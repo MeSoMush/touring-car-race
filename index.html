@@ -64,9 +64,11 @@ body.touch #gaps{top:calc(env(safe-area-inset-top,0px) + 50px)}
 body.touch #autoBadge{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 108px)}
 .mini[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
 #tower{position:absolute;left:14px;top:calc(env(safe-area-inset-top,0px) + 70px);display:grid;gap:2px;font-size:13px;min-width:150px}
-.tw{display:grid;grid-template-columns:1.6em 4px 1fr auto;gap:7px;align-items:center;background:rgba(12,14,18,.72);padding:3px 8px 3px 0;font-weight:500;font-variant-numeric:tabular-nums}
+.tw{display:grid;grid-template-columns:1.6em 4px 1fr auto auto;gap:7px;align-items:center;background:rgba(12,14,18,.72);padding:3px 8px 3px 0;font-weight:500;font-variant-numeric:tabular-nums}
 .tw b{font-family:var(--num);font-weight:800;color:var(--paper);background:rgba(255,255,255,.1);text-align:center;align-self:stretch;display:grid;place-items:center}
 .tw i{width:6px;height:14px;border-radius:2px}
+.tw u{text-decoration:none;font-size:10px;font-weight:700;color:var(--muted);border:1px solid rgba(255,255,255,.25);border-radius:2px;padding:0 3px;line-height:14px}
+.tw.me u{color:#fff;border-color:rgba(255,255,255,.6)}
 .tw em{font-style:normal;font-family:var(--num);font-weight:600;color:var(--muted);font-size:13px}
 .tw.me{background:rgba(232,52,42,.9);color:#fff}.tw.me b{background:rgba(0,0,0,.2);color:#fff}.tw.me em{color:#fff}
 #laps{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translateX(-50%);font-size:clamp(12px,1.8vw,14px);text-align:center;font-variant-numeric:tabular-nums;background:rgba(12,14,18,.6);padding:4px 12px;font-family:var(--num);font-weight:600;letter-spacing:.03em}
@@ -315,7 +317,7 @@ body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.20.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.26.3</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -363,6 +365,7 @@ body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
       <div><div class="label">周回数（レース）</div><div class="seg" id="lapsSeg"><button type="button" data-v="0">3周</button><button type="button" data-v="1">5周</button><button type="button" data-v="2">8周</button></div></div>
       <div><div class="label">タイヤ摩耗</div><div class="seg" id="wearSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">あり</button><button type="button" data-v="2">速い</button></div></div>
       <div><div class="label">ダメージ</div><div class="seg" id="dmgSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">見た目だけ</button><button type="button" data-v="2">性能にも</button></div></div>
+      <div><div class="label">大事故（高速の衝突で吹っ飛び・リタイア）</div><div class="seg" id="crSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
       <div><div class="label">0-400mの変速</div><div class="seg" id="dragSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">手動</button></div></div>
       <div><div class="label">0-400mの距離</div><div class="seg" id="ddSeg"><button type="button" data-v="0">400m</button><button type="button" data-v="1">1/8マイル（201m）</button></div></div>
       <div><div class="label">0-400mのツリー</div><div class="seg" id="dpSeg"><button type="button" data-v="0">スポーツマン（黄→黄→黄）</button><button type="button" data-v="1">プロ（黄3つ同時）</button></div></div>
@@ -388,6 +391,7 @@ body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
         <span><kbd>↑</kbd> / <kbd>W</kbd></span><span>アクセル</span>
         <span><kbd>↓</kbd> / <kbd>S</kbd></span><span>ブレーキ・バック</span>
         <span><kbd>←</kbd><kbd>→</kbd> / <kbd>A</kbd><kbd>D</kbd></span><span>ハンドル</span>
+        <span><kbd>↑</kbd>+<kbd>↓</kbd></span><span>アクセルを開けたまま軽くブレーキ（FF車の技。コーナー進入で前に荷重を乗せて向きを作る。踏みすぎるとアンダーステア）。パッドは RT と LT を同時に</span>
         <span><kbd>Space</kbd> / <kbd>Shift</kbd></span><span>サイドブレーキ（押している間だけ後輪が滑る。ヘアピンで向きを変えたい時だけ）</span>
         <span><kbd>C</kbd></span><span>視点の切り替え（後方・車載・遠め・中継・正面望遠）。中継は数秒ごとにカットで切り替わる：やぐら望遠／ヘリ上空／車載＋ルームミラー／ドローン追従／ピット定点／正面望遠。「正面望遠」は、先のコース脇から望遠で正面から狙う画角だけをずっと使う</span>
         <span><kbd>M</kbd></span><span>バックミラーの表示（画面上。少し重くなるのでスマホは最初OFF）</span>
@@ -397,8 +401,9 @@ body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
         <span>0-400m</span><span>1対1で400mの速さ比べ（ゼロヨン）。GARAGEで距離（400m／1/8マイル＝201m）、ツリー（スポーツマン＝黄が0.5秒ずつ／プロ＝黄3つ同時で0.4秒後に緑）、相手を選べる。ランプが黄→黄→黄→緑と点き、緑でアクセル。黄のうちに踏むとフライングで反則負け。変速「手動」（GARAGE）では Space／Shift（スマホは「シフト」、パッドはA）でシフトアップ。シフトランプが青く光った瞬間が PERFECT。記録はエンジンごとに保存</span>
         <span>リプレイ</span><span>結果画面の「リプレイ」でレースを見返せる。←→（ボタン）で見る車、C で視点、速さは×1／×2／×4、Esc で終了</span>
         <span><kbd>R</kbd></span><span>巻き戻し（5秒前に戻る。回数は結果に表示）</span>
-        <span><kbd>L</kbd></span><span>走行ラインの表示（緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ）</span>
+        <span><kbd>L</kbd></span><span>走行ラインの表示（コースの幅を使うアウト・イン・アウトの線。CPUもこの線を走る。緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ）</span>
         <span>ピット</span><span>タイヤ摩耗（GARAGEで「あり」）でグリップが落ちる。Iキー（ボタン「ピット」）で予約すると、次の周回でスタート直後のピットレーンに自動で入り、タイヤ交換（約3秒）。ダメージも直る。CPUも摩耗が進むと入る</span>
+        <span>大事故</span><span>高速で壁や他の車に強くぶつかる（目安は壁に時速約61km以上で垂直に当たる／車どうしは相対で約50km以上）と、車が跳ねて転がり、走れなくなってリタイア。順位表では最後に並び「リタイア」と出る（GARAGEで切れる）</span>
         <span>ダメージ</span><span>強くぶつけると車が傷んで、塗装がくすみ、ひどいと煙が出る。「性能にも」だとグリップと出力も落ちる。ピットで修理</span>
         <span>ピット無線</span><span>レース中、チームから「前の車まで0.8秒」「残り3周」「タイヤが限界」などの短い連絡が画面上に出る（GARAGEで切れる）</span>
         <span>フォト</span><span>結果画面の「フォト」（F キー／パッドX）で表を消して、優勝車（1人で走るモードは自分の車）の周りをカメラがゆっくり回る。タップかキーで戻る</span>
@@ -412,7 +417,7 @@ body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
         <span><kbd>O</kbd></span><span>オートプレイの切り替え（レース中いつでも）</span>
         <span>ゲームパッド</span><span>左スティック＝ハンドル、RT＝アクセル、LT＝ブレーキ（踏み加減が効く）、A＝サイドブレーキ、B＝巻き戻し、X＝ライン、Y＝視点、LB＝ミラー、START＝ポーズ、BACK＝オート。タイトルでA／STARTでレース開始</span>
         <span>コース外</span><span>4輪すべてが白線（コーナーは縁石）の外に出て走ると違反。3回までは警告、4回目から1回ごとに＋5秒（設定で切れる）</span>
-        <span>旗</span><span>黄旗＝この先に止まった車・スピンした車がいる（注意して減速）。青旗＝後ろから周回遅れにする速い車が来ている</span>
+        <span>旗</span><span>黄旗＝この先に止まった車・スピンした車がいる（注意して減速）。青旗＝後ろから周回遅れにする速い車が来ている（CPUの周回遅れは、ラインを外して少し緩めて道を譲る。自分が周回遅れの時も譲ると紳士的）</span>
         <span>スタート</span><span>赤ランプ5つが消えたらスタート。踏みすぎるとホイールスピンする</span>
         <span>アシスト</span><span>強＝滑りにくい（トラクション制御・カウンター補助・ABS）／なし＝タイヤのロックやスピンも自分で制御</span>
         <span>路面</span><span>縁石は少し滑る。コーナー外側の砂利（グラベル）と芝はグリップが落ちて減速する</span>
@@ -513,9 +518,16 @@ let LAPS=3;const W=7.5, WALL=W+6, SCALE=2.0;
 /* 車両の物理定数（質量1で正規化） */
 const G=9.8, MU={road:1.5,curb:1.35,grass:.65,gravel:.55}, AERO=.5*9.8/3600;
 const DRAGX={road:0,curb:.03,grass:.12,gravel:.35};
-const KA=1.3,KB=1.4,KL=2.7,IZ=1.9,HCG=.1;let LTX=2.6,RBR=.6,RG=1.25;
+const KA=1.3,KB=1.4,KL=2.7,IZ=1.9,HCG=.1;let LTX=2.6,RBR=.6,RG=1.25,TRLB=.3,AITB=.35,AIBL=10,FTH=0,FTM=.25,PSL=0,PSL_L=140,PSL_D=40; // AIBL＝CPU が曲がる手前で減速を終えておく余裕（m。T78）、 TRLB＝キーボードでアクセルとブレーキを同時に押した時のブレーキの強さ、AITB＝CPU（FF車）の同時ブレーキ
 const RATIO=[3.1,2.25,1.75,1.42,1.18,1.0],SHIFT_UP=8200,SHIFT_DN=4300,REDLINE=8700;
-const torque=rpm=>.55+.45*Math.sin(Math.PI*Math.min(rpm,9000)/9000);
+let EBK=1,SHIFT_BD=7000; // ブレーキ中の先落とし（オート変速）：下のギアにしても回転が SHIFT_BD 以下なら落とす。EBK=0で従来
+// トルク曲線（車＝エンジンごと。将来セッティングで差し替えられるよう、車の k.tq に持たせる）
+// lo＝0回転でのトルク（ピークを1として）、pk＝ピークの回転、hi＝end 回転での値、end＝落ち切る回転。下は sin、上は cos でなめらかにつなぐ
+const TQC=[{n:'1600cc',lo:.65,pk:5200,hi:.6,end:9000},{n:'2000cc',lo:.55,pk:4500,hi:.55,end:9000},{n:'ターボ',lo:.38,pk:5600,hi:.66,end:9500}];
+const torque=(rpm,c)=>{c=c||TQC[1];const r=Math.min(rpm,c.end);return r<c.pk?c.lo+(1-c.lo)*Math.sin(Math.PI/2*r/c.pk):c.hi+(1-c.hi)*Math.cos(Math.PI/2*(r-c.pk)/(c.end-c.pk));};
+// 手動変速の最適なシフト回転（今のギアと次のギアの駆動力が等しくなる回転。上限 REDLINE-100）
+function optShift(c){const o=[];for(let g=0;g<TOPG;g++){let best=REDLINE-100,bd=1e9;for(let r=5000;r<=REDLINE-100;r+=10){const d=Math.abs(torque(r,c)*RATIO[g]-torque(r*RATIO[g+1]/RATIO[g],c)*RATIO[g+1]);if(d<bd){bd=d;best=r;}}o.push(best);}return o;}
+const _optC=new Map();const k_opt=k=>{const c=k.tq||TQC[1];let o=_optC.get(c);if(!o){o=optShift(c);_optC.set(c,o);}return o;};
 const TFC=1.35,TFB=15,TRC=1.3,TRB=17;const MF=a=>Math.sin(TFC*Math.atan(TFB*a)),MFR=a=>Math.sin(TRC*Math.atan(TRB*a)); // タイヤ特性（マジックフォーミュラ簡略版）
 const ASSIST=[{name:'強',tc:.82,cs:.42,abs:true},{name:'標準',tc:.92,cs:.22,abs:true},{name:'なし',tc:1.05,cs:0,abs:false}];
 // 難易度（T55）：lo/hi＝CPUの速さの幅、err＝コーナー1つごとにミス（ブレーキ遅れでふくらむ・踏めずに失速）する確率
@@ -529,9 +541,9 @@ const SETW=[{n:'少なめ',dfm:.6,cdm:.94},{n:'標準',dfm:1,cdm:1},{n:'多め',
 const SETB=[{n:'前寄り',bb:.67,rbm:.8},{n:'標準',bb:.6,rbm:1},{n:'後ろ寄り',bb:.53,rbm:1.2}];
 const TYRE=['自動','スリック','レイン'];
 let setDrv=1,setG=1,setW=1,setB=1,setT=0,tiltOn=false;
-let autoStart=0;let lapsSel=0,wearMode=1,dmgMode=2;const LAPSET=[3,5,8];
+let autoStart=0;let lapsSel=0,wearMode=1,dmgMode=2,crashMode=1;const LAPSET=[3,5,8];
 // 0-400m（β0.15.0）
-let dragMan=1,dragRec=null,drag=null,dragDist=0,dragPro=0,dragRivalSel=-1;const DRAG_DS=[400,201.17];let DRAG_D=400;const DRAG_NM=['0-400m','1/8マイル（201m）'];const dragGoAt=()=>dragPro?.4:1.5;const DRAG_LAT=3.6,OPT_SHIFT=[8110,7870,7730,7640,7580],DRT=[[.34,.6],[.28,.5],[.18,.36],[.12,.26],[.08,.18]];
+let dragMan=1,dragRec=null,drag=null,dragDist=0,dragPro=0,dragRivalSel=-1;const DRAG_DS=[400,201.17];let DRAG_D=400;const DRAG_NM=['0-400m','1/8マイル（201m）'];const dragGoAt=()=>dragPro?.4:1.5;const DRAG_LAT=3.6,OPT_SHIFT=null,DRT=[[.34,.6],[.28,.5],[.18,.36],[.12,.26],[.08,.18]];
 function applySetup(k,drv,g,w,b,t){const d=DRV[DRV_KEYS[drv]];k.drv=DRV_KEYS[drv];k.fs=d.fs;k.ka=d.ka;k.kb=d.kb;k.pw=d.pw;k.ftx=d.ftx||1;k.rgm=d.rgm||1;k.gf=SETG[g].gf;k.dfm=SETW[w].dfm;k.cdm=SETW[w].cdm;k.bb=SETB[b].bb;k.rbm=SETB[b].rbm;
   k.rain=t===2||(t===0&&typeof ENV!=='undefined'&&(ENV.wet>.45||ENV.tr>.5));k.wear=0;k.dmg=0;k.pit=0;k.pitT=0;k.pitReq=false;k.pitDone=0;k.gripK=1;k.powK=1;return k;}
 const HX=.95,HZ=2.32;let IZC=1.9;const TOPG=5;
@@ -759,17 +771,46 @@ function ribbon(l0,l1,y,mat,vScale,mask){
    for(const o of[-.45,.45]){D.position.set(x+Math.cos(hd)*o,.55,z-Math.sin(hd)*o);D.updateMatrix();post.setMatrixAt(post.count++,D.matrix);}}}
 // 走行ライン（理想のライン。前方は自分の速さで色が変わる：緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ）
 const IL=new Float32Array(N),VC=new Float32Array(N),VP=new Float32Array(N);
-{const raw=new Float32Array(N);for(let i=0;i<N;i++)raw[i]=Math.max(-(W-1.6),Math.min(W-1.6,-KAP[wrap(i+5)]*300));
- for(let i=0;i<N;i++){let s=0;for(let k=-10;k<=10;k++)s+=raw[wrap(i+k)];IL[i]=s/21;}
+// レーシングライン（T79）：コースの幅いっぱいを使って曲がりの強さ（曲率）が最小になる線を、反復で求める。アウト→イン→アウトになり、半径が大きいぶん速く曲がれる。
+// 点 P(i)=中心線＋横位置 IL[i]。隣り合う点の2階差分（曲がり）の二乗和を小さくするよう、横位置を少しずつ動かして幅（RLW）の中に収める。
+let RLW=W-3.6,RLIT=1500,RLM=.5; // RLM：0＝曲率だけ（中心線から動かない）〜1＝最短距離（内側にべったり）。.5＝両方のバランス
+// （曲率だけを最小にすると、なめらかな中心線がそのまま答えになって動かない。最短距離を混ぜて、幅を使うアウト・イン・アウトにする）
+let RLX=0,RLG=120;let RLS=2; // 遅めのアペックスのずらし量（点の数。1点＝SP m。0で従来、4以上は曲がり込みが遅すぎてスピンが増える）
+const RADL=new Float32Array(N); // ラインの半径（曲がれる速さの計算に使う）
+function buildRL(){const px=new Float32Array(N),pz=new Float32Array(N);
+ for(let i=0;i<N;i++)IL[i]=0;
+ for(let it=0;it<RLIT;it++){
+  for(let i=0;i<N;i++){px[i]=TX[i]+NX[i]*IL[i];pz[i]=TZ[i]+NZ[i]*IL[i];}
+  for(let i=0;i<N;i++){const a=wrap(i-1),b=wrap(i+1),c=wrap(i-2),d=wrap(i+2);
+   const tx=(1-RLM)*(4*(px[a]+px[b])-(px[c]+px[d]))/6+RLM*(px[a]+px[b])/2,tz=(1-RLM)*(4*(pz[a]+pz[b])-(pz[c]+pz[d]))/6+RLM*(pz[a]+pz[b])/2;
+   let l=(tx-TX[i])*NX[i]+(tz-TZ[i])*NZ[i];l=Math.max(-RLW,Math.min(RLW,l));IL[i]+=(l-IL[i])*.7;}}
+ // 遅めのアペックス（T83）：線全体をコースに沿って RLS 点（×SP m）後ろへずらし、曲がり込みを遅らせて頂点を出口側へ寄せる
+ // 連続コーナー（T83⑤）：次のコーナーまで RLG m 以内のコーナーは、さらに RLX 点ずらして手前の頂点を遅らせ、次の出口を優先する
+ if(RLS>0||RLX>0){const o=Float32Array.from(IL),sh=new Int8Array(N).fill(RLS);
+  if(RLX>0){const st=[];let s0=0;while(CORNER[s0])s0++;let cur=-1;
+   for(let q=1;q<=N;q++){const i=(s0+q)%N,p=(i-1+N)%N;if(CORNER[i]&&!CORNER[p])cur=i;if(!CORNER[i]&&CORNER[p])st.push({s:cur,e:i});}
+   st.forEach((r,j)=>{const nx=st[(j+1)%st.length];const gap=((nx.s-r.e+N)%N)*SP;if(gap<RLG)for(let k=r.s;k!==r.e;k=(k+1)%N)sh[k]=RLS+RLX;});}
+  for(let i=0;i<N;i++)IL[i]=o[wrap(i-sh[i])];}
+ // ラインの半径：ライン上の点の向きの変わり方（KAP と同じ求め方）
+ const hx=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));}
+ const ka=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);const arc=Math.hypot((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));ka[i]=angDiff(hx[b],hx[a])/Math.max(1,arc);}
+ for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];RADL[i]=Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000));RADL[i]=Math.max(RADL[i],RAD[i]*.9);}
 }
+buildRL();
 // 曲がれる速さ（濡れた路面では下がる）
-function calcVC(){const p=plrSafe();const gm=wetMul('road',p);const ae=AERO*(p&&p.dfm||1);ENV.vcWet=ENV.wet;const la=MU.road*gm*G*.82;for(let i=0;i<N;i++){const den=1-la/G*ae*RAD[i];VC[i]=den>.15?Math.sqrt(la*RAD[i]/den):200;VP[i]=VC[i];}
+function calcVC(){const p=plrSafe();const gm=wetMul('road',p);const ae=AERO*(p&&p.dfm||1);ENV.vcWet=ENV.wet;const la=MU.road*gm*G*.82;for(let i=0;i<N;i++){const den=1-la/G*ae*RADL[i];VC[i]=den>.15?Math.sqrt(la*RADL[i]/den):200;VP[i]=VC[i];}
  for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const n=VP[wrap(i+1)];VP[i]=Math.min(VC[i],Math.sqrt(n*n+2*G*1.25*gm*SP));}}
 calcVC();
 const lineMesh=(()=>{const pos=[],idx=[];for(let i=0;i<=N;i++){const j=i%N;for(const o of[-.25,.25]){const l=IL[j]+o;pos.push(TX[j]+NX[j]*l,.058,TZ[j]+NZ[j]*l);}if(i<N)idx.push(i*2,i*2+1,i*2+2,i*2+1,i*2+3,i*2+2);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(new Float32Array(pos.length),3));g.setIndex(idx);
-  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.5,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3}));m.material.userData.lin=1;m.renderOrder=1;scene.add(m);return m;})();
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.3,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3}));m.material.userData.lin=1;m.renderOrder=1;scene.add(m);return m;})();
 let showLine=true;
+// アペックスの目印（T83⑦）：各コーナーでラインの半径が最小になる点（頂点）の内側にオレンジのコーン。走行ライン（Lキー）と一緒に出る（当たり判定なし）
+const apexMesh=(()=>{const pts=[];let s0=0;while(CORNER[s0]&&s0<N)s0++;let cur=null;
+  for(let q=1;q<=N;q++){const i=(s0+q)%N,p=(i-1+N)%N;if(CORNER[i]){if(!cur)cur={b:i};if(RADL[i]<RADL[cur.b])cur.b=i;}else if(cur){pts.push(cur.b);cur=null;}}
+  const m=new THREE.InstancedMesh(new THREE.ConeGeometry(.28,1.0,8,1,true),new THREE.MeshBasicMaterial({color:0xff7a12,transparent:true,opacity:.28,depthWrite:false}),Math.max(1,pts.length));m.material.userData.lin=1;
+  const D=new THREE.Object3D();pts.forEach((i,n)=>{const l=IL[i]-Math.sign(OUTS[i]||1)*2.2;D.position.set(TX[i]+NX[i]*l,.55,TZ[i]+NZ[i]*l);D.updateMatrix();m.setMatrixAt(n,D.matrix);});
+  m.count=pts.length;m.frustumCulled=false;m.visible=false;scene.add(m);return m;})();
 // 路面のラバー（T51）：走行ラインを車が通るたびにゴムが乗り、グリップが少し上がって路面が黒ずむ。雨で流れる
 const RUB=new Float32Array(N),RUB_ADD=.028,RUBG=.035;let rubT=0;
 const rubAt=k=>RUB[k.idx]*Math.max(0,1-Math.abs(k.lat-IL[k.idx])/2.5);
@@ -784,7 +825,7 @@ function rubStep(k){if(k.idx===k.prevIdx||k.surf!=='road'||Math.abs(k.u)<8)retur
   let i=k.prevIdx;for(let n=0;n<4&&i!==k.idx;n++){i=wrap(i+1);RUB[i]=Math.min(1,RUB[i]+add);}}
 function rubTick(dt){if(ENV.wet>.25){const f=1-dt*.03*ENV.wet;for(let i=0;i<N;i++)RUB[i]*=f;}rubT+=dt;if(rubT>1){rubT=0;rubVis();}}
 const LC={g:[.05,.62,.14],y:[1,.62,0],r:[1,.05,.03]};
-function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const aB=G*1.3*wetMul('road',p),u=Math.max(0,p.u);
+function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';apexMesh.visible=lineMesh.visible;if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const aB=G*1.3*wetMul('road',p),u=Math.max(0,p.u);
   const setC=(i,c)=>{for(const v of[i*2,i*2+1]){col[v*3]=c[0];col[v*3+1]=c[1];col[v*3+2]=c[2];}if(i===0)for(const v of[N*2,N*2+1]){col[v*3]=c[0];col[v*3+1]=c[1];col[v*3+2]=c[2];}};
   for(let i=0;i<N;i++)setC(i,VP[i]<VC[i]-.5&&VP[wrap(i+1)]<VP[i]?LC.y:LC.g);
   for(let j=0;j<150;j++){const i=wrap(p.idx+j);const need=u*u-(VP[i]*VP[i]+2*aB*j*SP);setC(i,u<=VP[i]+.3?LC.g:need>0?LC.r:need>-2*aB*28?LC.y:LC.g);}
@@ -1255,7 +1296,7 @@ function setupRace(){
     const top=CC[ccChoice].top*st.top;const Fp=4.9*Math.pow(top/61,.45);
     const k={id:gridPos,name:dr.name,dr,st,isPlayer:d===playerChoice,
       x:TX[i]+NX[i]*lat,z:TZ[i]+NZ[i]*lat,h:heading(i),u:0,vl:0,r:0,delta:0,ax:0,ay:0,speed:0,vx:0,vz:0,
-      gear:0,rpm:1500,shiftT:0,top,Fp,cd:Fp*torque(SHIFT_UP)/(top*top),wheelspin:0,slipF:0,slipR:0,surf:'road',
+      gear:0,rpm:1500,shiftT:0,top,Fp,tq:TQC[ccChoice],cd:Fp*torque(SHIFT_UP,TQC[ccChoice])/(top*top),wheelspin:0,slipF:0,slipR:0,surf:'road',
       idx:i,prevIdx:i,lap:0,cp:true,lat,
       drifting:false,driftDir:0,driftCharge:0,boost:0,spin:0,shield:0,item:null,roulette:0,
       finished:false,finishTime:0,lane:lat*.5,laneT:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
@@ -1268,7 +1309,7 @@ function setupRace(){
   updateItemHud();setLamps(0,false);carLights(!!TOD[ENV.tod].night,ENV.fog>.5||ENV.rain>.4);calcVC();updEnvHud();
 }
 const player=()=>karts.find(k=>k.isPlayer);
-function progress(k){if(k.finished)return 1e9-k.finishTime;return k.lap*L+k.idx*SP+alongAt(k.idx,k.x,k.z);}
+function progress(k){if(k.finished)return 1e9-k.finishTime;if(k.dnf)return -1e8+k.lap*L+k.idx*SP;return k.lap*L+k.idx*SP+alongAt(k.idx,k.x,k.z);}
 function ranking(){return karts.slice().sort((a,b)=>progress(b)-progress(a));}
 function rankOf(k){return ranking().indexOf(k);}
 
@@ -1305,7 +1346,7 @@ function stepKart(k,dt,ctl){
   const dMax=.5/(1+Math.abs(k.u)/26);
   const beta=Math.abs(k.u)>3?Math.atan2(k.vl,Math.abs(k.u)):0;
   let target=-ctl.steer*dMax;
-  const cs=k.aiDriven?.35:ASSIST[assistLv].cs;if(cs>0&&(k.drifting||Math.abs(beta)>.12))target+=beta*(k.drifting?cs+.2:cs)*Math.sign(k.u||1); // カウンター補助
+  const cs=k.aiDriven?(k.csx||.35):ASSIST[assistLv].cs;if(cs>0&&(k.drifting||Math.abs(beta)>.12))target+=beta*(k.drifting?cs+.2:cs)*Math.sign(k.u||1); // カウンター補助
   const rate=k.aiDriven?6:3.4;k.delta+=Math.max(-rate*dt,Math.min(rate*dt,target-k.delta));
   // ドリフト（後輪のグリップを抜く）
   if(k.spin<=0&&ctl.drift&&k.u>12&&!k.drifting&&surf!=='gravel'){k.drifting=true;k.driftDir=Math.sign(k.r||-ctl.steer||1);k.driftCharge=0;}
@@ -1319,13 +1360,18 @@ function stepKart(k,dt,ctl){
   if(k.shiftT>0)k.shiftT-=dt;
   if(k.rpm>SHIFT_UP&&k.gear<TOPG&&k.shiftT<=0&&!k.manual){k.gear++;k.shiftT=.14;if(k.isPlayer&&ctl.accel){sfx('shift');camKick=.3;}}
   else if(k.rpm<SHIFT_DN&&k.gear>0&&!k.manual){k.gear--;}
+  // ブレーキ・アクセルオフ中は、ひとつ下のギアでも回転が上がりすぎなければ先に落とす（エンジンブレーキ、出口で力のある回転域に備える）
+  else if(EBK&&(ctl.brake||!ctl.accel)&&k.gear>0&&!k.manual&&k.u>6&&Math.abs(k.u)*RATIO[k.gear-1]*K<=SHIFT_BD){k.gear--;}
   k.rpm=Math.max(1400,Math.abs(k.u)*RATIO[k.gear]*K);
+  // エンジンブレーキの強さは従来のギア割り当て（回転だけで決まる gc）で計算し、先落としで効きが変わらないように
+  {let gc=k.gc??k.gear;const rc=Math.abs(k.u)*RATIO[gc]*K;if(rc>SHIFT_UP&&gc<TOPG)gc++;else if(rc<SHIFT_DN&&gc>0)gc--;k.gc=gc;}
   let Fd=0,Fb=0;
   if(k.spin<=0){
-    if(ctl.brake&&k.u>.8)Fb=G*1.9*(ctl.brk??1);
+    const drv=()=>{const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual)?0:1;return k.Fp/(k.gf||1)*(k.pw||1)*(k.powK||1)*k.st.acc*RATIO[k.gear]*torque(k.rpm,k.tq)*lim*(ctl.thr??1)*(k.boost>0?1.9:1)*(k.shield>0?1.12:1)*(k.aiDriven?(k.power||1):1);};
+    if(ctl.brake&&k.u>.8){Fb=G*1.9*(ctl.brk??1);if(ctl.accel&&k.shiftT<=0)Fd=drv();} // アクセルを開けたままブレーキ（トレイルブレーキ）
     else if(ctl.brake&&k.u<=.8)Fd=-5;
-    else if(ctl.accel&&k.shiftT<=0){const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual)?0:1;Fd=k.Fp/(k.gf||1)*(k.pw||1)*(k.powK||1)*k.st.acc*RATIO[k.gear]*torque(k.rpm)*lim*(ctl.thr??1)*(k.boost>0?1.9:1)*(k.shield>0?1.12:1)*(k.aiDriven?(k.power||1):1);}
-    else if(!ctl.accel)Fd=-(.6+k.gear*.05)*Math.sign(k.u)*(1+ (5-k.gear)*.12);
+    else if(ctl.accel&&k.shiftT<=0)Fd=drv();
+    else if(!ctl.accel)Fd=-(.6+k.gc*.05)*Math.sign(k.u)*(1+ (5-k.gc)*.12);
   }
   const mu=MU[surf]*wetMul(surf,k)*(surf==='road'?1+RUBG*rubAt(k):1)*k.st.grip*(k.gripK||1)*(k.spin>0?.5:1);
   const muF=mu,muR=mu*(k.drifting?.45:1);
@@ -1338,11 +1384,11 @@ function stepKart(k,dt,ctl){
     const Nf=Math.max(1,G*kb/KL-dN+df*.9),Nr=Math.max(1,G*ka/KL+dN+df*1.1);
     const rg=RG*(k.rgm||1);let Fyf=-muF*Nf*MF(af),Fyr=-muR*rg*Nr*MFR(ar);
     // 後輪：駆動力と横力の合計はグリップ円の中
-    const capR=muR*rg*Nr;const noAbs=!k.aiDriven&&!ASSIST[assistLv].abs;let FxR=Fd*(1-fs)-Math.min(Fb*(1-bb),capR*(noAbs?RBR+.1:RBR)*(k.rbm||1))*sg-(k.drifting?4*sg:0);
-    const tc=k.drifting?1:(k.aiDriven?.85:ASSIST[assistLv].tc);
+    const capR=muR*rg*Nr;const noAbs=!k.aiDriven&&!ASSIST[assistLv].abs;let FxR=Fd*(1-fs)-Math.min(Fb*(ctl.fo?0:1-bb),capR*(noAbs?RBR+.1:RBR)*(k.rbm||1))*sg-(k.drifting?4*sg:0);
+    const tc=k.drifting?1:(k.aiDriven?(k.pwr?PWTC:.85):ASSIST[assistLv].tc);
     if(Math.abs(FxR)>capR*tc){ws=1;FxR=Math.sign(FxR)*capR*tc;}
     const yr=Math.sqrt(Math.max(0,capR*capR-FxR*FxR));if(Math.abs(Fyr)>yr)Fyr=Math.sign(Fyr)*yr;
-    const capF=muF*Nf;let FxF=Fd*fs-Fb*bb*sg;let lock=false;if(Fb<=0){const cx=capF*tc*(k.ftx||1);if(Math.abs(FxF)>cx){ws=1;FxF=Math.sign(FxF)*cx;}}else if(Math.abs(FxF)>capF*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>capF){lock=true;FxF=Math.sign(FxF)*capF*.85;}else FxF=Math.sign(FxF)*capF*.95;}
+    const capF=muF*Nf;let FxF=Fd*fs-Fb*(ctl.fo?1:bb)*sg;let lock=false;if(Fb<=0){const cx=capF*tc*(k.ftx||1);if(Math.abs(FxF)>cx){ws=1;FxF=Math.sign(FxF)*cx;}}else if(Math.abs(FxF)>capF*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>capF){lock=true;FxF=Math.sign(FxF)*capF*.85;}else FxF=Math.sign(FxF)*capF*.95;}
     const yf=Math.sqrt(Math.max(0,capF*capF-FxF*FxF));if(Math.abs(Fyf)>yf)Fyf=Math.sign(Fyf)*yf;if(lock){Fyf*=.15;k.locked=true;}
     const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
     const drag=cd*(k.cdm||1)*k.u*Math.abs(k.u)*(1-.3*(k.draft||0))+roll*Math.sign(k.u);
@@ -1377,7 +1423,7 @@ function computeDraft(){for(const k of karts){let d=0;const fx=Math.sin(k.h),fz=
   if(k.u>20)for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const f=dx*fx+dz*fz;if(f<4||f>32)continue;const sd=Math.abs(dx*Math.cos(k.h)-dz*Math.sin(k.h));const w=1.1+f*.025;if(sd>w)continue;d=Math.max(d,(1-(f-4)/28)*(1-sd/w*.6));}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
-const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','gripK','powK'];
+const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','gripK','powK'];
 let rwBuf=[],rwT=0,holdT=0,rwCount=0;
 function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
 function doRewind(){if(sess==='drag')return;if(state!=='race'||holdT>0||rwBuf.length<3)return;const target=raceTime-5;let s=rwBuf[0];for(const b of rwBuf)if(b.t<=target)s=b;
@@ -1394,7 +1440,7 @@ function onLap(k){
     if(sp&&valid)ghLapDone(lt);
     k.lapStart=raceTime;k.lapBad=false;if(sp){ghStart();sfx('lap');}
     if(!solo()&&(!fastLap||lt<fastLap.t)){fastLap={t:lt,k};telop('FASTEST LAP',k.name+'　'+fmt(lt),'purple');}}
-  if(k.lap>LAPS&&!k.finished){k.finished=true;k.finishTime=raceTime;finishOrder.push(k);
+  if(k.lap>LAPS&&!k.finished&&!k.dnf){k.finished=true;k.finishTime=raceTime;finishOrder.push(k);
     if(k.isPlayer){const r=finishOrder.length;showBanner('FINISH');toast(sess==='quali'?'予選終了':r+'位でフィニッシュ');sfx('finish');state='finished';afterFinish=0;}}
   else if(k.isPlayer&&!solo()&&k.lap>=2&&k.lap<=LAPS){if(k.lap===LAPS){toast('ファイナルラップ');sfx('final');}else{toast('ラップ '+k.lap);sfx('lap');}}
   else if(sp&&sess==='quali'&&k.lap===2)telop('QUALIFYING','最後の1周（アタックラップ）');
@@ -1457,13 +1503,13 @@ function ghostStep(dt){const p=player();const gm=ghostMesh;ghDelta=null;
 const RP_N=11;let rpBuf=[],rpT=0,rpI=0,rpTime=0,rpSpeed=1,rpFocus=0,rpSavedCam=0;
 function recordReplay(dt){rpT+=dt;if(rpT<.1&&rpBuf.length)return;rpT=0;const a=new Float32Array(karts.length*RP_N);
   karts.forEach((k,j)=>{const o=j*RP_N;a[o]=k.x;a[o+1]=k.z;a[o+2]=k.h;a[o+3]=k.u;a[o+4]=k.delta;a[o+5]=k.ay;a[o+6]=k.ax;a[o+7]=k.rpm;
-    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0);a[o+9]=k.lap;a[o+10]=k.vl;});
+    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0);a[o+9]=k.lap;a[o+10]=k.vl;});
   rpBuf.push({t:raceTime,a});}
 const camTarget=()=>state==='replay'?karts[rpFocus]:state==='title'?(titleMode==='garage'?karts[0]:(karts.length?ranking()[0]:null)):player();
 function applyReplay(){const f0=rpBuf[rpI],f1=rpBuf[Math.min(rpBuf.length-1,rpI+1)];const w=f1.t>f0.t?Math.max(0,Math.min(1,(rpTime-f0.t)/(f1.t-f0.t))):0;
   karts.forEach((k,j)=>{const o=j*RP_N,A=f0.a,B=f1.a;const L2=(q)=>A[o+q]+(B[o+q]-A[o+q])*w;
     k.x=L2(0);k.z=L2(1);k.h=A[o+2]+angDiff(B[o+2],A[o+2])*w;k.u=L2(3);k.delta=L2(4);k.ay=L2(5);k.ax=L2(6);k.rpm=L2(7);k.vl=L2(10);k.lap=A[o+9];
-    const fl=A[o+8];k.slipR=fl&1?.3:0;k.slipF=0;k.wheelspin=0;k.locked=false;k.spin=fl&2?1:0;k.shiftT=fl&4?.1:0;k.aiBrake=!!(fl&8);
+    const fl=A[o+8];k.slipR=fl&1?.3:0;k.slipF=0;k.wheelspin=0;k.locked=false;k.spin=fl&2?1:0;k.shiftT=fl&4?.1:0;k.aiBrake=!!(fl&8);k.rv=!!(fl&16);k.gone=!!(fl&32);
     k.idx=nearest(k.x,k.z,k.idx,24);k.lat=lateralAt(k.idx,k.x,k.z);k.surf=surfaceAt(k.idx,k.lat);syncWorld(k);});}
 function rpSnap(){const p=camTarget();for(const k of karts)k.g.headParts.forEach(m=>m.visible=true);camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;
   $('rpName').textContent=`${p.name}　×${rpSpeed}`;$('rpCam').textContent='視点 '+CAMN[camMode];$('rpSpd').textContent='速さ ×'+rpSpeed;}
@@ -1477,7 +1523,7 @@ function rpCamStep(){const order=[3,4,0,1,2];camMode=order[(order.indexOf(camMod
 function rpSpdStep(){rpSpeed=rpSpeed===1?2:rpSpeed===2?4:1;rpSnap();}
 
 // 4輪すべてが白線（コーナーは縁石の外端）より外で0.3秒以上走ったら違反
-function trackLimits(k,dt){if(k.finished||state!=='race'||holdT>0||k.pit>0){k.tlT=0;return;}
+function trackLimits(k,dt){if(k.dnf||k.finished||state!=='race'||holdT>0||k.pit>0){k.tlT=0;return;}
   let out=true;for(const c of kCorners(k)){const i=nearest(c[0],c[1],k.idx,6);const lim=CORNER[i]?W+1.5:W+.3;if(Math.abs(lateralAt(i,c[0],c[1]))<=lim){out=false;break;}}
   if(out&&k.u>12){k.tlT=(k.tlT||0)+dt;if(k.tlT>.3&&!k.tlHit){k.tlHit=true;k.tl=(k.tl||0)+1;if(!tlOn)return;
     if(solo()){if(k.isPlayer&&k.lap>=1&&!k.lapBad){k.lapBad=true;telop('TRACK LIMITS','コース外走行　このラップは無効','yellow');sfx('warn');}return;}
@@ -1485,7 +1531,7 @@ function trackLimits(k,dt){if(k.finished||state!=='race'||holdT>0||k.pit>0){k.tl
     else if(k.isPlayer){telop('TRACK LIMITS','コース外走行　警告 '+k.tl+'/3','yellow');sfx('warn');}}}
   else if(!out){k.tlT=0;k.tlHit=false;}}
 // 旗：止まった車・スピン・コース外で遅い車の手前250mに黄旗。周回遅れにされる車に青旗
-function incident(k){if(k.finished||raceTime<4||k.pit>0)return false;const b=Math.abs(k.u)>3?Math.abs(Math.atan2(k.vl,Math.abs(k.u))):0;return k.spin>0||Math.abs(k.u)<6||b>.7||(Math.abs(k.lat)>W+2&&k.u<18);}
+function incident(k){if(k.gone||k.finished||raceTime<4||k.pit>0)return false;const b=Math.abs(k.u)>3?Math.abs(Math.atan2(k.vl,Math.abs(k.u))):0;return k.spin>0||Math.abs(k.u)<6||b>.7||(Math.abs(k.lat)>W+2&&k.u<18);}
 let flagHud='';
 function updateFlags(){const inc=karts.filter(incident);
   for(const k of karts){k.yellow=false;k.blue=false;for(const o of inc){if(o===k)continue;const d=wrap(o.idx-k.idx)*SP;if(d<250){k.yellow=true;break;}}
@@ -1537,14 +1583,16 @@ function watchPositions(dt){const p=player();if(!p||state!=='race'||raceTime<3)r
   else leadPend=null;}
 
 /* ================= CPU（先読みして減速） ================= */
-const AI_LAT=MU.road*G*.8;let FFK=.93,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
+const AI_LATK=G*.8;let YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.93,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 function aiControl(k,dt){
   const p=player();
-  k.laneTimer-=dt;if(k.laneTimer<=0){k.laneT=(Math.random()*2-1)*2.6;k.laneTimer=2+Math.random()*3;}
-  k.lane+=(k.laneT-k.lane)*Math.min(1,dt*.8);
+  // 走り方（T79）：基本はレーシングライン IL（アウト・イン・アウト）。弱い CPU ほど線のぶれが大きい。並走・よけで laneT が決まった間（ovr）はその横位置
+  k.laneTimer-=dt;if(k.laneTimer<=0){k.wan=(Math.random()*2-1)*(.35+(1-Math.min(1,k.skill))*18);k.laneTimer=2+Math.random()*3;k.ovr=false;}
+  const lt0=k.laneT;
   const u=Math.max(0,k.u);
   const ld=7+u*.42;const t=wrap(k.idx+Math.round(ld/SP));
-  const lane=Math.max(-W+2.2,Math.min(W-2.2,k.lane-KAP[wrap(k.idx+Math.round((ld+10)/SP))]*260));
+  const devT=k.ovr?k.laneT-IL[k.idx]:(k.wan||0);k.lane+=(devT-k.lane)*Math.min(1,dt*.8);
+  const lane=Math.max(-W+2.2,Math.min(W-2.2,IL[t]+k.lane));
   let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   for(const s of slicks){const dx=s.x-k.x,dz=s.z-k.z;const d=Math.hypot(dx,dz);if(d<22){const fwd=(dx*Math.sin(k.h)+dz*Math.cos(k.h));if(fwd>0){const push=lateralAt(k.idx,s.x,s.z)>k.lat?-4:4;tx+=NX[t]*push;tz+=NZ[t]*push;}}}
   const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h);
@@ -1556,15 +1604,26 @@ function aiControl(k,dt){
   const gap=progress(k)-progress(p);
   k.power=k.isPlayer?1:k.skill;
   // 速度計画：先のカーブで曲がれる速さ＋ブレーキ距離
-  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:1));const aeK=AERO*(k.dfm||1);const latA=AI_LAT*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:k.skill)*(k.yellow?.9:1)*(k.fs>.8?FFK:1);let vAllow=1e9;
-  for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);const den=1-latA/G*aeK*RAD[i];const vc=den>.15?Math.sqrt(latA*RAD[i]/den):200;const v=Math.sqrt(vc*vc+2*G*1.2*wgm*j*SP);if(v<vAllow)vAllow=v;}
+  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:1));const aeK=AERO*(k.dfm||1);const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:k.skill)*(k.yellow?.9:1)*(k.fs>.8?FFK:1);let vAllow=1e9;
+  for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);const den=1-latA/G*aeK*RADL[i];const vc=den>.15?Math.sqrt(latA*RADL[i]/den):200;const v=Math.sqrt(vc*vc+2*G*1.2*wgm*Math.max(0,j*SP-AIBL));if(v<vAllow)vAllow=v;}
+  // 滑りを使う（T74）：グリップが低い（雨・低ミュー路面）ほど、立ち上がりでアクセルを踏んで尻を出し、きついコーナーではサイドブレーキで向きを変え、滑り始めは強めに逆ハンドル
+  const gripNow=MU.road*wetMul('road',k),slv=sess==='drag'||k.pit?0:Math.max(0,Math.min(1,(SLG-gripNow)/.5));k.slv=slv;
+  const beta=u>6?Math.atan2(k.vl,u):0;k.csx=.35+CSB*slv*Math.min(1,Math.abs(beta)/.15);
+  k.pwr=false;
+  if(slv>0&&k.fs<.6&&u>12&&!k.finished){
+    vAllow*=1+SLV*slv;
+    const kc=Math.abs(KAP[k.idx]),kn=Math.abs(KAP[wrap(k.idx+8)]);
+    if(CORNER[k.idx]&&kc>1/200&&kn<kc*.92&&Math.abs(beta)<.3)k.pwr=true; // 出口：曲率が減り始めたらパワースライド
+    if(k.hbT>0){k.hbT-=dt;if(Math.abs(beta)>.35||u<12)k.hbT=0;}
+    else if(!k.pwr&&slv>.3&&RAD[wrap(k.idx+Math.round(20/SP))]<HPR&&RAD[k.idx]>HPR*.8&&u>vAllow*.85&&Math.abs(beta)<.1&&(k.hbCool=(k.hbCool||0)-dt)<=0){k.hbT=.55;k.hbCool=5;}
+  }else k.hbT=0;
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(!k.isPlayer&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))];
     if(cn&&!k.cnPrev&&Math.random()<AILV[aiLv].err){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
     k.cnPrev=cn;if(k.errT>0){k.errT-=dt;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const tr=TRAITS[k.dr.tr??2];let follow=false,hard=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
-  for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd>26||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
+  for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd>(o.dnf?30+u*3.5:26)||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
     if(fwd<=5.5&&Math.abs(side)<tr.room+.6&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
       if(!(k.enc[o.id]>raceTime-1.5)&&Math.random()<tr.yld){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[o.id]=raceTime;
       const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2)));
@@ -1572,8 +1631,20 @@ function aiControl(k,dt){
       if(fwd>-3&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;}
     if(fwd<=0||Math.abs(side)>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz);if(close>0){if(Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=o.lat+(o.lat>0?-1:1)*(tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7)*tr.gap)follow=true;if(close*close>2*9*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
+  // スリップストリームから抜く（T83⑥）：直線で前の車の真後ろの空気に入ったら、早めに横へ出て（ブレーキで詰めずに）そのまま並びかけて抜く
+  if(PSL>0&&sess==='race'&&!k.finished&&!k.yieldF&&(k.draft||0)>.15&&u>25){let st=true;for(let j=4;j<=PSL_L;j+=6)if(Math.abs(KAP[wrap(k.idx+j)])>1/450){st=false;break;}
+    if(st)for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd<5||fwd>PSL_D)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);if(Math.abs(side)>2.2)continue;
+      const dir=o.lat>0?-1:1;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.8)));k.laneTimer=1.2;k.ovr=true;k.psl=1;break;}}
+  // 大事故で止まった車（T71）：コースに沿った距離で早めに見つけ、ブレーキをかけて横へよける
+  for(const o of karts){if(!o.dnf||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>40+u*3.6||Math.abs(o.lat-k.lat)>3.4)continue;
+    k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>0?-1:1)*3.6));k.laneTimer=1.5;if(u*u>2*8*Math.max(.5,ds-9))hard=true;}
+  // 周回遅れは道を譲る（T85）：青旗（後ろから周回遅れにする車が近づいた）が出たら、ラインを外して少し緩め、先に行かせる。譲る側はコーナーの外側へ、直線ではラインから3m外へ寄る
+  k.yieldF=false;
+  if(k.blue&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g2=progress(o)-progress(k);
+    if(g2>L-YLD_D&&g2<L+4){const side=(k.lat-IL[k.idx])>=0?1:-1;const s2=side;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,IL[k.idx]+s2*3.4));k.laneTimer=1;k.ovr=true;k.yieldF=true;break;}}}
+  if(k.laneT!==lt0)k.ovr=true;
   if(k.launchT>0){k.launchT-=dt;return {steer,accel:false,brake:false,drift:false};}
-  const accel=!follow&&!hard&&u<vAllow-.5,brake=u>vAllow+2.5||hard;k.aiBrake=brake;
+  const accel=!follow&&!hard&&u<vAllow*(k.yieldF?YLD_V:1)-.5+(FTH>0?1:0),brake=u>vAllow+2.5||hard;k.aiBrake=brake;
   // アイテム
   const c=Math.abs(KAP[wrap(k.idx+10)]);
   if(k.item&&k.roulette<=0){k.aiItemT-=dt;if(k.aiItemT<=0){let use=false;
@@ -1590,7 +1661,10 @@ function aiControl(k,dt){
   // 立ち上がりのアクセル加減：前輪が滑って外へふくらみ始めたら踏み込みを弱める（FF車で特に効く）
   const sl=k.slipF||0,th=k.fs>.3?AITH:AITH+.03;const outw=Math.sign(k.lat)===-Math.sign(steer)&&Math.abs(k.lat)>W-2.5?.25:0;
   const tgt=sess==='drag'?1:Math.max(.3,1-Math.max(0,sl-th)*AITK*(.4+k.fs)-outw);k.aiThr=(k.aiThr??1)+(tgt-(k.aiThr??1))*Math.min(1,dt*(tgt<(k.aiThr??1)?10:3));
-  return {steer,accel,brake,drift:false,thr:k.aiThr};
+  const trail=AITB>0&&sess!=='drag'&&k.fs>.3&&accel&&!brake&&sl>th+.03&&k.u>12;
+  // 出口のアクセル（T83④）：速さの上限に近づくほどアクセルを少しずつ戻し、上限で保つ（踏む・離すの繰り返しにしない）
+  const fth=FTH>0&&sess!=='drag'&&!k.yieldF?Math.max(FTM,Math.min(1,(vAllow+.5-u)/FTH)):1;
+  return {steer,accel,brake:brake||trail,brk:trail?AITB:undefined,fo:trail,drift:k.hbT>0,thr:fth*Math.min(k.pwr?Math.max(k.aiThr,.9):k.aiThr,Math.max(.1,1-(Math.abs(beta)-BLF)*BLK))};
 }
 
 /* ================= タイヤ摩耗・ダメージ・ピットストップ（β0.13.0） ================= */
@@ -1608,9 +1682,24 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(sess!=='race
   if(wearMode>0&&k.pit!==2){const slip=Math.max(k.slipR,k.slipF),ld=Math.min(1.2,Math.abs(k.ay)/(G*1.4)),spd=Math.min(1,Math.abs(k.u)/30);
     k.wear=Math.min(1,k.wear+dt*wearMode*.36*(.0009*spd+.0075*ld*ld+.02*Math.max(0,slip-.1)*spd+(k.wheelspin?.004:0)+(k.locked?.012:0)));}
   k.gripK=(1-.22*Math.pow(k.wear,1.3))*(dmgMode===2?1-.16*k.dmg:1);k.powK=dmgMode===2?1-.25*k.dmg:1;}
+/* 大事故（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
+const wreckCtl=k=>({steer:0,accel:false,brake:k.u>.8,brk:.8,drift:false});
+function crashCheck(k,v,th){if(!crashMode||k.dnf||sess!=='race'||state!=='race'||v<th)return;
+  k.dnf=true;const s=Math.min(1,(v-th)/12);k.drifting=false;k.pitReq=false;
+  k.cr={y:0,vy:2.5+v*.28,px:0,pz:0,wx:(Math.random()*2-1)*(1+3*s),wz:(Math.random()<.5?-1:1)*(2.5+5*s),air:true,t:0};
+  telop('CRASH',k.name+'　大クラッシュ　リタイア','yellow');
+  for(let q=0;q<8;q++)puff(k.x+(Math.random()-.5)*2,k.z+(Math.random()-.5)*2,k.vx*.3,k.vz*.3,q%2===0,q%2?0x3a3a3c:0xe8e8e8);
+  sfx('boom',k);
+  if(k.isPlayer){state='finished';afterFinish=0;showBanner('RETIRE');shake=.6;}}
+function stepCrash(k,dt){const c=k.cr;if(!c)return;c.t+=dt;
+  if(c.air){c.vy-=G*dt;c.y+=c.vy*dt;c.px+=c.wx*dt;c.pz+=c.wz*dt;k.u*=1-dt*.12;k.vl*=1-dt*.12;
+    if(c.y<=0){c.y=0;if(c.vy<-4){c.vy=-c.vy*.36;c.wx*=.55;c.wz*=.55;sfx('bump',k,null,.9);puff(k.x,k.z,k.vx,k.vz,true);}else{c.air=false;c.vy=0;}}}
+  else{const tz=Math.round(c.pz/Math.PI)*Math.PI,tx=Math.round(c.px/(Math.PI*2))*Math.PI*2;c.pz+=(tz-c.pz)*Math.min(1,dt*3);c.px+=(tx-c.px)*Math.min(1,dt*3);}
+  if(c.t>12&&!k.gone){k.gone=true;puff(k.x,k.z,0,0,true);}
+  if(c.t<14&&Math.random()<.35)puff(k.x,k.z,0,0,false,0x2f2f31);}
 function dmgHit(k,v){if(!dmgMode||sess!=='race'||state!=='race')return;if(v>3)k.dmg=Math.min(1,k.dmg+(v-3)*.012);}
 // ピットに入るか：CPU・オートは摩耗かダメージで判断、自分はIキーで予約
-function pitCheck(k){if(k.pit||k.finished||sess!=='race'||state!=='race'||k.lap<1||k.lap>=LAPS)return;
+function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'||k.lap<1||k.lap>=LAPS)return;
   if((!k.isPlayer||autoPlay)&&!k.pitDone&&((wearMode&&k.wear>.62)||(dmgMode&&k.dmg>.5)))k.pitReq=true;
   if(k.pitReq){const rel=relLine(k);if(rel>-450&&rel<-300){k.pit=1;k.pitReq=false;if(k.isPlayer){toast('ピットイン（自動運転）');$('pitBtn').setAttribute('aria-pressed','false');}else telop('PIT IN',k.name+'　ピットイン');}}}
 function pitFinish(k){k.wear=0;k.dmg=0;k.pit=3;k.pitDone=1;if(k.isPlayer){if(setT===0)k.rain=ENV.wet>.45||ENV.tr>.5;toast('ピット完了');}else{k.rain=ENV.wet>.45||ENV.tr>.5;}k.gripK=1;k.powK=1;}
@@ -1650,11 +1739,11 @@ function wallCollide(k){const cs=kCorners(k);let deep=0,dp=null,side=0,wi=k.idx;
     const tx=-nz,tz=nx;const vt=pv[0]*tx+pv[1]*tz;const kt=cross2(rx,rz,tx,tz);let jt=-vt/(1/m+kt*kt/I);const lim=.5*j;jt=Math.max(-lim,Math.min(lim,jt));
     impulse(k,dp[0],dp[1],nx*j+tx*jt,nz*j+tz*jt);syncLocal(k);
     if(k.drifting&&-vn>5)k.drifting=false;
-    dmgHit(k,-vn);if(k.bump<=0&&-vn>2.5){k.bump=.25;if(k.isPlayer){sfx('bump',null,null,Math.min(1,-vn/15));shake=Math.min(.5,-vn*.03);}for(let q=0;q<2;q++)puff(dp[0],dp[1],0,0,true);}}
+    dmgHit(k,-vn);crashCheck(k,-vn,17);if(k.bump<=0&&-vn>2.5){k.bump=.25;if(k.isPlayer){sfx('bump',null,null,Math.min(1,-vn/15));shake=Math.min(.5,-vn*.03);}for(let q=0;q<2;q++)puff(dp[0],dp[1],0,0,true);}}
   k.lat=lateralAt(k.idx,k.x,k.z);}
 // 車同士：四角形どうしの当たり判定（分離軸）と回転をともなう衝突
 function collisions(){
-  for(let i=0;i<karts.length;i++)for(let j=i+1;j<karts.length;j++){const a=karts[i],b=karts[j];const dx0=b.x-a.x,dz0=b.z-a.z;if(dx0*dx0+dz0*dz0>20)continue;
+  for(let i=0;i<karts.length;i++)for(let j=i+1;j<karts.length;j++){const a=karts[i],b=karts[j];if(a.gone||b.gone)continue;const dx0=b.x-a.x,dz0=b.z-a.z;if(dx0*dx0+dz0*dz0>20)continue;
     const ca=kCorners(a),cb=kCorners(b);let best=1e9,n=null;
     for(const ax of[...kAxes(a),...kAxes(b)]){const pa=proj(ca,ax),pb=proj(cb,ax);const o=Math.min(pa[1],pb[1])-Math.max(pa[0],pb[0]);if(o<=0){best=-1;break;}if(o<best){best=o;n=ax;}}
     if(best<=0||!n)continue;
@@ -1668,7 +1757,7 @@ function collisions(){
       const jn=-(1.25)*vn/(1/ma+1/mb+ka*ka/Ia+kb*kb/Ib);
       const tx=-nz,tz=nx;const vt=rvx*tx+rvz*tz;const ta=cross2(px-a.x,pz-a.z,tx,tz),tb=cross2(px-b.x,pz-b.z,tx,tz);
       let jt=-vt/(1/ma+1/mb+ta*ta/Ia+tb*tb/Ib);const lim=.4*jn;jt=Math.max(-lim,Math.min(lim,jt));
-      const Jx=nx*jn+tx*jt,Jz=nz*jn+tz*jt;impulse(b,px,pz,Jx,Jz);impulse(a,px,pz,-Jx,-Jz);syncLocal(a);syncLocal(b);dmgHit(a,-vn*.7);dmgHit(b,-vn*.7);
+      const Jx=nx*jn+tx*jt,Jz=nz*jn+tz*jt;impulse(b,px,pz,Jx,Jz);impulse(a,px,pz,-Jx,-Jz);syncLocal(a);syncLocal(b);dmgHit(a,-vn*.7);dmgHit(b,-vn*.7);crashCheck(a,-vn,14);crashCheck(b,-vn,14);
       if(-vn>.8&&state==='race'){a.ct=a.ct||{};b.ct=b.ct||{};if(!(a.ct[b.id]>raceTime-.8)){a.cont=(a.cont||0)+1;b.cont=(b.cont||0)+1;}a.ct[b.id]=b.ct[a.id]=raceTime;}
       if(a.isPlayer||b.isPlayer){if(-vn>1.5)sfx('bump',null,null,Math.min(1,-vn/12));if(-vn>4)shake=Math.max(shake,Math.min(.4,-vn*.03));}
       if(-vn>3&&(a.isPlayer||b.isPlayer||Math.random()<.5))puff(px,pz,0,0,false);
@@ -1692,7 +1781,8 @@ function syncVisuals(dt){
   clockT+=dt;
   for(const b of boxes){if(b.t>0){b.t-=dt;if(b.t<=0)b.m.visible=true;}b.m.rotation.y+=dt*1.2;b.m.rotation.x=.4;b.m.position.y=1.5+Math.sin(clockT*2+b.x)*.18;}
   const pl=player();
-  for(const k of karts){const g=k.g;g.root.position.set(k.x,0,k.z);g.root.rotation.y=k.h;
+  for(const k of karts){const g=k.g;g.root.visible=!k.gone;g.root.position.set(k.x,0,k.z);g.root.rotation.y=k.h;
+    {const c=(state==='replay'?k.rv:k.dnf)&&k.cr;if(c){const r=g.root;r.rotation.order='YXZ';r.rotation.x=c.px;r.rotation.z=c.pz;r.position.y=c.y+.7*(1-Math.cos(c.px))+.7*(1-Math.cos(c.pz));g.crV=1;}else if(g.crV){g.root.rotation.x=g.root.rotation.z=0;g.root.position.y=0;g.crV=0;}}
     // 車体のロールとピッチ（横G・前後G）
     const roll=Math.max(-.05,Math.min(.05,-k.ay*.0035)),pitch=Math.max(-.035,Math.min(.035,-k.ax*.0028))+(k.shiftT>0?.008:0);
     g.body.rotation.z+=(roll-g.body.rotation.z)*Math.min(1,dt*8);g.body.rotation.x+=(pitch-g.body.rotation.x)*Math.min(1,dt*8);
@@ -1828,7 +1918,7 @@ let mmT;
  path();g.strokeStyle='rgba(5,6,8,.75)';g.lineWidth=20;g.stroke();path();g.strokeStyle='#e8e8e8';g.lineWidth=12;g.stroke();path();g.strokeStyle='#55575c';g.lineWidth=8;g.stroke();
  const[sx,sy]=mmT(TX[0],TZ[0]);g.fillStyle='#e8342a';g.fillRect(sx-9,sy-3,18,6);}
 function drawMinimap(){mctx.clearRect(0,0,340,340);mctx.drawImage(mmBase,0,0);
-  for(const k of karts){const[x,y]=mmT(k.x,k.z);mctx.beginPath();mctx.arc(x,y,k.isPlayer?10:7,0,Math.PI*2);mctx.fillStyle='#'+k.dr.color.toString(16).padStart(6,'0');mctx.fill();mctx.lineWidth=k.isPlayer?4:3;mctx.strokeStyle=k.isPlayer?'#fffaf0':'#0d1030';mctx.stroke();}}
+  for(const k of karts){if(k.gone)continue;const[x,y]=mmT(k.x,k.z);mctx.beginPath();mctx.arc(x,y,k.isPlayer?10:7,0,Math.PI*2);mctx.fillStyle='#'+k.dr.color.toString(16).padStart(6,'0');mctx.fill();mctx.lineWidth=k.isPlayer?4:3;mctx.strokeStyle=k.isPlayer?'#fffaf0':'#0d1030';mctx.stroke();}}
 function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60),c=Math.floor((t*100)%100);return `${m}'${String(s).padStart(2,'0')}"${String(c).padStart(2,'0')}`;}
 let rouletteT=0;
 function updateItemHud(){}
@@ -1839,14 +1929,14 @@ function updateHud(dt){
   lastHud+=dt;if(lastHud<.05)return;lastHud=0;
   const rk=ranking();const r=rk.indexOf(p)+1;$('rank').innerHTML=r+'<small>位</small>';
   towerT-=.05;if(towerT<=0){towerT=.25;const lead=rk[0];const pace=p.top*.62;
-    $('tower').innerHTML=rk.map((k,i)=>{let gap=i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
-      return `<div class="tw${k.isPlayer?' me':''}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><span>${k.name}</span><em>${gap}</em></div>`;}).join('');
+    $('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
+      return `<div class="tw${k.isPlayer?' me':''}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><span>${k.name}</span><u title="${TRAITS[k.dr.tr??2].n}">${TRAITS[k.dr.tr??2].n[0]}</u><em>${gap}</em></div>`;}).join('');
     $('laps').innerHTML=`前周 ${p.lastLap?fmt(p.lastLap):'—'}<br>ベスト ${p.best?fmt(p.best):'—'}`;
     const me=rk.indexOf(p),a=rk[me-1],b=rk[me+1];const g=(x,y)=>Math.max(0,(progress(x)-progress(y))/pace).toFixed(1);
     if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);$('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動');
       $('gaps').innerHTML=(dragRec?`<div><span>自己ベスト</span><b>${dragRec.et.toFixed(3)}</b></div>`:'')+(c&&state!=='countdown'?`<div><span>${c.name}</span><b class="dlt ${d>=0?'f':'s'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}m</b></div>`:'');}
     else if(solo())$('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${fmt(ghost.t)}</b></div>`:'')+(ghDelta!=null?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${Math.abs(ghDelta).toFixed(2)}</b></div>`:'');else
-    $('gaps').innerHTML=(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${g(a,p)}秒</b></div>`:'')+(b&&!p.finished?`<div><span>後 ${b.name}</span><b>${g(p,b)}秒</b></div>`:'');}
+    $('gaps').innerHTML=(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${g(a,p)}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>後 ${b.name}</span><b>${g(p,b)}秒</b></div>`:'');}
   if(sess==='drag'){const m=p.dm||{};$('lap').innerHTML=(dragDist?'1/8マイル':'0-400m')+'　<b>'+Math.min(DRAG_D,Math.max(0,p.dd||0)).toFixed(0)+'</b>m';$('time').textContent=m.foul&&m.launch==null?'FOUL':((m.t400??raceTime)-(m.launch??raceTime)).toFixed(3);if(drag&&drag.green>=0&&raceTime>2.5)$('tree').hidden=true;}
   else if(sess==='ta'){$('lap').innerHTML='タイムアタック　ラップ <b>'+Math.max(1,p.lap)+'</b>';$('time').textContent=fmt(p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
   else if(sess==='quali'){$('lap').innerHTML='予選　ラップ <b>'+Math.max(1,Math.min(LAPS,p.lap))+'</b>/'+LAPS;$('time').textContent=fmt(p.finished?0:p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
@@ -1855,7 +1945,7 @@ function updateHud(dt){
   $('gearNum').textContent=p.u<-.5?'R':String(p.gear+1);
   const f=Math.min(1,(p.rpm-1400)/(REDLINE-1400));$('rpmBar').style.width=(f*100).toFixed(1)+'%';$('rpmBar').classList.toggle('hot',p.rpm>SHIFT_UP-300);
   // シフトランプ
-  {const sp=p.manual&&p.gear<TOPG?OPT_SHIFT[p.gear]-120:SHIFT_UP;const f=(p.rpm-5600)/(sp-5600);const n=Math.max(0,Math.min(10,Math.round(f*10)));const flash=p.rpm>sp-150&&p.gear<TOPG&&Math.floor(clockT*12)%2===0;
+  {const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP;const f=(p.rpm-5600)/(sp-5600);const n=Math.max(0,Math.min(10,Math.round(f*10)));const flash=p.rpm>sp-150&&p.gear<TOPG&&Math.floor(clockT*12)%2===0;
    [...$('leds').children].forEach((el,i)=>{el.className=flash?'b':(i<n?(i<4?'g':i<7?'y':'r'):'');});}
   $('slip').classList.toggle('on',(p.draft||0)>.25);carHud(p);
   drawMinimap();
@@ -1874,7 +1964,9 @@ function toast(t){$('toast').textContent=t;toastTimer=2;}
 
 /* ================= サウンド ================= */
 let ac=null,eng=null,squeal=null,muted=false,master=null;
-function initAudio(){if(ac)return;try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.5;master.connect(ac.destination);
+function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webkitAudioContext;
+  try{ac=new AC({sampleRate:48000,latencyHint:'interactive'});}catch(_){ac=new AC();} // 出力機器（DAC）が 384kHz などでも、音の処理は 48kHz に固定（高いと BGM の合成が重くなって音が歪む）
+  master=ac.createGain();master.gain.value=.5;master.connect(ac.destination);
   const o=ac.createOscillator();o.type='sawtooth';const o2=ac.createOscillator();o2.type='square';const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;f.Q.value=2;const g=ac.createGain();g.gain.value=0;o.connect(f);o2.connect(f);f.connect(g);g.connect(master);o.start();o2.start();eng={o,o2,g,f};
   const len=ac.sampleRate*1;const b=ac.createBuffer(1,len,ac.sampleRate);const d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
   const src=ac.createBufferSource();src.buffer=b;src.loop=true;const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1500;bp.Q.value=6;const sg=ac.createGain();sg.gain.value=0;src.connect(bp);bp.connect(sg);sg.connect(master);src.start();squeal={g:sg,bp};bgmInit();}catch(e){ac=null;}}
@@ -2040,7 +2132,7 @@ function playerControl(dt){
   steerSm+=Math.max(-rate*dt,Math.min(rate*dt,raw-steerSm));}
   const kb=input.accel||(autoAccel&&sess!=='drag'&&!input.brake&&gp.brk<=.05);
   const accel=kb||gp.thr>.05,brake=input.brake||gp.brk>.05;
-  const c={steer:steerSm,accel,brake,drift:input.drift||gp.hb,thr:kb?1:gp.thr,brk:input.brake?1:gp.brk};
+  const c={steer:steerSm,accel,brake,drift:input.drift||gp.hb,thr:kb?1:gp.thr,brk:input.brake?(kb&&input.accel?TRLB:1):gp.brk};
   if(input.item&&!prevIn.item)useItem(player());
   prevIn.drift=input.drift;prevIn.item=input.item;
   return c;
@@ -2050,16 +2142,16 @@ function playerControl(dt){
 const charsEl=$('chars');
 DRIVERS.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.className='card';b.setAttribute('aria-pressed',i===playerChoice?'true':'false');
   const hex='#'+d.color.toString(16).padStart(6,'0');
-  b.innerHTML=`<span class="face" style="background:${hex}"></span><span>${d.name}</span><span class="cls">No.${i+1}</span>`;
+  b.innerHTML=`<span class="face" style="background:${hex}"></span><span>${d.name}</span><span class="cls">No.${i+1}</span><span class="cls trt">${TRAITS[d.tr??2].n}</span>`;
   b.addEventListener('click',()=>{playerChoice=i;charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===i?'true':'false'));tone(660,.06,'square',.15);if(titleMode==='garage')garageSetup();updSpec();myColorUi();});
   charsEl.appendChild(b);});
 function segWire(id,set,cur){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.v===cur));b.addEventListener('click',()=>{set(+b.dataset.v);el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));saveSettings();});});}
-function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart}));}catch(_){}}
+function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode}));}catch(_){}}
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.as!=null)assistLv=sv.as;if(sv.ai5!=null)aiLv=sv.ai5;else if(sv.ai!=null)aiLv=sv.ai+1;if(sv.cam!=null)camMode=sv.cam;if(sv.tl!=null)tlOn=!!sv.tl;if(sv.mc!=null)myBody=sv.mc;if(sv.ma!=null)myAcc=sv.ma;if(sv.mn!=null)myNum=sv.mn;if(sv.rd!=null)radioOn=!!sv.rd;if(sv.mr!=null)mirOn=!!sv.mr;if(sv.md!=null)modeSel=sv.md;if(sv.gd!=null)gridMode=sv.gd;}catch(_){}
-try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;}catch(_){}
+try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;}catch(_){}
 const reTune=()=>{if(titleMode==='garage')garageSetup();updSpec();};
 segWire('drvSeg',v=>{setDrv=v;reTune();},setDrv);segWire('gearSeg',v=>{setG=v;reTune();},setG);segWire('wingSeg',v=>{setW=v;reTune();},setW);segWire('bbSeg',v=>{setB=v;reTune();},setB);segWire('tyreSeg',v=>{setT=v;reTune();},setT);
-segWire('lapsSeg',v=>lapsSel=v,lapsSel);segWire('wearSeg',v=>wearMode=v,wearMode);segWire('dmgSeg',v=>dmgMode=v,dmgMode);
+segWire('lapsSeg',v=>lapsSel=v,lapsSel);segWire('wearSeg',v=>wearMode=v,wearMode);segWire('dmgSeg',v=>dmgMode=v,dmgMode);segWire('crSeg',v=>crashMode=v,crashMode);
 segWire('dragSeg',v=>dragMan=v,dragMan);
 {const el=$('drSeg');[-1,...DRIVERS.keys()].forEach(i=>{const b=document.createElement('button');b.type='button';b.dataset.v=i;b.textContent=i<0?'おまかせ':DRIVERS[i].name;el.appendChild(b);});}
 segWire('ddSeg',v=>{dragDist=v;showRec();},dragDist);segWire('dpSeg',v=>dragPro=v,dragPro);segWire('drSeg',v=>dragRivalSel=v,dragRivalSel);
@@ -2142,7 +2234,7 @@ function toTitle(){photoOn=false;document.body.classList.remove('photo');$('phot
 // 結果画面の撮影カメラ（T54）：主役の車の周りを低い位置からゆっくり回る
 let resCar=null,resA=0,photoOn=false;
 function resultFocus(){if(sess==='race'&&finishOrder.length)return finishOrder[0];return player();}
-function resultCamStart(){lineMesh.visible=false;resCar=resultFocus();if(!resCar)return;resA=resCar.h+.7;resCar.g.headParts&&resCar.g.headParts.forEach(m=>m.visible=true);$('camTag').hidden=true;}
+function resultCamStart(){lineMesh.visible=false;apexMesh.visible=false;resCar=resultFocus();if(!resCar)return;resA=resCar.h+.7;resCar.g.headParts&&resCar.g.headParts.forEach(m=>m.visible=true);$('camTag').hidden=true;}
 function resultCam(dt){const k=resCar;if(!k)return;resA+=dt*(photoOn?.12:.2);const r=photoOn?9.5:10.5,y=1.25+.4*Math.sin(resA*.7);
   camera.position.set(k.x+Math.sin(resA)*r,y,k.z+Math.cos(resA)*r);camera.lookAt(k.x,.62,k.z);
   const f=photoOn?34:40;camera.fov+=(f-camera.fov)*Math.min(1,dt*2);camera.updateProjectionMatrix();followSun(k.x,k.z);}
@@ -2156,14 +2248,15 @@ function showResults(){
   if(sess==='quali'){showQuali();return;}
   if(sess==='drag'){showDrag();return;}
   state='results';resultCamStart();$('replayBtn').hidden=rpBuf.length<10;
-  const rest=ranking().filter(k=>!k.finished);
+  const rest=ranking().filter(k=>!k.finished&&!k.dnf);
   rest.forEach(k=>{const remain=(LAPS+1)*L-progress(k);k.finishTime=raceTime+Math.max(0,remain)/(k.top*.62);k.finished=true;k.est=true;finishOrder.push(k);});
+  karts.filter(k=>k.dnf&&!k.finished).sort((a,b)=>progress(b)-progress(a)).forEach(k=>{k.finished=true;k.ret=true;k.finishTime=1e5;finishOrder.push(k);});
   if(tlOn)finishOrder.sort((a,b)=>(a.finishTime+(a.pen||0))-(b.finishTime+(b.pen||0)));
   resultCamStart();
-  const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${TRAITS[k.dr.tr??2].n}</span>${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${fmt(k.finishTime+(tlOn?k.pen||0:0))}${k.est?'*':''}${tlOn&&k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}</td></tr>`).join('');
+  const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${TRAITS[k.dr.tr??2].n}</span>${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime+(tlOn?k.pen||0:0))+(k.est?'*':'')}${tlOn&&k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}</td></tr>`).join('');
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">タイム</td><td class="t">ベストラップ</td><td class="t">接触</td></tr>'+rows;
   const r=finishOrder.indexOf(player())+1;
-  $('resultTitle').textContent=(r===1?'優勝！ '+CC[ccChoice].name:(r<=3?r+'位 表彰台！':r+'位'))+(rwCount?`（巻き戻し ${rwCount}回）`:'');
+  $('resultTitle').textContent=(player().ret?'リタイア（大クラッシュ）':r===1?'優勝！ '+CC[ccChoice].name:(r<=3?r+'位 表彰台！':r+'位'))+(rwCount?`（巻き戻し ${rwCount}回）`:'');
   $('resultScreen').hidden=false;pad.hidden=true;
 }
 
@@ -2201,7 +2294,7 @@ function dragGo(){state='race';drag.green=raceTime;drag.key='';
   if(drag.foul==='p'){p.dm.foul=true;p.dm.launch=0;telop('FALSE START','フライング　反則負け','yellow');}
   dragTree();}
 function dragJudge(j){const el=$('judge');el.textContent=j;el.className='';void el.offsetWidth;el.className='on '+({PERFECT:'p',GOOD:'g',EARLY:'e',LATE:'l'}[j]);}
-function dragShift(k){if(k.gear>=TOPG||k.shiftT>0||k.dFin)return;const d=k.rpm-OPT_SHIFT[k.gear];
+function dragShift(k){if(k.gear>=TOPG||k.shiftT>0||k.dFin)return;const d=k.rpm-k_opt(k)[k.gear];
   const j=Math.abs(d)<=250?'PERFECT':d<-900?'EARLY':d<0?'GOOD':k.rpm>=REDLINE-60?'LATE':'GOOD';
   k.gear++;k.shiftT=.14;sfx('shift');camKick=.3;drag.shifts.push(j);dragJudge(j);}
 function dragCtl(k,dt,pc){k.fwdT=5;if(autoPlay&&k.manual)k.manual=false;const ai=aiControl(k,dt);
@@ -2274,6 +2367,7 @@ function bugInfo(){
     try{const gl=renderer.getContext(),ex=gl.getExtension('WEBGL_debug_renderer_info');L.push('描画: '+(ex?gl.getParameter(ex.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER))+'・影 '+(SHADOWS?'あり':'なし')+'・直近の描画 '+renderer.info.render.calls+'回/'+renderer.info.render.triangles+'面');}catch(_){}
     let host='';try{host=location.hostname||location.protocol;}catch(_){}
     L.push('開いている所: '+(host||'?')+(window.claude?'（Claude の公開ページ）':''));
+    L.push('音: '+(ac?'サンプル周波数 '+ac.sampleRate+'Hz（要求 48000Hz）・状態 '+ac.state+'・遅延 '+((ac.baseLatency||0)*1000).toFixed(1)+'ms'+(ac.outputLatency?'／出力 '+(ac.outputLatency*1000).toFixed(1)+'ms':'')+'・BGM '+(bgmOn?'ON':'OFF')+'（曲 '+(bgmTrk||'なし')+'）・音 '+(muted?'OFF':'ON'):'まだ起動していない（音を鳴らす操作の前）'));
   });
   sec('レースの状況');
   safe(()=>{
@@ -2293,7 +2387,7 @@ function bugInfo(){
   safe(()=>{
     L.push('ドライバー: '+DRIVERS[playerChoice].name+'・車種 '+CARS[myCar].name+'・エンジン '+CC[ccChoice].name+'・駆動 '+DRV_KEYS[setDrv]);
     L.push('セッティング: ギア '+SETG[setG].n+'・ウイング '+SETW[setW].n+'・ブレーキ '+SETB[setB].n+'・タイヤ '+TYRE[setT]);
-    L.push('ルール: アシスト '+ASSIST[assistLv].name+'・CPU '+AILV[aiLv].name+'・'+LAPSET[lapsSel]+'周・摩耗 '+['なし','あり','多め'][wearMode]+'・ダメージ '+['なし','見た目','性能にも'][dmgMode]+'・コース外 '+(tlOn?'あり':'なし')+'・無線 '+(radioOn?'あり':'なし')+'・ミラー '+(mirOn?'ON':'OFF')+'・傾きハンドル '+(tiltOn?'ON':'OFF'));
+    L.push('ルール: アシスト '+ASSIST[assistLv].name+'・CPU '+AILV[aiLv].name+'・'+LAPSET[lapsSel]+'周・摩耗 '+['なし','あり','多め'][wearMode]+'・ダメージ '+['なし','見た目','性能にも'][dmgMode]+'・大事故 '+(crashMode?'あり':'なし')+'・コース外 '+(tlOn?'あり':'なし')+'・無線 '+(radioOn?'あり':'なし')+'・ミラー '+(mirOn?'ON':'OFF')+'・傾きハンドル '+(tiltOn?'ON':'OFF'));
     let sv='';try{sv=localStorage.getItem('popkart')||'';}catch(_){}
     L.push('保存された設定: '+(sv||'（なし）'));
   });
@@ -2370,11 +2464,11 @@ function frame(now){
   else if(state==='race'||state==='finished'){
     raceTime+=dt;envStep(dt,true);
     const pc=playerControl(dt);lastPc=pc;computeDraft();
-    for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0;const ctl=k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?aiControl(k,dt):pc);stepKart(k,dt,ctl);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);rubStep(k);}}
+    for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0;const ctl=k.dnf?wreckCtl(k):k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?aiControl(k,dt):pc);stepKart(k,dt,ctl);if(k.dnf)stepCrash(k,dt);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);rubStep(k);}}
     rubTick(dt);
     updateFlags();if(sess!=='drag'){watchPositions(dt);watchRadio(dt);}
     collisions();stepProjectiles(dt);syncVisuals(dt);updateCamera(dt);updateHud(dt);drawFx();updateLine(player());if(state==='race')recordRewind(dt);recordReplay(dt);if(solo()&&sess!=='drag')ghostStep(dt);
-    if(state==='finished'){afterFinish+=dt;if(afterFinish>(sess==='drag'?7:5)||karts.every(k=>k.finished)&&(sess!=='drag'||afterFinish>2))showResults();}
+    if(state==='finished'){afterFinish+=dt;if(afterFinish>(sess==='drag'?7:5)||karts.every(k=>k.finished||k.dnf)&&(sess!=='drag'||afterFinish>2))showResults();}
   }
   if(bannerTimer>0){bannerTimer-=dt;if(bannerTimer<=0)$('banner').textContent='';}
   if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';}
