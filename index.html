@@ -1,4 +1,7 @@
-﻿<title>（仮）ツーリングカーレース</title>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>（仮）ツーリングカーレース</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,800;1,800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap">
 <style>
@@ -28,12 +31,12 @@ canvas#gl{display:block;width:100%;height:100%}
 #hud[hidden]{display:none}
 #rank{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);font-family:var(--num);font-weight:800;font-style:italic;font-size:clamp(48px,9vw,92px);line-height:.9;color:var(--paper)}
 #rank small{font-family:var(--display);font-style:normal;font-weight:700;font-size:.3em;color:var(--muted);margin-left:4px}
-body.touch #rank{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 70px);font-size:clamp(34px,7vw,56px)}
+body.touch #rank{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 98px);font-size:clamp(34px,7vw,56px)}
 #wx{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px + clamp(44px,8.2vw,84px));background:rgba(12,14,18,.6);padding:3px 10px;font-size:clamp(11px,1.6vw,14px);font-weight:700;letter-spacing:.04em}#wx b{font-family:var(--num);font-style:italic;letter-spacing:.1em;margin-left:2px}#carst{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 42px + clamp(44px,8.2vw,84px));background:rgba(12,14,18,.6);padding:3px 10px;font-family:var(--num);font-weight:700;font-size:clamp(11px,1.7vw,14px);letter-spacing:.06em;white-space:nowrap}#carst[hidden]{display:none}
 #carst .cb{display:inline-block;width:64px;height:8px;background:rgba(255,255,255,.2);margin:0 6px;vertical-align:middle;transform:skewX(-20deg)}#carst .cb s{display:block;height:100%;text-decoration:none}#carst b.bad{color:#ff5a4f}#carst b.pit{color:#3aa0ff}
-body.touch #carst{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 100px + clamp(34px,7vw,56px))}body.solo #carst,body.replay #carst{display:none}body.solo #pitBtn{display:none}
+body.touch #carst{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 134px + clamp(34px,7vw,56px))}body.solo #carst,body.replay #carst{display:none}body.solo #pitBtn{display:none}
 #wx b.wet{color:#5fb8ff}#wx b.damp{color:#a9d4ff}#wx b.dry{color:#e0e0e0}
-body.touch #wx{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 76px + clamp(34px,7vw,56px))}body.replay #wx{display:none}
+body.touch #wx{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 104px + clamp(34px,7vw,56px))}body.replay #wx{display:none}
 #topleft{position:absolute;left:14px;top:calc(env(safe-area-inset-top,0px) + 10px);display:grid;gap:2px;font-size:clamp(16px,2.6vw,22px)}
 #lap{font-weight:700;font-size:.8em;letter-spacing:.06em;color:var(--muted)}#lap b{font-family:var(--num);font-weight:800;font-size:1.5em;color:var(--paper)}
 #time{font-family:var(--num);font-weight:600;font-size:1.25em;font-variant-numeric:tabular-nums}
@@ -58,7 +61,7 @@ body.touch #tach{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 214px)}
 #gaps{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 58px);transform:translateX(-50%);display:grid;gap:2px;font-size:clamp(12px,1.7vw,14px);font-variant-numeric:tabular-nums;min-width:170px}
 #gaps div{display:flex;justify-content:space-between;gap:12px;background:rgba(12,14,18,.6);padding:2px 10px}
 #gaps b{font-family:var(--num);font-weight:800}
-body.touch #gaps{top:calc(env(safe-area-inset-top,0px) + 50px)}
+body.touch #gaps{top:calc(env(safe-area-inset-top,0px) + 62px)}
 #autoBadge{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);font-weight:700;font-size:clamp(13px,2.2vw,16px);letter-spacing:.2em;color:var(--paper);background:rgba(15,17,21,.7);border-left:3px solid var(--gold);padding:4px 12px;animation:blink 1.6s steps(2) infinite}
 @keyframes blink{50%{opacity:.35}}
 body.touch #autoBadge{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 108px)}
@@ -73,6 +76,7 @@ body.touch #autoBadge{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 108px)
 .tw.me{background:rgba(232,52,42,.9);color:#fff}.tw.me b{background:rgba(0,0,0,.2);color:#fff}.tw.me em{color:#fff}
 #laps{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 10px);transform:translateX(-50%);font-size:clamp(12px,1.8vw,14px);text-align:center;font-variant-numeric:tabular-nums;background:rgba(12,14,18,.6);padding:4px 12px;font-family:var(--num);font-weight:600;letter-spacing:.03em}
 body.touch #tower{display:none}
+@media (max-width:760px),(max-aspect-ratio:1/1){body:not(.touch) #tower{top:calc(env(safe-area-inset-top,0px) + 112px);font-size:12px;min-width:140px}body:not(.touch).mir #tower{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 118px)}body:not(.touch) #corner{max-width:calc(50vw - 128px);flex-wrap:wrap;justify-content:flex-end}body:not(.touch) #minimap{top:calc(env(safe-area-inset-top,0px) + 80px)}body:not(.touch) #flag{top:calc(env(safe-area-inset-top,0px) + 86px + clamp(110px,18vw,170px))}body:not(.touch) #topbtns{max-width:calc(100vw - clamp(250px,25vw,340px) - 250px)!important}body:not(.touch) #carst{bottom:calc(env(safe-area-inset-bottom,0px) + 46px + clamp(44px,8.2vw,84px))}body:not(.touch) #tele{bottom:calc(env(safe-area-inset-bottom,0px) + 230px)}}
 .setrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
 .setrow .seg{margin-top:6px}
 .note{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.5}.note:empty{display:none}.note b{color:var(--paper)}
@@ -83,7 +87,8 @@ td.b{color:var(--muted)}
 #toast{position:absolute;left:0;right:0;top:52%;text-align:center;font-family:var(--display);font-weight:900;font-size:clamp(18px,3.4vw,30px);color:var(--paper)}
 @keyframes pop{0%{transform:scale(2.2);opacity:0}60%{transform:scale(.92);opacity:1}100%{transform:scale(1)}}
 #topbtns{position:absolute;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 108px);flex-wrap:wrap;justify-content:flex-end;max-width:60vw;display:flex;gap:8px;pointer-events:auto}
-body.touch #topbtns{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 264px)}
+body.touch #topbtns{top:auto;right:auto;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);justify-content:center;gap:4px;max-width:calc(100vw - 2*(2*clamp(64px,17vw,92px) + 36px))}
+body.touch #topbtns .mini{padding:4px 6px;font-size:11px}
 .mini{font-family:var(--dot);font-weight:700;font-size:13px;background:rgba(12,14,18,.72);color:var(--paper);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer}
 .mini:focus-visible,.btn:focus-visible,.card:focus-visible,.seg button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 /* Touch pad */
@@ -95,6 +100,9 @@ body.touch.tilt .cluster{visibility:hidden}
 .tb{width:clamp(64px,17vw,92px);height:clamp(64px,17vw,92px);border-radius:50%;border:2px solid rgba(242,243,245,.6);background:rgba(12,14,18,.4);color:var(--paper);font-family:var(--display);font-weight:700;font-size:clamp(13px,3.4vw,18px);display:grid;place-items:center;touch-action:none}
 .tb.on{background:rgba(232,52,42,.7);border-color:var(--gold);color:#fff}
 .tb.big{width:clamp(78px,21vw,110px);height:clamp(78px,21vw,110px)}
+.sb{display:none;width:clamp(48px,12vw,64px);height:clamp(48px,12vw,64px);border-radius:12px;border:2px solid rgba(245,180,0,.85);background:rgba(12,14,18,.45);color:#f5b400;font-weight:800;font-size:clamp(20px,4.4vw,26px);place-items:center;touch-action:none;user-select:none}
+body.touch.mt:not(.drag) .sb{display:grid}
+.sb.on{background:rgba(245,180,0,.75);color:#111}
 .right-stack{display:flex;flex-direction:column;gap:10px;align-items:flex-end}
 .right-row{display:flex;gap:10px;align-items:flex-end}
 /* Menus */
@@ -123,6 +131,20 @@ h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,4vw,28px);mar
 .numc button{min-width:36px;height:32px;border-radius:3px;border:1px solid rgba(255,255,255,.25);background:var(--night-2);color:var(--paper);font-weight:800;font-size:16px;cursor:pointer}
 .numc #numTeam{font-size:12px;padding:0 10px}.numc #numTeam[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
 .numc b{font-family:var(--num);font-weight:800;font-style:italic;font-size:24px;min-width:2.2em;text-align:center;background:#f4f4f0;color:#111;border-radius:3px;padding:0 6px}
+details.grp{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:10px}
+details.grp>summary{cursor:pointer;font-family:var(--display);font-weight:900;font-size:16px;color:var(--paper);padding:4px 0;list-style:none;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+details.grp>summary::-webkit-details-marker{display:none}
+details.grp>summary::before{content:"▶";font-size:11px;color:var(--gold);transition:transform .15s}
+details.grp[open]>summary::before{transform:rotate(90deg)}
+details.grp>summary small{font-family:var(--dot);font-weight:500;font-size:12px;color:var(--muted)}
+details.grp>summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.label .hint{display:block;margin-top:2px;font-size:11px;font-weight:500;letter-spacing:0;color:var(--muted);line-height:1.4}
+.basic{display:grid;gap:8px;margin:2px 0 4px}
+.basic>div{display:grid;grid-template-columns:2em 1fr;gap:4px 10px;align-items:start;background:var(--night-2);border-left:4px solid var(--gold);padding:8px 12px;font-size:14px;line-height:1.5}
+.basic b{font-family:var(--num);font-style:italic;font-weight:800;font-size:1.3em;color:var(--gold);line-height:1.2}
+.basic kbd{font-family:var(--dot);color:var(--paper);background:rgba(255,255,255,.12);border-radius:5px;padding:1px 6px}
+details.more{margin-top:8px}
+details.more>summary{cursor:pointer;font-weight:700;color:var(--paper);padding:6px 0}
 .seg.small button{flex:1 1 72px;font-size:13px;padding:8px 4px}
 .card .cls{font-family:var(--num);font-weight:600;font-size:13px;color:var(--muted)}
 .seg{display:flex;gap:8px;flex-wrap:wrap}
@@ -260,7 +282,8 @@ body.replay #topbtns,body.replay #tach,body.replay #rank,body.replay #gaps,body.
 #mirFrame[hidden]{display:none}
 body.mir #laps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 16px)}
 body.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 64px)}
-@media (prefers-reduced-motion:reduce){#banner.pop{animation:none}.tl,#flag i{animation:none}}
+body.touch.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 76px)}body.touch.mir #autoBadge{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 114px)}
+@media (prefers-reduced-motion:reduce){#banner.pop{animation:none}.tl,#flag i,#autoBadge,.tsPress,#tmenu,#setup,#judge.on,.tl.out{animation:none!important}.mi,details.grp>summary::before{transition:none!important}.mi:hover,.mi:focus-visible{transform:skewX(-8deg)}}
 /* 不具合報告（T66） */
 #bugScreen{z-index:20}
 #bugScreen .panel{width:min(720px,100%);max-height:calc(100vh - 32px);overflow-y:auto;gap:10px}
@@ -280,7 +303,24 @@ body.touch #corner .mini{padding:4px 7px;font-size:11px}/* メーター：回転
 body.touch #gauge{width:clamp(110px,17vw,135px);aspect-ratio:214/200}
 body.touch #tach{right:calc(clamp(110px,18vw,170px) + 26px);top:calc(env(safe-area-inset-top,0px) + 44px);bottom:auto}
 #tach .tnum,#tach .rpm{display:none}
-body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);max-width:calc(100vw - clamp(250px,25vw,340px) - 170px)}</style>
+body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);max-width:calc(100vw - clamp(250px,25vw,340px) - 170px)}
+/* スマホ（β0.39.0）：必要なもの（メーター・順位・ラップ・アクセル類）を大きく、補助は小さく／メニューに畳む */
+#mnBtn{display:none}
+body.touch #mnBtn{display:inline-block}
+body.touch #corner #fsBtn,body.touch #corner #hudBtn,body.touch #corner #ctBtn{display:none}
+body.touch.tmenu #corner #fsBtn,body.touch.tmenu #corner #hudBtn,body.touch.tmenu #corner #ctBtn{display:inline-block}
+body.touch #corner .mini{padding:6px 10px;font-size:12px;background:rgba(12,14,18,.55)}
+body.touch #topbtns{display:none}
+body.touch.tmenu #topbtns{display:flex;top:50%;bottom:auto;left:50%;right:auto;transform:translate(-50%,-50%);max-width:min(560px,74vw);padding:12px;gap:8px;background:rgba(10,12,16,.92);border:1px solid var(--line);border-radius:6px;z-index:6}
+body.touch.tmenu #topbtns .mini{padding:9px 12px;font-size:14px}
+body.touch #laps,body.touch #wx,body.touch #pauseBtn{display:none}
+body.touch #minimap{width:clamp(78px,11vw,104px);opacity:.7}
+body.touch #tach{right:calc(clamp(78px,11vw,104px) + 22px)}
+body.touch #flag{top:calc(env(safe-area-inset-top,0px) + 48px + clamp(78px,11vw,104px))}
+body.touch #gaps{font-size:11px;min-width:130px}
+body.touch #carst{font-size:11px;opacity:.85}
+body.touch #rank{font-size:clamp(40px,8vw,62px)}
+body.touch .sb,body.touch .tb{opacity:.9}</style>
 
 <div id="game"><canvas id="gl"></canvas></div>
 <div id="vign"></div>
@@ -307,7 +347,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
   <div id="camTag" hidden></div>
   <div id="rpInfo" hidden><b>REPLAY</b><span id="rpName"></span></div>
   <div id="rpBar" hidden><button class="mini" id="rpPrev" type="button">◀ 前の車</button><button class="mini" id="rpNext" type="button">次の車 ▶</button><button class="mini" id="rpCam" type="button">視点 中継</button><button class="mini" id="rpSpd" type="button">速さ ×1</button><button class="mini" id="rpEnd" type="button">リプレイ終了</button></div>
-  <div id="corner"><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">HUD最小化</button><button class="mini" id="cpBtn" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
+  <div id="corner"><button class="mini" id="mnBtn" type="button" aria-expanded="false">メニュー</button><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">HUD最小化</button><button class="mini" id="cpBtn" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
   <div id="topbtns"><button class="mini" id="rwBtn" type="button">巻き戻し</button><button class="mini" id="pitBtn" type="button" aria-pressed="false">ピット</button><button class="mini" id="lineBtn" type="button" aria-pressed="true">ライン ON</button><button class="mini" id="camBtn" type="button">視点 後方</button><button class="mini" id="mirBtn" type="button" aria-pressed="false">ミラー OFF</button><button class="mini" id="autoBtn" type="button" aria-pressed="false">オート OFF</button><button class="mini" id="pauseBtn" type="button">ポーズ</button><button class="mini" id="muteBtn" type="button">音 ON</button><button class="mini" id="bgmBtn" type="button">BGM ON</button></div>
 </div>
 
@@ -318,6 +358,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
   </div>
   <div class="right-stack">
     <div class="right-row">
+      <div class="sb" id="shDn" aria-label="シフトダウン">▼</div><div class="sb" id="shUp" aria-label="シフトアップ">▲</div>
       <div class="tb" data-k="brake">ブレーキ</div>
     </div>
     <div class="right-row">
@@ -328,12 +369,12 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.29.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.39.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
     <nav id="tmenu" aria-label="メインメニュー">
-      <button class="mi" id="startBtn" type="button"><b>RACE</b><span>レース　8台・3周</span></button>
+      <button class="mi" id="startBtn" type="button"><b>RACE</b><span id="startSub">レース　8台・3周</span></button>
       <button class="mi" id="taBtn" type="button"><b>TIME ATTACK</b><span>タイムアタック</span><em id="taRec"></em></button>
       <button class="mi" id="dragBtn" type="button"><b>0-400m</b><span>ゼロヨン加速勝負</span><em id="dragRec"></em></button>
       <button class="mi" id="watchBtn" type="button"><b>WATCH</b><span>オートで観戦</span></button>
@@ -349,47 +390,71 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
     <div class="label">車種（見た目だけの違い。走りは同じ）</div>
     <div class="seg" id="carSeg"></div>
     <p class="note" id="carNote"></p>
-    <div class="label">マイカラー（自分の車の塗装とゼッケン）</div>
-    <div class="myc"><span>ボディ</span><div class="sw" id="swBody"></div></div>
-    <div class="myc"><span>差し色</span><div class="sw" id="swAcc"></div></div>
-    <div class="myc"><span>ゼッケン</span><div class="numc"><button type="button" id="numDn" aria-label="番号を下げる">−</button><b id="numV"></b><button type="button" id="numUp" aria-label="番号を上げる">＋</button><button type="button" id="numTeam">チーム</button></div></div>
-    <div class="label">エンジン</div>
+    <div class="label">エンジン<span class="hint">最高速と加速が変わる。ターボは速いが扱いがむずかしい</span></div>
     <div class="seg" id="ccSeg">
       <button type="button" data-cc="0">1600cc</button>
       <button type="button" data-cc="1" aria-pressed="true">2000cc</button>
       <button type="button" data-cc="2">ターボ</button>
     </div>
-    <div class="label">セッティング</div>
-    <div class="setrow tune">
-      <div><div class="label">駆動方式</div><div class="seg" id="drvSeg"><button type="button" data-v="0">FF</button><button type="button" data-v="1">FR</button><button type="button" data-v="2">4WD</button></div></div>
-      <div><div class="label">ギア比</div><div class="seg" id="gearSeg"><button type="button" data-v="0">加速寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">最高速寄り</button></div></div>
-      <div><div class="label">ウイング（ダウンフォース）</div><div class="seg" id="wingSeg"><button type="button" data-v="0">少なめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">多め</button></div></div>
-      <div><div class="label">ブレーキバランス</div><div class="seg" id="bbSeg"><button type="button" data-v="0">前寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">後ろ寄り</button></div></div>
-      <div><div class="label">タイヤ</div><div class="seg" id="tyreSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">スリック</button><button type="button" data-v="2">レイン</button></div></div>
-    </div>
-    <p class="note" id="tuneNote"></p>
-    <div class="setrow">
-      <div><div class="label">スタート時の視点（レース中もCキー・ボタンで切替）</div><div class="seg" id="camSeg"><button type="button" data-v="0">後方</button><button type="button" data-v="1">車載</button><button type="button" data-v="2">遠め</button><button type="button" data-v="3">中継</button><button type="button" data-v="4">正面望遠</button></div></div>
-      <div><div class="label">スタート時のオート（レース・タイムアタック・0-400m）</div><div class="seg" id="autoSeg"><button type="button" data-v="0">OFF（自分で運転）</button><button type="button" data-v="1">ON（オートで走る）</button></div></div>
-      <div><div class="label">走行ライン</div><div class="seg" id="lnSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
-      <div><div class="label">バックミラー</div><div class="seg" id="mrSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
-      <div><div class="label">周回数（レース）</div><div class="seg" id="lapsSeg"><button type="button" data-v="0">3周</button><button type="button" data-v="1">5周</button><button type="button" data-v="2">8周</button></div></div>
-      <div><div class="label">タイヤ摩耗</div><div class="seg" id="wearSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">あり</button><button type="button" data-v="2">速い</button></div></div>
-      <div><div class="label">ダメージ</div><div class="seg" id="dmgSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">見た目だけ</button><button type="button" data-v="2">性能にも</button></div></div>
-      <div><div class="label">大事故（高速の衝突で吹っ飛び・リタイア）</div><div class="seg" id="crSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-      <div><div class="label">0-400mの変速</div><div class="seg" id="dragSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">手動</button></div></div>
-      <div><div class="label">0-400mの距離</div><div class="seg" id="ddSeg"><button type="button" data-v="0">400m</button><button type="button" data-v="1">1/8マイル（201m）</button></div></div>
-      <div><div class="label">0-400mのツリー</div><div class="seg" id="dpSeg"><button type="button" data-v="0">スポーツマン（黄→黄→黄）</button><button type="button" data-v="1">プロ（黄3つ同時）</button></div></div>
-      <div><div class="label">0-400mの相手</div><div class="seg small" id="drSeg"></div></div>
-      <div><div class="label">スマホのハンドル</div><div class="seg" id="tiltSeg"><button type="button" data-v="0">ボタン</button><button type="button" data-v="1">傾ける</button></div><p class="note" id="tiltNote"></p><div class="label" style="margin-top:8px">傾きの感度</div><div class="seg" id="tsSeg"><button type="button" data-v="0">弱い（大きく傾ける）</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
-      <div><div class="label">アシスト</div><div class="seg" id="asSeg"><button type="button" data-v="0">強</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">なし</button></div></div>
-      <div><div class="label">CPUの強さ（難易度）</div><div class="seg" id="aiSeg"><button type="button" data-v="0">入門</button><button type="button" data-v="1">やさしい</button><button type="button" data-v="2">ふつう</button><button type="button" data-v="3">つよい</button><button type="button" data-v="4">達人</button></div></div>
-      <div><div class="label">スタート位置</div><div class="seg" id="gridSeg"><button type="button" data-v="0">最後尾</button><button type="button" data-v="1">ランダム</button><button type="button" data-v="2">予選で決める</button></div></div>
-      <div><div class="label">時間帯</div><div class="seg" id="todSeg"><button type="button" data-v="0">朝焼け</button><button type="button" data-v="1">昼</button><button type="button" data-v="2">夕方</button><button type="button" data-v="3">夜</button><button type="button" data-v="4">おまかせ</button></div></div>
-      <div><div class="label">天気</div><div class="seg" id="wxSeg"><button type="button" data-v="0">晴れ</button><button type="button" data-v="1">くもり</button><button type="button" data-v="2">雨</button><button type="button" data-v="3">霧</button><button type="button" data-v="4">変わる</button><button type="button" data-v="5">おまかせ</button></div></div>
-      <div><div class="label">ピット無線</div><div class="seg" id="radSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-      <div><div class="label">コース外ペナルティ</div><div class="seg" id="tlSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-    </div>
+    <details class="grp" open>
+      <summary>よく使う設定<small>周回数・難易度・時間帯と天気など</small></summary>
+      <div class="setrow">
+        <div><div class="label">遊びやすさ<span class="hint">かんたん＝タイヤ摩耗なし・ダメージは見た目だけ・アシスト強／ほんかく＝摩耗あり・ダメージは性能にも・アシスト標準（下の個別の設定で細かく変えられる）</span></div><div class="seg" id="presetSeg"><button type="button" data-v="0">かんたん</button><button type="button" data-v="1">ほんかく</button></div></div>
+        <div><div class="label">周回数（レース）</div><div class="seg" id="lapsSeg"><button type="button" data-v="0">3周</button><button type="button" data-v="1">5周</button><button type="button" data-v="2">8周</button></div></div>
+        <div><div class="label">CPUの強さ（難易度）</div><div class="seg" id="aiSeg"><button type="button" data-v="0">入門</button><button type="button" data-v="1">やさしい</button><button type="button" data-v="2">ふつう</button><button type="button" data-v="3">つよい</button><button type="button" data-v="4">達人</button></div></div>
+        <div><div class="label">アシスト<span class="hint">運転の補助。強＝滑りにくい／なし＝ブレーキのロックやスピンも自分で止める</span></div><div class="seg" id="asSeg"><button type="button" data-v="0">強</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">なし</button></div></div>
+        <div><div class="label">スタート位置</div><div class="seg" id="gridSeg"><button type="button" data-v="0">最後尾</button><button type="button" data-v="1">ランダム</button><button type="button" data-v="2">予選で決める</button></div></div>
+        <div><div class="label">時間帯</div><div class="seg" id="todSeg"><button type="button" data-v="0">朝焼け</button><button type="button" data-v="1">昼</button><button type="button" data-v="2">夕方</button><button type="button" data-v="3">夜</button><button type="button" data-v="4">おまかせ</button></div></div>
+        <div><div class="label">天気<span class="hint">雨や霧では路面がすべりやすく、見通しも悪くなる</span></div><div class="seg" id="wxSeg"><button type="button" data-v="0">晴れ</button><button type="button" data-v="1">くもり</button><button type="button" data-v="2">雨</button><button type="button" data-v="3">霧</button><button type="button" data-v="4">変わる</button><button type="button" data-v="5">おまかせ</button></div></div>
+        <div><div class="label">走行ライン<span class="hint">路面に出る理想の線。緑の細い線＝そのまま／黄の点線＝減速の準備／赤の太い線＝今ブレーキ</span></div><div class="seg" id="lnSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
+        <div><div class="label">バックミラー</div><div class="seg" id="mrSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
+      </div>
+    </details>
+    <details class="grp">
+      <summary>マシンの調整<small>色・ゼッケン・駆動方式・ギア・タイヤなど</small></summary>
+      <div class="label">マイカラー（自分の車の塗装とゼッケン）</div>
+      <div class="myc"><span>ボディ</span><div class="sw" id="swBody"></div></div>
+      <div class="myc"><span>差し色</span><div class="sw" id="swAcc"></div></div>
+      <div class="myc"><span>ゼッケン</span><div class="numc"><button type="button" id="numDn" aria-label="番号を下げる">−</button><b id="numV"></b><button type="button" id="numUp" aria-label="番号を上げる">＋</button><button type="button" id="numTeam">チーム</button></div></div>
+      <div class="label">セッティング</div>
+      <div class="setrow tune">
+        <div><div class="label">駆動方式<span class="hint">どのタイヤでエンジンの力を伝えるか（FF＝前／FR＝後ろ／4WD＝4輪）</span></div><div class="seg" id="drvSeg"><button type="button" data-v="0">FF</button><button type="button" data-v="1">FR</button><button type="button" data-v="2">4WD</button></div></div>
+        <div><div class="label">ギア比<span class="hint">変速のギアの掛け方。加速寄り＝出足が速い／最高速寄り＝直線で伸びる</span></div><div class="seg" id="gearSeg"><button type="button" data-v="0">加速寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">最高速寄り</button></div></div>
+        <div><div class="label">ウイング（ダウンフォース）<span class="hint">走ると車を地面へ押さえつける力。多いとコーナーに強く、直線は遅い</span></div><div class="seg" id="wingSeg"><button type="button" data-v="0">少なめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">多め</button></div></div>
+        <div><div class="label">ブレーキバランス<span class="hint">前輪と後輪のブレーキの強さの配分</span></div><div class="seg" id="bbSeg"><button type="button" data-v="0">前寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">後ろ寄り</button></div></div>
+        <div><div class="label">タイヤ<span class="hint">スリック＝乾いた路面用／レイン＝雨用。自動なら路面が濡れていればレイン</span></div><div class="seg" id="tyreSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">スリック</button><button type="button" data-v="2">レイン</button></div></div>
+        <div><div class="label">ラジエーター・ダクト（冷却）<span class="hint">エンジンの冷え方。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="coolSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
+        <div><div class="label">変速（レース・タイムアタック・予選）<span class="hint">マニュアル＝自分でギアを上げ下げする（キーボード・パッド・スマホの▲▼）</span></div><div class="seg" id="mtSeg"><button type="button" data-v="0">オート</button><button type="button" data-v="1">マニュアル（E／Q・ホイール）</button></div></div>
+      </div>
+      <p class="note" id="tuneNote"></p>
+    </details>
+    <details class="grp">
+      <summary>レースのルール<small>タイヤ摩耗・ダメージ・大事故・ペナルティ・無線</small></summary>
+      <div class="setrow">
+        <div><div class="label">タイヤ摩耗<span class="hint">走るとタイヤが減ってグリップが落ちる。ピットで交換</span></div><div class="seg" id="wearSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">あり</button><button type="button" data-v="2">速い</button></div></div>
+        <div><div class="label">ダメージ</div><div class="seg" id="dmgSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">見た目だけ</button><button type="button" data-v="2">性能にも</button></div></div>
+        <div><div class="label">大事故（高速の衝突で吹っ飛び・リタイア）</div><div class="seg" id="crSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+        <div><div class="label">コース外ペナルティ</div><div class="seg" id="tlSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+        <div><div class="label">ピット無線</div><div class="seg" id="radSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
+      </div>
+    </details>
+    <details class="grp">
+      <summary>視点・操作<small>スタート時の視点とオート、スマホのハンドル</small></summary>
+      <div class="setrow">
+        <div><div class="label">スタート時の視点（レース中もCキー・ボタンで切替）</div><div class="seg" id="camSeg"><button type="button" data-v="0">後方</button><button type="button" data-v="1">車載</button><button type="button" data-v="2">遠め</button><button type="button" data-v="3">中継</button><button type="button" data-v="4">正面望遠</button></div></div>
+        <div><div class="label">スタート時のオート（レース・タイムアタック・0-400m）</div><div class="seg" id="autoSeg"><button type="button" data-v="0">OFF（自分で運転）</button><button type="button" data-v="1">ON（オートで走る）</button></div></div>
+        <div><div class="label">スマホのハンドル</div><div class="seg" id="tiltSeg"><button type="button" data-v="0">ボタン</button><button type="button" data-v="1">傾ける</button></div><p class="note" id="tiltNote"></p><div class="label" style="margin-top:8px">傾きの感度</div><div class="seg" id="tsSeg"><button type="button" data-v="0">弱い（大きく傾ける）</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
+      </div>
+    </details>
+    <details class="grp">
+      <summary>0-400m<small>変速・距離・ツリー・相手</small></summary>
+      <div class="setrow">
+        <div><div class="label">0-400mの変速</div><div class="seg" id="dragSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">手動</button></div></div>
+        <div><div class="label">0-400mの距離<span class="hint">1/8マイル＝約201m</span></div><div class="seg" id="ddSeg"><button type="button" data-v="0">400m</button><button type="button" data-v="1">1/8マイル（201m）</button></div></div>
+        <div><div class="label">0-400mのツリー<span class="hint">スタートの合図のランプ。プロは黄3つが同時に点き、すぐ緑になる</span></div><div class="seg" id="dpSeg"><button type="button" data-v="0">スポーツマン（黄→黄→黄）</button><button type="button" data-v="1">プロ（黄3つ同時）</button></div></div>
+        <div><div class="label">0-400mの相手</div><div class="seg small" id="drSeg"></div></div>
+      </div>
+    </details>
     <div class="row"><button class="btn" id="setupClose" type="button">決定</button><button class="btn alt" id="bugOpenG" type="button">不具合報告</button></div>
   </section>
   <div class="tsBar tsBot"><b>TIPS</b><span id="tsTip"></span></div>
@@ -398,6 +463,13 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
 <section class="screen" id="helpScreen" hidden>
   <div class="panel">
     <h2>操作方法</h2>
+    <div class="basic">
+      <div><b>1</b><span><b style="font-size:1em;font-style:normal;color:inherit">走る・止まる</b>　<kbd>↑</kbd> アクセル　<kbd>↓</kbd> ブレーキ　<kbd>←</kbd><kbd>→</kbd> ハンドル（WASDも可）。スマホは画面のボタン、ゲームパッドは左スティックと RT／LT。</span></div>
+      <div><b>2</b><span><b style="font-size:1em;font-style:normal;color:inherit">ブレーキの目安</b>　路面の線の色を見る：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ。コーナーの手前の看板 150・100・50m も目安。<kbd>L</kbd> で線の表示を切り替え。</span></div>
+      <div><b>3</b><span><b style="font-size:1em;font-style:normal;color:inherit">やり直す</b>　<kbd>R</kbd> で5秒巻き戻し。<kbd>Esc</kbd> でポーズ（そこから「やり直す」「タイトルへ」）。</span></div>
+      <div><b>4</b><span><b style="font-size:1em;font-style:normal;color:inherit">見え方を変える</b>　<kbd>C</kbd> 視点の切り替え、<kbd>O</kbd> オートで走る、<kbd>M</kbd> バックミラー、<kbd>B</kbd> 音楽のオン／オフ。</span></div>
+    </div>
+    <details class="more"><summary>くわしい操作・モード・用語の説明（ひらく）</summary>
     <div class="help" style="margin-top:4px">
         <span><kbd>↑</kbd> / <kbd>W</kbd></span><span>アクセル</span>
         <span><kbd>↓</kbd> / <kbd>S</kbd></span><span>ブレーキ・バック</span>
@@ -413,7 +485,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
         <span>0-400m</span><span>1対1で400mの速さ比べ（ゼロヨン）。GARAGEで距離（400m／1/8マイル＝201m）、ツリー（スポーツマン＝黄が0.5秒ずつ／プロ＝黄3つ同時で0.4秒後に緑）、相手を選べる。ランプが黄→黄→黄→緑と点き、緑でアクセル。黄のうちに踏むとフライングで反則負け。変速「手動」（GARAGE）では Space／Shift（スマホは「シフト」、パッドはA）でシフトアップ。シフトランプが青く光った瞬間が PERFECT。記録はエンジンごとに保存</span>
         <span>リプレイ</span><span>結果画面の「リプレイ」でレースを見返せる。←→（ボタン）で見る車、C で視点、速さは×1／×2／×4、Esc で終了</span>
         <span><kbd>R</kbd></span><span>巻き戻し（5秒前に戻る。回数は結果に表示）</span>
-        <span><kbd>L</kbd></span><span>走行ラインの表示（コースの幅を使うアウト・イン・アウトの線。コーナーの種類（だんだんきつい／緩い）や出口の直線の長さ、連続コーナーかどうかで頂点の位置が変わる。CPUもこの線を走る。緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ）</span>
+        <span><kbd>L</kbd></span><span>走行ラインの表示（コースの幅を使うアウト・イン・アウトの線。コーナーの種類（だんだんきつい／緩い）や出口の直線の長さ、連続コーナーかどうかで頂点の位置が変わる。CPUもこの線を走る。緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ）</span>
         <span>ピット</span><span>タイヤ摩耗（GARAGEで「あり」）でグリップが落ちる。Iキー（ボタン「ピット」）で予約すると、次の周回でスタート直後のピットレーンに自動で入り、タイヤ交換（約3秒）。ダメージも直る。CPUも摩耗が進むと入る</span>
         <span>大事故</span><span>高速で壁や他の車に強くぶつかる（目安は壁に時速約61km以上で垂直に当たる／車どうしは相対で約50km以上）と、車が跳ねて転がり、走れなくなってリタイア。順位表では最後に並び「リタイア」と出る（GARAGEで切れる）</span>
         <span>ダメージ</span><span>強くぶつけると車が傷んで、塗装がくすみ、ひどいと煙が出る。「性能にも」だとグリップと出力も落ちる。ピットで修理</span>
@@ -425,6 +497,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
         <span>スリップ</span><span>前の車の真後ろにつくと空気抵抗が減って伸びる（SLIPSTREAM表示）</span>
         <span>開始前の設定</span><span>GARAGEで、スタート時の視点・オート・走行ライン・バックミラーを決めておける。レースのカウントダウン中も、Cキー・ボタンで視点、Oキー・ボタンでオートを切り替えられる</span>
         <span>不具合報告</span><span>GARAGE とポーズ画面の「不具合報告」で、今の状況・設定・起きたエラー・無線の履歴を文章にまとめてコピー／.txt 保存できる（自動では送られない）</span>
+        <span><kbd>E</kbd> / <kbd>Q</kbd></span><span>マニュアル変速（GARAGE「変速」をマニュアルに）：E＝シフトアップ、Q＝シフトダウン（スマホは画面右下の▲▼）。マウスのホイールも使える（手前に回す＝アップ、奥に回す＝ダウン）。パッドは右スティック（手前に引く＝アップ、奥に倒す＝ダウン）。0-400m の手動変速のアップも E・ホイールで。回転計の上限（約8700）を超える落とし方はできない。回転を合わせずに落とすと、駆動輪にショックが出る（アシスト「なし」でアクセルを煽らない時だけ。落とす時にアクセルを踏んでいればブリップで合う）。止まりかけると自動で1速に戻る。オート（O）にするとオートの変速になる</span>
         <span>エンジン</span><span>アクセルを踏むと回転がすぐ上がる（停車・発進・変速中は車速から離れて吹け上がり、離すとすぐ落ちる）。ターボは過給圧が上がるまで少し遅れる（アクセルを戻した直後は特に）。水温・油温が高すぎると出力が落ちる（ひどい傷み・低速の全開が長いと）。雨や走行風・ピット停車で下がる。落とす（シフトダウン）のはブレーキの中盤〜後半</span>
         <span><kbd>Esc</kbd> / <kbd>P</kbd></span><span>ポーズ</span>
         <span><kbd>O</kbd></span><span>オートプレイの切り替え（レース中いつでも）</span>
@@ -438,6 +511,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
         <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン）を選べる</span>
         <span>天気</span><span>雨は路面が濡れてグリップが落ちる（左下に DRY／DAMP／WET）。夜はヘッドライトが点く</span>
       </div>
+    </details>
     <div class="row"><button class="btn" id="helpClose" type="button">閉じる</button></div>
   </div>
 </section>
@@ -447,6 +521,7 @@ body:not(.touch) #topbtns{right:calc(clamp(250px,25vw,340px) + 28px);bottom:calc
     <h2>ポーズ中</h2>
     <div class="row">
       <button class="btn" id="resumeBtn" type="button">つづける</button>
+      <button class="btn alt" id="restartBtn" type="button">やり直す</button>
       <button class="btn alt" id="bugOpenP" type="button">不具合報告</button>
       <button class="btn alt" id="retireBtn" type="button">タイトルへ</button>
     </div>
@@ -538,12 +613,14 @@ let DSAY=4,BLIPR=900,BLIPT=.25; // T97：DSAY＝旋回中は落とさない横�
 // T105 エンジンレスポンス：ERQ＝1で有効。erpm＝エンジン自体の回転（クラッチが切れている間＝停車・発進・変速中は車速から離れて、アクセルで素早く上がり、離すと素早く下がる）。ERU・ERD＝上がる・下がる速さ（回転/秒）、ERL＝停車でアクセル全開の時に上がる量、ERC＝クラッチが滑る速さ（m/s、これ未満はエンジンが車速から離れる）
 // T101 DSP＝ブレーキで減らす速さのうち何割まで減ったら先落としを始めるか（0で従来）
 // T95 TBW＝ターボの過給圧が足りない時に落ちるトルクの割合、OHT/OHF/OHL＝水温がこれを超えると OHF℃かけて出力が最大 OHL 落ちる、OIT＝油温の同じ（OHF℃かけて OHL）、COW＝雨で下がる水温、PTC＝ピットで冷える速さ
+let DSMIN=4; // 先落としは、先のコーナーの速さまでまだ DSMIN（m/s）より多く減らす時だけ（すでにコーナーの速さまで落ちていて、ほとんど減速しない時には落とさない）（ほとんど減速しない緩いコーナーでは落とさない。0で従来。T107）
 let ERQ=1,ERU=14000,ERD=9000,ERL=3600,ERC=12,DSP=.5,TBW=.25,OHT=110,OHF=15,OHL=.25,OIT=132,COW=8,PTC=.3;
 const rpmOf=p=>(p.erpm??p.rpm)+(p.blip>0?BLIPR*p.blip:0); // 表示・エンジン音用の回転（物理には使わない）
  // ブレーキ中の先落とし（オート変速）：下のギアにしても回転が SHIFT_BD 以下なら落とす。EBK=0で従来
 // トルク曲線（車＝エンジンごと。将来セッティングで差し替えられるよう、車の k.tq に持たせる）
 // lo＝0回転でのトルク（ピークを1として）、pk＝ピークの回転、hi＝end 回転での値、end＝落ち切る回転。下は sin、上は cos でなめらかにつなぐ
-const TQC=[{n:'1600cc',lo:.65,pk:5200,hi:.6,end:9000},{n:'2000cc',lo:.55,pk:4500,hi:.55,end:9000},{n:'ターボ',lo:.38,pk:5600,hi:.66,end:9500}];
+// ru・rd＝エンジンの回転の上がる・下がる速さ（回転/秒。T106：小さいエンジンは軽くて鋭く、ターボは重くて少し鈍い）
+const TQC=[{n:'1600cc',lo:.65,pk:5200,hi:.6,end:9000,ru:16000,rd:10500},{n:'2000cc',lo:.55,pk:4500,hi:.55,end:9000,ru:14000,rd:9000},{n:'ターボ',lo:.38,pk:5600,hi:.66,end:9500,ru:11000,rd:7500}];
 const torque=(rpm,c)=>{c=c||TQC[1];const r=Math.min(rpm,c.end);return r<c.pk?c.lo+(1-c.lo)*Math.sin(Math.PI/2*r/c.pk):c.hi+(1-c.hi)*Math.cos(Math.PI/2*(r-c.pk)/(c.end-c.pk));};
 // 手動変速の最適なシフト回転（今のギアと次のギアの駆動力が等しくなる回転。上限 REDLINE-100）
 function optShift(c){const o=[];for(let g=0;g<TOPG;g++){let best=REDLINE-100,bd=1e9;for(let r=5000;r<=REDLINE-100;r+=10){const d=Math.abs(torque(r,c)*RATIO[g]-torque(r*RATIO[g+1]/RATIO[g],c)*RATIO[g+1]);if(d<bd){bd=d;best=r;}}o.push(best);}return o;}
@@ -559,12 +636,15 @@ const DRV_KEYS=['FF','FR','4WD'],CPU_DRV=[1,0,1,0,2,0,1,2];
 const SETG=[{n:'加速寄り',gf:.93},{n:'標準',gf:1},{n:'最高速寄り',gf:1.06}];
 const SETW=[{n:'少なめ',dfm:.6,cdm:.94},{n:'標準',dfm:1,cdm:1},{n:'多め',dfm:1.45,cdm:1.07}];
 const SETB=[{n:'前寄り',bb:.67,rbm:.8},{n:'標準',bb:.6,rbm:1},{n:'後ろ寄り',bb:.53,rbm:1.2}];
+const SETC=[{n:'小さめ',hf:1.3,cdm:.97},{n:'標準',hf:1,cdm:1},{n:'大きめ',hf:.7,cdm:1.04}]; // ラジエーター・ダクト（T106）：hf＝熱の上がり方の倍率（大きいほど熱くなりやすい）、cdm＝空気抵抗の倍率
 const TYRE=['自動','スリック','レイン'];
-let setDrv=1,setG=1,setW=1,setB=1,setT=0,tiltOn=false;
+let setDrv=1,setG=1,setW=1,setB=1,setT=0,setC=1,tiltOn=false;
+// マニュアル変速（レース・タイムアタック・予選。0-400m は別設定）：manualMode＝1で自車が手動。SHKG＝回転を合わせずに落とした時のショック（エンジンブレーキの衝撃。回転の差1000あたり m/s²、アシスト「なし」でアクセルを煽らない時だけ）、SHKM＝その上限
+let manualMode=0,SHKG=2.5,SHKM=7;
 let autoStart=0;let lapsSel=0,wearMode=1,dmgMode=2,crashMode=1;const LAPSET=[3,5,8];
 // 0-400m（β0.15.0）
 let dragMan=1,dragRec=null,drag=null,dragDist=0,dragPro=0,dragRivalSel=-1;const DRAG_DS=[400,201.17];let DRAG_D=400;const DRAG_NM=['0-400m','1/8マイル（201m）'];const dragGoAt=()=>dragPro?.4:1.5;const DRAG_LAT=3.6,OPT_SHIFT=null,DRT=[[.34,.6],[.28,.5],[.18,.36],[.12,.26],[.08,.18]];
-function applySetup(k,drv,g,w,b,t){const d=DRV[DRV_KEYS[drv]];k.drv=DRV_KEYS[drv];k.fs=d.fs;k.ka=d.ka;k.kb=d.kb;k.pw=d.pw;k.ftx=d.ftx||1;k.rgm=d.rgm||1;k.gf=SETG[g].gf;k.dfm=SETW[w].dfm;k.cdm=SETW[w].cdm;k.bb=SETB[b].bb;k.rbm=SETB[b].rbm;
+function applySetup(k,drv,g,w,b,t,c){const d=DRV[DRV_KEYS[drv]];k.drv=DRV_KEYS[drv];k.fs=d.fs;k.ka=d.ka;k.kb=d.kb;k.pw=d.pw;k.ftx=d.ftx||1;k.rgm=d.rgm||1;k.gf=SETG[g].gf;k.dfm=SETW[w].dfm;k.cdm=SETW[w].cdm*SETC[c==null?1:c].cdm;k.hf=SETC[c==null?1:c].hf;k.bb=SETB[b].bb;k.rbm=SETB[b].rbm;
   k.rain=t===2||(t===0&&typeof ENV!=='undefined'&&(ENV.wet>.45||ENV.tr>.5));k.wear=0;k.dmg=0;k.pit=0;k.pitT=0;k.pitReq=false;k.pitDone=0;k.gripK=1;k.powK=1;return k;}
 const HX=.95,HZ=2.32;let IZC=1.9;const TOPG=5;
 const ITEMS={
@@ -610,6 +690,7 @@ const renderer=new THREE.WebGLRenderer({canvas,antialias:!isTouch,powerPreferenc
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,isTouch?1.5:2));
 renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
 const SHADOWS=!isTouch;
+const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches); // 端末の「動きを減らす」設定：画面の揺れを止める（T129）
 if(SHADOWS){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;}
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(66,1,0.2,3200);
@@ -661,14 +742,16 @@ const _c1=new THREE.Color(),_c2=new THREE.Color(),_c3=new THREE.Color();
 function plrSafe(){try{return karts.find(k=>k.isPlayer)||null;}catch(_){return null;}}
 function wetMul(s,k){const w=ENV.wet;if(k&&k.rain)return .9*(s==='road'?1-.07*w:s==='curb'?1-.16*w:1-.1*w);return s==='road'?1-.3*w:s==='curb'?1-.45*w:1-.18*w;} // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
 // 環境反射（空と地面の簡易モデル）。時間帯と雲で作り直す
-let envTex=null;
+let envTex=null,envRT=null;
 function buildEnv(P,cloud){const env=new THREE.Scene();const sg=new THREE.SphereGeometry(50,32,16);const col=[];const pos=sg.attributes.position;const c=new THREE.Color();
  const gy=P.night?.03:.42*(P.ex);const grey=[gy,gy*1.03,gy*1.08];const mix=(a)=>a.map((v,i)=>v+(grey[i]-v)*cloud*.85);
  const et=mix(P.et),eh=mix(P.eh),eg=P.eg;
  for(let i=0;i<pos.count;i++){const y=pos.getY(i)/50;if(y>0)c.setRGB(et[0]+(eh[0]-et[0])*(1-y),et[1]+(eh[1]-et[1])*(1-y),et[2]+(eh[2]-et[2])*(1-y));else c.setRGB(eg[0],eg[1],eg[2]);col.push(c.r,c.g,c.b);}
  sg.setAttribute('color',new THREE.Float32BufferAttribute(col,3));env.add(new THREE.Mesh(sg,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.BackSide})));
  if(cloud<.7){const sd=SUN_OFF.clone().normalize().multiplyScalar(40);const sm=new THREE.Mesh(new THREE.SphereGeometry(P.night?2:4,12,8),new THREE.MeshBasicMaterial({color:new THREE.Color(P.night?.5:1,P.night?.55:1,P.night?.7:1).multiplyScalar(1-cloud)}));sm.position.copy(sd);env.add(sm);}
- const pm=new THREE.PMREMGenerator(renderer);const t=pm.fromScene(env,.02).texture;pm.dispose();sg.dispose();if(envTex)envTex.dispose();envTex=t;scene.environment=t;}
+ const pm=new THREE.PMREMGenerator(renderer);const rt=pm.fromScene(env,.02),t=rt.texture;pm.dispose();
+ env.traverse(o=>{if(o.isMesh){o.geometry.dispose();o.material.dispose();}}); // 作った空の玉は捨てる（T124）
+ if(envRT)envRT.dispose();envRT=rt;envTex=t;scene.environment=t;}
 // 空のドームの色
 function paintSky(P,cloud,rain){const g=sky.geometry,p=g.attributes.position,ca=g.attributes.color;const sd=SUN_OFF.clone().normalize();const v=new THREE.Vector3();
  const hz=_c1.set(P.hz),zn=_c2.set(P.zn),gl=new THREE.Color(P.gl),gr=_c3.set(P.gr).multiplyScalar(1-.28*rain);const c=new THREE.Color();
@@ -680,7 +763,7 @@ function paintSky(P,cloud,rain){const g=sky.geometry,p=g.attributes.position,ca=
 const stars=(()=>{const pos=[];let sd=777;const r=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};for(let i=0;i<700;i++){const a=r()*6.283,e=Math.asin(.08+r()*.92),R=2400;pos.push(Math.cos(a)*Math.cos(e)*R,Math.sin(e)*R,Math.sin(a)*Math.cos(e)*R);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));const m=new THREE.Points(g,new THREE.PointsMaterial({color:0xdfe6ff,size:1.6,sizeAttenuation:false,fog:false,transparent:true,depthWrite:false}));m.material.userData.lin=1;m.visible=false;m.renderOrder=-1;sky.add(m);return m;})();
 // 雨粒（カメラのまわりだけ降らせる）
-const NRAIN=isTouch?520:1200;
+const NRAIN=isTouch?520:1200;let RNF=1; // RNF＝雨がカメラの動き（車速）に比例して流れる強さ（T104。0で従来の真上から）
 const rainMesh=(()=>{const a=new Float32Array(NRAIN*6);const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(a,3));
  const m=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xb8c2cc,transparent:true,opacity:.4,depthWrite:false,fog:false}));m.material.userData.lin=1;m.frustumCulled=false;m.visible=false;scene.add(m);
  m.userData.d=new Float32Array(NRAIN*3);for(let i=0;i<NRAIN;i++){m.userData.d[i*3]=(Math.random()-.5)*56;m.userData.d[i*3+1]=Math.random()*26;m.userData.d[i*3+2]=(Math.random()-.5)*56;}return m;})();
@@ -734,12 +817,18 @@ function envStep(dt,race){const e=ENV;e.t+=dt;
  if(race){if(e.rain>.15)e.wet=Math.min(1,e.wet+e.rain*.02*dt);else e.wet=Math.max(0,e.wet-.004*dt);}
  if(Math.abs(pc-e.cloud)>1e-4||Math.abs(pr-e.rain)>1e-4||Math.abs(e.wet-e.vcWet)>.04)envApply(false);
  // 雨粒
- if(rainMesh.visible){const d=rainMesh.userData.d,a=rainMesh.geometry.attributes.position.array;const cp=camera.position;const vy=19,wx=2.5,len=.055;
-  for(let i=0;i<NRAIN;i++){let x=d[i*3],y=d[i*3+1],z=d[i*3+2];y-=vy*dt;x+=wx*dt;if(y<-4){y+=26;x=(Math.random()-.5)*56;z=(Math.random()-.5)*56;}if(x>28)x-=56;d[i*3]=x;d[i*3+1]=y;d[i*3+2]=z;
-   const X=cp.x+x,Y=cp.y+y-6,Z=cp.z+z;a[i*6]=X;a[i*6+1]=Y;a[i*6+2]=Z;a[i*6+3]=X-wx*len;a[i*6+4]=Y+vy*len;a[i*6+5]=Z;}
+ // T104：雨粒はカメラといっしょに動く箱の中。カメラが動く速さ（cv）の逆向きに雨が流れて見える（速いほど手前へ強く流れ、線も長くなる。止まっていれば真上から落ちる）。RNF＝0で従来
+ if(rainMesh.visible){const d=rainMesh.userData.d,a=rainMesh.geometry.attributes.position.array;const cp=camera.position;const vy=19,wx=2.5;
+  const rc=rainMesh.userData.cam||(rainMesh.userData.cam={x:cp.x,z:cp.z,vx:0,vz:0});
+  if(dt>1e-4){const rx=(cp.x-rc.x)/dt,rz=(cp.z-rc.z)/dt;if(RNF>0&&Math.hypot(rx,rz)<130){const k2=Math.min(1,dt*8);rc.vx+=(rx-rc.vx)*k2;rc.vz+=(rz-rc.vz)*k2;}else if(RNF<=0){rc.vx=rc.vz=0;}}
+  rc.x=cp.x;rc.z=cp.z;const cvx=rc.vx*RNF,cvz=rc.vz*RNF;
+  const rvx=wx-cvx,rvz=-cvz,len=Math.min(.055,3.2/Math.max(1,Math.hypot(rvx,vy,rvz)));
+  for(let i=0;i<NRAIN;i++){let x=d[i*3],y=d[i*3+1],z=d[i*3+2];y-=vy*dt;x+=rvx*dt;z+=rvz*dt;if(y<-4){y+=26;x=(Math.random()-.5)*56;z=(Math.random()-.5)*56;}if(x>28)x-=56;else if(x<-28)x+=56;if(z>28)z-=56;else if(z<-28)z+=56;d[i*3]=x;d[i*3+1]=y;d[i*3+2]=z;
+   const X=cp.x+x,Y=cp.y+y-6,Z=cp.z+z;a[i*6]=X;a[i*6+1]=Y;a[i*6+2]=Z;a[i*6+3]=X-rvx*len;a[i*6+4]=Y+vy*len;a[i*6+5]=Z-rvz*len;}
   rainMesh.geometry.attributes.position.needsUpdate=true;}
  // 自分の車のヘッドライト
  const p=player();const on=TOD[e.tod].night||e.fog>.5;
+ headSpot.visible=!!(p&&on); // 昼は光源ごと外して、全部の面の計算から省く（T124）
  if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;headSpot.position.set(p.x+Math.sin(p.h)*2.2,.75,p.z+Math.cos(p.h)*2.2);headSpot.target.position.set(p.x+Math.sin(p.h)*30,0,p.z+Math.cos(p.h)*30);headSpot.target.updateMatrixWorld();}
  else headSpot.intensity=0;}
 function updEnvHud(){const P=TOD[ENV.tod],w=WXN[ENV.wx];const ic=ENV.rain>.3?'☂':ENV.fog>.5?'🌫':ENV.cloud>.6?'☁':P.ic;
@@ -789,7 +878,7 @@ function ribbon(l0,l1,y,mat,vScale,mask){
  for(const s of spots){const lat=(W+3.6)*s.side;const x=TX[s.i]+NX[s.i]*lat,z=TZ[s.i]+NZ[s.i]*lat;const hd=heading(s.i);
    D.position.set(x,1.55,z);D.rotation.set(0,hd+Math.PI,0);D.scale.set(1,1,1);D.updateMatrix();const im=ims[s.q];im.setMatrixAt(im.count++,D.matrix);
    for(const o of[-.45,.45]){D.position.set(x+Math.cos(hd)*o,.55,z-Math.sin(hd)*o);D.updateMatrix();post.setMatrixAt(post.count++,D.matrix);}}}
-// 走行ライン（理想のライン。前方は自分の速さで色が変わる：緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ）
+// 走行ライン（理想のライン。前方は自分の速さで色が変わる：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ）
 const IL=new Float32Array(N),VC=new Float32Array(N),VP=new Float32Array(N);
 // レーシングライン（T79）：コースの幅いっぱいを使って曲がりの強さ（曲率）が最小になる線を、反復で求める。アウト→イン→アウトになり、半径が大きいぶん速く曲がれる。
 // 点 P(i)=中心線＋横位置 IL[i]。隣り合う点の2階差分（曲がり）の二乗和を小さくするよう、横位置を少しずつ動かして幅（RLW）の中に収める。
@@ -850,12 +939,15 @@ function rubReset(){RUB.fill(0);rubVis();}
 function rubStep(k){if(k.idx===k.prevIdx||k.surf!=='road'||Math.abs(k.u)<8)return;const off=Math.abs(k.lat-IL[k.idx]);if(off>2.5)return;const add=RUB_ADD*(1-off/2.5)*(1-ENV.wet);
   let i=k.prevIdx;for(let n=0;n<4&&i!==k.idx;n++){i=wrap(i+1);RUB[i]=Math.min(1,RUB[i]+add);}}
 function rubTick(dt){if(ENV.wet>.25){const f=1-dt*.03*ENV.wet;for(let i=0;i<N;i++)RUB[i]*=f;}rubT+=dt;if(rubT>1){rubT=0;rubVis();}}
-const LC={g:[.05,.62,.14],y:[1,.62,0],r:[1,.05,.03]};
+const LC={g:[.05,.62,.14],y:[1,.62,0],r:[1,.05,.03]},LW_G=.25,LW_R=.62; // 走行ラインの半幅（緑・黄／赤）
 function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';apexMesh.visible=lineMesh.visible;if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const aB=G*1.3*wetMul('road',p),u=Math.max(0,p.u);
-  const setC=(i,c)=>{for(const v of[i*2,i*2+1]){col[v*3]=c[0];col[v*3+1]=c[1];col[v*3+2]=c[2];}if(i===0)for(const v of[N*2,N*2+1]){col[v*3]=c[0];col[v*3+1]=c[1];col[v*3+2]=c[2];}};
+  const pp=lineMesh.geometry.attributes.position.array;
+  // 色に加えて形でも分かるように（T131）：緑＝細い実線、黄＝点線（2点おきに途切れる）、赤＝太い線
+  const setC=(i,c)=>{const kind=c===LC.r?2:c===LC.y?1:0,w=kind===2?LW_R:kind===1?((i&3)<2?LW_G:0):LW_G;
+    for(const q of(i===0?[0,N]:[i])){const j=q%N,l=IL[j];for(let sd=0;sd<2;sd++){const v=q*2+sd,ll=l+(sd?w:-w);pp[v*3]=TX[j]+NX[j]*ll;pp[v*3+2]=TZ[j]+NZ[j]*ll;const o=v*3;col[o]=c[0];col[o+1]=c[1];col[o+2]=c[2];}}};
   for(let i=0;i<N;i++)setC(i,VP[i]<VC[i]-.5&&VP[wrap(i+1)]<VP[i]?LC.y:LC.g);
   for(let j=0;j<150;j++){const i=wrap(p.idx+j);const need=u*u-(VP[i]*VP[i]+2*aB*j*SP);setC(i,u<=VP[i]+.3?LC.g:need>0?LC.r:need>-2*aB*28?LC.y:LC.g);}
-  lineMesh.geometry.attributes.color.needsUpdate=true;}
+  lineMesh.geometry.attributes.color.needsUpdate=true;lineMesh.geometry.attributes.position.needsUpdate=true;}
 // 中継カメラの位置（コース脇の高い所）
 let GS_SIDE=1;
 const TVS=[];{const step=Math.round(85/SP);for(let i=0;i<N;i+=step){const side=CORNER[wrap(i+12)]?OUTS[wrap(i+12)]:(TVS.length%2?1:-1);const lat=(WALL+5.5+(i%3))*side;TVS.push({i,x:TX[i]+NX[i]*lat,y:8+(TVS.length%3)*2.2,z:TZ[i]+NZ[i]*lat});}}
@@ -1137,9 +1229,76 @@ const CARS=[
  strips:[],spZ:-.6,spY:.68,numZ:.1,numY:.7,hoodZ:1.7,lineY:.5,
  gr:{w:.9,h:.2,y:.58},gr2:{w:.4,h:.06,y:.7},hl:{s:'box',x:.6,y:.66,z:2.28},split:{w:1.8,y:.2},
  tl:{s:'box',y:.82},diff:{w:1.4,h:.1,y:.3},wing:{s:'lip',y:.97,z:-2.2,w:1.4},
- mir:{z:.7,y:1.0},ex:[-.5],ey:.3,wh:{k:2,r:.31,w:.24,x:.78,z:[1.36,-1.34]},bump:1,vent:0,canard:0}
+ mir:{z:.7,y:1.0},ex:[-.5],ey:.3,wh:{k:2,r:.31,w:.24,x:.78,z:[1.36,-1.34]},bump:1,vent:0,canard:0},
+/* β0.31.0 追加の5車種（実車の定番スタイルをもとにした、すべてオリジナルの形）。scoop＝ボンネットの空気取り入れ口、rails＝ルーフレール、
+   intake＝サイドの空気取り入れ口、rvent＝リアデッキの排熱ルーバー、fog＝バンパーの丸いライト */
+{name:'ワゴン',en:'WAGON',d:'屋根が後ろまで伸びたツーリングワゴン。ルーフレールと縦長のテールランプ',
+ YB:[[2.37,.3],[2.28,.19],[-2.25,.2],[-2.37,.34]],arch:.43,fl:.035,tum:.07,
+ BT:[[2.37,.46],[2.33,.62],[2.15,.72],[1.6,.82],[1.1,.9],[.3,.95],[-1.2,1],[-2,1.02],[-2.3,1],[-2.37,.94]],
+ BW:[[2.37,.66],[2.3,.84],[2.12,.91],[1.38,.96],[.6,.93],[-.4,.93],[-1.36,.96],[-2.1,.94],[-2.3,.91],[-2.37,.86]],
+ n:z=>z>2.2?3.0:z<-2.25?4.2:z<-1.9?4.0:3.8,
+ GL:{z0:1.12,z1:-2.3,wb:.87,wt:.7,yb:.88,yt:[[1.12,.9],[.36,1.34],[-.8,1.38],[-2,1.36],[-2.3,1.2]],n:4.5},
+ RF:{z0:.34,z1:-2.1,wb:.72,wt:.68,yb:1.22,yt:[[.34,1.352],[.2,1.39],[-2.1,1.4]],n:4},
+ belt:.96,trimZ:-.5,trimL:3.3,bp:[-.2,1.12,.36],roofY:1.404,roofZ:-.9,roofL:2.1,numRY:1.408,numRZ:-.3,
+ strips:[[2.3,1.2]],spZ:-.6,spY:.72,numZ:.15,numY:.72,hoodZ:1.75,lineY:.52,
+ gr:{w:1,h:.16,y:.44},gr2:{w:.5,h:.07,y:.6},hl:{s:'angular',x:.58,y:.64,z:2.22},split:{w:1.84,y:.13},
+ tl:{s:'vert',y:1.0},diff:{w:1.5,h:.12,y:.26},wing:{s:'lip',y:1.2,z:-2.3,w:1.4},
+ mir:{z:1,y:1.05},ex:[-.62],ey:.26,wh:{k:2,r:.33,w:.26,x:.82,z:[1.38,-1.36]},bump:0,vent:0,canard:0,rails:1},
+{name:'ウェッジクーペ',en:'WEDGE',d:'80年代のくさび型スポーツ。低い鼻先とポップアップライト',
+ YB:[[2.37,.22],[2.28,.13],[-2.25,.16],[-2.37,.3]],arch:.43,fl:.05,tum:.1,
+ BT:[[2.37,.32],[2.33,.42],[2.15,.5],[1.8,.56],[1.2,.64],[.6,.74],[0,.86],[-.8,.98],[-1.6,1.04],[-2.2,1.06],[-2.3,1.04],[-2.37,.94]],
+ BW:[[2.37,.6],[2.3,.8],[2.12,.9],[1.38,.95],[.6,.93],[-.4,.93],[-1.36,.98],[-2.1,.96],[-2.3,.9],[-2.37,.8]],
+ n:z=>z>2.2?2.6:z<-2.25?4.6:3.4,
+ GL:{z0:.75,z1:-1.3,wb:.86,wt:.6,yb:.76,yt:[[.75,.8],[.1,1.14],[-.5,1.17],[-1.3,1.06]],n:4.2},
+ RF:{z0:.15,z1:-.85,wb:.7,wt:.58,yb:.98,yt:[[.15,1.14],[0,1.19],[-.5,1.2],[-.85,1.12]],n:4},
+ belt:.88,trimZ:-.3,trimL:2.1,bp:[-.3,1,.3],roofY:1.208,roofZ:-.4,roofL:.8,numRY:1.212,numRZ:-.3,
+ strips:[[2.3,.8]],spZ:-.6,spY:.6,numZ:.1,numY:.6,hoodZ:1.5,lineY:.42,
+ gr:{w:.8,h:.07,y:.28},gr2:{w:.4,h:.04,y:.4},hl:{s:'popup',x:.52,y:.6,z:1.85},split:{w:1.9,y:.08},
+ tl:{s:'bar',y:.92},diff:{w:1.5,h:.1,y:.2},wing:{s:'duck',y:1.08,z:-2.28,w:1.5},
+ mir:{z:.66,y:.93},ex:[.55],ey:.2,wh:{k:0,r:.33,w:.27,x:.84,z:[1.4,-1.34]},bump:0,vent:0,canard:0},
+{name:'ラリーセダン',en:'RALLY',d:'車高が高めのラリー系ターボセダン。ボンネットのスクープと大きなウイング',
+ YB:[[2.37,.38],[2.28,.27],[-2.25,.27],[-2.37,.4]],arch:.45,fl:.06,tum:.06,
+ BT:[[2.37,.52],[2.33,.68],[2.15,.78],[1.6,.88],[1.1,.94],[.3,.98],[-1.2,1],[-2.05,1.02],[-2.3,1],[-2.37,.9]],
+ BW:[[2.37,.7],[2.3,.88],[2.12,.95],[1.38,1],[.6,.95],[-.4,.95],[-1.36,1],[-2.1,.97],[-2.3,.93],[-2.37,.86]],
+ n:z=>z>2.2?3.0:z<-2.25?5.6:z<-1.9?4.6:3.8,
+ GL:{z0:1.1,z1:-1.36,wb:.88,wt:.67,yb:.92,yt:[[1.1,.96],[.36,1.38],[-.55,1.4],[-1.36,1.02]],n:4.5},
+ RF:{z0:.34,z1:-.6,wb:.72,wt:.65,yb:1.26,yt:[[.34,1.4],[.2,1.43],[-.6,1.43]],n:4},
+ belt:1,trimZ:-.12,trimL:2.3,bp:[-.12,1.14,.36],roofY:1.438,roofZ:-.13,roofL:.9,numRY:1.442,numRZ:.02,
+ strips:[],spZ:-.6,spY:.76,numZ:.15,numY:.76,hoodZ:1.95,lineY:.56,
+ gr:{w:1,h:.2,y:.5},gr2:{w:.5,h:.08,y:.66},hl:{s:'angular',x:.6,y:.7,z:2.24},split:{w:1.84,y:.2},
+ tl:{s:'pair',y:.84},diff:{w:1.5,h:.12,y:.3},wing:{s:'gt',y:1.4,z:-2.12,w:1.76,neck:1},
+ mir:{z:1,y:1.08},ex:[-.62],ey:.3,wh:{k:1,r:.36,w:.26,x:.86,z:[1.38,-1.36]},bump:0,vent:0,canard:0,scoop:{z:1.25,w:.5,h:.1,l:.5},fog:1},
+{name:'マッスルGT',en:'MUSCLE',d:'長いボンネットと流れる屋根の大排気量クーペ。丸目2灯と3本のテールランプ',
+ YB:[[2.37,.28],[2.28,.17],[-2.25,.18],[-2.37,.3]],arch:.44,fl:.05,tum:.06,
+ BT:[[2.37,.46],[2.33,.62],[2.15,.72],[1.9,.78],[1.3,.84],[.8,.9],[.3,.94],[-.5,.98],[-1.5,1],[-2.1,1],[-2.3,.98],[-2.37,.9]],
+ BW:[[2.37,.7],[2.3,.9],[2.12,.97],[1.38,1],[.6,.97],[-.4,.97],[-1.36,1.02],[-2.1,1],[-2.3,.95],[-2.37,.88]],
+ n:z=>z>2.2?3.2:z<-2.25?4.8:3.6,
+ GL:{z0:.7,z1:-1.9,wb:.9,wt:.66,yb:.88,yt:[[.7,.92],[.1,1.3],[-.6,1.32],[-1.3,1.16],[-1.9,1]],n:4.5},
+ RF:{z0:.1,z1:-1.2,wb:.72,wt:.62,yb:1.14,yt:[[.1,1.3],[-.1,1.34],[-.6,1.34],[-1.2,1.2]],n:4},
+ belt:.96,trimZ:-.6,trimL:2.7,bp:[-.55,1.12,.34],roofY:1.348,roofZ:-.4,roofL:1.1,numRY:1.352,numRZ:-.3,
+ strips:[[2.3,.95],[-1.4,-2.3]],spZ:-.7,spY:.7,numZ:.1,numY:.7,hoodZ:1.55,lineY:.5,
+ gr:{w:1.1,h:.14,y:.5},gr2:{w:.6,h:.06,y:.64},hl:{s:'round',x:.6,y:.62,z:2.25},split:{w:1.9,y:.13},
+ tl:{s:'tri',y:.84},diff:{w:1.5,h:.1,y:.26},wing:{s:'duck',y:1.03,z:-2.25,w:1.7},
+ mir:{z:.62,y:1.02},ex:[-.6,.6],ey:.22,wh:{k:1,r:.35,w:.3,x:.86,z:[1.42,-1.34]},bump:2,vent:0,canard:0,scoop:{z:1.4,w:.7,h:.07,l:.8}},
+{name:'ミッドシップ',en:'MID-SHIP',d:'エンジンを真ん中に積んだ低くワイドなGT。サイドの空気取り入れ口と高いウイング',
+ YB:[[2.37,.2],[2.28,.1],[-2.25,.12],[-2.37,.26]],arch:.45,fl:.05,tum:.12,
+ BT:[[2.37,.32],[2.33,.44],[2.15,.5],[1.8,.55],[1.4,.62],[1,.74],[.6,.86],[.2,.92],[-.6,.94],[-1.2,.96],[-2,.98],[-2.3,.96],[-2.37,.88]],
+ BW:[[2.37,.66],[2.3,.86],[2.12,.95],[1.38,.98],[.6,.94],[-.4,.96],[-1.36,1.04],[-2.1,1.04],[-2.3,.96],[-2.37,.88]],
+ n:z=>z>2.2?2.8:z<-2.25?5:3.4,
+ GL:{z0:1.1,z1:-.9,wb:.86,wt:.6,yb:.68,yt:[[1.1,.72],[.55,1.08],[0,1.16],[-.9,1]],n:4.2},
+ RF:{z0:.45,z1:-.7,wb:.68,wt:.56,yb:1,yt:[[.45,1.1],[.1,1.17],[-.4,1.17],[-.7,1.06]],n:4},
+ belt:.9,trimZ:.2,trimL:1.8,bp:[0,.98,.3],roofY:1.178,roofZ:-.1,roofL:.8,numRY:1.182,numRZ:-.05,
+ strips:[[2.3,.9]],spZ:.3,spY:.62,numZ:.3,numY:.6,hoodZ:1.7,lineY:.42,
+ gr:{w:1.3,h:.08,y:.24},gr2:{w:.8,h:.04,y:.38},hl:{s:'slim',x:.7,y:.5,z:2.12},split:{w:2,y:.07},
+ tl:{s:'bar',y:.9},diff:{w:1.7,h:.14,y:.2},wing:{s:'gt',y:1.3,z:-2.16,w:1.9,neck:1},
+ mir:{z:.85,y:.9},ex:[-.5,.5],ey:.2,wh:{k:2,r:.35,w:.32,x:.88,z:[1.42,-1.3],xr:.95},bump:0,vent:0,canard:1,intake:{z:-.85,y:.6},rvent:1}
 ];
-const CPU_CAR=[0,1,2,3,4,1,2,0];let myCar=0;
+const CPU_CAR=[5,1,7,3,9,2,8,4];let myCar=0;
+// ドアの合わせ目の位置（z。前端・間・後端の順。車種の番号順）。2ドアは2つ、4ドアは3つ
+const DOORS=[[1,0,-1.05],[.85,-.75],[.95,-.55],[.7,-.7],[.75,-.2,-1.2],[1.05,.05,-.9],[.65,-.75],[1,0,-1.05],[.6,-.8],[.8,-.5]];
+let _plM=null;
+function plateMat(){if(_plM)return _plM;const t=canvasTex(128,64,(g,w,h)=>{g.fillStyle='#e9e9e4';g.fillRect(0,0,w,h);g.strokeStyle='#1a1a1c';g.lineWidth=3;g.strokeRect(3,3,w-6,h-6);g.fillStyle='#1a1a1c';g.font='bold 25px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('GP 27-27',w/2,h/2+2);});
+  _plM=new THREE.MeshStandardMaterial({map:t,roughness:.5,polygonOffset:true,polygonOffsetFactor:-2});_plM.userData.shared=1;return _plM;}
 // 車体表面の横位置（z, 高さ y）
 function sideX(c,z,y){const s=bodyAt(c,z);const fy=Math.max(0,Math.min(1,(y-s.yb)/(s.yt-s.yb)));const py=2*fy-1;const w=s.wb+(s.wt-s.wb)*fy;return Math.pow(Math.max(0,1-Math.pow(Math.abs(py),s.n)),1/s.n)*w;}
 function bodyAt(c,z){let yb=pl(c.YB,z);let bump=0;const R=c.arch,wr=c.wh.r;
@@ -1156,27 +1315,30 @@ const _spM={};
 function sponsorMat(txt,col){const key=txt+col;if(_spM[key])return _spM[key];
   const hex='#'+('000000'+col.toString(16)).slice(-6);
   const t=canvasTex(256,64,(g,w,h)=>{g.clearRect(0,0,w,h);g.fillStyle='rgba(10,10,12,.85)';g.fillRect(0,0,w,h);g.fillStyle=hex;g.fillRect(0,h-8,w,8);g.fillStyle='#f4f4f0';g.font='italic bold 34px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,w/2,h/2-3);});
-  return _spM[key]=new THREE.MeshStandardMaterial({map:t,roughness:.45,transparent:true,polygonOffset:true,polygonOffsetFactor:-2});}
+  const sm=new THREE.MeshStandardMaterial({map:t,roughness:.45,transparent:true,polygonOffset:true,polygonOffsetFactor:-2});sm.userData.shared=1;return _spM[key]=sm;}
 // グリルの網目（車種ごとに黒地＋明るい格子）
 let _grM=null;
 function grilleMat(){if(_grM)return _grM;const t=canvasTex(128,64,(g,w,h)=>{g.fillStyle='#08090b';g.fillRect(0,0,w,h);g.strokeStyle='#2f3338';g.lineWidth=2;for(let x=-h;x<w+h;x+=10){g.beginPath();g.moveTo(x,0);g.lineTo(x+h,h);g.stroke();g.beginPath();g.moveTo(x+h,0);g.lineTo(x,h);g.stroke();}g.strokeStyle='#14161a';g.lineWidth=4;g.strokeRect(2,2,w-4,h-4);});
-  return _grM=new THREE.MeshStandardMaterial({map:t,roughness:.5,metalness:.4});}
+  _grM=new THREE.MeshStandardMaterial({map:t,roughness:.5,metalness:.4});_grM.userData.shared=1;return _grM;}
 function sideXm(c,z,y,h){let m=0;for(let i=0;i<=6;i++)m=Math.max(m,sideX(c,z,y-h/2+h*i/6));return m;}
 const BODY_Z=(()=>{const a=[];for(let z=2.37;z>=-2.37;z-=.05)a.push(+z.toFixed(3));if(a[a.length-1]>-2.37)a.push(-2.37);return a;})();
 const _cg=[];
 function carGeos(ci){if(_cg[ci])return _cg[ci];const c=CARS[ci];
   const zr=(z0,z1)=>{const a=[];for(let z=z0;z>z1;z-=.06)a.push(z);a.push(z1);return a;};
   const G=c.GL,R=c.RF;
-  return _cg[ci]={body:loftGeo(BODY_Z,z=>bodyAt(c,z),30),
+  const o={body:loftGeo(BODY_Z,z=>bodyAt(c,z),30),
     glass:loftGeo(zr(G.z0,G.z1),z=>({wb:G.wb,wt:G.wt,yb:G.yb,yt:pl(G.yt,z),n:G.n}),22),
-    roof:loftGeo(zr(R.z0,R.z1),z=>({wb:R.wb,wt:R.wt,yb:R.yb,yt:pl(R.yt,z),n:R.n}),22)};}
+    roof:loftGeo(zr(R.z0,R.z1),z=>({wb:R.wb,wt:R.wt,yb:R.yb,yt:pl(R.yt,z),n:R.n}),22)};
+  for(const k in o)o[k].userData.shared=1;return _cg[ci]=o;}
+const PHY=(o)=>{if(!isTouch)return new THREE.MeshPhysicalMaterial(o);const q=Object.assign({},o);delete q.clearcoat;delete q.clearcoatRoughness;return new THREE.MeshStandardMaterial(q);}; // スマホはクリアコートなしの標準材質（T130）
 function makeKart(dr,num,ci){
   ci=ci||0;const c=CARS[ci],gm=carGeos(ci),WH=c.wh,WZ=WH.z;
   const root=new THREE.Group(),body=new THREE.Group();root.add(body);
-  const S=(col,m=.3,r=.45)=>new THREE.MeshStandardMaterial({color:col,metalness:m,roughness:r});
-  const paint=new THREE.MeshPhysicalMaterial({color:dr.color,metalness:.15,roughness:.38,clearcoat:1,clearcoatRoughness:.06});
-  const accent=new THREE.MeshPhysicalMaterial({color:dr.accent,metalness:.15,roughness:.38,clearcoat:1,clearcoatRoughness:.06});
-  const glass=new THREE.MeshPhysicalMaterial({color:0x06080b,metalness:.2,roughness:.04,clearcoat:1,clearcoatRoughness:.01});
+  const S=(col,m=.3,r=.45)=>shM('S'+col+'_'+m+'_'+r,()=>new THREE.MeshStandardMaterial({color:col,metalness:m,roughness:r})); // 色固定の材質は全車で共有（T124）
+  const own=[]; // この車だけの絵（dispose する）
+  const paint=PHY({color:dr.color,metalness:.15,roughness:.38,clearcoat:1,clearcoatRoughness:.06});
+  const accent=PHY({color:dr.accent,metalness:.15,roughness:.38,clearcoat:1,clearcoatRoughness:.06});
+  const glass=shM('glass',()=>PHY({color:0x06080b,metalness:.2,roughness:.04,clearcoat:1,clearcoatRoughness:.01,transparent:true,opacity:.6}));
   const carbon=S(0x0b0b0c,.05,.75);carbon.envMapIntensity=.1;const black=S(0x060607,0,.8),rubber=S(0x121213,0,.88),rim=S(0x2c2e32,.85,.32);
   const add=(geo,mat,x,y,z,p=body,rx=0,ry=0,rz=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx,ry,rz);m.castShadow=SHADOWS;p.add(m);return m;};
   const bx=(w,h,d,mat,x,y,z,rx,ry,rz)=>add(new THREE.BoxGeometry(w,h,d),mat,x,y,z,body,rx||0,ry||0,rz||0);
@@ -1198,7 +1360,7 @@ function makeKart(dr,num,ci){
   for(const s of[-1,1])bx(.012,.09,2.2,accent,s*(sideX(c,-.05,c.lineY)+.008),c.lineY,-.05);
   // ゼッケン（ドア）とルーフ
   const nt=canvasTex(128,128,(g)=>{g.fillStyle='#f4f4f0';g.fillRect(8,8,112,112);g.fillStyle='#111';g.font='bold 78px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(num),64,68);});
-  const nm=new THREE.MeshStandardMaterial({map:nt,roughness:.5,transparent:true,polygonOffset:true,polygonOffsetFactor:-2});
+  own.push(nt);const nm=new THREE.MeshStandardMaterial({map:nt,roughness:.5,transparent:true,polygonOffset:true,polygonOffsetFactor:-2});
   for(const s of[-1,1]){const p=add(new THREE.PlaneGeometry(.42,.42),nm,s*(sideXm(c,c.numZ,c.numY,.42)+.01),c.numY,c.numZ,body,0,s*Math.PI/2);p.castShadow=false;}
   const roofN=add(new THREE.PlaneGeometry(.5,.5),nm,0,c.numRY,c.numRZ,body,-Math.PI/2);roofN.castShadow=false;
   // フロント：グリル、ライト、スプリッター
@@ -1206,8 +1368,16 @@ function makeKart(dr,num,ci){
   add(new THREE.BoxGeometry(c.gr.w,c.gr.h,.06),gmat,0,c.gr.y,2.35);
   add(new THREE.BoxGeometry(c.gr2.w,c.gr2.h,.05),black,0,c.gr2.y,2.33);
   const hl=new THREE.MeshStandardMaterial({color:0xe8eef6,emissive:0xcfe0ff,emissiveIntensity:.5,roughness:.08,metalness:.3});
-  const lens=new THREE.MeshPhysicalMaterial({color:0x111418,roughness:.05,clearcoat:1});
-  const H=c.hl;
+  const lens=shM('lens',()=>PHY({color:0x111418,roughness:.05,clearcoat:1}));
+  // ライトは車体の表面から位置を求めて、上の縁より下・前面に埋め込む（浮かせない）
+  const H0=c.hl;let H=H0;
+  if(H0.s!=='popup'){const hh={round:.07,slim:.05,angular:.075,box:.12}[H0.s]||.07;
+    let top=pl(c.BT,H0.z);while(top>.1&&sideX(c,H0.z,top)<H0.x)top-=.005;
+    const y=Math.min(H0.y,top-hh);let fz=H0.z;
+    for(let z=2.37;z>1.5;z-=.01){const sb=bodyAt(c,z);if(y>=sb.yb&&y<=sb.yt&&sideX(c,z,y)>=H0.x){fz=z;break;}}
+    const hw={round:.5,slim:.52,angular:.5,box:.52}[H0.s]||.5;let hx=H0.x;
+    while(hx>.4&&sideX(c,fz-.04,y)<hx+hw/2-.05)hx-=.01; // 外側の端が車体の幅に収まるまで内側へ
+    H={...H0,x:hx,y,z:fz-.04};}
   for(const s of[-1,1]){
     if(H.s==='round'){ // 黒いふち＋丸みのあるレンズ＋2つの丸い光源＋細い昼間点灯ライン
       bx(.5,.12,.12,black,s*H.x,H.y,H.z,-.35,s*-.12);
@@ -1216,15 +1386,20 @@ function makeKart(dr,num,ci){
       for(const o of[-.1,.1])add(new THREE.CylinderGeometry(.045,.045,.02,12),hl,s*H.x+o*Math.cos(s*.12),H.y+.015,H.z+.085,body,Math.PI/2-.35,0,0);
       bx(.4,.016,.02,hl,s*H.x,H.y-.045,H.z+.085,-.35,s*-.12);
     }else if(H.s==='slim'){ // 細く吊り上がった目（クーペ・GT）
-      bx(.62,.09,.1,black,s*H.x,H.y,H.z,-.3,s*-.2,s*.12);
-      bx(.54,.05,.04,lens,s*H.x,H.y+.005,H.z+.05,-.3,s*-.2,s*.12);
-      for(const o of[.14,-.12])add(new THREE.CylinderGeometry(.034,.034,.02,12),hl,s*(H.x+o*s*.9),H.y+.005,H.z+.075,body,Math.PI/2-.3,0,0);
-      bx(.5,.014,.02,hl,s*H.x,H.y-.04,H.z+.075,-.3,s*-.2,s*.12);
+      bx(.52,.09,.1,black,s*H.x,H.y,H.z,-.3,s*.2,s*.12);
+      bx(.44,.05,.04,lens,s*H.x,H.y+.005,H.z+.05,-.3,s*.2,s*.12);
+      for(const o of[.11,-.1])add(new THREE.CylinderGeometry(.034,.034,.02,12),hl,s*(H.x+o*s*.9),H.y+.005,H.z+.075,body,Math.PI/2-.3,0,0);
+      bx(.4,.014,.02,hl,s*H.x,H.y-.04,H.z+.075,-.3,s*.2,s*.12);
     }else if(H.s==='angular'){ // 角ばったつり目（ハッチ）
-      bx(.54,.14,.1,black,s*H.x,H.y,H.z,-.3,s*-.14,s*.1);
-      bx(.46,.09,.04,lens,s*H.x,H.y+.005,H.z+.05,-.3,s*-.14,s*.1);
-      for(const o of[.12,-.1])bx(.12,.05,.02,hl,s*(H.x+o*s),H.y+.01,H.z+.075,-.3,s*-.14,s*.1);
-      bx(.42,.016,.02,hl,s*H.x,H.y-.06,H.z+.075,-.3,s*-.14,s*.1);
+      bx(.5,.14,.1,black,s*H.x,H.y,H.z,-.3,s*.14,s*.1);
+      bx(.42,.09,.04,lens,s*H.x,H.y+.005,H.z+.05,-.3,s*.14,s*.1);
+      for(const o of[.11,-.09])bx(.12,.05,.02,hl,s*(H.x+o*s),H.y+.01,H.z+.075,-.3,s*.14,s*.1);
+      bx(.38,.016,.02,hl,s*H.x,H.y-.06,H.z+.075,-.3,s*.14,s*.1);
+    }else if(H.s==='popup'){ // 開いたポップアップライト（ボンネット上に起き上がる）
+      const yb=BTz(H.z);
+      bx(.34,.03,.18,black,s*H.x,yb+.01,H.z);
+      bx(.3,.15,.07,black,s*H.x,yb+.08,H.z,-.9);
+      bx(.24,.1,.03,hl,s*H.x,yb+.115,H.z+.03,-.9);
     }else{ // 角形2灯（クラシック）
       bx(.52,.22,.1,black,s*H.x,H.y,H.z,-.1,s*-.05);
       for(const o of[.12,-.12])bx(.2,.14,.03,hl,s*(H.x+o),H.y,H.z+.055,-.1,s*-.05);
@@ -1233,7 +1408,20 @@ function makeKart(dr,num,ci){
   bx(c.split.w,.03,.2,black,0,c.split.y,2.33);
   for(const s of[-1,1])bx(.06,.12,.26,black,s*(c.split.w/2-.02),c.split.y+.06,2.3);
   if(c.canard)for(const s of[-1,1]){bx(.3,.016,.14,black,s*(BWz(2.2)-.06),c.split.y+.22,2.2,0,s*.2,s*.1);}
-  if(c.bump){bx(1.86,.2,.12,black,0,.4,2.36);bx(1.86,.18,.12,black,0,.42,-2.37);} // 黒い樹脂バンパー（クラシック）
+  if(c.bump===1){bx(1.86,.2,.12,black,0,.4,2.36);bx(1.86,.18,.12,black,0,.42,-2.37);} // 黒い樹脂バンパー（クラシック）
+  else if(c.bump===2){const ch=S(0xc8ccd2,.9,.25);bx(1.84,.07,.1,ch,0,.4,2.36);bx(1.84,.07,.1,ch,0,.44,-2.37);} // クロームのバンパー（マッスル）
+  // ボンネットのスクープ（空気取り入れ口）
+  if(c.scoop){const q=c.scoop,pz=Math.atan2(BTz(q.z-.1)-BTz(q.z+.1),.2);
+    add(new THREE.BoxGeometry(q.w,q.h,q.l),paint,0,BTz(q.z)+q.h/2-.01,q.z,body,pz);
+    bx(q.w-.08,q.h*.7,.02,black,0,BTz(q.z+q.l/2)+q.h*.4,q.z+q.l/2+.005,pz);}
+  // バンパーの丸い補助ライト（ラリー）
+  if(c.fog)for(const s of[-1,1])add(new THREE.CylinderGeometry(.075,.075,.04,14),hl,s*.66,c.gr.y-.02,2.37,body,Math.PI/2);
+  // ルーフレール（ワゴン）
+  if(c.rails){const rm=S(0x9aa0a8,.8,.4);for(const s of[-1,1])bx(.035,.035,2.2,rm,s*.56,c.roofY+.03,-.9);}
+  // サイドの空気取り入れ口（ミッドシップ）
+  if(c.intake)for(const s of[-1,1])bx(.06,.2,.55,black,s*(sideX(c,c.intake.z,c.intake.y)+.005),c.intake.y,c.intake.z);
+  // リアデッキの排熱ルーバー（ミッドシップ）
+  if(c.rvent)for(let q=0;q<6;q++){const z=-1.0-q*.12;bx(.9,.012,.05,black,0,BTz(z)+.013,z,Math.atan2(BTz(z-.1)-BTz(z+.1),.2));}
   // ボンネットのエアロ（ダミーのダクト）
   if(c.vent)for(const s of[-1,1])for(let q=0;q<4;q++){const z=1.45-q*.09;bx(.3,.012,.04,black,s*.38,BTz(z)+.013,z,Math.atan2(BTz(z-.1)-BTz(z+.1),.2));}
   // リア：テールランプ、ディフューザー、ウイング
@@ -1241,6 +1429,7 @@ function makeKart(dr,num,ci){
   const T=c.tl;
   if(T.s==='pair'){for(const s of[-1,1])bx(.46,.08,.05,tl,s*.52,T.y,-2.39);bx(.5,.035,.04,tl,0,T.y+.02,-2.39);}
   else if(T.s==='bar'){bx(1.56,.06,.05,tl,0,T.y,-2.385);for(const s of[-1,1])bx(.3,.1,.05,tl,s*.66,T.y,-2.385);}
+  else if(T.s==='tri'){for(const s of[-1,1])for(const o of[0,.15,.3])bx(.1,.3,.05,tl,s*(.4+o),T.y,-2.385);bx(.5,.34,.03,black,0,T.y,-2.37);}
   else if(T.s==='vert'){for(const s of[-1,1]){bx(.12,.36,.05,tl,s*.82,T.y,-2.375);bx(.34,.06,.05,tl,s*.5,T.y-.1,-2.385);}}
   else{for(const s of[-1,1])bx(.62,.14,.05,tl,s*.55,T.y,-2.385);}
   bx(c.diff.w,c.diff.h,.3,carbon,0,c.diff.y,-2.3);
@@ -1257,6 +1446,54 @@ function makeKart(dr,num,ci){
   for(const x of c.ex)add(new THREE.CylinderGeometry(.055,.055,.22,10),exM,x,c.ey,-2.38,body,Math.PI/2);
   const flameMat=new THREE.MeshBasicMaterial({color:0x7fb8ff,transparent:true,opacity:.8});const fg=new THREE.ConeGeometry(.08,.5,8);fg.rotateX(-Math.PI/2);
   const flames=[add(fg,flameMat,c.ex[0],c.ey,-2.68)];flames.forEach(f=>{f.visible=false;f.castShadow=false;});
+  // ドアの合わせ目・取っ手・ワイパー・後ろのナンバープレート（β0.32.0）
+  {const D=DOORS[ci]||[],hm=S(0x6a6e76,.6,.4),lm=S(0x120a09,0,.9),wm=S(0x4a4d54,.3,.6),y0=pl(c.YB,0)+.16,y1=c.belt-.03,ym=(y0+y1)/2;
+    for(const s of[-1,1]){
+      D.forEach(z=>bx(.02,y1-y0,.02,lm,s*(sideX(c,z,ym)+.008),ym,z));
+      if(D.length>1){const za=D[0],zb=D[D.length-1];bx(.02,.02,za-zb,lm,s*(sideX(c,(za+zb)/2,y0)+.008),y0,(za+zb)/2);}
+      for(let k=0;k+1<D.length;k++){const z=D[k+1]+.2,yh=c.belt-.08;bx(.04,.03,.16,hm,s*(sideX(c,z,yh)+.014),yh,z);}}
+    const G=c.GL,wz=G.z0-.28,wy=pl(G.yt,wz),ws=Math.atan2(pl(G.yt,wz-.05)-wy,.05);
+    for(const o of[-.3,.3])bx(.5,.016,.026,wm,o,wy+.014,wz,ws,o*.4);
+    const pp=add(new THREE.PlaneGeometry(.5,.25),plateMat(),0,c.diff.y+c.diff.h+.16,-2.392,body,0,Math.PI);pp.castShadow=false;}
+  // 前のナンバープレートと牽引フック（β0.33.0）。ナンバーはグリルの前に付け、鼻先の低い車は小さくする
+  {const topF=pl(c.BT,2.345)-.02,botF=pl(c.YB,2.345)+.03,hP=Math.min(.22,topF-botF),yC=Math.min(topF-hP/2,Math.max(botF+hP/2,c.gr.y));
+    bx(hP*2.1,hP+.02,.02,black,0,yC,2.382);
+    const fp=add(new THREE.PlaneGeometry(hP*2,hP),plateMat(),0,yC,2.394,body,0,0);fp.castShadow=false;
+    const tm=S(0xe0580f,.2,.5),hy=Math.max(botF+.07,c.split.y+.1);
+    for(const [x,z,s] of[[.5,2.37,1],[.35,-2.37,-1]]){const yy=s>0?hy:Math.max(c.diff.y,.18);bx(.03,.03,.1,tm,x,yy,z+s*.04);const r=add(new THREE.TorusGeometry(.05,.013,6,14),tm,x,yy,z+s*.1,body,0,0,0);r.castShadow=false;}}
+  // 細部（β0.33.0）：ボンネットピン・給油口・ルーフのアンテナ・サイドマーカー・フェンダーの排気スリット・リアワイパー・バンパーの当てゴム
+  {const chrome=S(0xc8ccd2,.9,.25),amber=shM('amber',()=>new THREE.MeshStandardMaterial({color:0xffa31a,emissive:0xff8a00,emissiveIntensity:.35,roughness:.3}));
+    for(const s of[-1,1]){const zp=2.04,yp=BTz(zp),sl=Math.atan2(BTz(zp-.1)-BTz(zp+.1),.2);
+      add(new THREE.CylinderGeometry(.02,.02,.035,8),chrome,s*.46,yp+.012,zp,body,sl);bx(.014,.005,.1,black,s*.46,yp+.012,zp-.06,sl);}
+    {const z=-1.55,y=c.belt-.1,x=sideX(c,z,y);const a=add(new THREE.CircleGeometry(.085,16),black,x+.004,y,z,body,0,Math.PI/2);const b=add(new THREE.CircleGeometry(.058,16),chrome,x+.006,y,z,body,0,Math.PI/2);a.castShadow=b.castShadow=false;}
+    {const R=c.RF,z=R.z1+.3,y=pl(R.yt,z)+.025;bx(.025,.06,.16,black,0,y,z,Math.atan2(pl(R.yt,z-.1)-pl(R.yt,z+.1),.2));}
+    if(ci===0||ci===4)for(const s of[-1,1])bx(.02,.05,.14,amber,s*(sideX(c,2.17,.56)+.006),.56,2.17);
+    if(ci===1||ci===3)for(let q=0;q<(ci===3?4:3);q++){const z=.98-q*.045;bx(.02,.13,.022,black,(sideX(c,z,.62)+.006),.62,z);bx(.02,.13,.022,black,-(sideX(c,z,.62)+.006),.62,z);}
+    if(ci===2||ci===5){const G=c.GL,z=G.z1+.2,y=pl(G.yt,z)+.014;bx(.46,.016,.026,black,0,y,z,Math.atan2(pl(G.yt,z-.05)-pl(G.yt,z),.05),0,.12);}
+    if(ci===4)for(const s of[-1,1])for(const z of[2.4,-2.4])bx(.07,.2,.07,black,s*.56,.4,z);}
+  // 運転席（β0.33.0）：ガラス越しに見えるシート・ドライバー（ヘルメット）・ハンドル・メーターパネル・ロールケージ（右ハンドル）。車載視点では隠す
+  const inter=new THREE.Group();body.add(inter);
+  {const G=c.GL,R=c.RF,by=c.belt,dk=S(0x141518,0,.9),cage=S(0xaab0b8,.7,.4),suit=S(0x23262c,0,.85);
+    const ib=(w,h,d,mat,x,y,z,rx,ry,rz)=>add(new THREE.BoxGeometry(w,h,d),mat,x,y,z,inter,rx||0,ry||0,rz||0);
+    const dx=-.38,wz=G.z0-.5,sz=wz-.75,bz=sz-.22,hy=by+.1;
+    ib(.44,.8,.1,dk,dx,by-.2,bz,-.12);ib(.2,.16,.07,dk,dx,hy,bz-.02,-.1); // 背もたれ・ヘッドレスト
+    ib(.44,.1,.46,dk,dx,by-.45,sz);
+    ib(.44,.32,.2,suit,dx,hy-.3,bz+.2,-.12); // 肩
+    add(new THREE.SphereGeometry(.115,14,10),accent,dx,hy,sz-.08,inter);
+    ib(.16,.05,.1,black,dx,hy-.005,sz-.08+.1); // バイザー
+    for(const s of[-1,1])ib(.08,.08,.5,suit,dx+s*.2,hy-.32,wz-.12,.3,s*-.14); // 腕
+    ib(.05,.05,.3,dk,dx,by+.04,wz-.14,.55); // ステアリングコラム
+    add(new THREE.TorusGeometry(.15,.016,6,16),dk,dx,by+.14,wz,inter,.45,0,0);
+    ib(1.34,.1,.26,dk,0,by-.03,G.z0-.26); // ダッシュボード
+    ib(.3,.12,.1,dk,dx,by+.1,wz+.22); // メーターパネル
+    // ロールケージ：後ろの2本柱と斜め、前の柱（Aピラー沿い）
+    const rb=bz-.15,top=R.yb;
+    for(const s of[-1,1]){ib(.035,top-by+.3,.035,cage,s*.6,(top+by-.3)/2,rb);
+      const fz=G.z0-.3,fy=by-.05,tz=R.z0-.05,dy=top-fy,dz=tz-fz,L=Math.hypot(dy,dz);ib(.035,.035,L,cage,s*.6,(top+fy)/2,(tz+fz)/2,-Math.atan2(dy,dz));}
+    {const dxx=1.2,dyy=top-.12-by,L=Math.hypot(dxx,dyy);ib(L,.035,.035,cage,0,(top-.12+by)/2,rb,0,0,Math.atan2(dyy,dxx));}
+    ib(1.2,.035,.035,cage,0,top-.1,rb);
+  }
+  mergeByMaterial(inter);inter.traverse(o=>{o.castShadow=false;});
   // タイヤとホイール（ブレーキキャリパーは回らない側）
   const wheels=[];const cal=S(0xc8a21a,.4,.4),disc=S(0x6a6d72,.8,.45);const wfg=wfaceGeo(WH.r),wmat=wheelMat(WH.k);
   const mkWheel=(x,z,front)=>{const r=WH.r,w=WH.w;const piv=new THREE.Group();piv.position.set(x,r,z);root.add(piv);const spin=new THREE.Group();piv.add(spin);
@@ -1273,17 +1510,25 @@ function makeKart(dr,num,ci){
   const sparks=[];
   const shield=new THREE.Object3D();shield.visible=false;
   let blob=null;if(!SHADOWS){blob=new THREE.Mesh(new THREE.PlaneGeometry(2.3,5.0),new THREE.MeshBasicMaterial({map:blobTex(),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.05;root.add(blob);}
-  heads.forEach(m=>m.userData.keep=1);mergeByMaterial(body);linAll(root);
+  heads.push(inter);heads.forEach(m=>m.userData.keep=1);mergeByMaterial(body);linAll(root);
   scene.add(root);
-  return {root,body,wheels,wheelS:new THREE.Object3D(),flames,sparks,sparkMat,shield,headParts:heads,tail:tl,head:hl,paint,paintBase:paint.color.clone(),dmgShown:0,car:ci,hlx:H.x,hly:H.y+.02,hlz:H.z+.17};
+  return {root,body,wheels,wheelS:new THREE.Object3D(),flames,sparks,sparkMat,shield,headParts:heads,tail:tl,head:hl,paint,paintBase:paint.color.clone(),dmgShown:0,car:ci,own,hlx:H.x,hly:H.y+.02,hlz:H.z+.17};
 }
+// 全車で共有する材質・形（userData.shared＝dispose しない）
+const _shM={};function shM(key,fn){let m=_shM[key];if(!m){m=fn();m.userData.shared=1;_shM[key]=m;}return m;}
+// 車を捨てる時に GPU のメモリを解放する（共有の形・材質・絵は残す）
+function disposeKart(g){if(!g||!g.root)return;const seen=new Set();
+  g.root.traverse(o=>{if(o.isMesh&&o.geometry&&!o.geometry.userData.shared)o.geometry.dispose();
+    const ms=o.material?(Array.isArray(o.material)?o.material:[o.material]):[];
+    for(const m of ms){if(m.userData.shared||seen.has(m))continue;seen.add(m);m.dispose();}});
+  (g.own||[]).forEach(t=>t.dispose());}
 // 同じ材質の部品を1つにまとめて描画回数を減らす
 function mergeByMaterial(grp){const by=new Map();for(const m of grp.children.slice()){if(!m.isMesh||m.material.map||m.userData.keep)continue;if(!by.has(m.material))by.set(m.material,[]);by.get(m.material).push(m);}
   for(const [mat,list] of by){if(list.length<2)continue;const P=[],Nn=[];
     for(const m of list){m.updateMatrix();let g=m.geometry.index?m.geometry.toNonIndexed():m.geometry.clone();g.applyMatrix4(m.matrix);P.push(...g.attributes.position.array);Nn.push(...g.attributes.normal.array);grp.remove(m);}
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(Nn,3));
     const mm=new THREE.Mesh(g,mat);mm.castShadow=SHADOWS;grp.add(mm);}}
-const _wfg={};function wfaceGeo(r){return _wfg[r]||(_wfg[r]=new THREE.CircleGeometry(r*.74,24));}
+const _wfg={};function wfaceGeo(r){if(!_wfg[r]){_wfg[r]=new THREE.CircleGeometry(r*.74,24);_wfg[r].userData.shared=1;}return _wfg[r];}
 const _wm=[];
 function wheelMat(k){if(_wm[k])return _wm[k];const t=canvasTex(256,256,(g,w,h)=>{g.clearRect(0,0,w,h);const c=w/2;
   g.fillStyle='#7a8089';g.beginPath();g.arc(c,c,c-2,0,Math.PI*2);g.fill();
@@ -1294,7 +1539,7 @@ function wheelMat(k){if(_wm[k])return _wm[k];const t=canvasTex(256,256,(g,w,h)=>
   g.globalCompositeOperation='source-over';
   g.strokeStyle='#5d6168';g.lineWidth=6;g.beginPath();g.arc(c,c,c-6,0,Math.PI*2);g.stroke();
   g.fillStyle='#9aa0a8';g.beginPath();g.arc(c,c,18,0,Math.PI*2);g.fill();g.fillStyle='#2a2c30';for(let q=0;q<5;q++){const a=q/5*Math.PI*2;g.beginPath();g.arc(c+Math.cos(a)*10,c+Math.sin(a)*10,3,0,Math.PI*2);g.fill();}});
-  return _wm[k]=new THREE.MeshStandardMaterial({map:t,metalness:.8,roughness:.3,side:THREE.DoubleSide,alphaTest:.5});}
+  const wm=new THREE.MeshStandardMaterial({map:t,metalness:.8,roughness:.3,side:THREE.DoubleSide,alphaTest:.5});wm.userData.shared=1;return _wm[k]=wm;}
 let _blobT=null;function blobTex(){if(_blobT)return _blobT;_blobT=canvasTex(64,128,(g,w,h)=>{const gr=g.createRadialGradient(32,64,4,32,64,62);gr.addColorStop(0,'rgba(0,0,0,.55)');gr.addColorStop(.6,'rgba(0,0,0,.35)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);},false,false);return _blobT;}
 
 linAll(scene);[sun.color,hemi.color,hemi.groundColor,scene.fog.color].forEach(c=>c.convertSRGBToLinear());
@@ -1309,7 +1554,7 @@ let autoAccel=isTouch;
 
 function setupRace(){
   envStart();rubReset();
-  for(const k of karts){scene.remove(k.g.root);}
+  for(const k of karts){scene.remove(k.g.root);disposeKart(k.g);}
   for(const p of projectiles)scene.remove(p.m);for(const s of slicks)scene.remove(s.m);
   karts=[];projectiles=[];slicks=[];finishOrder=[];afterFinish=0;raceTime=0;
   skidMesh.count=0;skidI=0;{const zero=new THREE.Matrix4().makeScale(0,0,0);for(let i=0;i<SKID_MAX;i++)skidMesh.setMatrixAt(i,zero);skidMesh.instanceMatrix.needsUpdate=true;}
@@ -1327,7 +1572,7 @@ function setupRace(){
       drifting:false,driftDir:0,driftCharge:0,boost:0,spin:0,shield:0,item:null,roulette:0,
       finished:false,finishTime:0,lane:lat*.5,laneT:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
       prevWheel:null,g:makeKart(dr,d===playerChoice?myNo(d):d+1,d===playerChoice?myCar:CPU_CAR[d])};
-    if(d===playerChoice)applySetup(k,setDrv,setG,setW,setB,setT);else applySetup(k,sess==='drag'?setDrv:CPU_DRV[d],1,1,1,0);
+    if(d===playerChoice)applySetup(k,setDrv,setG,setW,setB,setT,setC);else applySetup(k,sess==='drag'?setDrv:CPU_DRV[d],1,1,1,0);
     karts.push(k);
   });
   const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);
@@ -1399,13 +1644,15 @@ function stepKart(k,dt,ctl){
   // 先のコーナー（約300m）の速さ vref で回転が SHIFT_BK 以上になる、いちばん高いギアまで落とす（頂点で力のある回転域に入り、立ち上がりでそこから上げていく）
   // 旋回中（横加速度が DSAY を超えている間）は落とさない（荷重が乱れる）。落とす瞬間はアクセルをあおって回転を合わせる（blip）
   if(k.blip>0)k.blip=Math.max(0,k.blip-dt/BLIPT);
-  if(EBK&&k.liftT>LFT&&(k.dsT||0)<=0&&k.gear>0&&!k.manual&&k.u>6&&dsProg>=DSP&&!(DSAY>0&&Math.abs(k.ay)>DSAY)){
+  if(EBK&&k.liftT>LFT&&(k.dsT||0)<=0&&k.gear>0&&!k.manual&&k.u>6&&dsProg>=DSP&&(DSMIN<=0||k.u-vrefD>DSMIN)&&!(DSAY>0&&Math.abs(k.ay)>DSAY)){
     if(k.gear>gtv&&Math.abs(k.u)*RATIO[k.gear-1]*K<=SHIFT_BD){k.gear--;k.dsT=DSCD;if(BLIPR>0){k.blip=1;sfx('blip',k);}}}
   k.rpm=Math.max(1400,Math.abs(k.u)*RATIO[k.gear]*K);
   // T105 エンジン自体の回転 erpm：クラッチが切れている間（発進・変速中）は車速から離れ、アクセルで素早く上がる。つながっている間は車速どおり。上がる・下がる速さに上限（慣性）
   {const wr=k.rpm,th=k.spin>0?0:(ctl.accel?(ctl.thr??1):0);if(k.erpm==null)k.erpm=wr;
    let tg=wr;if(ERQ&&k.shiftT<=0){const slip=Math.max(0,1-Math.abs(k.u)/ERC);if(slip>0)tg=wr+(Math.max(wr,1400+th*ERL)-wr)*slip;}
-   const d=tg-k.erpm;k.erpm+=Math.max(-ERD*dt,Math.min(ERU*dt,d));if(!ERQ)k.erpm=wr;k.erpm=Math.min(REDLINE+200,Math.max(1100,k.erpm));}
+   const ru=(k.tq&&k.tq.ru)||ERU,rd=(k.tq&&k.tq.rd)||ERD,d=tg-k.erpm;k.erpm+=Math.max(-rd*dt,Math.min(ru*dt,d));if(!ERQ)k.erpm=wr;k.erpm=Math.min(REDLINE+200,Math.max(1100,k.erpm));}
+  // マニュアル（レース等）：停車近くではクラッチが切れて1速に戻る（高いギアのまま止まっても発進できる）
+  if(k.manual&&sess!=='drag'&&k.gear>0&&Math.abs(k.u)<4)k.gear=0;
   // エンジンブレーキの強さは従来のギア割り当て（回転だけで決まる gc）で計算し、先落としで効きが変わらないように
   {let gc=k.gc??k.gear;const rc=Math.abs(k.u)*RATIO[gc]*K;if(rc>SHIFT_UP&&gc<TOPG)gc++;else if(rc<SHIFT_DN&&gc>0)gc--;k.gc=gc;}
   let Fd=0,Fb=0;
@@ -1419,6 +1666,8 @@ function stepKart(k,dt,ctl){
     else if(ctl.accel&&k.shiftT<=0)Fd=drv();
     else if(!ctl.accel)Fd=EBF>0?-(EBR+EBF*(RATIO[k.gear]/RATIO[0])*Math.max(.3,Math.min(1.1,k.rpm/8000)))*Math.sign(k.u):-(.6+k.gc*.05)*Math.sign(k.u)*(1+ (5-k.gc)*.12);
   }
+  // 回転を合わせずにシフトダウンした時のショック（エンジンブレーキの衝撃が駆動輪にかかる）。短く減衰
+  if(k.shk>0){Fd-=k.shk*Math.sign(k.u||1);k.shk=Math.max(0,k.shk-dt*SHKM/.35);}
   const mu=MU[surf]*wetMul(surf,k)*(surf==='road'?1+RUBG*rubAt(k):1)*k.st.grip*(k.gripK||1)*(k.spin>0?.5:1);
   const muF=mu,muR=mu*(k.drifting?.45:1);
   const cd=k.cd,roll=.35+DRAGX[surf]*Math.abs(k.u);
@@ -1454,7 +1703,7 @@ function stepKart(k,dt,ctl){
    k.thrV=thr;
    // T95：走行風で冷え（air）、雨で下がり（COW×濡れ）、ピットの停車中は急に冷える。傷んだラジエーター（dmg）や前の車の後ろ（draft）で上がる。高すぎると出力が落ちる（heatK）
    const pc=k.pit===2?1:0,cw=typeof ENV!=='undefined'?COW*Math.min(1,ENV.wet||0):0;
-   k.tw+=((78+34*ld*(1-.4*air)+(k.dmg||0)*25+(k.draft||0)*5-cw)*(1-pc)+70*pc-k.tw)*Math.min(1,dt*(.09+PTC*pc));
+   k.tw+=((78+(34*ld*(1-.4*air)+(k.dmg||0)*25+(k.draft||0)*5)*(k.hf||1)-cw)*(1-pc)+70*pc-k.tw)*Math.min(1,dt*(.09+PTC*pc));
    k.to+=((82+.8*(k.tw-78)+22*ld*(.5+.5*rn))*(1-pc)+75*pc-k.to)*Math.min(1,dt*(.04+PTC*pc*.5));
    k.heatK=1-OHL*Math.max(Math.max(0,Math.min(1,(k.tw-OHT)/OHF)),Math.max(0,Math.min(1,(k.to-OIT)/OHF)));
    const turbo=k.tq===TQC[2],bt=thr>.02?(turbo?Math.min(1.3,Math.max(0,(k.rpm-2800)/3000)*1.3):0)*thr+(thr-1)*.05:-.85+.8*thr*Math.min(1,k.rpm/4000)-.1*(1-rn);
@@ -1485,7 +1734,7 @@ let rwBuf=[],rwT=0,holdT=0,rwCount=0;
 function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
 function doRewind(){if(sess==='drag')return;if(state!=='race'||holdT>0||rwBuf.length<3)return;const target=raceTime-5;let s=rwBuf[0];for(const b of rwBuf)if(b.t<=target)s=b;
   rwBuf.length=rwBuf.indexOf(s)+1;raceTime=s.t;finishOrder.length=s.fo;karts.forEach((k,j)=>RW_KEYS.forEach((n,q)=>k[n]=s.ks[j][q]));
-  for(const k of karts)k.prevWheel=null;holdT=1.2;rwCount++;rpBuf=rpBuf.filter(f=>f.t<=raceTime);if(solo()){const p=player();if(p.lap>=1&&!p.lapBad){p.lapBad=true;telop('REWIND','巻き戻したのでこのラップは無効','yellow');}}toast('5秒巻き戻し');steerSm=0;const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;}
+  for(const k of karts){k.prevWheel=null;k.rl={};k.lostT=0;k.sc=null;k.enc={};k.errT=0;k.yT=0;}holdT=1.2;rwCount++;rpBuf=rpBuf.filter(f=>f.t<=raceTime);if(solo()){const p=player();if(p.lap>=1&&!p.lapBad){p.lapBad=true;telop('REWIND','巻き戻したのでこのラップは無効','yellow');}}toast('5秒巻き戻し');steerSm=0;const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;}
 function onLap(k){
   if(sess==='drag')return;
   const sp=solo()&&k.isPlayer;
@@ -1539,8 +1788,8 @@ function ghSave(){try{const g=[];const a=ghost.s;for(let i=0;i<a.length;i+=4)g.p
 function lapDist(k){let d=k.idx*SP+alongAt(k.idx,k.x,k.z);if(d>L*.9&&k.idx<N*.1)d-=L;return d;}
 function ghStart(){ghRec=[];ghT=0;}
 function ghLapDone(lt){if(sess!=='ta'||ghRec.length<40)return;if(!ghost||lt<ghost.t){const first=!ghost;ghost={t:lt,s:Float32Array.from(ghRec),p:playerChoice};ghSave();telop(first?'RECORD':'NEW RECORD','タイムアタック記録　'+fmt(lt),'purple');}}
-function ghMesh(){const gk=playerChoice+':'+myBody+':'+myAcc+':'+myNum+':'+myCar;if(ghostMesh&&ghostFor===gk)return ghostMesh;if(ghostMesh)scene.remove(ghostMesh.root);
-  const g=makeKart(myDr(playerChoice),myNo(playerChoice),myCar);g.root.traverse(o=>{o.castShadow=false;if(o.material){const f=m=>{const c=m.clone();c.transparent=true;c.opacity=.32;c.depthWrite=false;return c;};o.material=Array.isArray(o.material)?o.material.map(f):f(o.material);}});
+function ghMesh(){const gk=playerChoice+':'+myBody+':'+myAcc+':'+myNum+':'+myCar;if(ghostMesh&&ghostFor===gk)return ghostMesh;if(ghostMesh){scene.remove(ghostMesh.root);disposeKart(ghostMesh);}
+  const g=makeKart(myDr(playerChoice),myNo(playerChoice),myCar);g.root.traverse(o=>{o.castShadow=false;if(o.material){const f=m=>{const c=m.clone();c.userData.shared=0;c.transparent=true;c.opacity=.32;c.depthWrite=false;return c;};o.material=Array.isArray(o.material)?o.material.map(f):f(o.material);}});
   ghostMesh=g;ghostFor=gk;return g;}
 // ゴーストの時刻 t の位置
 function ghAt(t){const a=ghost.s,n=a.length/4;let f=t/.05-1;if(f<0)f=0;if(f>n-1)return null;const i=Math.floor(f),w=f-i,j=Math.min(n-1,i+1);
@@ -1642,7 +1891,12 @@ function watchPositions(dt){const p=player();if(!p||state!=='race'||raceTime<3)r
   else leadPend=null;}
 
 /* ================= CPU（先読みして減速） ================= */
-const AI_LATK=G*.8;let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.93,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
+const AI_LATK=G*.8;
+// T118 取り返し（SBK＝1で有効）：SBT＝取り返しモードの秒数、SBO＝直線で相手の横につく間隔(m)、SBD＝差す距離の伸び、SBL＝ブレーキをさらに遅らせる倍率、SBX＝出口でアクセルを開ける（1で絞らない）。T119 抜き所を探す（SCK＝1で有効）：SCT＝追従してから狙いを絞るまでの秒数、SCF＝狙い以外のコーナーで差す距離の割合（性格 0〜4 ごと）
+let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=[.5,.4,.55,.8,1];
+const CID=new Int16Array(N).fill(-1);{let n=-1;for(let i=0;i<N;i++){if(CORNER[i]){if(!CORNER[wrap(i-1)])n++;CID[i]=n;}}}
+let PBK=1,PB_D=30,PBL=60,PBF=1.05,PBR=1.03,PB4=1.04,PRT=1,PRH=2.3,DFW=.25,DFD=22; // T115〜T117：ブレーキングで差す（PBK＝1で有効、PB_D＝狙う前の車までの距離、PBL＝先のコーナーまで、PBF/PBR/PB4＝FF/FR/4WD のブレーキの遅らせ方）、並走の権利（PRT、PRH＝半車身）、守り（DFW＝後ろに迫られている間のふらつきの倍率、DFD＝その距離）
+let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.93,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 function aiControl(k,dt){
   const p=player();
   // 走り方（T79）：基本はレーシングライン IL（アウト・イン・アウト）。弱い CPU ほど線のぶれが大きい。並走・よけで laneT が決まった間（ovr）はその横位置
@@ -1650,7 +1904,9 @@ function aiControl(k,dt){
   const lt0=k.laneT;
   const u=Math.max(0,k.u);
   const ld=7+u*.42;const t=wrap(k.idx+Math.round(ld/SP));
-  const devT=k.ovr?k.laneT-IL[k.idx]:(k.wan||0);k.lane+=(devT-k.lane)*Math.min(1,dt*.8);
+  // 守り（T117）：後ろから迫られている間は、横へふらつかない（1直線で動くのは1回まで）
+  let chased=false;if(DFW<1&&sess==='race'&&!k.finished&&u>20){for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dg=progress(k)-progress(o);if(dg>0&&dg<DFD){chased=true;break;}}}
+  const devT=k.ovr?k.laneT-IL[k.idx]:(k.wan||0)*(chased?DFW:1);k.lane+=(devT-k.lane)*Math.min(1,dt*.8);
   const lane=Math.max(-W+2.2,Math.min(W-2.2,IL[t]+k.lane));
   let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   for(const s of slicks){const dx=s.x-k.x,dz=s.z-k.z;const d=Math.hypot(dx,dz);if(d<22){const fwd=(dx*Math.sin(k.h)+dz*Math.cos(k.h));if(fwd>0){const push=lateralAt(k.idx,s.x,s.z)>k.lat?-4:4;tx+=NX[t]*push;tz+=NZ[t]*push;}}}
@@ -1679,24 +1935,55 @@ function aiControl(k,dt){
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(!k.isPlayer&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))];
     if(cn&&!k.cnPrev&&Math.random()<AILV[aiLv].err){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
-    k.cnPrev=cn;if(k.errT>0){k.errT-=dt;vAllow*=k.errK;}}
+    k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const tr=TRAITS[k.dr.tr??2];let follow=false,hard=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
   for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd>(o.dnf?30+u*3.5:26)||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
     if(fwd<=5.5&&Math.abs(side)<tr.room+.6&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
-      if(!(k.enc[o.id]>raceTime-1.5)&&Math.random()<tr.yld){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[o.id]=raceTime;
+      // 並走の権利（T117）：半車身以上前に出ている方が権利を持ち（ラインを守る）、後ろ側が下がる（コーナーの中・手前は必ず譲る）
+      const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
+      const ek=o.id+(trail?'t':lead?'l':'n'); // 前後の関係（後ろ側・前側・中立）が変わるたびに、もう一度譲るかを決める
+      if(!(k.enc[ek]>raceTime-1.5)&&Math.random()<py){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[ek]=raceTime;
       const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2)));
-      if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;
+      if(!lead){if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;}
       if(fwd>-3&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;}
     if(fwd<=0||Math.abs(side)>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz);
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFT（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
-    if(AFT>0&&fwd<(AFM+u*AFT)*tr.gap)follow=true;
+    if(AFT>0&&fwd<(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap)follow=true; // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
     if(close>0){if(Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=o.lat+(o.lat>0?-1:1)*(tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFT)*tr.gap)follow=true;const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
   // スリップストリームから抜く（T83⑥）：直線で前の車の真後ろの空気に入ったら、早めに横へ出て（ブレーキで詰めずに）そのまま並びかけて抜く
   if(PSL>0&&sess==='race'&&!k.finished&&!k.yieldF&&(k.draft||0)>.15&&u>25){let st=true;for(let j=4;j<=PSL_L;j+=6)if(Math.abs(KAP[wrap(k.idx+j)])>1/450){st=false;break;}
     if(st)for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd<5||fwd>PSL_D)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);if(Math.abs(side)>2.2)continue;
       const dir=o.lat>0?-1:1;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.8)));k.laneTimer=1.2;k.ovr=true;k.psl=1;break;}}
+  // ブレーキングで差す（T115・T116）：減速が要るコーナーの手前で、すぐ前の車に追いついていたら、コーナーの内側へ寄って並びかけ、ブレーキを少し遅らせて前に出る。遅らせ方は駆動方式で変える（FF＝前が重く止まりやすいので大きめ、FR＝後ろが軽いので控えめ、4WD＝中間）。ターンインまでに並べない車は、横へ出ていても元の速度計画なので引き下がる
+  k.atk=0;
+  // 抜かれた（T118）：前後が入れ替わったら SBT 秒のあいだ「取り返しモード」。直線ではその車の真後ろ近く（スリップストリーム）につき、出口でアクセルを早く開け、次のブレーキングで差す距離とブレーキの遅らせ方を強める
+  if(SBK>0&&sess==='race'&&!k.finished&&!k.pit){k.rl=k.rl||{};if(k.lostT>0)k.lostT-=dt;
+    for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const g=progress(o)-progress(k);if(Math.abs(g)<40){const pv=k.rl[o.id];if(pv!==undefined&&pv<0&&g>2&&!(k.lostT>0)){k.lostT=SBT;k.lostO=o.id;}if(Math.abs(g)>2)k.rl[o.id]=g;}else k.rl[o.id]=undefined;} // 差が±2m以内の間は記録を更新しない（前後が入れ替わる瞬間は差が0をまたぐだけで、1フレームでは±2mを越えないため）
+    if(k.lostT>0&&!k.yieldF&&u>20){const o=karts.find(q=>q.id===k.lostO);if(o&&!o.dnf&&o.pit===0){const ds=progress(o)-progress(k);
+      let nc=false;for(let j=0;j<=26;j+=4)if(CORNER[wrap(k.idx+j)]){nc=true;break;}
+      if(ds>4&&ds<45&&!CORNER[k.idx]&&!nc){const w=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>k.lat?-1:1)*SBO));k.laneT=w;k.laneTimer=.8;k.ovr=true;}}}}
+  else{k.lostT=0;if(k.pit)k.rl={};}
+  // 抜き所を探す（T119）：すぐ前の車に追従している間、その車に最も近づけたコーナーを覚える。SCT 秒ついたら、いちばん近づけたコーナーでは全力で仕掛け、ほかのコーナーは控えめに（性格が「ぐいぐい」「強引」ほど積極的）
+  if(SCK>0&&sess==='race'&&!k.finished&&!k.pit&&u>20){let lead=null,ld=35;for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;const ds=progress(o)-progress(k);if(ds>3&&ds<ld&&Math.abs(o.lat-k.lat)<3.2){lead=o;ld=ds;}}
+    if(lead){if(!k.sc||k.sc.o!==lead.id)k.sc={o:lead.id,t:0,g:{},bc:-1,lose:0};else{k.sc.t+=dt;k.sc.lose=0;}}
+    else if(k.sc){k.sc.lose+=dt;if(k.sc.lose>6)k.sc=null;}}
+  else if(k.sc&&sess!=='race')k.sc=null;
+  if(PBK>0&&sess==='race'&&!k.finished&&!k.yieldF&&!k.pit&&u>25&&vAllow<u+8&&!k.errT){let ci=-1;for(let j=6;j<=PBL;j+=4){const i=wrap(k.idx+j);if(CORNER[i]){ci=i;break;}}
+    if(ci>=0){let tg=null,tds=1e9,tfull=false,trev=false,tsc=null;
+      for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;const ds=progress(o)-progress(k);
+        const sc=SCK>0&&k.sc&&k.sc.o===o.id?k.sc:null;const cid=CID[ci];
+        if(sc&&ds>3&&ds<45){const gv=sc.g[cid];if(gv===undefined||ds<gv){sc.g[cid]=ds;let bc=-1,bg=1e9;for(const c in sc.g)if(sc.g[c]<bg){bg=sc.g[c];bc=+c;}sc.bc=bc;}}
+        const revenge=k.lostT>0&&k.lostO===o.id;
+        // 狙う場所：覚えたベストのコーナー（追従を SCT 秒続けた後）か取り返しの時は全力、それ以外は性格に応じて控えめ
+        const full=revenge||!SCK||(sc&&sc.t>=SCT&&sc.bc===cid);const dmax=PB_D*(full?1:(SCF[k.dr.tr??2]??1))*(revenge?1+SBD:1);
+        if(ds<4||ds>dmax||ds>=tds)continue;if(Math.abs(o.lat-k.lat)>2.6||k.u<o.u-1.5)continue;
+        tg=o;tds=ds;tfull=full;trev=revenge;tsc=sc;} // 狙うのはいちばん近い車
+      if(tg){const o=tg,s=-OUTS[ci],sd=Math.max(tr.room+.8,2.8);const nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+s*sd));
+        // 内側に別の車がいたら仕掛けない
+        let blocked=false;for(const q of karts){if(q===k||q===o||q.dnf||q.pit>0)continue;const dq=progress(q)-progress(k);if(dq>-8&&dq<PB_D&&Math.abs(q.lat-nt)<2.6){blocked=true;break;}}
+        if(!blocked&&Math.abs(nt-o.lat)>=2.3){k.laneT=nt;k.laneTimer=1.2;k.ovr=true;k.atk=1;vAllow*=(k.fs>.8?PBF:k.fs<.3?PBR:PB4)*((trev||tfull&&tsc&&tsc.t>=SCT)?SBL:1);}}}}
   // 大事故で止まった車（T71）：コースに沿った距離で早めに見つけ、ブレーキをかけて横へよける
   for(const o of karts){if(!o.dnf||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>40+u*3.6||Math.abs(o.lat-k.lat)>3.4)continue;
     k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>0?-1:1)*3.6));k.laneTimer=1.5;if(u*u>2*8*Math.max(.5,ds-9))hard=true;}
@@ -1718,17 +2005,18 @@ function aiControl(k,dt){
     if(use)useItem(k);}}
   // 立ち往生からの復帰（バックで向きを直す）
   const wrongWay=Math.abs(angDiff(heading(k.idx),k.h))>1.2;
-  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;}else if(k.spin<=0&&(Math.abs(k.u)<3||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
+  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;}else if(k.spin<=0&&(Math.abs(k.u)<3&&!(follow&&raceTime<12)||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
   if(k.stuckT>1.2&&!k.revT){k.revT=1.3;k.stuckT=0;}
   if(k.revT>0){k.revT-=dt;if(k.revT<=0){k.revT=0;k.fwdT=3;}const need=angDiff(heading(k.idx),k.h);return {steer:Math.sign(need)||1,accel:false,brake:true,drift:false};}
   // 立ち上がりのアクセル加減：前輪が滑って外へふくらみ始めたら踏み込みを弱める（FF車で特に効く）
   const sl=k.slipF||0,th=k.fs>.3?AITH:AITH+.03;const outw=Math.sign(k.lat)===-Math.sign(steer)&&Math.abs(k.lat)>W-2.5?.25:0;
-  const tgt=sess==='drag'?1:Math.max(.3,1-Math.max(0,sl-th)*AITK*(.4+k.fs)-outw);k.aiThr=(k.aiThr??1)+(tgt-(k.aiThr??1))*Math.min(1,dt*(tgt<(k.aiThr??1)?10:3));
+  const lowv=u<LOWV; // 発進（低速）では、ハンドルを切っていても前輪の滑りや舵角でアクセルを絞らない（絞ると動き出せず、止まったまま「立ち往生」と判定されてバックする）
+  const tgt=sess==='drag'||lowv?1:Math.max(.3,1-Math.max(0,sl-th)*AITK*(.4+k.fs)-outw);k.aiThr=lowv?1:(k.aiThr??1)+(tgt-(k.aiThr??1))*Math.min(1,dt*(tgt<(k.aiThr??1)?10:3));
   const trail=AITB>0&&sess!=='drag'&&k.fs>.3&&accel&&!brake&&sl>th+.03&&k.u>12;
   // 出口のアクセル（T83④）：速さの上限に近づくほどアクセルを少しずつ戻し、上限で保つ（踏む・離すの繰り返しにしない）
   const fth=FTH>0&&sess!=='drag'&&!k.yieldF?Math.max(FTM,Math.min(1,(vAllow+.5-u)/FTH)):1;
   // 出口のアクセル（T99）：舵角を戻すのと入れ替わりに徐々に開ける（舵が XT0 を超えている間は、切っているほどアクセルを絞る。XTH＝絞る強さ、XTM＝最小）
-  const xth=XTH>0&&sess!=='drag'&&!k.pwr?Math.max(XTM,Math.min(1,1-XTH*(Math.abs(steer)-XT0)/(1-XT0))):1;
+  const xth=XTH>0&&sess!=='drag'&&!lowv&&!k.pwr&&!(SBX>0&&k.lostT>0)?Math.max(XTM,Math.min(1,1-XTH*(Math.abs(steer)-XT0)/(1-XT0))):1;
   return {steer,accel,brake:brake||trail,brk:trail?AITB:undefined,fo:trail,drift:k.hbT>0,thr:xth*fth*Math.min(k.pwr?Math.max(k.aiThr,.9):k.aiThr,Math.max(.1,1-(Math.abs(beta)-BLF)*BLK))};
 }
 
@@ -1786,10 +2074,11 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   else{const ld=5+u*.5;const t=wrap(k.idx+Math.round(ld/SP));const lat=pitLatAt(k,relIdx(t,0));ctl={steer:steerTo(k,TX[t]+NX[t]*lat,TZ[t]+NZ[t]*lat,u),accel:true,brake:false,drift:false};}
   const brake=u>vt+1.5;ctl.brake=brake||ctl.brake&&u>vt;ctl.accel=!brake&&u<vt-.5&&ctl.accel;k.aiBrake=ctl.brake;return ctl;}
 function togglePit(){const p=player();if(!p||p.pit||sess!=='race'||p.lap>=LAPS&&state==='race'&&!p.pitReq)return;p.pitReq=!p.pitReq;$('pitBtn').setAttribute('aria-pressed',String(p.pitReq));toast(p.pitReq?'次の周回でピットイン':'ピット予約を取り消し');}
-function carHud(p){const el=$('carst');if(sess==='quali'&&p){el.hidden=false;el.innerHTML='TYRE <b class="pit">QUALIFY</b>';return;}if(sess!=='race'||!p||(!wearMode&&!dmgMode)){el.hidden=true;return;}el.hidden=false;
+const H2=(el)=>({set innerHTML(h){if(el._h!==h){el._h=h;el.innerHTML=h;}}});
+function carHud(p){const el=$('carst');if(sess==='quali'&&p){el.hidden=false;H2(el).innerHTML='TYRE <b class="pit">QUALIFY</b>';return;}if(sess!=='race'||!p||(!wearMode&&!dmgMode)){el.hidden=true;return;}el.hidden=false;
   const w=1-p.wear,col=w>.5?'#3ddc6c':w>.28?'#f5b400':'#ff4a3d';
   const st=p.pit===1?'PIT IN':p.pit===2?'PIT STOP':p.pit===3?'PIT OUT':p.pitReq?'PIT ▶ 次周':'';
-  el.innerHTML=(wearMode?`TYRE <i class="cb"><s style="width:${(w*100).toFixed(0)}%;background:${col}"></s></i>${(w*100).toFixed(0)}%`:'')+(dmgMode?`　DMG <b class="${p.dmg>.5?'bad':''}">${Math.round(p.dmg*100)}%</b>`:'')+(st?`　<b class="pit">${st}</b>`:'');}
+  H2(el).innerHTML=(wearMode?`TYRE <i class="cb"><s style="width:${(w*100).toFixed(0)}%;background:${col}"></s></i>${(w*100).toFixed(0)}%`:'')+(dmgMode?`　DMG <b class="${p.dmg>.5?'bad':''}">${Math.round(p.dmg*100)}%</b>`:'')+(st?`　<b class="pit">${st}</b>`:'');}
 /* ================= 衝突 ================= */
 function kCorners(k){const fx=Math.sin(k.h),fz=Math.cos(k.h),lx=Math.cos(k.h),lz=-Math.sin(k.h);return [[1,1],[1,-1],[-1,1],[-1,-1]].map(([a,b])=>[k.x+fx*HZ*a+lx*HX*b,k.z+fz*HZ*a+lz*HX*b]);}
 function kAxes(k){return [[Math.sin(k.h),Math.cos(k.h)],[Math.cos(k.h),-Math.sin(k.h)]];}
@@ -1906,7 +2195,7 @@ function cockpitCam(p,dt,snap){
   const fx=Math.sin(p.h),fz=Math.cos(p.h),lx=Math.cos(p.h),lz=-Math.sin(p.h);
   const roll=p.g.body.rotation.z,pitch=p.g.body.rotation.x;
   camera.position.set(p.x+fx*1.02+lx*roll*1.5,1.27+(Math.random()-.5)*(p.surf!=='road'?.03:.006)*Math.min(1,Math.abs(p.u)/20),p.z+fz*1.02+lz*roll*1.5);
-  if(shake>0){shake-=dt;camera.position.x+=(Math.random()-.5)*shake*.4;camera.position.y+=(Math.random()-.5)*shake*.3;}
+  if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake*.4;camera.position.y+=(Math.random()-.5)*shake*.3;}}
   camera.up.set(-lx*roll*.6,1,-lz*roll*.6);
   camera.lookAt(p.x+fx*30,1.02-pitch*18,p.z+fz*30);camera.up.set(0,1,0);
   const f=(innerWidth<innerHeight?88:72);if(snap)camera.fov=f;else camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();camH=p.h;}
@@ -1944,7 +2233,7 @@ function updateCamera(dt){
   const tgt=tmpV.set(p.x-Math.sin(camH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(camH)*dist);
   camPos.lerp(tgt,Math.min(1,dt*9));camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
-  if(shake>0){shake-=dt;camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake*.7;}
+  if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake*.7;}}
   camera.lookAt(p.x+Math.sin(camH)*8,1.1,p.z+Math.cos(camH)*8);
   const f=baseFov()+r*7;
   camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();
@@ -1994,24 +2283,25 @@ function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60),c=Math.floor((t*100)
 let rouletteT=0;
 function updateItemHud(){}
 let lastHud=0,towerT=0;
+const H=(id)=>{const el=$(id);return{set innerHTML(h){if(el._h!==h){el._h=h;el.innerHTML=h;}}};}; // 値が変わった時だけ書き換える（T130）
 function updateHud(dt){
   const p=player();if(!p)return;
   if(p.roulette>0){rouletteT+=dt;updateItemHud();}
   lastHud+=dt;if(lastHud<.05)return;lastHud=0;
-  const rk=ranking();const r=rk.indexOf(p)+1;$('rank').innerHTML=r+'<small>位</small>';
+  const rk=ranking();const r=rk.indexOf(p)+1;H('rank').innerHTML=r+'<small>位</small>';
   towerT-=.05;if(towerT<=0){towerT=.25;const lead=rk[0];const pace=p.top*.62;
-    $('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
+    H('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
       return `<div class="tw${k.isPlayer?' me':''}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><span>${k.name}</span><u title="${TRAITS[k.dr.tr??2].n}">${TRAITS[k.dr.tr??2].n[0]}</u><em>${gap}</em></div>`;}).join('');
-    $('laps').innerHTML=`前周 ${p.lastLap?fmt(p.lastLap):'—'}<br>ベスト ${p.best?fmt(p.best):'—'}`;
+    H('laps').innerHTML=`前周 ${p.lastLap?fmt(p.lastLap):'—'}<br>ベスト ${p.best?fmt(p.best):'—'}`;
     const me=rk.indexOf(p),a=rk[me-1],b=rk[me+1];const g=(x,y)=>Math.max(0,(progress(x)-progress(y))/pace).toFixed(1);
-    if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);$('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動');
-      $('gaps').innerHTML=(dragRec?`<div><span>自己ベスト</span><b>${dragRec.et.toFixed(3)}</b></div>`:'')+(c&&state!=='countdown'?`<div><span>${c.name}</span><b class="dlt ${d>=0?'f':'s'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}m</b></div>`:'');}
-    else if(solo())$('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${fmt(ghost.t)}</b></div>`:'')+(ghDelta!=null?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${Math.abs(ghDelta).toFixed(2)}</b></div>`:'');else
-    $('gaps').innerHTML=(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${g(a,p)}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>後 ${b.name}</span><b>${g(p,b)}秒</b></div>`:'');}
-  if(sess==='drag'){const m=p.dm||{};$('lap').innerHTML=(dragDist?'1/8マイル':'0-400m')+'　<b>'+Math.min(DRAG_D,Math.max(0,p.dd||0)).toFixed(0)+'</b>m';$('time').textContent=m.foul&&m.launch==null?'FOUL':((m.t400??raceTime)-(m.launch??raceTime)).toFixed(3);if(drag&&drag.green>=0&&raceTime>2.5)$('tree').hidden=true;}
-  else if(sess==='ta'){$('lap').innerHTML='タイムアタック　ラップ <b>'+Math.max(1,p.lap)+'</b>';$('time').textContent=fmt(p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
-  else if(sess==='quali'){$('lap').innerHTML='予選　ラップ <b>'+Math.max(1,Math.min(LAPS,p.lap))+'</b>/'+LAPS;$('time').textContent=fmt(p.finished?0:p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
-  else{$('lap').innerHTML='ラップ <b>'+Math.max(1,Math.min(LAPS,p.lap))+'</b>/'+LAPS;$('time').textContent=fmt(p.finished?p.finishTime:raceTime);}
+    if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);H('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動');
+      H('gaps').innerHTML=(dragRec?`<div><span>自己ベスト</span><b>${dragRec.et.toFixed(3)}</b></div>`:'')+(c&&state!=='countdown'?`<div><span>${c.name}</span><b class="dlt ${d>=0?'f':'s'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}m</b></div>`:'');}
+    else if(solo())H('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${fmt(ghost.t)}</b></div>`:'')+(ghDelta!=null?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${Math.abs(ghDelta).toFixed(2)}</b></div>`:'');else
+    H('gaps').innerHTML=(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${g(a,p)}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>後 ${b.name}</span><b>${g(p,b)}秒</b></div>`:'');}
+  if(sess==='drag'){const m=p.dm||{};H('lap').innerHTML=(dragDist?'1/8マイル':'0-400m')+'　<b>'+Math.min(DRAG_D,Math.max(0,p.dd||0)).toFixed(0)+'</b>m';$('time').textContent=m.foul&&m.launch==null?'FOUL':((m.t400??raceTime)-(m.launch??raceTime)).toFixed(3);if(drag&&drag.green>=0&&raceTime>2.5)$('tree').hidden=true;}
+  else if(sess==='ta'){H('lap').innerHTML='タイムアタック　ラップ <b>'+Math.max(1,p.lap)+'</b>';$('time').textContent=fmt(p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
+  else if(sess==='quali'){H('lap').innerHTML='予選　ラップ <b>'+Math.max(1,Math.min(LAPS,p.lap))+'</b>/'+LAPS;$('time').textContent=fmt(p.finished?0:p.lap>=1?raceTime-p.lapStart:0)+(p.lapBad?' ×':'');}
+  else{H('lap').innerHTML='ラップ <b>'+Math.max(1,Math.min(LAPS,p.lap))+'</b>/'+LAPS;$('time').textContent=fmt(p.finished?p.finishTime:raceTime);}
   $('spdNum').textContent=Math.max(0,Math.round(p.u*3.6));
   $('gearNum').textContent=p.u<-.5?'R':String(p.gear+1);
   const rv=rpmOf(p),f=Math.min(1,(rv-1400)/(REDLINE-1400));$('rpmBar').style.width=(f*100).toFixed(1)+'%';$('rpmBar').classList.toggle('hot',rv>SHIFT_UP-300);
@@ -2022,7 +2312,7 @@ function updateHud(dt){
   drawMinimap();
 }
 /* ===== メーター（右下）：回転計の針＋速度（大）＋ギア、右に水温・油温・ブースト圧（グランツーリスモ・Forza・Assetto Corsa などの計器表現を参考にした自作） ===== */
-const gc=$('gauge'),gx=gc.getContext('2d');let gDpr=0;const GH=200,GW=isTouch?214:360;
+const gc=$('gauge'),gx=gc.getContext('2d');let gDpr=0;const GH=200,GW=document.body.classList.contains('touch')?214:360; // 画面の幅（CSS の aspect-ratio）と同じ条件で決める
 const GF='"Saira Condensed","Arial Narrow",sans-serif',GWH='rgba(240,242,245,.92)',GAM='#f5b400',GRD='#ff4a3d';
 function gaugeFit(){const d=Math.min(2,devicePixelRatio||1);if(gDpr===d)return;gDpr=d;gc.width=Math.round(GW*d);gc.height=GH*d;}
 function gArc(g,cx,cy,r,a,b,col,w){g.beginPath();g.arc(cx,cy,r,a,b);g.strokeStyle=col;g.lineWidth=w;g.stroke();}
@@ -2049,13 +2339,14 @@ function drawGauge(p){if(!p)return;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}ga
   g.fillStyle='#fff';g.font='italic 800 52px '+GF;g.fillText(String(Math.max(0,Math.round(p.u*3.6))),cx,cy+20);g.fillStyle='rgba(200,206,214,.8)';g.font='700 12px '+GF;g.fillText('km/h',cx,cy+43);
   const gt=p.u<-.5?'R':String(p.gear+1);g.fillStyle=shiftF?'#4fb4ff':GWH;g.beginPath();g.roundRect?g.roundRect(cx-17,cy+52,34,30,5):g.rect(cx-17,cy+52,34,30);g.fill();
   g.fillStyle='#111';g.font='italic 800 24px '+GF;g.fillText(gt,cx,cy+68);
+  if(p.manual){g.fillStyle=GAM;g.font='italic 800 14px '+GF;g.fillText('MT',cx+32,cy+68);}
   if(isTouch)return;
   gMini(g,242,34,27,p.tw,50,130,105,115,'WATER',Math.round(p.tw)+'°C');
   gMini(g,242,100,27,p.to,60,150,125,138,'OIL',Math.round(p.to)+'°C');
   gMini(g,242,166,27,p.bst,-1,1.6,1.15,1.4,'BOOST',(Math.round(p.bst*100)<0?'−':'+')+Math.abs(p.bst).toFixed(2)+'bar');}
 const fx=$('fx'),fctx=fx.getContext('2d');
 function drawFx(){const p=player();const w=Math.round(innerWidth/2),h=Math.round(innerHeight/2);if(fx.width!==w||fx.height!==h){fx.width=w;fx.height=h;}
-  fctx.clearRect(0,0,w,h);if(!p||state==='countdown'||p.boost<=0)return;
+  fctx.clearRect(0,0,w,h);if(!p||state==='countdown'||p.boost<=0||RM)return;
   const cx=w/2,cy=h*.46;fctx.lineCap='round';
   for(let i=0;i<22;i++){const ang=Math.random()*Math.PI*2;const r0=Math.min(w,h)*(.36+Math.random()*.25);const len=Math.min(w,h)*(.1+Math.random()*.2);
     fctx.strokeStyle=`rgba(255,255,255,${.1+Math.random()*.18})`;fctx.lineWidth=1+Math.random()*1.5;
@@ -2182,12 +2473,15 @@ addEventListener('keydown',e=>{if(!$('bugScreen').hidden){if(e.code==='Escape'){
   if(e.code==='KeyC'&&state!=='title')setCam((camMode+1)%5);
   if(e.code==='KeyM'&&state!=='title')setMir(!mirOn);
   if(e.code==='KeyR')doRewind();
+  if(e.code==='KeyE'&&!e.repeat)shiftReq(1);if(e.code==='KeyQ'&&!e.repeat)shiftReq(-1);
   if(e.code==='KeyI'&&(state==='race'||state==='countdown')&&!autoPlay)togglePit();
   if(e.code==='KeyL')setLine(!showLine);
   if(e.code==='KeyO'&&(state==='race'||state==='countdown'||state==='finished'))setAuto(!autoPlay);
   if((e.code==='Escape'||e.code==='KeyP')&&(state==='race'||state==='countdown'))pause();
   else if((e.code==='Escape'||e.code==='KeyP')&&state==='paused')resume();});
 addEventListener('keyup',e=>{const k=KEYMAP[e.code];if(k)input[k]=false;});
+// マウスホイール：手前に回す＝アップ、奥に回す＝ダウン（シーケンシャルレバーを引く＝アップ、押す＝ダウン）。マニュアルの時だけ（ページのスクロールは止める）
+let wheelAt=0;addEventListener('wheel',e=>{if(state!=='race'||autoPlay||$('bugScreen').hidden===false)return;const p=player();if(!p||!p.manual)return;e.preventDefault();const t=performance.now();if(t-wheelAt<90)return;wheelAt=t;shiftReq(e.deltaY>0?1:-1);},{passive:false});
 addEventListener('blur',()=>{for(const k in input)input[k]=false;});
 pad.querySelectorAll('.tb').forEach(el=>{const k=el.dataset.k;const ids=new Set();
   const on=e=>{e.preventDefault();ids.add(e.pointerId);try{el.setPointerCapture(e.pointerId);}catch(_){}if(k==='accel'&&!input.accel&&state==='countdown')accelDownAt=countdown;input[k]=true;el.classList.add('on');initAudio();};
@@ -2204,9 +2498,10 @@ function pollPad(){const gs=typeof navigator!=='undefined'&&navigator.getGamepad
   gp.thr=bv(7)>.04?bv(7):0;gp.brk=bv(6)>.04?bv(6):0;gp.hb=bp(0);
   if(bp(12))gp.thr=Math.max(gp.thr,1);if(bp(13))gp.brk=Math.max(gp.brk,1);if(bp(14))gp.steer=-1;if(bp(15))gp.steer=1;
   const edge=i=>bp(i)&&!gp.prev[i];
+  {const ry=g.axes[3]||0,sd=ry>.6?1:ry<-.6?-1:0;if(sd&&sd!==gp.rs)shiftReq(sd);gp.rs=sd;} // 右スティック：手前に引く＝アップ、奥に倒す＝ダウン
   const racing=state==='race'||state==='countdown'||state==='finished';
   if(racing){if(edge(1))doRewind();if(edge(2))setLine(!showLine);if(edge(3))setCam((camMode+1)%5);if(edge(4))setMir(!mirOn);if(edge(5))togglePit();if(edge(8))setAuto(!autoPlay);if(edge(9)&&state!=='finished')pause();}
-  else if(state==='paused'){if(edge(9)||edge(0))resume();if(edge(1))toTitle();}
+  else if(state==='paused'){if(edge(9)||edge(0))resume();if(edge(1))padTitleAsk();}
   else if(state==='title'){titlePad(edge);}
   else if(state==='results'&&photoOn){if(edge(0)||edge(1)||edge(2)||edge(9))photoClose();}
   else if(state==='results'){if(edge(2))photoOpen();else if(edge(0)||edge(9))$(qualiRes&&!$('raceBtn').hidden?'raceBtn':'againBtn').click();if(edge(1))toTitle();if(edge(3))startReplay();}
@@ -2255,12 +2550,19 @@ DRIVERS.forEach((d,i)=>{const b=document.createElement('button');b.type='button'
   b.addEventListener('click',()=>{playerChoice=i;charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===i?'true':'false'));tone(660,.06,'square',.15);if(titleMode==='garage')garageSetup();updSpec();myColorUi();});
   charsEl.appendChild(b);});
 function segWire(id,set,cur){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.v===cur));b.addEventListener('click',()=>{set(+b.dataset.v);el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));saveSettings();});});}
-function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode}));}catch(_){}}
+function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode,sc:setC,mt:manualMode}));}catch(_){}}
+try{if(localStorage.getItem('popkart')===null){wearMode=0;dmgMode=1;}}catch(_){} // 初めて起動した時は、かんたん設定（摩耗なし・ダメージは見た目だけ。保存済みの設定は変えない）
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.as!=null)assistLv=sv.as;if(sv.ai5!=null)aiLv=sv.ai5;else if(sv.ai!=null)aiLv=sv.ai+1;if(sv.cam!=null)camMode=sv.cam;if(sv.tl!=null)tlOn=!!sv.tl;if(sv.mc!=null)myBody=sv.mc;if(sv.ma!=null)myAcc=sv.ma;if(sv.mn!=null)myNum=sv.mn;if(sv.rd!=null)radioOn=!!sv.rd;if(sv.mr!=null)mirOn=!!sv.mr;if(sv.md!=null)modeSel=sv.md;if(sv.gd!=null)gridMode=sv.gd;}catch(_){}
-try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;}catch(_){}
+try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;if(sv.sc!=null&&SETC[sv.sc])setC=sv.sc;if(sv.mt!=null)manualMode=sv.mt?1:0;}catch(_){}
 const reTune=()=>{if(titleMode==='garage')garageSetup();updSpec();};
-segWire('drvSeg',v=>{setDrv=v;reTune();},setDrv);segWire('gearSeg',v=>{setG=v;reTune();},setG);segWire('wingSeg',v=>{setW=v;reTune();},setW);segWire('bbSeg',v=>{setB=v;reTune();},setB);segWire('tyreSeg',v=>{setT=v;reTune();},setT);
-segWire('lapsSeg',v=>lapsSel=v,lapsSel);segWire('wearSeg',v=>wearMode=v,wearMode);segWire('dmgSeg',v=>dmgMode=v,dmgMode);segWire('crSeg',v=>crashMode=v,crashMode);
+segWire('drvSeg',v=>{setDrv=v;reTune();},setDrv);segWire('gearSeg',v=>{setG=v;reTune();},setG);segWire('wingSeg',v=>{setW=v;reTune();},setW);segWire('bbSeg',v=>{setB=v;reTune();},setB);segWire('tyreSeg',v=>{setT=v;reTune();},setT);segWire('coolSeg',v=>{setC=v;reTune();},setC);if(isTouch){const mb=$('mtSeg').querySelector('[data-v="1"]');if(mb)mb.textContent='マニュアル（画面の▲▼で変速）';}
+const setMtClass=()=>document.body.classList.toggle('mt',!!manualMode&&isTouch);setMtClass();
+segWire('mtSeg',v=>{manualMode=v;setMtClass();updSpec();},manualMode);
+// 画面の▲▼：押した瞬間に1段（マニュアルの時だけ。shiftReq が受け付ける）
+for(const [id,dir] of[['shUp',1],['shDn',-1]]){const el=$(id);el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('on');initAudio();shiftReq(dir);});
+  const off=()=>el.classList.remove('on');el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('pointerleave',off);el.addEventListener('contextmenu',e=>e.preventDefault());}
+const updStartSub=()=>{$('startSub').textContent='レース　8台・'+LAPSET[lapsSel]+'周';};updStartSub();
+segWire('lapsSeg',v=>{lapsSel=v;updStartSub();},lapsSel);segWire('wearSeg',v=>wearMode=v,wearMode);segWire('dmgSeg',v=>dmgMode=v,dmgMode);segWire('crSeg',v=>crashMode=v,crashMode);
 segWire('dragSeg',v=>dragMan=v,dragMan);
 {const el=$('drSeg');[-1,...DRIVERS.keys()].forEach(i=>{const b=document.createElement('button');b.type='button';b.dataset.v=i;b.textContent=i<0?'おまかせ':DRIVERS[i].name;el.appendChild(b);});}
 segWire('ddSeg',v=>{dragDist=v;showRec();},dragDist);segWire('dpSeg',v=>dragPro=v,dragPro);segWire('drSeg',v=>dragRivalSel=v,dragRivalSel);
@@ -2280,7 +2582,11 @@ $('numTeam').addEventListener('click',()=>{myNum=0;myColorChanged();});
 myColorUi();
 {const el=$('carSeg');CARS.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.dataset.v=i;b.textContent=c.name;el.appendChild(b);});$('carNote').textContent=CARS[myCar].d;}
 segWire('carSeg',v=>{myCar=v;$('carNote').textContent=CARS[v].d;reTune();},myCar);
-segWire('asSeg',v=>assistLv=v,assistLv);segWire('gridSeg',v=>gridMode=v,gridMode);segWire('tlSeg',v=>tlOn=!!v,tlOn?1:0);segWire('aiSeg',v=>aiLv=v,aiLv);segWire('radSeg',v=>radioOn=!!v,radioOn?1:0);
+segWire('asSeg',v=>assistLv=v,assistLv);
+// かんたん／ほんかく：アシスト・摩耗・ダメージをまとめて変える。個別に変えた時は、どちらにも当てはまらなければ表示を消す
+function syncPreset(){const e=wearMode===0&&dmgMode===1&&assistLv===0,h=wearMode>=1&&dmgMode===2&&assistLv===1;$('presetSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v==='0'?e:h)));}
+$('presetSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{const h=b.dataset.v==='1';wearMode=h?1:0;dmgMode=h?2:1;assistLv=h?1:0;markSeg('wearSeg',wearMode);markSeg('dmgSeg',dmgMode);markSeg('asSeg',assistLv);saveSettings();syncPreset();}));
+for(const id of['asSeg','wearSeg','dmgSeg'])$(id).addEventListener('click',syncPreset);segWire('gridSeg',v=>gridMode=v,gridMode);segWire('tlSeg',v=>tlOn=!!v,tlOn?1:0);segWire('aiSeg',v=>aiLv=v,aiLv);segWire('radSeg',v=>radioOn=!!v,radioOn?1:0);
 const CAMN=['後方','車載','遠め','中継','正面望遠'];function setCam(v){camMode=v;$('camBtn').textContent='視点 '+CAMN[v];saveSettings();}
 function setMir(v){mirOn=v;$('mirBtn').textContent='ミラー '+(v?'ON':'OFF');$('mirBtn').setAttribute('aria-pressed',String(v));saveSettings();}
 $('mirBtn').addEventListener('click',()=>setMir(!mirOn));
@@ -2292,7 +2598,7 @@ if(tiltOn&&!(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.re
 $('ccSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ccChoice=+b.dataset.cc;$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));showRec();}));
 /* 開始前の設定（T69）：視点・オート・ライン・ミラーをGARAGEで決める。HUDのボタンで変えたら、開いた時に表示を合わせる */
 function markSeg(id,cur){$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===cur)));}
-function syncStartUi(){markSeg('camSeg',camMode);markSeg('autoSeg',autoStart);markSeg('lnSeg',showLine?1:0);markSeg('mrSeg',mirOn?1:0);}
+function syncStartUi(){syncPreset();markSeg('camSeg',camMode);markSeg('autoSeg',autoStart);markSeg('lnSeg',showLine?1:0);markSeg('mrSeg',mirOn?1:0);}
 segWire('camSeg',v=>setCam(v),camMode);segWire('autoSeg',v=>autoStart=v,autoStart);segWire('lnSeg',v=>setLine(!!v),showLine?1:0);segWire('mrSeg',v=>setMir(!!v),mirOn?1:0);
 function showRec(){$('dragRec').textContent=dragRecText();ghLoad();$('taRec').textContent=ghost?`${CC[ccChoice].name}　ベスト ${fmt(ghost.t)}`:`${CC[ccChoice].name}　記録なし`;updSpec();}
 
@@ -2302,7 +2608,7 @@ showRec();
 
 let cdShown=-1;
 function startRace(){
-  saveSettings();titleMode='attract';setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();camera.updateProjectionMatrix();
+  saveSettings();setTMenu(false);titleMode='attract';setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();camera.updateProjectionMatrix();
   initAudio();if(ac&&ac.state==='suspended')ac.resume();
   setupRace();
   $('titleScreen').hidden=true;$('resultScreen').hidden=true;$('pauseScreen').hidden=true;hud.hidden=false;pad.hidden=false;
@@ -2325,6 +2631,10 @@ $('raceBtn').addEventListener('click',()=>{if(!gridOrder)return;startSession('ra
 $('replayBtn').addEventListener('click',startReplay);$('photoBtn').addEventListener('click',photoOpen);$('photoCap').addEventListener('click',photoClose);
 $('rpPrev').addEventListener('click',()=>rpFocusStep(-1));$('rpNext').addEventListener('click',()=>rpFocusStep(1));$('rpCam').addEventListener('click',rpCamStep);$('rpSpd').addEventListener('click',rpSpdStep);$('rpEnd').addEventListener('click',endReplay);
 $('autoBtn').addEventListener('click',()=>setAuto(!autoPlay));
+// スマホのメニュー（補助ボタンを畳む。巻き戻し・ピット・ポーズ・タイトルへなどを押したら閉じる）
+function setTMenu(on){document.body.classList.toggle('tmenu',on);$('mnBtn').textContent=on?'閉じる':'メニュー';$('mnBtn').setAttribute('aria-expanded',String(on));}
+$('mnBtn').addEventListener('click',()=>setTMenu(!document.body.classList.contains('tmenu')));
+for(const id of['rwBtn','pitBtn','pauseBtn','cpBtn','ctBtn','fsBtn','hudBtn'])$(id).addEventListener('click',()=>setTMenu(false));
 // 画面右上の操作ボタン：全画面・HUD最小化・ポーズ・タイトルへ（タイトルへは2回押しで確定）
 {const fs=$('fsBtn'),hb=$('hudBtn'),cp=$('cpBtn'),ct=$('ctBtn');let ctT=0;
  const root=document.documentElement;
@@ -2343,6 +2653,14 @@ $('againBtn').addEventListener('click',beginEvent);
 $('menuBtn').addEventListener('click',toTitle);
 $('retireBtn').addEventListener('click',toTitle);
 $('resumeBtn').addEventListener('click',resume);
+$('restartBtn').addEventListener('click',beginEvent);
+// ポーズ・結果が開いたら、キーボードの Enter で進めるよう最初のボタンへフォーカス
+for(const [sid,bid] of [['pauseScreen',()=>'resumeBtn'],['resultScreen',()=>$('raceBtn').hidden?'againBtn':'raceBtn']])
+  if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{const s=$(sid);if(!s.hidden){try{$(bid()).focus({preventScroll:true});}catch(_){}}else if(sid==='pauseScreen')padTitleReset();}).observe($(sid),{attributes:true,attributeFilter:['hidden']});
+// ゲームパッドの B でタイトルへ戻る時は、2回押しで確定（ポーズ画面の「タイトルへ」ボタンの文言で知らせる）
+let padTitleT=0;
+function padTitleReset(){padTitleT=0;$('retireBtn').textContent='タイトルへ';}
+function padTitleAsk(){if(padTitleT&&performance.now()-padTitleT<3000){padTitleReset();toTitle();return;}padTitleT=performance.now();$('retireBtn').textContent='もう一度 B でタイトルへ';setTimeout(()=>{if(padTitleT&&performance.now()-padTitleT>=2900)padTitleReset();},3100);}
 $('pauseBtn').addEventListener('click',()=>{if(state==='race'||state==='countdown')pause();});
 function bgmToggle(){bgmOn=!bgmOn;$('bgmBtn').textContent=bgmOn?'BGM ON':'BGM OFF';try{localStorage.setItem('popkart_bgm',bgmOn?1:0);}catch(_){}initAudio();}
 try{if(localStorage.getItem('popkart_bgm')==='0'){bgmOn=false;$('bgmBtn').textContent='BGM OFF';}}catch(_){}
@@ -2419,6 +2737,18 @@ function dragJudge(j){const el=$('judge');el.textContent=j;el.className='';void 
 function dragShift(k){if(k.gear>=TOPG||k.shiftT>0||k.dFin)return;const d=k.rpm-k_opt(k)[k.gear];
   const j=Math.abs(d)<=250?'PERFECT':d<-900?'EARLY':d<0?'GOOD':k.rpm>=REDLINE-60?'LATE':'GOOD';
   k.gear++;k.shiftT=.14;sfx('shift');camKick=.3;drag.shifts.push(j);dragJudge(j);}
+// マニュアル変速（レース・タイムアタック・予選）：dir＝+1 アップ／-1 ダウン。ダウンは回転が REDLINE-100 を超えるなら受け付けない（オーバーレブ）。
+// 落とす時にアクセルを煽る（押している）か、アシストが強・標準なら回転が自動で合う（ブリップ）。アシスト「なし」で煽らないと、回転の差に応じて駆動輪にショック（SHKG・SHKM）
+function manualShift(k,dir){if(!k||k.finished||k.dnf||k.shiftT>0||sess==='drag')return;const K=SHIFT_UP/(k.top*(k.gf||1)*RATIO[TOPG]);
+  if(dir>0){if(k.gear>=TOPG)return;k.gear++;k.shiftT=.14;sfx('shift');camKick=.3;return;}
+  if(k.gear<=0)return;const wr=Math.abs(k.u)*RATIO[k.gear-1]*K;
+  if(wr>REDLINE-100){if(k.isPlayer){toast('回転が高すぎて落とせない');sfx('warn');}return;}
+  k.gear--;k.shiftT=.08;const jump=Math.max(0,wr-(k.erpm||k.rpm));
+  if(assistLv<2||accelHeld()){k.blip=1;sfx('blip',k);}
+  else{k.shk=Math.min(SHKM,SHKG*jump/1000);if(k.shk>1.5)sfx('bump',null,null,Math.min(1,k.shk/SHKM));}}
+function shiftReq(dir){const k=player();if(!k||autoPlay)return;
+  if(sess==='drag'){if(dir>0&&k.manual&&state==='race')dragShift(k);return;}
+  if(k.manual&&state==='race')manualShift(k,dir);}
 function dragCtl(k,dt,pc){k.fwdT=5;if(autoPlay&&k.manual)k.manual=false;const ai=aiControl(k,dt);
   if(k.dFin)return{steer:ai.steer,accel:false,brake:k.u>.8,brk:1,drift:false};
   if(k.isPlayer&&!autoPlay){
@@ -2450,7 +2780,7 @@ function showDrag(){state='results';resultCamStart();$('replayBtn').hidden=rpBuf
 
 /* ================= ループ ================= */
 /* ================= タイトル画面（デモ走行・ガレージ・メニュー） ================= */
-const TIPS=['周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑＝そのまま、黄＝減速の準備、赤＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら R キーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
+const TIPS=['周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら R キーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
 let titleMode='attract',attT=0,attNeed=true,garT=0,tipT=0,tipI=0,tStage=0,setupOpen=false;
 const tScr=$('titleScreen');
 function attractSetup(){sess='race';LAPS=999;document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;DIR.last='';}
@@ -2508,7 +2838,7 @@ function bugInfo(){
   sec('マシンと設定');
   safe(()=>{
     L.push('ドライバー: '+DRIVERS[playerChoice].name+'・車種 '+CARS[myCar].name+'・エンジン '+CC[ccChoice].name+'・駆動 '+DRV_KEYS[setDrv]);
-    L.push('セッティング: ギア '+SETG[setG].n+'・ウイング '+SETW[setW].n+'・ブレーキ '+SETB[setB].n+'・タイヤ '+TYRE[setT]);
+    L.push('セッティング: ギア '+SETG[setG].n+'・ウイング '+SETW[setW].n+'・ブレーキ '+SETB[setB].n+'・タイヤ '+TYRE[setT]+'・冷却 '+SETC[setC].n+'・変速 '+(manualMode?'マニュアル':'オート'));
     L.push('ルール: アシスト '+ASSIST[assistLv].name+'・CPU '+AILV[aiLv].name+'・'+LAPSET[lapsSel]+'周・摩耗 '+['なし','あり','多め'][wearMode]+'・ダメージ '+['なし','見た目','性能にも'][dmgMode]+'・大事故 '+(crashMode?'あり':'なし')+'・コース外 '+(tlOn?'あり':'なし')+'・無線 '+(radioOn?'あり':'なし')+'・ミラー '+(mirOn?'ON':'OFF')+'・傾きハンドル '+(tiltOn?'ON':'OFF'));
     let sv='';try{sv=localStorage.getItem('popkart')||'';}catch(_){}
     L.push('保存された設定: '+(sv||'（なし）'));
@@ -2548,8 +2878,8 @@ function updSpec(){const d=myDr(playerChoice),c=CC[ccChoice];const v=Math.round(
 <div class="bar"><label>最高速</label><u><s style="width:${(c.top/70*100).toFixed(0)}%"></s></u><em>${v} km/h</em></div>
 <div class="bar"><label>加速</label><u><s style="width:${(c.top/70*100-6).toFixed(0)}%"></s></u><em>${['★★★','★★★★','★★★★★'][ccChoice]}</em></div>
 <div class="bar"><label>扱いやすさ</label><u><s style="width:${[92,76,58][ccChoice]}%"></s></u><em>${['やさしい','ふつう','じゃじゃ馬'][ccChoice]}</em></div>
-<p>車種 ${CARS[myCar].name}　駆動 ${DRV_KEYS[setDrv]}　6速オート　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}</p>`;
-  $('tuneNote').innerHTML=`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。`;}
+<p>車種 ${CARS[myCar].name}　駆動 ${DRV_KEYS[setDrv]}　6速${manualMode?'マニュアル':'オート'}　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}</p>`;
+  $('tuneNote').innerHTML=`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（傷んだ時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}`;}
 function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(tStage===0){if(any)enterMenu();return;}
   if(!$('helpScreen').hidden){if(edge(1)||edge(0))closeHelp();return;}
@@ -2559,9 +2889,14 @@ $('tsTip').textContent=TIPS[0];$('tsCourse').textContent='HIGASHI RACEWAY　全�
 let last=performance.now();
 let titleT=0;
 function titleCam(dt){titleT+=dt*.05;const i=wrap(Math.floor(titleT*N*.6));const h=heading(i);camera.position.set(TX[i]-Math.sin(h)*14+NX[i]*6,6,TZ[i]-Math.cos(h)*14+NZ[i]*6);camera.lookAt(TX[wrap(i+8)],1,TZ[wrap(i+8)]);followSun(TX[i],TZ[i]);}
+// スマホの解像度の自動調整（T124）：レース中に3秒平均が約30fps未満なら、描画の細かさを 1.5→1.25→1.0 へ段階的に下げる（上げ戻しはしない）
+const AR_FPS=1/33;let _arT=0,_arN=0;
+function autoRes(raw){if(!isTouch||(state!=='race'&&state!=='countdown')||raw>.25){_arT=0;_arN=0;return;}
+  _arT+=raw;_arN++;if(_arT<3)return;const avg=_arT/_arN;_arT=0;_arN=0;
+  const pr=renderer.getPixelRatio();if(avg>AR_FPS&&pr>1.01){renderer.setPixelRatio(Math.max(1,pr-.25));resize();}}
 function frame(now){
   requestAnimationFrame(frame);
-  let dt=Math.min(.05,(now-last)/1000);last=now;
+  const raw=(now-last)/1000;let dt=Math.min(.05,raw);last=now;autoRes(raw);
   pollPad();bgmTick(dt);
   if(state==='title'){titleStep(dt);envStep(dt,false);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);}
@@ -2586,7 +2921,7 @@ function frame(now){
   else if(state==='race'||state==='finished'){
     raceTime+=dt;envStep(dt,true);
     const pc=playerControl(dt);lastPc=pc;computeDraft();
-    for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0;const ctl=k.dnf?wreckCtl(k):k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?aiControl(k,dt):pc);stepKart(k,dt,ctl);if(k.dnf)stepCrash(k,dt);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);rubStep(k);}}
+    for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0;if(sess!=='drag')k.manual=!!(k.isPlayer&&manualMode&&!autoPlay&&!k.pit&&!k.dnf&&!k.finished);const ctl=k.dnf?wreckCtl(k):k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?aiControl(k,dt):pc);stepKart(k,dt,ctl);if(k.dnf)stepCrash(k,dt);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);rubStep(k);}}
     rubTick(dt);
     updateFlags();if(sess!=='drag'){watchPositions(dt);watchRadio(dt);}
     collisions();stepProjectiles(dt);syncVisuals(dt);updateCamera(dt);updateHud(dt);drawFx();updateLine(player());if(state==='race')recordRewind(dt);recordReplay(dt);if(solo()&&sess!=='drag')ghostStep(dt);
