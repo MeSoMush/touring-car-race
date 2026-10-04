@@ -425,7 +425,7 @@ body.touch #cstack>*{position:static!important;transform:none!important;left:aut
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.48.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.50.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -445,7 +445,7 @@ body.touch #cstack>*{position:static!important;transform:none!important;left:aut
       <summary>マシンを選ぶ<small>ドライバー・車種・エンジン</small></summary>
     <div class="label">ドライバー／マシン</div>
     <div class="chars" id="chars"></div>
-    <div class="label">車種（見た目だけの違い。走りは同じ）</div>
+    <div class="label">車種（形と車重が違う。重いほど加速とブレーキが鈍い）</div>
     <div class="seg" id="carSeg"></div>
     <p class="note" id="carNote"></p>
     <div class="label">エンジン<span class="hint">最高速と加速が変わる。ターボは速いが扱いがむずかしい</span></div>
@@ -570,6 +570,7 @@ body.touch #cstack>*{position:static!important;transform:none!important;left:aut
         <span>アシスト</span><span>強＝滑りにくい（トラクション制御・カウンター補助・ABS）／なし＝タイヤのロックやスピンも自分で制御</span>
         <span>路面</span><span>縁石は少し滑る。コーナー外側の砂利（グラベル）と芝はグリップが落ちて減速する</span>
         <span>スマホ</span><span>横持ち推奨。アクセルは自動でON（ブレーキで減速）。GARAGEの「スマホのハンドル」を「傾ける」にすると、スマホを左右に傾けてハンドル（センサーが使える場所だけ）</span>
+        <span>車重</span><span>車種と駆動方式で重さが違う（GARAGE に約kg）。重い車は加速が鈍く、ブレーキも少し効きにくい。軽い車はその逆。最高速は変わらない。FF・4WD は駆動系のぶん重く、ぶつかると重い車が押し勝つ</span>
         <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン）を選べる</span>
         <span>天気</span><span>雨は路面が濡れてグリップが落ちる（左下に DRY／DAMP／WET）。夜はヘッドライトが点く</span>
       </div>
@@ -690,11 +691,11 @@ const _optC=new Map();const k_opt=k=>{const c=k.tq||TQC[1];let o=_optC.get(c);if
 let TFC=1.35,TFB=15,TRC=1.3,TRB=17;const MF=a=>Math.sin(TFC*Math.atan(TFB*a)),MFR=a=>Math.sin(TRC*Math.atan(TRB*a)); // タイヤ特性（マジックフォーミュラ簡略版）
 const ASSIST=[{name:'強',tc:.82,cs:.42,abs:true},{name:'標準',tc:.92,cs:.22,abs:true},{name:'なし',tc:1.05,cs:0,abs:false}];
 // 難易度（T55）：lo/hi＝CPUの速さの幅、err＝コーナー1つごとにミス（ブレーキ遅れでふくらむ・踏めずに失速）する確率
-const AILV=[{name:'入門',lo:.80,hi:.855,err:.34},{name:'やさしい',lo:.86,hi:.91,err:.2},{name:'ふつう',lo:.92,hi:.965,err:.09},{name:'つよい',lo:.975,hi:1.01,err:.03},{name:'達人',lo:.985,hi:1.015,err:0}];
+const AILV=[{name:'入門',lo:.80,hi:.855,err:.34},{name:'やさしい',lo:.86,hi:.91,err:.2},{name:'ふつう',lo:.92,hi:.965,err:.09},{name:'つよい',lo:.975,hi:1.01,err:.03},{name:'達人',lo:.995,hi:1.03,err:0}];
 let assistLv=1,aiLv=2,camMode=0;
 /* 駆動方式とセッティング（β0.12.0）。fs＝前輪に行く駆動力の割合、ka/kb＝重心から前軸・後軸（前が重いほど kb が大きい） */
-const DRV={FF:{fs:1,ka:1.13,kb:1.57,pw:1,ftx:1.25,rgm:1.05,d:'前輪駆動。前が重く安定、踏みすぎると外へふくらむ'},FR:{fs:0,ka:1.3,kb:1.4,pw:1,rgm:.95,d:'後輪駆動。曲がりやすい、踏みすぎるとお尻が出る'},'4WD':{fs:.4,ka:1.22,kb:1.48,pw:.97,ftx:1.1,rgm:1,d:'四輪駆動。立ち上がりと雨に強い、少し重い'}};
-const DRV_KEYS=['FF','FR','4WD'],CPU_DRV=[1,0,1,0,2,0,1,2];
+const DRV={FF:{ms:1.02,fs:1,ka:1.13,kb:1.57,pw:1,ftx:1.25,rgm:1.05,d:'前輪駆動。前が重く安定、踏みすぎると外へふくらむ'},FR:{ms:1,fs:0,ka:1.3,kb:1.4,pw:1,rgm:.95,d:'後輪駆動。曲がりやすい、踏みすぎるとお尻が出る'},'4WD':{ms:1.05,fs:.4,ka:1.22,kb:1.48,pw:.97,ftx:1.1,rgm:1,d:'四輪駆動。立ち上がりと雨に強い、少し重い'}};
+const DRV_KEYS=['FF','FR','4WD'],CPU_DRV=[1,0,1,0,2,0,1,2]; let DSHUF=1,evDrv=null; // T126 DSHUF＝1：レースごとに CPU の駆動方式を席の間でシャッフル（FF の席だけ損をしない）
 const SETG=[{n:'加速寄り',gf:.93},{n:'標準',gf:1},{n:'最高速寄り',gf:1.06}];
 const SETW=[{n:'少なめ',dfm:.6,cdm:.94},{n:'標準',dfm:1,cdm:1},{n:'多め',dfm:1.45,cdm:1.07}];
 const SETB=[{n:'前寄り',bb:.67,rbm:.8},{n:'標準',bb:.6,rbm:1},{n:'後ろ寄り',bb:.53,rbm:1.2}];
@@ -726,7 +727,9 @@ const cum=[0];for(let i=1;i<=dense.length;i++){const a=dense[i-1],b=dense[i%dens
 const L=cum[dense.length];
 const N=Math.round(L/3), SP=L/N;
 const TX=new Float32Array(N),TZ=new Float32Array(N),FX=new Float32Array(N),FZ=new Float32Array(N),NX=new Float32Array(N),NZ=new Float32Array(N);
-{let j=0;for(let i=0;i<N;i++){const s=i*SP;while(cum[j+1]<s)j++;const f=(s-cum[j])/(cum[j+1]-cum[j]||1);const a=dense[j],b=dense[(j+1)%dense.length];TX[i]=a[0]+(b[0]-a[0])*f;TZ[i]=a[1]+(b[1]-a[1])*f;}
+// スタート／ゴールの位置（T80）：コースの点列の起点を、最長の直線（元の15〜432m）の中ほどへ START_S m ずらす（グリッドもピットも全部直線に収まる）。0 で従来（最終コーナーの出口）。0-400m は従来の位置（DRAG_S）から走る
+const START_S=110,DRAG_S=START_S?L-START_S:0;
+{let j=0,ps=-1;for(let i=0;i<N;i++){const s=(i*SP+START_S)%L;if(s<ps)j=0;ps=s;while(cum[j+1]<s)j++;const f=(s-cum[j])/(cum[j+1]-cum[j]||1);const a=dense[j],b=dense[(j+1)%dense.length];TX[i]=a[0]+(b[0]-a[0])*f;TZ[i]=a[1]+(b[1]-a[1])*f;}
  for(let i=0;i<N;i++){const a=(i-1+N)%N,b=(i+1)%N;let fx=TX[b]-TX[a],fz=TZ[b]-TZ[a];const l=Math.hypot(fx,fz)||1;fx/=l;fz/=l;FX[i]=fx;FZ[i]=fz;NX[i]=-fz;NZ[i]=fx;}}
 const wrap=i=>((i%N)+N)%N;
 function heading(i){return Math.atan2(FX[i],FZ[i]);}
@@ -1042,7 +1045,7 @@ const startGrp=new THREE.Group();
  scene.add(startGrp);}
 // 0-400m のゴールと距離看板（ドラッグの時だけ表示）
 const dragGrp=new THREE.Group();
-{const at=s=>{const f=s/SP,i=Math.floor(f),t=f-i,j=wrap(i+1);return[TX[i]+(TX[j]-TX[i])*t,TZ[i]+(TZ[j]-TZ[i])*t,heading(i)];};
+{const at=s=>{const f=(s+DRAG_S)/SP,i=wrap(Math.floor(f)),t=f-Math.floor(f),j=wrap(i+1);return[TX[i]+(TX[j]-TX[i])*t,TZ[i]+(TZ[j]-TZ[i])*t,heading(i)];};
  const chk=canvasTex(256,32,(g)=>{for(let x=0;x<32;x++)for(let y=0;y<4;y++){g.fillStyle=(x+y)%2?'#151515':'#f2f2f2';g.fillRect(x*8,y*8,8,8);}});
  const steel=new THREE.MeshStandardMaterial({color:0x8b9099,metalness:.6,roughness:.45});
  const board=(txt,col)=>new THREE.MeshBasicMaterial({map:canvasTex(256,128,(g,w,h)=>{g.fillStyle=col;g.fillRect(0,0,w,h);g.fillStyle='#fff';g.fillRect(6,6,w-12,h-12);g.fillStyle='#16182a';g.font='italic 800 84px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(txt,w/2,h/2+4);})});
@@ -1146,7 +1149,10 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   ridge(2150,300,260,420,77,[0x55677a,0x8494a4]);
   ridge(1450,260,90,210,31,[0x34482f,0x6a7760]);}
  // 観客席とピット（スタートの直線）
- {const i0=wrap(Math.round(N*.02));const side=farFromTrack(TX[i0]+NX[i0]*(WALL+14),TZ[i0]+NZ[i0]*(WALL+14),WALL+8)?1:-1;GS_SIDE=side;
+ {const i0=wrap(Math.round(N*.02));
+  // ピットは内周側（コースの重心がある側）、観客席はその反対の外周側（T82）
+  let mx=0,mz=0;for(let i=0;i<N;i++){mx+=TX[i];mz+=TZ[i];}mx/=N;mz/=N;
+  const inner=((mx-TX[i0])*NX[i0]+(mz-TZ[i0])*NZ[i0])>0?1:-1;const side=-inner;GS_SIDE=side;
   const crowd=canvasTex(512,64,(g,w,h)=>{g.fillStyle='#3a3d45';g.fillRect(0,0,w,h);const cs=['#d8d4cc','#2c3e70','#8c2a22','#e0b24a','#3d6b3a','#f0f0f0','#555'];for(let y=6;y<h;y+=10)for(let x=2;x<w;x+=5){if(Math.random()<.15)continue;g.fillStyle=cs[Math.random()*cs.length|0];g.fillRect(x,y,3,4);g.fillStyle='#c9a184';g.fillRect(x,y-3,3,3);}});
   const i1=wrap(i0+8),hd=heading(i1);const put=(obj,lat,al)=>{obj.position.set(TX[i1]+NX[i1]*lat+FX[i1]*al,obj.position.y,TZ[i1]+NZ[i1]*lat+FZ[i1]*al);obj.rotation.y=hd;scene.add(obj);};
   const len=70;const conc=new THREE.MeshStandardMaterial({color:0xa9a9a4,roughness:.9});
@@ -1177,7 +1183,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
    for(const lx of[-4.4,4.4]){const l=new THREE.Mesh(new THREE.BoxGeometry(.12,1.4,.12),legM);l.position.set(lx,.7,0);g.add(l);}scene.add(g);n++;}}
 }
 
-// ピットレーン（スタート直後の直線、観客席の反対側）：舗装の帯・区画線・ボックス・制限速度の表示
+// ピットレーン（スタート直後の直線、内周側＝観客席の反対側）：舗装の帯・区画線・ボックス・制限速度の表示
 {PS=-GS_SIDE;
  const t=canvasTex(256,512,(g,w,h)=>{noiseFill(g,w,h,'#4f5157',.08,16000,2.2);g.fillStyle='#e9e9e4';g.fillRect(w*.985-4,0,8,h);g.fillStyle='rgba(233,233,228,.85)';for(let y=0;y<h;y+=64)g.fillRect(w*.5-3,y,6,34);g.fillStyle='rgba(240,190,20,.9)';g.fillRect(2,0,7,h);},true);
  const m=new THREE.MeshStandardMaterial({map:t,roughness:.93,metalness:0});
@@ -1356,6 +1362,9 @@ const CARS=[
  mir:{z:.85,y:.9},ex:[-.5,.5],ey:.2,wh:{k:2,r:.35,w:.32,x:.88,z:[1.42,-1.3],xr:.95},bump:0,vent:0,canard:1,intake:{z:-.85,y:.6},rvent:1}
 ];
 const CPU_CAR=[5,1,7,3,9,2,8,4];let myCar=0;
+// 車重（T154）：車種ごとの重さの比（セダン＝1＝約1250kg）と、駆動方式ごとの重さ（DRV の ms）。MGK＝1で有効（0で全車同じ）。重いほど加速が鈍く（エンジンの力・空気抵抗とも質量で割るので最高速は同じ）、ブレーキは MGB 乗、横グリップは MGP 乗で少し落ちる（荷重感度）。ぶつかる時の質量にも使う
+const CARM=[1,.95,.9,1,1.1,1.08,.92,1.05,1.12,.9];let MGK=1,MGB=.3,MGP=.12;
+const carMass=(ci,drv)=>MGK?CARM[ci]*((DRV[drv]&&DRV[drv].ms)||1):1;
 // ドアの合わせ目の位置（z。前端・間・後端の順。車種の番号順）。2ドアは2つ、4ドアは3つ
 const DOORS=[[1,0,-1.05],[.85,-.75],[.95,-.55],[.7,-.7],[.75,-.2,-1.2],[1.05,.05,-.9],[.65,-.75],[1,0,-1.05],[.6,-.8],[.8,-.5]];
 let _plM=null;
@@ -1647,10 +1656,12 @@ function setupRace(){
       drifting:false,driftDir:0,driftCharge:0,boost:0,spin:0,shield:0,item:null,roulette:0,
       finished:false,finishTime:0,lane:lat*.5,laneT:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
       prevWheel:null,g:makeKart(dr,d===playerChoice?myNo(d):d+1,d===playerChoice?myCar:CPU_CAR[d])};
-    if(d===playerChoice)applySetup(k,setDrv,setG,setW,setB,setT,setC);else applySetup(k,sess==='drag'?setDrv:CPU_DRV[d],1,1,1,0);
+    if(d===playerChoice)applySetup(k,setDrv,setG,setW,setB,setT,setC);else applySetup(k,sess==='drag'?setDrv:(evDrv?evDrv[d]:CPU_DRV[d]),1,1,1,0);
+    k.mm=carMass(d===playerChoice?myCar:CPU_CAR[d],k.drv);k.st=Object.assign({},k.st,{acc:k.st.acc/k.mm,grip:k.st.grip*Math.pow(k.mm,-MGP)}); // T154 車重
     karts.push(k);
   });
   const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);
+  {const si=sess==='drag'?wrap(Math.round(DRAG_S/SP)):0;startGrp.position.set(TX[si],0.06,TZ[si]);startGrp.rotation.y=heading(si);} // ゲート・信号は、0-400m では 0-400m の起点へ
   if(sess==='drag'){DRAG_D=DRAG_DS[dragDist];dragPlace();}dragGrp.visible=sess==='drag';dragGrp.children.forEach((c,i)=>c.visible=i===dragDist);
   updateItemHud();setLamps(0,false);carLights(!!TOD[ENV.tod].night,ENV.fog>.5||ENV.rain>.4);calcVC();updEnvHud();
 }
@@ -1736,7 +1747,7 @@ function stepKart(k,dt,ctl){
     const tbF=k.tq===TQC[2]&&k.bst!=null?1-TBW*(1-Math.max(0,Math.min(1,k.bst/1.3))):1;
     const reT=ERQ&&Math.abs(k.u)<ERC?Math.max(k.rpm,k.erpm):k.rpm; // 発進でクラッチが滑っている間は、上がったエンジン回転のトルクを使う
     const drv=()=>{const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual)?0:1;return k.Fp/(k.gf||1)*(k.pw||1)*(k.powK||1)*(k.heatK||1)*tbF*k.st.acc*RATIO[k.gear]*torque(reT,k.tq)*lim*(ctl.thr??1)*(k.boost>0?1.9:1)*(k.shield>0?1.12:1)*(k.aiDriven?(k.power||1):1);};
-    if(ctl.brake&&k.u>.8){Fb=G*BRKG*(ctl.brk??1);if(ctl.accel&&k.shiftT<=0)Fd=drv();} // アクセルを開けたままブレーキ（トレイルブレーキ）
+    if(ctl.brake&&k.u>.8){Fb=G*BRKG*(ctl.brk??1)*Math.pow(k.mm||1,-MGB);if(ctl.accel&&k.shiftT<=0)Fd=drv();} // アクセルを開けたままブレーキ（トレイルブレーキ）
     else if(ctl.brake&&k.u<=.8)Fd=-5;
     else if(ctl.accel&&k.shiftT<=0)Fd=drv();
     else if(!ctl.accel)Fd=EBF>0?-(EBR+EBF*(RATIO[k.gear]/RATIO[0])*Math.max(.3,Math.min(1.1,k.rpm/8000)))*Math.sign(k.u):-(.6+k.gc*.05)*Math.sign(k.u)*(1+ (5-k.gc)*.12);
@@ -1745,7 +1756,7 @@ function stepKart(k,dt,ctl){
   if(k.shk>0){Fd-=k.shk*Math.sign(k.u||1);k.shk=Math.max(0,k.shk-dt*SHKM/.35);}
   const mu=MU[surf]*wetMul(surf,k)*(surf==='road'?1+RUBG*rubAt(k):1)*k.st.grip*(k.gripK||1)*(k.spin>0?.5:1);
   const muF=mu,muR=mu*(k.drifting?.45:1);
-  const cd=k.cd,roll=.35+DRAGX[surf]*Math.abs(k.u);
+  const mmI=1/(k.mm||1),cd=k.cd*mmI,roll=(.35+DRAGX[surf]*Math.abs(k.u))*mmI;
   const sub=5,h=dt/sub;let ws=0,sF=0,sR=0;
   for(let s=0;s<sub;s++){
     const ua=Math.max(Math.abs(k.u),3),sg=k.u>=0?1:-1;
@@ -1834,7 +1845,7 @@ let tlOn=true,fastLap=null;
 let sess='race',modeSel=0,gridMode=0,gridOrder=null,evSkill=null,qualiRes=null,lastPc=null,gridInfo=null; // gridInfo＝予選のタイム順（決勝の最初に「予選 N位」と出す。T153）
 const solo=()=>sess!=='race';
 const QREF=[60.5,58.0,55.9],QK=[.6,.5,.5]; // CPUの予選タイムの目安（強さ1で1周の秒数、強さによる伸び）
-function newEvent(){evSkill={};for(let d=0;d<8;d++)evSkill[d]=AILV[aiLv].lo+Math.random()*(AILV[aiLv].hi-AILV[aiLv].lo);gridOrder=null;qualiRes=null;gridInfo=null;}
+function newEvent(){evDrv=CPU_DRV.slice();if(DSHUF)for(let i=7;i>0;i--){const j=Math.random()*(i+1)|0;[evDrv[i],evDrv[j]]=[evDrv[j],evDrv[i]];}evSkill={};for(let d=0;d<8;d++)evSkill[d]=AILV[aiLv].lo+Math.random()*(AILV[aiLv].hi-AILV[aiLv].lo);gridOrder=null;qualiRes=null;gridInfo=null;}
 function cpuQuali(d){return QREF[ccChoice]*(1+QK[ccChoice]*(1-evSkill[d]))+Math.random()*.5+AILV[aiLv].err*Math.random()*4;}
 function makeGrid(){const o=[];for(let i=0;i<8;i++)if(i!==playerChoice)o.push(i);
   if(gridMode===1)o.push(playerChoice);
@@ -1881,16 +1892,17 @@ function ghostStep(dt){const p=player();const gm=ghostMesh;ghDelta=null;
   const g=ghMesh();const q=ghAt(t);g.root.visible=!!q;if(q){g.root.position.set(q[0],0,q[1]);g.root.rotation.y=q[2];}
   const tg=ghTimeAt(lapDist(p));if(tg!=null&&t>1)ghDelta=t-tg;}
 /* リプレイ：0.1秒ごとに全車の位置などを記録して、レース後に中継カメラで再生 */
-const RP_N=11;let rpBuf=[],rpT=0,rpI=0,rpTime=0,rpSpeed=1,rpFocus=0,rpSavedCam=0;
+const RP_N=14;let rpBuf=[],rpT=0,rpI=0,rpTime=0,rpSpeed=1,rpFocus=0,rpSavedCam=0;
 function recordReplay(dt){rpT+=dt;if(rpT<.1&&rpBuf.length)return;rpT=0;const a=new Float32Array(karts.length*RP_N);
   karts.forEach((k,j)=>{const o=j*RP_N;a[o]=k.x;a[o+1]=k.z;a[o+2]=k.h;a[o+3]=k.u;a[o+4]=k.delta;a[o+5]=k.ay;a[o+6]=k.ax;a[o+7]=k.rpm;
-    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0);a[o+9]=k.lap;a[o+10]=k.vl;});
+    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0);a[o+9]=k.lap;a[o+10]=k.vl;const c=k.dnf&&k.cr;if(c){a[o+11]=c.y;a[o+12]=c.px;a[o+13]=c.pz;}});
   rpBuf.push({t:raceTime,a});}
 const camTarget=()=>state==='replay'?karts[rpFocus]:state==='title'?(titleMode==='garage'?karts[0]:(karts.length?ranking()[0]:null)):player();
 function applyReplay(){const f0=rpBuf[rpI],f1=rpBuf[Math.min(rpBuf.length-1,rpI+1)];const w=f1.t>f0.t?Math.max(0,Math.min(1,(rpTime-f0.t)/(f1.t-f0.t))):0;
   karts.forEach((k,j)=>{const o=j*RP_N,A=f0.a,B=f1.a;const L2=(q)=>A[o+q]+(B[o+q]-A[o+q])*w;
     k.x=L2(0);k.z=L2(1);k.h=A[o+2]+angDiff(B[o+2],A[o+2])*w;k.u=L2(3);k.delta=L2(4);k.ay=L2(5);k.ax=L2(6);k.rpm=L2(7);k.erpm=k.rpm;k.blip=0;k.vl=L2(10);k.lap=A[o+9];
     const fl=A[o+8];k.slipR=fl&1?.3:0;k.slipF=0;k.wheelspin=0;k.locked=false;k.spin=fl&2?1:0;k.shiftT=fl&4?.1:0;k.aiBrake=!!(fl&8);k.rv=!!(fl&16);k.gone=!!(fl&32);
+    if(k.rv){const m=k.rcr||(k.rcr={});m.y=L2(11);m.px=L2(12);m.pz=L2(13);} // T73 リプレイでも跳ねて転がる様子を再生する（最終の姿勢で止まって見えないように）
     k.idx=nearest(k.x,k.z,k.idx,24);k.lat=lateralAt(k.idx,k.x,k.z);k.surf=surfaceAt(k.idx,k.lat);syncWorld(k);});}
 function rpSnap(){const p=camTarget();for(const k of karts)k.g.headParts.forEach(m=>m.visible=true);camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;
   $('rpName').textContent=`${p.name}　×${rpSpeed}`;$('rpCam').textContent='視点 '+CAMN[camMode];$('rpSpd').textContent='速さ ×'+rpSpeed;}
@@ -1972,9 +1984,11 @@ let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=[.5,.4
 // T147 ブロッカー（性格 blk）：BKM＝1で有効。後ろから迫る車（BKL〜BKD m 後ろ、横の差 .8〜BKX m）に対し、直線で1度だけ（BKC 秒おき）その車のラインへ寄って前に出させない。コーナーの中・手前は動かない。接触しない車間は後ろ側が守る（follow）
 let BKM=1,BKC=6,BKD=28,BKL=7,BKX=3.4;
 const CID=new Int16Array(N).fill(-1);{let n=-1;for(let i=0;i<N;i++){if(CORNER[i]){if(!CORNER[wrap(i-1)])n++;CID[i]=n;}}}
+let SCV=6; // T120 SCV＝いちばん近づけたコーナーとの差がこの距離(m)以内のコーナーから毎周選び直す（0で従来どおり固定）
+let YLW=.9,DNF0=40,DNF1=3.6,DNFA=8; // T127 大事故の対策：YLW＝黄旗中のコーナー速度の係数、DNF0・DNF1＝止まった車を見つける距離（m＝DNF0＋速さ×DNF1）、DNFA＝止まった車の手前でのブレーキの見積り減速(m/s²)
 let RTK=0,RTF=6.5,RTW=.6; // T148 RTK＝1で、ラインへ戻る動きが横の車の側へ向かう間は戻らない（RTF＝前後 m、RTW＝間隔の余裕 m）
 let PBK=1,PB_D=30,PBL=60,PBF=1.05,PBR=1.03,PB4=1.04,PRT=1,PRH=2.3,DFW=.25,DFD=22; // T115〜T117：ブレーキングで差す（PBK＝1で有効、PB_D＝狙う前の車までの距離、PBL＝先のコーナーまで、PBF/PBR/PB4＝FF/FR/4WD のブレーキの遅らせ方）、並走の権利（PRT、PRH＝半車身）、守り（DFW＝後ろに迫られている間のふらつきの倍率、DFD＝その距離）
-let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.93,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
+let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.97,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPUのコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 function aiControl(k,dt){
   const p=player();
   // 走り方（T79）：基本はレーシングライン IL（アウト・イン・アウト）。弱い CPU ほど線のぶれが大きい。並走・よけで laneT が決まった間（ovr）はその横位置
@@ -2003,7 +2017,7 @@ function aiControl(k,dt){
   const gap=progress(k)-progress(p);
   k.power=k.isPlayer?1:k.skill;
   // 速度計画：先のカーブで曲がれる速さ＋ブレーキ距離
-  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:1));const aeK=AERO*(k.dfm||1);const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:k.skill)*(k.yellow?.9:1)*(k.fs>.8?FFK:1);let vAllow=1e9;
+  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:1));const aeK=AERO*(k.dfm||1);const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:k.skill)*(k.yellow?YLW:1)*(k.fs>.8?FFK:1);let vAllow=1e9;
   for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);const den=1-latA/G*aeK*RADL[i];const vc=den>.15?Math.sqrt(latA*RADL[i]/den):200;const v=Math.sqrt(vc*vc+2*G*1.2*wgm*Math.max(0,j*SP-AIBL));if(v<vAllow)vAllow=v;}
   // 滑りを使う（T74）：グリップが低い（雨・低ミュー路面）ほど、立ち上がりでアクセルを踏んで尻を出し、きついコーナーではサイドブレーキで向きを変え、滑り始めは強めに逆ハンドル
   const gripNow=MU.road*wetMul('road',k),slv=sess==='drag'||k.pit?0:Math.max(0,Math.min(1,(SLG-gripNow)/.5));k.slv=slv;
@@ -2061,7 +2075,8 @@ function aiControl(k,dt){
         if(sc&&ds>3&&ds<45){const gv=sc.g[cid];if(gv===undefined||ds<gv){sc.g[cid]=ds;let bc=-1,bg=1e9;for(const c in sc.g)if(sc.g[c]<bg){bg=sc.g[c];bc=+c;}sc.bc=bc;}}
         const revenge=k.lostT>0&&k.lostO===o.id;
         // 狙う場所：覚えたベストのコーナー（追従を SCT 秒続けた後）か取り返しの時は全力、それ以外は性格に応じて控えめ
-        const full=revenge||!SCK||(sc&&sc.t>=SCT&&sc.bc===cid);const dmax=PB_D*(full?1:(SCF[k.dr.tr??2]??1))*(revenge?1+SBD:1);
+        if(sc&&SCV>0&&sc.t>=SCT&&(sc.pl!==k.lap||sc.pick==null)){sc.pl=k.lap;let mg=1e9;for(const c in sc.g)mg=Math.min(mg,sc.g[c]);const cand=Object.keys(sc.g).filter(c=>sc.g[c]<=mg+SCV);sc.pick=+cand[Math.random()*cand.length|0];} // T120 狙うコーナーは毎周、近づけたコーナーの中から選び直す（いちばん近づけた所だけを固定で狙うと読まれる）
+        const full=revenge||!SCK||(sc&&sc.t>=SCT&&(SCV>0?sc.pick:sc.bc)===cid);const dmax=PB_D*(full?1:(SCF[k.dr.tr??2]??1))*(revenge?1+SBD:1);
         if(ds<4||ds>dmax||ds>=tds)continue;if(Math.abs(o.lat-k.lat)>2.6||k.u<o.u-1.5)continue;
         tg=o;tds=ds;tfull=full;trev=revenge;tsc=sc;} // 狙うのはいちばん近い車
       if(tg){const o=tg,s=-OUTS[ci],sd=Math.max(tr.room+.8,2.8);const nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+s*sd));
@@ -2069,8 +2084,8 @@ function aiControl(k,dt){
         let blocked=false;for(const q of karts){if(q===k||q===o||q.dnf||q.pit>0)continue;const dq=progress(q)-progress(k);if(dq>-8&&dq<PB_D&&Math.abs(q.lat-nt)<2.6){blocked=true;break;}}
         if(!blocked&&Math.abs(nt-o.lat)>=2.3){k.laneT=nt;k.laneTimer=1.2;k.ovr=true;k.atk=1;vAllow*=(k.fs>.8?PBF:k.fs<.3?PBR:PB4)*((trev||tfull&&tsc&&tsc.t>=SCT)?SBL:1);}}}}
   // 大事故で止まった車（T71）：コースに沿った距離で早めに見つけ、ブレーキをかけて横へよける
-  for(const o of karts){if(!o.dnf||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>40+u*3.6||Math.abs(o.lat-k.lat)>3.4)continue;
-    k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>0?-1:1)*3.6));k.laneTimer=1.5;if(u*u>2*8*Math.max(.5,ds-9))hard=true;}
+  for(const o of karts){if(!o.dnf||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>DNF0+u*DNF1||Math.abs(o.lat-k.lat)>3.4)continue;
+    k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>0?-1:1)*3.6));k.laneTimer=1.5;if(u*u>2*DNFA*Math.max(.5,ds-9))hard=true;}
   // 周回遅れは道を譲る（T85）：青旗（後ろから周回遅れにする車が近づいた）が出たら、ラインを外して少し緩め、先に行かせる。譲る側はコーナーの外側へ、直線ではラインから3m外へ寄る
   k.yieldF=false;
   if(k.blue&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g2=progress(o)-progress(k);
@@ -2196,7 +2211,7 @@ function proj(cs,ax){let mn=1e9,mx=-1e9;for(const c of cs){const d=c[0]*ax[0]+c[
 function insideK(k,p){const dx=p[0]-k.x,dz=p[1]-k.z;const f=dx*Math.sin(k.h)+dz*Math.cos(k.h),l=dx*Math.cos(k.h)-dz*Math.sin(k.h);return Math.abs(f)<=HZ+.05&&Math.abs(l)<=HX+.05;}
 const cross2=(rx,rz,nx,nz)=>rz*nx-rx*nz;
 function pointVel(k,px,pz){const rx=px-k.x,rz=pz-k.z;return[k.vx+k.r*rz,k.vz-k.r*rx];}
-function impulse(k,px,pz,jx,jz){const m=k.st.mass,I=IZC*m;k.vx+=jx/m;k.vz+=jz/m;k.r+=cross2(px-k.x,pz-k.z,jx,jz)/I;}
+function impulse(k,px,pz,jx,jz){const m=k.mm||k.st.mass,I=IZC*m;k.vx+=jx/m;k.vz+=jz/m;k.r+=cross2(px-k.x,pz-k.z,jx,jz)/I;}
 // 壁：車体の四隅で当たる（当たった場所で向きが変わる）
 function wallCollide(k){const cs=kCorners(k);let deep=0,dp=null,side=0,wi=k.idx;
   for(const c of cs){const i=nearest(c[0],c[1],k.idx,8);const lat=lateralAt(i,c[0],c[1]);const s=Math.sign(lat);const face=(CORNER[i]&&s===OUTS[i])?WALL+.55:WALL+1.05;const pen=Math.abs(lat)-face;if(pen>deep){deep=pen;dp=c;side=s;wi=i;}}
@@ -2204,7 +2219,7 @@ function wallCollide(k){const cs=kCorners(k);let deep=0,dp=null,side=0,wi=k.idx;
   const nx=-NX[wi]*side,nz=-NZ[wi]*side; // コース内向き
   k.x+=nx*deep;k.z+=nz*deep;dp=[dp[0]+nx*deep,dp[1]+nz*deep];
   const pv=pointVel(k,dp[0],dp[1]);const vn=pv[0]*nx+pv[1]*nz;
-  if(vn<0){const m=k.st.mass,I=IZC*m;const rx=dp[0]-k.x,rz=dp[1]-k.z;
+  if(vn<0){const m=k.mm||k.st.mass,I=IZC*m;const rx=dp[0]-k.x,rz=dp[1]-k.z;
     const kn=cross2(rx,rz,nx,nz);const j=-(1.3)*vn/(1/m+kn*kn/I);
     const tx=-nz,tz=nx;const vt=pv[0]*tx+pv[1]*tz;const kt=cross2(rx,rz,tx,tz);let jt=-vt/(1/m+kt*kt/I);const lim=.5*j;jt=Math.max(-lim,Math.min(lim,jt));
     impulse(k,dp[0],dp[1],nx*j+tx*jt,nz*j+tz*jt);syncLocal(k);
@@ -2220,7 +2235,7 @@ function collisions(){
     let nx=n[0],nz=n[1];if(dx0*nx+dz0*nz<0){nx=-nx;nz=-nz;}
     const pts=cb.filter(p=>insideK(a,p)).concat(ca.filter(p=>insideK(b,p)));
     let px=(a.x+b.x)/2,pz=(a.z+b.z)/2;if(pts.length){px=0;pz=0;for(const q of pts){px+=q[0];pz+=q[1];}px/=pts.length;pz/=pts.length;}
-    const ma=a.st.mass,mb=b.st.mass,tot=ma+mb;
+    const ma=a.mm||a.st.mass,mb=b.mm||b.st.mass,tot=ma+mb;
     a.x-=nx*best*mb/tot;a.z-=nz*best*mb/tot;b.x+=nx*best*ma/tot;b.z+=nz*best*ma/tot;
     const va=pointVel(a,px,pz),vb=pointVel(b,px,pz);const rvx=vb[0]-va[0],rvz=vb[1]-va[1];const vn=rvx*nx+rvz*nz;
     if(vn<0){const Ia=IZC*ma,Ib=IZC*mb;const ka=cross2(px-a.x,pz-a.z,nx,nz),kb=cross2(px-b.x,pz-b.z,nx,nz);
@@ -2252,7 +2267,7 @@ function syncVisuals(dt){
   for(const b of boxes){if(b.t>0){b.t-=dt;if(b.t<=0)b.m.visible=true;}b.m.rotation.y+=dt*1.2;b.m.rotation.x=.4;b.m.position.y=1.5+Math.sin(clockT*2+b.x)*.18;}
   const pl=player();
   for(const k of karts){const g=k.g;g.root.visible=!k.gone;g.root.position.set(k.x,0,k.z);g.root.rotation.y=k.h;
-    {const c=(state==='replay'?k.rv:k.dnf)&&k.cr;if(c){const r=g.root;r.rotation.order='YXZ';r.rotation.x=c.px;r.rotation.z=c.pz;r.position.y=c.y+.7*(1-Math.cos(c.px))+.7*(1-Math.cos(c.pz));g.crV=1;}else if(g.crV){g.root.rotation.x=g.root.rotation.z=0;g.root.position.y=0;g.crV=0;}}
+    {const c=state==='replay'?(k.rv&&k.rcr):(k.dnf&&k.cr);if(c){const r=g.root;r.rotation.order='YXZ';r.rotation.x=c.px;r.rotation.z=c.pz;r.position.y=c.y+.7*(1-Math.cos(c.px))+.7*(1-Math.cos(c.pz));g.crV=1;}else if(g.crV){g.root.rotation.x=g.root.rotation.z=0;g.root.position.y=0;g.crV=0;}}
     // 車体のロールとピッチ（横G・前後G）
     const roll=Math.max(-.05,Math.min(.05,-k.ay*.0035)),pitch=Math.max(-.035,Math.min(.035,-k.ax*.0028))+(k.shiftT>0?.008:0);
     g.body.rotation.z+=(roll-g.body.rotation.z)*Math.min(1,dt*8);g.body.rotation.x+=(pitch-g.body.rotation.x)*Math.min(1,dt*8);
@@ -2601,6 +2616,8 @@ addEventListener('keydown',e=>{if(!$('bugScreen').hidden){if(e.code==='Escape'){
   if(e.code==='KeyL')setLine(!showLine);
   if(e.code==='KeyO'&&(state==='race'||state==='countdown'||state==='finished'))setAuto(!autoPlay);
   if(e.code==='KeyT')spdStep();
+  if(e.code==='KeyK'&&e.shiftKey&&state==='race'&&sess==='race'){const pk=player();if(pk&&!pk.dnf){pk.u=Math.max(pk.u,30);crashCheck(pk,26,14);}} // 試験用（T73）：Shift+K で自車を大クラッシュさせる。Shift+J で前の車
+  if(e.code==='KeyJ'&&e.shiftKey&&state==='race'&&sess==='race'){const pk=player();let b=null,bd=1e9;for(const o of karts){if(o===pk||o.dnf)continue;const d=progress(o)-progress(pk);if(d>0&&d<bd){bd=d;b=o;}}if(b){b.u=Math.max(b.u,30);crashCheck(b,26,14);}}
   if((e.code==='Escape'||e.code==='KeyP')&&(state==='race'||state==='countdown'))pause();
   else if((e.code==='Escape'||e.code==='KeyP')&&state==='paused')resume();});
 addEventListener('keyup',e=>{const k=KEYMAP[e.code];if(k)input[k]=false;});
@@ -2836,8 +2853,9 @@ function dragSave(){try{localStorage.setItem(dragKey(),JSON.stringify(dragRec));
 function dragRecText(){dragLoad();return (dragDist?'1/8マイル　':'')+(dragRec?`${CC[ccChoice].name}　ベスト ${dragRec.et.toFixed(3)}秒`:`${CC[ccChoice].name}　記録なし`);}
 function dragRival(){if(dragRivalSel>=0&&dragRivalSel!==playerChoice)return dragRivalSel;const o=[];for(let i=0;i<DRIVERS.length;i++)if(i!==playerChoice)o.push(i);return o[Math.random()*o.length|0];}
 function dragPlace(){
-  karts.forEach((k,j)=>{const lat=j?DRAG_LAT:-DRAG_LAT;k.x=TX[0]-FX[0]*(HZ+.3)+NX[0]*lat;k.z=TZ[0]-FZ[0]*(HZ+.3)+NZ[0]*lat;k.h=heading(0);
-    k.idx=nearest(k.x,k.z,N-1,8);k.prevIdx=k.idx;k.lat=lateralAt(k.idx,k.x,k.z);k.lane=k.laneT=lat;k.laneTimer=1e9;k.dd=0;k.dm={};k.dFin=false;
+  const DI=wrap(Math.round(DRAG_S/SP)); // 0-400m の起点（スタートラインの位置が変わっても従来の直線から走る）
+  karts.forEach((k,j)=>{const lat=j?DRAG_LAT:-DRAG_LAT;k.x=TX[DI]-FX[DI]*(HZ+.3)+NX[DI]*lat;k.z=TZ[DI]-FZ[DI]*(HZ+.3)+NZ[DI]*lat;k.h=heading(DI);
+    k.idx=nearest(k.x,k.z,wrap(DI-1),8);k.prevIdx=k.idx;k.lat=lateralAt(k.idx,k.x,k.z);k.lane=k.laneT=lat;k.laneTimer=1e9;k.dd=0;k.dm={};k.dFin=false;
     k.manual=k.isPlayer&&!!dragMan&&!autoPlay;if(k.manual)k.dm.man=1;syncWorld(k);});
   const r=DRT[aiLv];
   drag={t:0,stage:1.1+Math.random()*1.3,green:-1,amb:0,foul:null,cpuRt:r[0]+Math.random()*(r[1]-r[0]),cpuFoul:Math.random()<.04,prevShift:false,shifts:[],key:'',warned:false};
@@ -3008,7 +3026,7 @@ function updSpec(){const d=myDr(playerChoice),c=CC[ccChoice];const v=Math.round(
 <div class="bar"><label>最高速</label><u><s style="width:${Math.min(100,c.top/84*100).toFixed(0)}%"></s></u><em>${v} km/h</em></div>
 <div class="bar"><label>加速</label><u><s style="width:${Math.min(100,c.top/84*100-6).toFixed(0)}%"></s></u><em>${['★★★','★★★★','★★★★★'][ccChoice]}</em></div>
 <div class="bar"><label>扱いやすさ</label><u><s style="width:${[92,76,58][ccChoice]}%"></s></u><em>${['やさしい','ふつう','じゃじゃ馬'][ccChoice]}</em></div>
-<p>車種 ${CARS[myCar].name}　駆動 ${DRV_KEYS[setDrv]}　6速${manualMode?'マニュアル':'オート'}　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}</p>`;
+<p>車種 ${CARS[myCar].name}（車重 約${Math.round(1250*carMass(myCar,DRV_KEYS[setDrv])/10)*10}kg）　駆動 ${DRV_KEYS[setDrv]}　6速${manualMode?'マニュアル':'オート'}　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}</p>`;
   $('tuneNote').innerHTML=`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（傷んだ時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}`;}
 function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(tStage===0){if(any)enterMenu();return;}
@@ -3057,7 +3075,7 @@ function frame(now){
     rubTick(dt);
     updateFlags();if(sess!=='drag'){watchPositions(dt);watchRadio(dt);}
     collisions();stepProjectiles(dt);if(state==='race')recordRewind(dt);recordReplay(dt);if(solo()&&sess!=='drag')ghostStep(dt);
-    if(state==='finished'){afterFinish+=dt;if(afterFinish>(sess==='drag'?7:5)||karts.every(k=>k.finished||k.dnf)&&(sess!=='drag'||afterFinish>2))showResults();}
+    if(state==='finished'){afterFinish+=dt;if(afterFinish>(sess==='drag'?7:autoPlay&&sess==='race'&&player().dnf?40:5)||karts.every(k=>k.finished||k.dnf)&&(sess!=='drag'||afterFinish>2))showResults();}
     }
     if(state==='race'||state==='finished'){syncVisuals(dt);updateCamera(dt);updateHud(dt);drawFx();updateLine(player());}
   }
