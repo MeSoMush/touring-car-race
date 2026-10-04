@@ -425,7 +425,7 @@ body.touch #cstack>*{position:static!important;transform:none!important;left:aut
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.52.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.53.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -1221,6 +1221,21 @@ function addSkid(x,z,px,pz){const dx=x-px,dz=z-pz;const d=Math.hypot(dx,dz);if(d
 const smokeTex=canvasTex(64,64,(g)=>{const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(235,235,235,.8)');gr.addColorStop(1,'rgba(235,235,235,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);});
 const smokes=[];for(let i=0;i<140;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:smokeTex,transparent:true,depthWrite:false,opacity:0}));s.visible=false;scene.add(s);smokes.push({s,life:0,max:1,vx:0,vz:0,dust:false});}
 let smokeI=0;
+// T174 火花（壁や車とこすれた時）。点の集まり1つで描く（描画は1回）。寿命の切れた点は地面の下へ
+const SPK_N=180,spkPos=new Float32Array(SPK_N*3),spkV=new Float32Array(SPK_N*3),spkL=new Float32Array(SPK_N);let spkI=0,spkLive=0;
+for(let i=0;i<SPK_N;i++)spkPos[i*3+1]=-50;
+const spkGeo=new THREE.BufferGeometry();spkGeo.setAttribute('position',new THREE.BufferAttribute(spkPos,3));
+const spkTex=canvasTex(32,32,g=>{const gr=g.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,235,1)');gr.addColorStop(.35,'rgba(255,190,90,.9)');gr.addColorStop(1,'rgba(255,120,30,0)');g.fillStyle=gr;g.fillRect(0,0,32,32);});
+const spkPts=new THREE.Points(spkGeo,new THREE.PointsMaterial({map:spkTex,size:.45,color:0xffd090,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,toneMapped:false}));spkPts.frustumCulled=false;scene.add(spkPts);
+function spark(x,z,vx,vz,n){const pl=camTarget();if(!pl||Math.hypot(x-pl.x,z-pl.z)>130)return;
+  for(let j=0;j<n;j++){const i=spkI;spkI=(spkI+1)%SPK_N;const o=i*3;spkPos[o]=x;spkPos[o+1]=.3+Math.random()*.25;spkPos[o+2]=z;
+    spkV[o]=vx*.55+(Math.random()-.5)*5;spkV[o+1]=1.2+Math.random()*3.2;spkV[o+2]=vz*.55+(Math.random()-.5)*5;spkL[i]=.22+Math.random()*.38;}spkLive=1;}
+function stepSparks(dt){if(!spkLive)return;let any=0;
+  for(let i=0;i<SPK_N;i++){if(spkL[i]<=0)continue;const o=i*3;spkL[i]-=dt;if(spkL[i]<=0){spkPos[o+1]=-50;continue;}any=1;
+    spkV[o+1]-=9.8*dt;spkPos[o]+=spkV[o]*dt;spkPos[o+1]+=spkV[o+1]*dt;spkPos[o+2]+=spkV[o+2]*dt;
+    if(spkPos[o+1]<.03){spkPos[o+1]=.03;spkV[o+1]*=-.3;spkV[o]*=.6;spkV[o+2]*=.6;}}
+  spkGeo.attributes.position.needsUpdate=true;spkLive=any;}
+let scrLv=0; // T174 自車がこすれている強さ（0〜1）。擦れる音の大きさに使い、毎フレーム減らす
 function puff(x,z,vx,vz,dust,col){const p=smokes[smokeI];smokeI=(smokeI+1)%smokes.length;p.s.visible=true;p.life=0;p.max=dust?1.1:.9;p.vx=vx*.3;p.vz=vz*.3;p.dust=dust;p.s.material.color.setHex(col||(dust?0xb89f72:0xe8e8e8));p.s.position.set(x,.5,z);p.s.scale.set(1,1,1);}
 function stepSmoke(dt){for(const p of smokes){if(!p.s.visible)continue;p.life+=dt;const t=p.life/p.max;if(t>=1){p.s.visible=false;continue;}p.s.position.x+=p.vx*dt;p.s.position.z+=p.vz*dt;p.s.position.y+=dt*1.2;const sc=1+t*3.5;p.s.scale.set(sc,sc,1);p.s.material.opacity=(1-t)*.55;}}
 
@@ -1423,7 +1438,9 @@ function makeKart(dr,num,ci){
   add(gm.body,paint,0,0,0);add(gm.glass,glass,0,0,0);add(gm.roof,paint,0,0,0);
   const BTz=z=>btop(c,z),BWz=z=>pl(c.BW,z);
   // 柱と窓まわりの黒いふち
-  for(const s of[-1,1]){bx(.05,c.bp[2],.08,black,s*(BWz(c.bp[0])-.13),c.bp[1],c.bp[0]);bx(.02,.03,c.trimL,black,s*(sideX(c,c.trimZ,c.belt)+.005),c.belt,c.trimZ);}
+  // β0.53.0：窓の間の柱（Bピラー）は窓ガラスの曲面に沿わせる（以前は車体のいちばん広い幅に縦に立てていて、上へ細くなるガラスから浮いて横へ突き出していた）
+  const bpz=c.bp[0],bpa=Math.max(c.GL.yb+.02,c.bp[1]-c.bp[2]/2),bpb=Math.min(pl(c.GL.yt,bpz)-.03,c.bp[1]+c.bp[2]/2);
+  for(const s of[-1,1]){for(let q=0;q<3;q++){const ya=bpa+(bpb-bpa)*q/3,yc=bpa+(bpb-bpa)*(q+1)/3,xa=glassX(c,bpz,ya),xc=glassX(c,bpz,yc),L=Math.hypot(yc-ya,xc-xa);bx(.03,L+.008,.08,black,s*((xa+xc)/2+.008),(ya+yc)/2,bpz,0,0,-Math.asin(s*(xc-xa)/L));}bx(.02,.03,c.trimL,black,s*(sideX(c,c.trimZ,c.belt)+.005),c.belt,c.trimZ);}
   // ルーフのストライプ（チームカラー）
   bx(.36,.012,c.roofL,accent,0,c.roofY,c.roofZ);
   // ボンネットとトランクの上にも車体の曲面に沿ったストライプ（中央に細い線を足す）
@@ -1486,7 +1503,7 @@ function makeKart(dr,num,ci){
   const spw=Math.min(c.split.w,2*(BWz(2.3)-.12)); // スプリッターは車体の前の幅に収める
   bx(spw,.03,.2,black,0,c.split.y,2.33);
   for(const s of[-1,1])bx(.06,.12,.26,black,s*(spw/2-.02),c.split.y+.06,2.3);
-  if(c.canard)for(const s of[-1,1]){bx(.3,.016,.14,black,s*(BWz(2.2)-.06),c.split.y+.22,2.2,0,s*.2,s*.1);}
+  if(c.canard)for(const s of[-1,1]){const cy=c.split.y+.22;bx(.2,.016,.14,black,s*(sideX(c,2.2,cy)-.02),cy,2.2,0,s*.2,s*.1);} // β0.53.0：車体の側面から 8cm ほどだけ出す（以前は 20cm 以上はみ出していた）
   if(c.bump===1){bx(Math.min(1.86,2*sideX(c,2.33,.4)),.2,.12,black,0,.4,2.36);bx(Math.min(1.86,2*sideX(c,-2.33,.42)),.18,.12,black,0,.42,-2.37);} // 黒い樹脂バンパー（クラシック）
   else if(c.bump===2){const ch=S(0xc8ccd2,.9,.25);bx(2*sideX(c,2.32,.3),.07,.1,ch,0,.3,2.35);bx(2*sideX(c,-2.32,.44),.07,.1,ch,0,.44,-2.36);} // クロームのバンパー（マッスル）
   // ボンネットのスクープ（空気取り入れ口）
@@ -1496,7 +1513,7 @@ function makeKart(dr,num,ci){
   // バンパーの丸い補助ライト（ラリー）
   if(c.fog)for(const s of[-1,1])add(new THREE.CylinderGeometry(.075,.075,.04,14),hl,s*.66,c.gr.y-.02,2.37,body,Math.PI/2);
   // ルーフレール（ワゴン）
-  if(c.rails){const rm=S(0x9aa0a8,.8,.4);for(const s of[-1,1])bx(.035,.035,2.2,rm,s*.56,c.roofY+.03,-.9);}
+  if(c.rails){const rm=S(0x9aa0a8,.8,.4);for(const s of[-1,1]){bx(.035,.035,2.2,rm,s*.56,c.roofY+.03,-.9);for(const z of[.16,-.9,-1.96])bx(.05,.09,.08,rm,s*.56,c.roofY-.02,z);}} // β0.53.0：前・中・後ろに脚を付けて屋根とつなぐ（浮いて角のように見えていた）
   // サイドの空気取り入れ口（ミッドシップ）
   if(c.intake)for(const s of[-1,1])bx(.06,.2,.55,black,s*(sideX(c,c.intake.z,c.intake.y)+.005),c.intake.y,c.intake.z);
   // リアデッキの排熱ルーバー（ミッドシップ）
@@ -1531,7 +1548,8 @@ function makeKart(dr,num,ci){
   // ドアの合わせ目・取っ手・ワイパー・後ろのナンバープレート（β0.32.0）
   {const D=DOORS[ci]||[],hm=S(0x6a6e76,.6,.4),lm=S(0x120a09,0,.9),wm=S(0x4a4d54,.3,.6),y0=pl(c.YB,0)+.16,y1=c.belt-.03,ym=(y0+y1)/2;
     for(const s of[-1,1]){
-      D.forEach(z=>bx(.02,y1-y0,.02,lm,s*(sideX(c,z,ym)+.008),ym,z));
+      // β0.53.0：合わせ目の線は側面の曲がり（上ほど内側へ絞られる）に沿って4つに分けて付ける（以前は1本の縦棒で、上の方が車体から浮いて飛び出していた）
+      D.forEach(z=>{for(let q=0;q<4;q++){const ya=y0+(y1-y0)*q/4,yc=y0+(y1-y0)*(q+1)/4,xa=sideX(c,z,ya),xc=sideX(c,z,yc),L=Math.hypot(yc-ya,xc-xa);bx(.02,L+.006,.02,lm,s*((xa+xc)/2+.008),(ya+yc)/2,z,0,0,-Math.asin(s*(xc-xa)/L));}});
       if(D.length>1){const za=D[0],zb=D[D.length-1];bx(.02,.02,za-zb,lm,s*(sideX(c,(za+zb)/2,y0)+.008),y0,(za+zb)/2);}
       for(let k=0;k+1<D.length;k++){const z=D[k+1]+.2,yh=c.belt-.08;bx(.04,.03,.16,hm,s*(sideX(c,z,yh)+.014),yh,z);}}
     const G=c.GL,wz=G.z0-.28,wy=pl(G.yt,wz),ws=Math.atan2(pl(G.yt,wz-.05)-wy,.05);
@@ -1573,11 +1591,12 @@ function makeKart(dr,num,ci){
     const mTop=Math.min(by+.16,gt(wz+.22)-.03);
     ib(.3,.12,.1,dk,dx,mTop-.06,wz+.22); // メーターパネル
     // ロールケージ：後ろの2本柱と斜め、前の柱（Aピラー沿い）
-    const rb=bz-.15,top=R.yb;
-    for(const s of[-1,1]){ib(.035,top-by+.3,.035,cage,s*.6,(top+by-.3)/2,rb);
-      const fz=G.z0-.3,fy=by-.05,tz=R.z0-.05,dy=top-fy,dz=tz-fz,L=Math.hypot(dy,dz);ib(.035,.035,L,cage,s*.6,(top+fy)/2,(tz+fz)/2,-Math.atan2(dy,dz));}
-    {const dxx=1.2,dyy=top-.12-by,L=Math.hypot(dxx,dyy);ib(L,.035,.035,cage,0,(top-.12+by)/2,rb,0,0,Math.atan2(dyy,dxx));}
-    ib(1.2,.035,.035,cage,0,top-.1,rb);
+    // β0.53.0：柱の位置と高さは車種ごとにガラスの内側へ収める（以前は左右 0.6m・屋根の裏の高さで固定で、ガラスの狭い車種では外へ突き抜けていた）
+    const rb=Math.max(bz-.15,G.z1+.2),top=Math.min(R.yb,gt(rb)-.07),xr=Math.min(.6,glassX(c,rb,top)-.08);
+    {const fz=G.z0-.3,fy=by-.05,tz=Math.max(R.z0-.05,rb+.3),ty=Math.min(R.yb,gt(tz)-.07),xa=Math.min(.6,glassX(c,tz,ty)-.08),dy=ty-fy,dz=tz-fz,L=Math.hypot(dy,dz);
+     for(const s of[-1,1]){ib(.035,top-by+.3,.035,cage,s*xr,(top+by-.3)/2,rb);ib(.035,.035,L,cage,s*xa,(ty+fy)/2,(tz+fz)/2,-Math.atan2(dy,dz));}}
+    {const dxx=2*xr,dyy=top-.12-by,L=Math.hypot(dxx,dyy);ib(L,.035,.035,cage,0,(top-.12+by)/2,rb,0,0,Math.atan2(dyy,dxx));}
+    ib(2*xr,.035,.035,cage,0,top-.1,rb);
   }
   mergeByMaterial(inter);inter.traverse(o=>{o.castShadow=false;});
   // タイヤとホイール（ブレーキキャリパーは回らない側）
@@ -1727,14 +1746,16 @@ function stepKart(k,dt,ctl){
   // ブレーキ・アクセルオフ中は、ひとつ下のギアでも回転が上がりすぎなければ先に落とす（エンジンブレーキ、出口で力のある回転域に備える）
   // 回転が SHIFT_BK まで下がってきた時だけ、1段ずつ DSCD 秒あけて落とす（一瞬抜いただけで連続して落ちない。落とした後は力のある回転域に入る）
   if(k.dsT>0)k.dsT-=dt;
-  if(!(ctl.brake||!ctl.accel)){k.liftT=0;k.u0=k.u;}else k.liftT=(k.liftT||0)+dt;
+  if(!(ctl.brake||!ctl.accel)){k.liftT=0;k.u0=k.u;}else{
+    if(!k.liftT&&(!k.isPlayer||autoPlay)&&k.rpm>6300&&k.u>20&&Math.random()<.35){k.popT=.1;sfx('pop',k);} // T174 CPU も高回転でアクセルを離すとポップ（炎と音）。手で運転する自車は updateEngine で
+    k.liftT=(k.liftT||0)+dt;}
   // T101：ブレーキ（アクセルオフ）で減らす速さ（開始時の速さ→先のコーナーの速さ）のうち DSP 割まで減ってから落とす（ブレーキ中盤〜後半で落とし、頂点までに終える）
   const dsSpan=(k.u0??k.u)-vrefD,dsProg=DSP>0&&dsSpan>4?((k.u0??k.u)-k.u)/dsSpan:1;
   // 先のコーナー（約300m）の速さ vref で回転が SHIFT_BK 以上になる、いちばん高いギアまで落とす（頂点で力のある回転域に入り、立ち上がりでそこから上げていく）
   // 旋回中（横加速度が DSAY を超えている間）は落とさない（荷重が乱れる）。落とす瞬間はアクセルをあおって回転を合わせる（blip）
   if(k.blip>0)k.blip=Math.max(0,k.blip-dt/BLIPT);
   if(EBK&&k.liftT>LFT&&(k.dsT||0)<=0&&k.gear>0&&!k.manual&&k.u>6&&dsProg>=DSP&&(DSMIN<=0||k.u-vrefD>DSMIN)&&!(DSAY>0&&Math.abs(k.ay)>DSAY)){
-    if(k.gear>gtv&&Math.abs(k.u)*RATIO[k.gear-1]*K<=SHIFT_BD){k.gear--;k.dsT=DSCD;if(BLIPR>0){k.blip=1;sfx('blip',k);}}}
+    if(k.gear>gtv&&Math.abs(k.u)*RATIO[k.gear-1]*K<=SHIFT_BD){k.gear--;k.dsT=DSCD;if(BLIPR>0){k.blip=1;sfx('blip',k);if(Math.random()<.4)k.popT=.08;}}}
   k.rpm=Math.max(1400,Math.abs(k.u)*RATIO[k.gear]*K);
   // T105 エンジン自体の回転 erpm：クラッチが切れている間（発進・変速中）は車速から離れ、アクセルで素早く上がる。つながっている間は車速どおり。上がる・下がる速さに上限（慣性）
   {const wr=k.rpm,th=k.spin>0?0:(ctl.accel?(ctl.thr??1):0);if(k.erpm==null)k.erpm=wr;
@@ -1815,7 +1836,7 @@ function stepKart(k,dt,ctl){
 
 // スリップストリーム：前の車の真後ろ（4〜32m、後ろほど広い円すい）で空気抵抗が最大3割減る
 function computeDraft(){for(const k of karts){let d=0;const fx=Math.sin(k.h),fz=Math.cos(k.h);
-  if(k.u>20)for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const f=dx*fx+dz*fz;if(f<4||f>32)continue;const sd=Math.abs(dx*Math.cos(k.h)-dz*Math.sin(k.h));const w=1.1+f*.025;if(sd>w)continue;d=Math.max(d,(1-(f-4)/28)*(1-sd/w*.6));}
+  if(k.u>20)for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const f=dx*fx+dz*fz;if(f<4||f>32)continue;const sd=Math.abs(dx*Math.cos(k.h)-dz*Math.sin(k.h));const w=1.1+f*.025;if(sd>w)continue;d=Math.max(d,(1-(f-4)/28)*(1-sd/w*.6));}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
 const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto'];
@@ -2042,7 +2063,8 @@ function aiControl(k,dt){
     k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const tr=TRAITS[k.dr.tr??2];let follow=false,hard=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
-  for(const o of karts){if(o===k)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd>(o.dnf?30+u*3.5:26)||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
+  // β0.53.1：片付けた残骸（gone）は見ない。前の車をどこまで先から見るかは速さの差で伸ばす（ピットへ減速する車に、全開の車が26m手前まで気づかず追突していた）
+  for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd>(o.dnf?30+u*3.5:Math.max(26,8+Math.max(0,u-Math.max(0,o.u))*CLK))||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
     if(fwd<=5.5&&Math.abs(side)<tr.room+.6&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
       // 並走の権利（T117）：半車身以上前に出ている方が権利を持ち（ラインを守る）、後ろ側が下がる（コーナーの中・手前は必ず譲る）
       const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
@@ -2090,8 +2112,11 @@ function aiControl(k,dt){
         let blocked=false;for(const q of karts){if(q===k||q===o||q.dnf||q.pit>0)continue;const dq=progress(q)-progress(k);if(dq>-8&&dq<PB_D&&Math.abs(q.lat-nt)<2.6){blocked=true;break;}}
         if(!blocked&&Math.abs(nt-o.lat)>=2.3){k.laneT=nt;k.laneTimer=1.2;k.ovr=true;k.atk=1;vAllow*=(k.fs>.8?PBF:k.fs<.3?PBR:PB4)*((trev||tfull&&tsc&&tsc.t>=SCT)?SBL:1);}}}}
   // 大事故で止まった車（T71）：コースに沿った距離で早めに見つけ、ブレーキをかけて横へよける
-  for(const o of karts){if(!o.dnf||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>DNF0+u*DNF1||Math.abs(o.lat-k.lat)>3.4)continue;
-    k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat+(o.lat>0?-1:1)*3.6));k.laneTimer=1.5;if(u*u>2*DNFA*Math.max(.5,ds-9))hard=true;}
+  // β0.53.1：片付けた残骸（gone）は避けない（見えない残骸の手前で止まってバックを繰り返していた）。止まった車が何台あっても、いちばん空いている横位置を選ぶ（以前は1台ずつ反対側へ寄せ、2台の間で左右に迷って止まっていた）
+  {const wk=[];for(const o of karts){if(!o.dnf||o.gone||o===k)continue;const ds=progress(o)-progress(k);if(ds<-4||ds>DNF0+u*DNF1)continue;wk.push([o,ds]);}
+   if(wk.some(([o])=>Math.abs(o.lat-k.lat)<3.4)){let best=k.lat,bs=-1e9;for(let c=-W+2.2;c<=W-2.2+1e-6;c+=.5){let m=1e9;for(const [o] of wk)m=Math.min(m,Math.abs(c-o.lat));const sc=Math.min(m,4)-.12*Math.abs(c-k.lat);if(sc>bs){bs=sc;best=c;}}
+     k.laneT=best;k.laneTimer=1.5;k.ovr=true;
+     for(const [o,ds] of wk)if((Math.abs(o.lat-k.lat)<2.2||Math.abs(o.lat-best)<2.4)&&u*u>2*DNFA*Math.max(.5,ds-9))hard=true;}}
   // 周回遅れは道を譲る（T85）：青旗（後ろから周回遅れにする車が近づいた）が出たら、ラインを外して少し緩め、先に行かせる。譲る側はコーナーの外側へ、直線ではラインから3m外へ寄る
   k.yieldF=false;
   if(k.blue&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g2=progress(o)-progress(k);
@@ -2179,7 +2204,7 @@ function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'|
     if(!(PQ&&!k.isPlayer&&pitBusy()>=PQN)){const fin=LAPS-k.lap===1;k.pit=1;if(PBX)pitAssignBox(k);k.pitReq=false;k.pitAuto=0;if(k.isPlayer){toast(fin?'ファイナルラップにピットイン（自動運転）':'ピットイン（自動運転）');$('pitBtn').setAttribute('aria-pressed','false');}else telop('PIT IN',k.name+(fin?'　ファイナルラップにピットイン':'　ピットイン'));}}}}
 function pitFinish(k){k.wear=0;k.dmg=0;k.pit=3;k.pitDone=1;k.rain=tyreWet();if(k.isPlayer)toast('ピット完了（'+(k.rain?'レイン':'スリック')+'）');k.gripK=1;k.powK=1;}
 // T103：ピット内の混雑。PQ＝1で有効、PQG＝止まる車間(m)、PQW＝同じ列とみなす横の差(m)、PQN＝同時にピットへ向かえる台数、PQX＝出る時に後ろを待つ距離(m)
-let PBX=1,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
+let PSK=1,CLK=2.2,PBX=1,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
 function pitLat(o){const i=o.idx;return(o.x-TX[i])*NX[i]+(o.z-TZ[i])*NZ[i];}
 function pitBlocked(k,rel){for(const o of karts){if(o===k||o.gone||o.dnf||o.pit!==1)continue;const d=rel-relLine(o);if(d>-4&&d<PQX&&Math.abs(o.u)>2)return true;}return false;}
 function pitBusy(){let n=0;for(const o of karts)if(o.pit>0&&!o.gone)n++;return n;}
@@ -2192,7 +2217,7 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   else if(k.pit===3){vt=rel<PIT_C?PIT_V:1e9;if(rel>PIT_D){k.pit=0;k.box=null;}}
   if(PQ&&(k.pit===1||k.pit===3)){const lk=pitLat(k);for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ro=relLine(o),ds=ro-rel;if(ds>0&&ds<70&&o.pit>0&&Math.abs(pitLat(o)-lk)<PQW)vt=Math.min(vt,Math.max(0,o.u)+Math.sqrt(2*G*.7*Math.max(0,ds-PQG)));}}
   let ctl;
-  if(k.pit===1&&rel<PIT_A-5){ctl=aiControl(k,dt);}
+  if(k.pit===1&&rel<PIT_A-5){if(PSK&&rel>-380){k.laneT=PS*(W-2.2);k.laneTimer=.5;k.ovr=true;}ctl=aiControl(k,dt);} // β0.53.1：ピットに入る車は、減速する前にピット側の端へ寄る（ラインの上で減速して追突されていた）
   else{const ld=5+u*.5;const t=wrap(k.idx+Math.round(ld/SP));const lat=pitLatAt(k,relIdx(t,0));ctl={steer:steerTo(k,TX[t]+NX[t]*lat,TZ[t]+NZ[t]*lat,u),accel:true,brake:false,drift:false};}
   const brake=u>vt+1.5;ctl.brake=brake||ctl.brake&&u>vt;ctl.accel=!brake&&u<vt-.5&&ctl.accel;k.aiBrake=ctl.brake;return ctl;}
 function togglePit(){const p=player();if(!p||p.pit||sess!=='race')return;
@@ -2225,6 +2250,8 @@ function wallCollide(k){const cs=kCorners(k);let deep=0,dp=null,side=0,wi=k.idx;
   const nx=-NX[wi]*side,nz=-NZ[wi]*side; // コース内向き
   k.x+=nx*deep;k.z+=nz*deep;dp=[dp[0]+nx*deep,dp[1]+nz*deep];
   const pv=pointVel(k,dp[0],dp[1]);const vn=pv[0]*nx+pv[1]*nz;
+  {const vs=Math.abs(pv[0]*nz-pv[1]*nx); // T174 壁に沿ってこする速さ→火花と擦れる音
+   if(vs>5&&!k.gone){spark(dp[0],dp[1],k.vx,k.vz,Math.min(5,1+Math.floor(vs/8+Math.max(0,-vn)/3+Math.random())));if(k.isPlayer)scrLv=Math.max(scrLv,Math.min(1,vs/22+Math.max(0,-vn)/10));}}
   if(vn<0){const m=k.mm||k.st.mass,I=IZC*m;const rx=dp[0]-k.x,rz=dp[1]-k.z;
     const kn=cross2(rx,rz,nx,nz);const j=-(1.3)*vn/(1/m+kn*kn/I);
     const tx=-nz,tz=nx;const vt=pv[0]*tx+pv[1]*tz;const kt=cross2(rx,rz,tx,tz);let jt=-vt/(1/m+kt*kt/I);const lim=.5*j;jt=Math.max(-lim,Math.min(lim,jt));
@@ -2244,6 +2271,8 @@ function collisions(){
     const ma=a.mm||a.st.mass,mb=b.mm||b.st.mass,tot=ma+mb;
     a.x-=nx*best*mb/tot;a.z-=nz*best*mb/tot;b.x+=nx*best*ma/tot;b.z+=nz*best*ma/tot;
     const va=pointVel(a,px,pz),vb=pointVel(b,px,pz);const rvx=vb[0]-va[0],rvz=vb[1]-va[1];const vn=rvx*nx+rvz*nz;
+    {const vs=Math.abs(rvx*nz-rvz*nx); // T174 車どうしがこすれた・ぶつかった時の火花と擦れる音
+     if(vs>4||vn<-3){spark(px,pz,(a.vx+b.vx)/2,(a.vz+b.vz)/2,Math.min(8,2+Math.floor(Math.max(vs/6,-vn/2)+Math.random())));if(a.isPlayer||b.isPlayer)scrLv=Math.max(scrLv,Math.min(1,vs/18));}}
     if(vn<0){const Ia=IZC*ma,Ib=IZC*mb;const ka=cross2(px-a.x,pz-a.z,nx,nz),kb=cross2(px-b.x,pz-b.z,nx,nz);
       const jn=-(1.25)*vn/(1/ma+1/mb+ka*ka/Ia+kb*kb/Ib);
       const tx=-nz,tz=nx;const vt=rvx*tx+rvz*tz;const ta=cross2(px-a.x,pz-a.z,tx,tz),tb=cross2(px-b.x,pz-b.z,tx,tz);
@@ -2281,7 +2310,8 @@ function syncVisuals(dt){
     for(const w of g.wheels){if(w.front)w.piv.rotation.y=Math.max(-VSTEER,Math.min(VSTEER,k.delta));w.spin.rotation.x+=(k.u/w.r)*dt*(w.front?1:(k.wheelspin?1.6:1));}
     g.wheelS.rotation.z=-k.delta*3;
     g.tail.emissiveIntensity=k.isPlayer&&input.brake||k.aiBrake?(g.tailBase>.5?2.6:1.6):(g.tailBase||.35);
-    const fl=k.shiftT>.06&&Math.random()<.6;g.flames.forEach(f=>{f.visible=fl;if(fl){const s=.8+Math.random()*.6;f.scale.set(s,s,s);}});
+    if(k.popT>0)k.popT-=dt; // T174 アクセルオフ・シフトダウンのポップでも炎
+    const fl=(k.shiftT>.06||k.popT>0)&&Math.random()<.6;g.flames.forEach(f=>{f.visible=fl;if(fl){const s=.8+Math.random()*.6;f.scale.set(s,s,s);}});
     const lv=k.driftCharge>2.2?2:k.driftCharge>1.0?1:0;
     g.sparks.forEach(sp=>{sp.visible=k.drifting&&lv>0;const s=.4+Math.random()*.6;sp.scale.set(s,s,s);});
     g.sparkMat.color.setHex(lv===2?0xff8a1f:0x5fc8ff);
@@ -2300,7 +2330,7 @@ function syncVisuals(dt){
       if(Math.random()<.35){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,false);}k.prevWheel=rw;}
     else{k.prevWheel=null;if(near&&(surf==='gravel'||surf==='grass')&&Math.abs(k.u)>8&&Math.random()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
   }
-  stepSmoke(dt);
+  stepSmoke(dt);stepSparks(dt);
 }
 let tvI=-1;
 /* ================= 中継ディレクター（数秒ごとにカットで切り替わる） ================= */
@@ -2323,13 +2353,18 @@ function dirStart(p,s){DIR.sub=s;DIR.last=s;DIR.snap=true;
   else if(s==='heli'){DIR.ang=p.h+Math.PI+(Math.random()*2-1)*.9;}
   else if(s==='drone'){DIR.side=Math.random()<.5?-1:1;DIR.ph=Math.random()*6;}
   const t=$('camTag');t.textContent=CAMLBL[s];t.hidden=false;}
+let hdX=0,hdV=0,hdG=0,hdK=null; // T174 車載視点の頭の揺れ（前後の位置 m・その速さ・前のギア・対象の車）
 function cockpitCam(p,dt,snap){
   const fx=Math.sin(p.h),fz=Math.cos(p.h),lx=Math.cos(p.h),lz=-Math.sin(p.h);
   const roll=p.g.body.rotation.z,pitch=p.g.body.rotation.x;
-  camera.position.set(p.x+fx*1.02+lx*roll*1.5,1.27+(Math.random()-.5)*(p.surf!=='road'?.03:.006)*Math.min(1,Math.abs(p.u)/20),p.z+fz*1.02+lz*roll*1.5);
+  // ブレーキで頭が前へ、加速で後ろへ（ばねで戻る）。シフトアップの瞬間は駆動が抜けて軽く前へ揺れる。動きを減らす設定では止める
+  if(hdK!==p||snap){hdK=p;hdX=hdV=0;hdG=p.gear;}
+  if(p.gear>hdG&&!RM)hdV+=.32;hdG=p.gear;
+  {const tg=RM?0:Math.max(-.035,Math.min(.08,-(p.ax||0)*.0045)),h=Math.min(dt,.04);hdV+=((tg-hdX)*90-hdV*11)*h;hdX=Math.max(-.05,Math.min(.14,hdX+hdV*h));}
+  camera.position.set(p.x+fx*(1.02+hdX)+lx*roll*1.5,1.27+(Math.random()-.5)*(p.surf!=='road'?.03:.006)*Math.min(1,Math.abs(p.u)/20),p.z+fz*(1.02+hdX)+lz*roll*1.5);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake*.4;camera.position.y+=(Math.random()-.5)*shake*.3;}}
   camera.up.set(-lx*roll*.6,1,-lz*roll*.6);
-  camera.lookAt(p.x+fx*30,1.02-pitch*18,p.z+fz*30);camera.up.set(0,1,0);
+  camera.lookAt(p.x+fx*30,1.02-pitch*18-hdX*5,p.z+fz*30);camera.up.set(0,1,0);
   const f=(innerWidth<innerHeight?88:72);if(snap)camera.fov=f;else camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();camH=p.h;}
 function directorCam(p,dt){
   if(tvI<0){DIR.t=0;DIR.sub='';tvI=0;}
@@ -2502,15 +2537,21 @@ function showBanner(t){const b=$('banner');b.textContent=t;b.classList.remove('p
 function toast(t){$('toast').textContent=t;toastTimer=2;}
 
 /* ================= サウンド ================= */
-let ac=null,eng=null,squeal=null,muted=false,master=null;
+let ac=null,eng=null,squeal=null,muted=false,master=null,scrape=null,npcV=[];const AUD={x:0,z:0,t:0,vx:0,vz:0},audDir=new THREE.Vector3();
 function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webkitAudioContext;
   try{ac=new AC({sampleRate:48000,latencyHint:'interactive'});}catch(_){ac=new AC();} // 出力機器（DAC）が 384kHz などでも、音の処理は 48kHz に固定（高いと BGM の合成が重くなって音が歪む）
   master=ac.createGain();master.gain.value=.5;master.connect(ac.destination);
   const o=ac.createOscillator();o.type='sawtooth';const o2=ac.createOscillator();o2.type='square';const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;f.Q.value=2;const g=ac.createGain();g.gain.value=0;o.connect(f);o2.connect(f);f.connect(g);g.connect(master);o.start();o2.start();eng={o,o2,g,f};
   const len=ac.sampleRate*1;const b=ac.createBuffer(1,len,ac.sampleRate);const d=b.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
-  const src=ac.createBufferSource();src.buffer=b;src.loop=true;const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1500;bp.Q.value=6;const sg=ac.createGain();sg.gain.value=0;src.connect(bp);bp.connect(sg);sg.connect(master);src.start();squeal={g:sg,bp};bgmInit();}catch(e){ac=null;}}
-function tone(freq,dur,type='square',vol=.25,slide=0,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,freq+slide),t+dur);g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02);}
-function noise(dur,vol=.3){if(!ac||muted)return;const b=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=vol;s.connect(g);g.connect(master);s.start();}
+  const src=ac.createBufferSource();src.buffer=b;src.loop=true;const bp=ac.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1500;bp.Q.value=6;const sg=ac.createGain();sg.gain.value=0;src.connect(bp);bp.connect(sg);sg.connect(master);src.start();squeal={g:sg,bp};
+  // T174 擦れる音（壁・車）：同じ雑音を高めの帯域で
+  {const s2=ac.createBufferSource();s2.buffer=b;s2.loop=true;s2.loopStart=.37;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=2600;f2.Q.value=1.4;const g2=ac.createGain();g2.gain.value=0;s2.connect(f2);f2.connect(g2);g2.connect(master);s2.start(0,.37);scrape={g:g2,f:f2};}
+  // T174 ほかの車のエンジン音（カメラに近い2台。左右の位置とドップラー）
+  npcV=[0,1].map(()=>{const o=ac.createOscillator();o.type='sawtooth';const o2=ac.createOscillator();o2.type='square';const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=600;f.Q.value=1.5;const g=ac.createGain();g.gain.value=0;o.connect(f);o2.connect(f);f.connect(g);
+    let pn=null;if(ac.createStereoPanner){pn=ac.createStereoPanner();g.connect(pn);pn.connect(master);}else g.connect(master);o.start();o2.start();return{o,o2,f,g,pn,k:null};});
+  bgmInit();}catch(e){ac=null;}}
+function tone(freq,dur,type='square',vol=.25,slide=0,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,freq+slide),t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.004);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02);}
+function noise(dur,vol=.3){if(!ac||muted)return;const b=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate);const d=b.getChannelData(0);const fi=ac.sampleRate*.004;for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)*Math.min(1,i/fi);/* T174 出だしを4msで立ち上げる（プチ音を防ぐ） */const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=vol;s.connect(g);g.connect(master);s.start();}
 function near(k,p){const pl=player();if(!pl)return 0;const x=k?k.x:p.x,z=k?k.z:p.z;const d=Math.hypot(x-pl.x,z-pl.z);return d<45?1-d/45:0;}
 function sfx(n,k,p,vol){if(!ac||muted||state==='title'||spdMul>1&&autoPlay)return;let v=vol??1;if(k&&!k.isPlayer){v=near(k)*.6;if(v<.05)return;}if(p){v=near(null,p);if(v<.05)return;}
   switch(n){
@@ -2621,10 +2662,33 @@ function updateEngine(){if(!eng)return;const p=state==='replay'?camTarget():play
   const rpm=p?rpmOf(p):1400;const thr=p&&(accelHeld()||autoAccel&&sess!=='drag'||autoPlay)?1:.4;
   // T105：回転・音量・フィルターの追従を速く（鋭いレスポンス）。高回転でアクセルを急に離すとバックファイア（ポップ）
   const f=rpm/30,ts=ERQ?.018:.03;eng.o.frequency.setTargetAtTime(f,ac.currentTime,ts);eng.o2.frequency.setTargetAtTime(f*.5,ac.currentTime,ts);
-  if(ERQ&&on&&p&&state!=='replay'){if(eng.pt>.9&&thr<.5&&rpm>6500&&p.u>20&&!(p.shiftT>0))sfx('pop',p);eng.pt=thr;}
-  eng.g.gain.setTargetAtTime(on?(.05+.05*thr)*(p&&p.shiftT>0?.4:1):0,ac.currentTime,ERQ?.025:.04);eng.f.frequency.setTargetAtTime(300+rpm*.18*thr,ac.currentTime,ERQ?.03:.05);
+  if(ERQ&&on&&p&&state!=='replay'){if(eng.pt>.9&&thr<.5&&rpm>6500&&p.u>20&&!(p.shiftT>0)){sfx('pop',p);p.popT=.1;}eng.pt=thr;}
+  // T174 中継カメラ（車載以外）の時は、カメラからの距離でエンジン・タイヤ・擦れる音を小さく
+  const cv=p&&camMode>=3&&DIR.sub!=='onboard'?Math.max(.12,Math.min(1,18/(Math.hypot(p.x-camera.position.x,p.z-camera.position.z)+8))):1;
+  eng.g.gain.setTargetAtTime(on?(.05+.05*thr)*(p&&p.shiftT>0?.4:1)*cv:0,ac.currentTime,ERQ?.025:.04);eng.f.frequency.setTargetAtTime(300+rpm*.18*thr,ac.currentTime,ERQ?.03:.05);
   const sq=p&&on&&(p.surf==='road'||p.surf==='curb')&&Math.abs(p.u)>5?Math.max(0,Math.min(1,(Math.max(p.slipR-.12,p.slipF-.18)*4)))+(p.wheelspin?.3:0):0;
-  squeal.g.gain.setTargetAtTime(Math.min(.16,sq*.14),ac.currentTime,.05);squeal.bp.frequency.setTargetAtTime(1300+sq*500,ac.currentTime,.1);}
+  squeal.g.gain.setTargetAtTime(Math.min(.16,sq*.14)*cv,ac.currentTime,.05);squeal.bp.frequency.setTargetAtTime(1300+sq*500,ac.currentTime,.1);
+  const quiet=spdMul>1&&autoPlay; // 倍速の間は効果音と同じく止める
+  if(scrape){scrape.g.gain.setTargetAtTime(on&&!quiet&&state!=='replay'?Math.min(.2,scrLv*.2)*cv:0,ac.currentTime,.03);scrape.f.frequency.setTargetAtTime(2000+scrLv*1600,ac.currentTime,.05);scrLv*=.55;}
+  npcAudio(on&&!quiet,p);}
+// T174 ほかの車のエンジン音：カメラ（聞く位置）に近い2台を、距離の音量・左右の位置・ドップラー（近づくと高く、離れると低く）で鳴らす
+function npcAudio(on,p){if(!npcV.length)return;const t=ac.currentTime,lx=camera.position.x,lz=camera.position.z;
+  const dta=t-AUD.t;if(dta>.004&&dta<.5){AUD.vx+=((lx-AUD.x)/dta-AUD.vx)*.35;AUD.vz+=((lz-AUD.z)/dta-AUD.vz)*.35;}else if(dta>=.5){AUD.vx=AUD.vz=0;}
+  if(dta>.004){AUD.x=lx;AUD.z=lz;AUD.t=t;}
+  const R=90,c=[];if(on)for(const k of karts){if(k===p||k.gone||k.dnf)continue;const d=Math.hypot(k.x-lx,k.z-lz);if(d<R)c.push([d,k]);}
+  c.sort((a,b)=>a[0]-b[0]);const top=c.slice(0,3).map(e=>e[1]);
+  for(const v of npcV)if(v.k&&!top.slice(0,3).includes(v.k))v.k=null; // 4番目より遠くなったら外す（入れ替わりの揺れを防ぐ）
+  for(const e of c.slice(0,2)){const k=e[1];if(npcV.some(v=>v.k===k))continue;const v=npcV.find(v=>!v.k);if(v){v.k=k;v.g.gain.setValueAtTime(0,t);v.fresh=1;}}
+  camera.getWorldDirection(audDir);const rl=Math.hypot(audDir.x,audDir.z)||1;
+  for(const v of npcV){const k=v.k;if(!k){v.g.gain.setTargetAtTime(0,t,.05);continue;}
+    const dx=k.x-lx,dz=k.z-lz,d=Math.max(1,Math.hypot(dx,dz)),ux=dx/d,uz=dz/d;
+    const vs=-(k.vx*ux+k.vz*uz),vl=AUD.vx*ux+AUD.vz*uz; // 音源が近づく速さ・聞く側が近づく速さ
+    const dop=Math.max(.7,Math.min(1.45,(343+vl)/(343-vs)));
+    const f=rpmOf(k)/30*dop,ts=v.fresh?0:.03;v.fresh=0;
+    if(ts){v.o.frequency.setTargetAtTime(f,t,ts);v.o2.frequency.setTargetAtTime(f*.5,t,ts);}else{v.o.frequency.setValueAtTime(f,t);v.o2.frequency.setValueAtTime(f*.5,t);}
+    const att=Math.pow(1-d/R,2),acc=k.liftT>0?0:1; // アクセルを離している間は小さく・こもった音
+    v.g.gain.setTargetAtTime(.075*att*(.55+.45*acc),t,.04);v.f.frequency.setTargetAtTime(260+rpmOf(k)*.13*(.5+.5*acc),t,.05);
+    if(v.pn)v.pn.pan.setTargetAtTime(Math.max(-.8,Math.min(.8,(ux*-audDir.z+uz*audDir.x)/rl)),t,.05);}}
 
 /* ================= 入力 ================= */
 const KEYMAP={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'accel',KeyW:'accel',ArrowDown:'brake',KeyS:'brake',Space:'drift',ShiftLeft:'drift',ShiftRight:'drift'};
@@ -2920,7 +2984,7 @@ function manualShift(k,dir){if(!k||k.finished||k.dnf||k.shiftT>0||sess==='drag')
   if(k.gear<=0)return;const wr=Math.abs(k.u)*RATIO[k.gear-1]*K;
   if(wr>REDLINE-100){if(k.isPlayer){toast('回転が高すぎて落とせない');sfx('warn');}return;}
   k.gear--;k.shiftT=.08;const jump=Math.max(0,wr-(k.erpm||k.rpm));
-  if(assistLv<2||accelHeld()){k.blip=1;sfx('blip',k);}
+  if(assistLv<2||accelHeld()){k.blip=1;sfx('blip',k);if(Math.random()<.4)k.popT=.08;}
   else{k.shk=Math.min(SHKM,SHKG*jump/1000);if(k.shk>1.5)sfx('bump',null,null,Math.min(1,k.shk/SHKM));}}
 function shiftReq(dir){const k=player();if(!k||autoPlay)return;
   if(sess==='drag'){if(dir>0&&k.manual&&state==='race')dragShift(k);return;}
@@ -3076,7 +3140,7 @@ function frame(now){
   const raw=(now-last)/1000;let dt=Math.min(.05,raw);last=now;autoRes(raw);
   pollPad();bgmTick(dt);
   if(state==='title'){titleStep(dt);envStep(dt,false);renderer.render(scene,camera);mirLayout();updateEngine();return;}
-  if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);}
+  if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);}
   if(state==='paused'){renderer.render(scene,camera);mirLayout();renderMirror();updateEngine();return;}
   if(state==='replay'){rpTime+=dt*rpSpeed;while(rpI<rpBuf.length-2&&rpBuf[rpI+1].t<=rpTime)rpI++;
     if(rpTime>=rpBuf[rpBuf.length-1].t)endReplay();else{applyReplay();envStep(dt*rpSpeed,false);syncVisuals(dt*rpSpeed);updateCamera(dt);drawMinimap();}}
