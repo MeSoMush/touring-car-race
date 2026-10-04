@@ -425,7 +425,7 @@ body.touch #cstack>*{position:static!important;transform:none!important;left:aut
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.50.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.50.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -1652,9 +1652,9 @@ function setupRace(){
     const k={id:gridPos,name:dr.name,dr,st,isPlayer:d===playerChoice,
       x:TX[i]+NX[i]*lat,z:TZ[i]+NZ[i]*lat,h:heading(i),u:0,vl:0,r:0,delta:0,ax:0,ay:0,speed:0,vx:0,vz:0,
       gear:0,rpm:1500,shiftT:0,top,Fp,tq:TQC[ccChoice],cd:Fp*torque(SHIFT_UP,TQC[ccChoice])/(top*top),wheelspin:0,slipF:0,slipR:0,surf:'road',
-      idx:i,prevIdx:i,lap:0,cp:true,lat,
+      idx:i,prevIdx:i,lap:0,cp:true,lat,sl:lat-IL[i],
       drifting:false,driftDir:0,driftCharge:0,boost:0,spin:0,shield:0,item:null,roulette:0,
-      finished:false,finishTime:0,lane:lat*.5,laneT:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
+      finished:false,finishTime:0,lane:SLK>0&&sess==="race"?lat-IL[i]:lat*.5,laneT:SLK>0&&sess==="race"?lat:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
       prevWheel:null,g:makeKart(dr,d===playerChoice?myNo(d):d+1,d===playerChoice?myCar:CPU_CAR[d])};
     if(d===playerChoice)applySetup(k,setDrv,setG,setW,setB,setT,setC);else applySetup(k,sess==='drag'?setDrv:(evDrv?evDrv[d]:CPU_DRV[d]),1,1,1,0);
     k.mm=carMass(d===playerChoice?myCar:CPU_CAR[d],k.drv);k.st=Object.assign({},k.st,{acc:k.st.acc/k.mm,grip:k.st.grip*Math.pow(k.mm,-MGP)}); // T154 車重
@@ -1984,6 +1984,7 @@ let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=[.5,.4
 // T147 ブロッカー（性格 blk）：BKM＝1で有効。後ろから迫る車（BKL〜BKD m 後ろ、横の差 .8〜BKX m）に対し、直線で1度だけ（BKC 秒おき）その車のラインへ寄って前に出させない。コーナーの中・手前は動かない。接触しない車間は後ろ側が守る（follow）
 let BKM=1,BKC=6,BKD=28,BKL=7,BKX=3.4;
 const CID=new Int16Array(N).fill(-1);{let n=-1;for(let i=0;i<N;i++){if(CORNER[i]){if(!CORNER[wrap(i-1)])n++;CID[i]=n;}}}
+let SLK=1,SL0=100,SL1=230; // T169 スタートの列：SLK＝グリッドの横位置を保つ割合（0で無効）、SL0・SL1＝線からこの距離(m)まで保ち、SL1 までに通常のラインへ戻す
 let SCV=6; // T120 SCV＝いちばん近づけたコーナーとの差がこの距離(m)以内のコーナーから毎周選び直す（0で従来どおり固定）
 let YLW=.9,DNF0=40,DNF1=3.6,DNFA=8; // T127 大事故の対策：YLW＝黄旗中のコーナー速度の係数、DNF0・DNF1＝止まった車を見つける距離（m＝DNF0＋速さ×DNF1）、DNFA＝止まった車の手前でのブレーキの見積り減速(m/s²)
 let RTK=0,RTF=6.5,RTW=.6; // T148 RTK＝1で、ラインへ戻る動きが横の車の側へ向かう間は戻らない（RTF＝前後 m、RTW＝間隔の余裕 m）
@@ -2001,7 +2002,9 @@ function aiControl(k,dt){
   if(BKM>0&&(TRAITS[k.dr.tr??2].blk)&&sess==='race'&&!k.finished&&!k.pit&&!k.yieldF&&u>25&&!(k.blkT>0)&&!CORNER[k.idx]&&!CORNER[wrap(k.idx+8)]&&!CORNER[wrap(k.idx+16)]){for(const o of karts){if(o===k||o.dnf||o.pit>0||o.finished)continue;const dg=progress(k)-progress(o);if(dg<BKL||dg>BKD)continue;const dl=o.lat-k.lat;if(Math.abs(dl)<.8||Math.abs(dl)>BKX||o.u<u-2)continue;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat));k.laneTimer=1.4;k.ovr=true;k.blkT=BKC;k.blkN=(k.blkN||0)+1;break;}}
   // 守り（T117）：後ろから迫られている間は、横へふらつかない（1直線で動くのは1回まで）
   let chased=false;if(DFW<1&&sess==='race'&&!k.finished&&u>20){for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dg=progress(k)-progress(o);if(dg>0&&dg<DFD){chased=true;break;}}}
-  const devT=k.ovr?k.laneT-IL[k.idx]:(k.wan||0)*(chased?DFW:1);let dlane=(devT-k.lane)*Math.min(1,dt*.8);
+  // スタートの列（T169）：発進から第1コーナーのブレーキング手前までは、グリッドの列（左右）のラインを保ち、同じラインへ一斉に寄らない。SL0 m を過ぎたら SL1 m までに通常のラインへ戻す（SLK＝0 で無効）
+  let slw=0;if(SLK>0&&sess==="race"&&k.sl!=null&&!k.finished){const pp=progress(k)-L;slw=pp<SL0?1:pp>SL1?0:1-(pp-SL0)/(SL1-SL0);}
+  const devT=k.ovr?k.laneT-IL[k.idx]:slw>0?((k.sl*SLK)*slw+(k.wan||0)*(1-slw)):(k.wan||0)*(chased?DFW:1);let dlane=(devT-k.lane)*Math.min(1,dt*.8);
   // 復帰の切り返し（T148）：ラインへ戻る動きが、すぐ横（前後 RTF m・横 room＋RTW m 以内）の車の側へ向かう間は、戻るのを止める（接触するのは、譲り・取り返しのあと外側からラインへ戻る時に、横の車へ切り込む形が多い）
   if(RTK>0&&!k.ovr&&sess==='race'&&u>12&&dlane!==0){const rm=TRAITS[k.dr.tr??2].room+RTW;for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fw=dx*Math.sin(k.h)+dz*Math.cos(k.h);if(Math.abs(fw)>RTF)continue;const sd=o.lat-k.lat;if(Math.abs(sd)>rm)continue;if(sd*dlane>0){dlane=0;break;}}}
   k.lane+=dlane;
@@ -2049,7 +2052,7 @@ function aiControl(k,dt){
     const close=k.u-(o.vx*fx+o.vz*fz);
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFT（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
     if(AFT>0&&fwd<(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap)follow=true; // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
-    if(close>0){if(Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=o.lat+(o.lat>0?-1:1)*(tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFT)*tr.gap)follow=true;const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
+    if(close>0){if(!(slw>0)&&Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=o.lat+(o.lat>0?-1:1)*(tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFT)*tr.gap)follow=true;const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
   // スリップストリームから抜く（T83⑥）：直線で前の車の真後ろの空気に入ったら、早めに横へ出て（ブレーキで詰めずに）そのまま並びかけて抜く
   if(PSL>0&&sess==='race'&&!k.finished&&!k.yieldF&&(k.draft||0)>.15&&u>25){let st=true;for(let j=4;j<=PSL_L;j+=6)if(Math.abs(KAP[wrap(k.idx+j)])>1/450){st=false;break;}
     if(st)for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd<5||fwd>PSL_D)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);if(Math.abs(side)>2.2)continue;
