@@ -491,7 +491,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.71.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.71.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -893,7 +893,7 @@ const SHADOWS=!isTouch;
 const RM=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches); // 端末の「動きを減らす」設定：画面の揺れを止める（T129）
 if(SHADOWS){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;}
 const scene=new THREE.Scene();
-const camera=new THREE.PerspectiveCamera(66,1,0.2,3200);terrCam(camera);
+const camera=new THREE.PerspectiveCamera(66,1,0.2,4000);/* β0.71.1：遠くの山なみを押し広げた分、見える距離を 3200→4000 */terrCam(camera);
 function baseFov(){return innerWidth<innerHeight?84:66;}
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=baseFov();camera.updateProjectionMatrix();}
 addEventListener('resize',resize);resize();
@@ -1321,10 +1321,12 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
  {const ct=canvasTex(128,128,(g,w,h)=>{for(let i=0;i<14;i++){const x=24+rnd()*80,y=40+rnd()*50,r=18+rnd()*26;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,'rgba(255,255,255,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);}});
   for(let i=0;i<26;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:ct,fog:false,depthWrite:false,opacity:.85}));const a=rnd()*6.28,r=400+rnd()*900;s.position.set(CX+Math.cos(a)*r,120+rnd()*120,CZ+Math.sin(a)*r);const sc=120+rnd()*160;s.scale.set(sc,sc*.5,1);scene.add(s);CLOUDS.push(s);}}
  // 遠くの山なみ（輪になった稜線。高さで色を変え、霞に溶ける）
- {const ridge=(R0,depth,base,amp,seed,cols)=>{let sd=seed;const r=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
+ // β0.71.1：コースが南北に長い（T207）ので、丸い輪だと第1コーナー・最終コーナーの先で山が近すぎた。向きごとにコースの張り出し（sup）だけ外へずらし、どの向きでもコースの端からの距離をそろえる。RGO＝ずらしの基準（東西の張り出しと同じくらい）
+ {const RGO=290,sup=a=>{const ca=Math.cos(a),sa=Math.sin(a);let m=0;for(let i=0;i<N;i+=4)m=Math.max(m,(TX[i]-CX)*ca+(TZ[i]-CZ)*sa);return m;};
+  const ridge=(R0,depth,base,amp,seed,cols)=>{let sd=seed;const r=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
    const ph=[...Array(6)].map(()=>r()*6.28);const S=220,rows=5;const pos=[],col=[],idx=[];const c=new THREE.Color();
    const H=a=>base+amp*(.5+.25*Math.sin(a*3+ph[0])+.18*Math.sin(a*7+ph[1])+.12*Math.sin(a*13+ph[2])+.07*Math.sin(a*29+ph[3])+.04*Math.sin(a*61+ph[4]));
-   for(let i=0;i<=S;i++){const a=i/S*Math.PI*2;const h=H(a);for(let j=0;j<rows;j++){const t=j/(rows-1);const rr=R0+depth*(1-t)*.5+depth*t*.1;const y=-10+(h+10)*Math.pow(Math.sin(t*Math.PI/2),1.3);
+   for(let i=0;i<=S;i++){const a=i/S*Math.PI*2;const h=H(a),ro=Math.max(0,sup(a)-RGO);for(let j=0;j<rows;j++){const t=j/(rows-1);const rr=R0+ro+depth*(1-t)*.5+depth*t*.1;const y=-10+(h+10)*Math.pow(Math.sin(t*Math.PI/2),1.3);
      pos.push(CX+Math.cos(a)*rr,y,CZ+Math.sin(a)*rr);const e=y/(base+amp);c.set(cols[0]).lerp(new THREE.Color(cols[1]),Math.min(1,e*1.2));if(e>.82)c.lerp(new THREE.Color(0xe6ecf0),Math.min(1,(e-.82)*5));c.convertSRGBToLinear();col.push(c.r,c.g,c.b);}}
    for(let i=0;i<S;i++)for(let j=0;j<rows-1;j++){const a=i*rows+j,b=(i+1)*rows+j;idx.push(a,b,a+1,a+1,b,b+1);}
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();
