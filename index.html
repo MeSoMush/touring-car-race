@@ -251,6 +251,7 @@ body.touch #camTag{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 14px);lef
 .bar em{font-style:normal;font-family:var(--num);font-weight:600;min-width:5.4em;text-align:right}
 #specBox p{margin:0;font-size:12px;color:var(--muted)}
 @media (max-width:760px),(max-aspect-ratio:1/1){#setup{left:12px;right:12px;width:auto;top:auto;bottom:clamp(36px,7vh,50px);height:52vh}}
+#tree[hidden]{display:none} /* β0.66.0：0-400m 以外でも空のシグナルの枠（黒い楕円）が左に出ていた */
 #tree{position:absolute;left:calc(env(safe-area-inset-left,0px) + clamp(12px,2.5vw,32px));top:32%;display:flex;gap:18px;padding:10px 14px;background:rgba(10,12,16,.74);border-radius:10px;pointer-events:none;z-index:3}
 #tree .tc{display:grid;gap:6px;justify-items:center}
 #tree em{font:italic 700 13px/1 'Saira Condensed','Arial Narrow',sans-serif;color:#fff;letter-spacing:.08em;max-width:96px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -470,7 +471,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.65.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><span id="tsVer">β0.66.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -1166,6 +1167,16 @@ function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='
 // 中継カメラの位置（コース脇の高い所）
 let GS_SIDE=1;
 const TVS=[];{const step=Math.round(85/SP);for(let i=0;i<N;i+=step){const side=CORNER[wrap(i+12)]?OUTS[wrap(i+12)]:(TVS.length%2?1:-1);const lat=(WALL+5.5+(i%3))*side;TVS.push({i,x:TX[i]+NX[i]*lat,y:8+(TVS.length%3)*2.2,z:TZ[i]+NZ[i]*lat});}}
+// 軽量化（β0.66.0）：動かない景色（STATIC に入れた物）を、同じ見た目の材質ごとに1つの形へまとめて描画回数を減らす。
+// 見えない物（旗など、あとで出す物）・材質が複数の物・インスタンス描画の物はそのまま残す。bakeStatic は linAll(scene) の直前で1回
+const STATIC=[];
+function matKey(m){return [m.type,m.color&&m.color.getHex(),m.emissive&&m.emissive.getHex(),m.roughness,m.metalness,m.map&&m.map.uuid,m.side,m.transparent,m.opacity,m.flatShading,m.alphaTest].join('|');}
+function bakeStatic(){const by=new Map();scene.updateMatrixWorld(true);
+  const shown=o=>{for(let q=o;q;q=q.parent)if(!q.visible)return false;return true;};
+  for(const r of STATIC)r.traverse(o=>{if(!o.isMesh||o.isInstancedMesh||Array.isArray(o.material)||!shown(o))return;const k=matKey(o.material)+'|'+o.castShadow+'|'+o.receiveShadow;if(!by.has(k))by.set(k,[]);by.get(k).push(o);});
+  for(const list of by.values()){if(list.length<2)continue;const g=mergeGeos(list.map(o=>[o.geometry,o.matrixWorld]));
+    const m=new THREE.Mesh(g,list[0].material);m.castShadow=list[0].castShadow;m.receiveShadow=list[0].receiveShadow;for(const o of list)o.parent.remove(o);scene.add(m);}
+  STATIC.length=0;}
 // マーシャルポスト（旗を振る台）：コース外側に約180mおき
 const POSTS=[];{const step=Math.round(180/SP);const poleM=new THREE.MeshStandardMaterial({color:0xd8dadf,roughness:.5,metalness:.3});const boothM=new THREE.MeshStandardMaterial({color:0xf2f2f2,roughness:.7});const orange=new THREE.MeshStandardMaterial({color:0xe86a1a,roughness:.6});
  const fg=new THREE.PlaneGeometry(1.1,.75);fg.translate(.55,0,0);
@@ -1176,7 +1187,7 @@ const POSTS=[];{const step=Math.round(180/SP);const poleM=new THREE.MeshStandard
   const pole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.6,6),poleM);pole.position.set(-.6*side,2.6,0);g.add(pole);
   const mat=new THREE.MeshBasicMaterial({color:0xf5c400,side:THREE.DoubleSide});mat.userData.lin=true;
   const fl=new THREE.Mesh(fg,mat);fl.position.set(-.6*side,3.1,0);fl.visible=false;g.add(fl);
-  scene.add(g);POSTS.push({i,fl,mat,c:0});}}
+  scene.add(g);STATIC.push(g);POSTS.push({i,fl,mat,c:0});}}
 // スタートライン
 const startGrp=new THREE.Group();
 {const t=canvasTex(256,32,(g)=>{for(let x=0;x<32;x++)for(let y=0;y<4;y++){g.fillStyle=(x+y)%2?'#151515':'#f2f2f2';g.fillRect(x*8,y*8,8,8);}});
@@ -1253,7 +1264,8 @@ let lampTO=0;function setLamps(n,green){(startGrp.userData.lamps||[]).forEach((l
  const n=isTouch?1500:3200;const im=new THREE.InstancedMesh(geo,new THREE.MeshLambertMaterial({map:t,alphaTest:.5,side:THREE.DoubleSide}),n);const D=new THREE.Object3D();let c=0;
  for(let q=0;q<n*3&&c<n;q++){const i=Math.floor(Math.random()*N);const s=Math.random()<.5?-1:1;let lat;
   lat=WALL+2.5+Math.random()*14;if(PITZ[i]||PITZ[wrap(i+12)]||PITZ[wrap(i-12)])continue; // β0.57.0：壁の内側（ピットレーン・縁石の外）とピット・観客席の前には生やさない（ご本人の要望）
-  const x=TX[i]+NX[i]*lat*s,z=TZ[i]+NZ[i]*lat*s;const sc=.6+Math.random()*.9;D.position.set(x,0,z);D.rotation.set(0,Math.random()*3,0);D.scale.set(sc,sc*(.8+Math.random()*.6),sc);D.updateMatrix();im.setMatrixAt(c++,D.matrix);}
+  const x=TX[i]+NX[i]*lat*s,z=TZ[i]+NZ[i]*lat*s;if(!farFromTrack(x,z,WALL+1.5))continue; // β0.66.0：別の区間のコースが近くを通る所で、その路面の上に生えていた（不具合報告）
+  const sc=.6+Math.random()*.9;D.position.set(x,0,z);D.rotation.set(0,Math.random()*3,0);D.scale.set(sc,sc*(.8+Math.random()*.6),sc);D.updateMatrix();im.setMatrixAt(c++,D.matrix);}
  im.count=c;scene.add(im);}
 function farFromTrack(x,z,m){for(let i=0;i<N;i+=2){const dx=x-TX[i],dz=z-TZ[i];if(dx*dx+dz*dz<m*m)return false;}return true;}
 let minX=1e9,maxX=-1e9,minZ=1e9,maxZ=-1e9;for(let i=0;i<N;i++){minX=Math.min(minX,TX[i]);maxX=Math.max(maxX,TX[i]);minZ=Math.min(minZ,TZ[i]);maxZ=Math.max(maxZ,TZ[i]);}
@@ -1281,9 +1293,9 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   mk(bushT,cross(3.4,1.7),320,()=>{const p=spot(WALL+4,110);return p&&[p[0],p[1],.6+rnd()*.9];});
  }
  // 丘
- {const hm=new THREE.MeshLambertMaterial({color:0x4b5f34});for(let i=0;i<16;i++){const p=spot(WALL+45,280);if(!p)continue;const r=22+rnd()*34;const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,10,0,Math.PI*2,0,Math.PI/2),hm);m.scale.y=.28+rnd()*.3;m.position.set(p[0],-.6,p[1]);m.receiveShadow=true;scene.add(m);}}
+ {const hm=new THREE.MeshLambertMaterial({color:0x4b5f34});for(let i=0;i<16;i++){const p=spot(WALL+45,280);if(!p)continue;const r=22+rnd()*34;const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,10,0,Math.PI*2,0,Math.PI/2),hm);m.scale.y=.28+rnd()*.3;m.position.set(p[0],-.6,p[1]);m.receiveShadow=true;scene.add(m);STATIC.push(m);}}
  // 岩
- {const rm=new THREE.MeshLambertMaterial({color:0x85817a,flatShading:true});for(let i=0;i<50;i++){const p=spot(WALL+4,80);if(!p)continue;const m=new THREE.Mesh(new THREE.DodecahedronGeometry(.8+rnd()*2,0),rm);m.position.set(p[0],.3,p[1]);m.scale.y=.6;m.rotation.set(rnd()*3,rnd()*3,0);m.castShadow=true;m.receiveShadow=true;scene.add(m);}}
+ {const rm=new THREE.MeshLambertMaterial({color:0x85817a,flatShading:true});for(let i=0;i<50;i++){const p=spot(WALL+4,80);if(!p)continue;const m=new THREE.Mesh(new THREE.DodecahedronGeometry(.8+rnd()*2,0),rm);m.position.set(p[0],.3,p[1]);m.scale.y=.6;m.rotation.set(rnd()*3,rnd()*3,0);m.castShadow=true;m.receiveShadow=true;scene.add(m);STATIC.push(m);}}
  // 池
  {for(let t=0;t<2;t++){const p=spot(WALL+36,20);if(!p)continue;const r=22+rnd()*8;
   const w=new THREE.Mesh(new THREE.CircleGeometry(r,32),new THREE.MeshStandardMaterial({color:0x2f5f78,roughness:.08,metalness:.2}));w.rotation.x=-Math.PI/2;w.position.set(p[0],.06,p[1]);scene.add(w);
@@ -1315,7 +1327,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
    const cr=new THREE.Mesh(new THREE.PlaneGeometry(len,1.1),new THREE.MeshLambertMaterial({map:crowd}));cr.position.set(-side*(r*2.4-1.21),r*1.2+1.7,0);cr.rotation.y=side>0?Math.PI/2:-Math.PI/2;st.add(cr);}
   const roof=new THREE.Mesh(new THREE.BoxGeometry(15,.4,len+4),new THREE.MeshStandardMaterial({color:0xdadde2,metalness:.4,roughness:.5}));roof.position.set(-side*6,10.2,0);roof.castShadow=true;st.add(roof);
   for(const z of[-len/2,-len/6,len/6,len/2]){const pl=new THREE.Mesh(new THREE.BoxGeometry(.5,10,.5),new THREE.MeshStandardMaterial({color:0x50535a,metalness:.6,roughness:.4}));pl.position.set(-side*12.5,5,z);pl.castShadow=true;st.add(pl);}
-  put(st,(WALL+4)*side,0);
+  put(st,(WALL+4)*side,0);STATIC.push(st);
   // ピットビル（反対側）
   const win=canvasTex(512,128,(g,w,h)=>{g.fillStyle='#e6e6e2';g.fillRect(0,0,w,h);for(let x=8;x<w;x+=32){g.fillStyle='#3d5873';g.fillRect(x,14,24,40);g.fillStyle='rgba(255,255,255,.25)';g.fillRect(x,14,24,8);}
    for(let x=4;x<w;x+=64){g.fillStyle='#55585e';g.fillRect(x,70,56,58);g.fillStyle='#6b6e75';for(let y=72;y<128;y+=6)g.fillRect(x,y,56,2);}});
@@ -1325,7 +1337,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   pb.position.y=4.5;pb.castShadow=true;pb.receiveShadow=true;const pg=new THREE.Group();pg.add(pb);put(pg,-(WALL+9)*side,0);
   // 照明塔
   for(const al of[-60,-20,20,60])for(const s of[-1,1]){const g=new THREE.Group();const p=new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,14,6),new THREE.MeshStandardMaterial({color:0x777b82,metalness:.7,roughness:.4}));p.position.y=7;p.castShadow=true;g.add(p);
-   const hdm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.9,.4),new THREE.MeshStandardMaterial({color:0x2c2f36}));hdm.position.set(-s*.8,14,0);g.add(hdm);const lf=new THREE.Mesh(new THREE.PlaneGeometry(2,.7),new THREE.MeshBasicMaterial({color:0xfff6e6}));lf.position.set(-s*.8,14,.21);g.add(lf);g.userData.s=s;put(g,(WALL+2.2)*s,al);TOWERS.push(g);}}
+   const hdm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.9,.4),new THREE.MeshStandardMaterial({color:0x2c2f36}));hdm.position.set(-s*.8,14,0);g.add(hdm);const lf=new THREE.Mesh(new THREE.PlaneGeometry(2,.7),new THREE.MeshBasicMaterial({color:0xfff6e6}));lf.position.set(-s*.8,14,.21);g.add(lf);g.userData.s=s;put(g,(WALL+2.2)*s,al);TOWERS.push(g);STATIC.push(g);}}
  // 看板（コーナー外側のフェンス上）
  {const ads=[['HIGASHI RACEWAY','#16182a','#f2f2f2'],['TURBO OIL','#f2f2f2','#c8201a'],['ホタテ急便','#1f5fa8','#ffffff'],['SKY RADIO 81.3','#e8e8e8','#1f3aa8'],['NEKO CAN','#e0b000','#16182a'],['TOKYO EAST','#1f7a44','#ffffff'],['カツサンド','#c8201a','#ffffff']];
   const texs=ads.map(a=>canvasTex(512,96,(g,w,h)=>{g.fillStyle=a[1];g.fillRect(0,0,w,h);g.fillStyle=a[2];g.font='italic 800 60px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(a[0],w/2,h/2+3);}));
@@ -1334,7 +1346,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
    const off=WALL+2.8;const x=TX[i]+NX[i]*off*side,z=TZ[i]+NZ[i]*off*side;if(!farFromTrack(x,z,WALL+2))continue;
    const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading(i)+(side>0?Math.PI/2:-Math.PI/2);
    const m=new THREE.MeshLambertMaterial({map:texs[n%texs.length]});const b=new THREE.Mesh(new THREE.BoxGeometry(10,1.9,.12),[legM,legM,legM,legM,m,legM]);b.position.y=1.9;b.castShadow=true;g.add(b);
-   for(const lx of[-4.4,4.4]){const l=new THREE.Mesh(new THREE.BoxGeometry(.12,1.4,.12),legM);l.position.set(lx,.7,0);g.add(l);}scene.add(g);n++;}}
+   for(const lx of[-4.4,4.4]){const l=new THREE.Mesh(new THREE.BoxGeometry(.12,1.4,.12),legM);l.position.set(lx,.7,0);g.add(l);}scene.add(g);STATIC.push(g);n++;}}
 }
 
 // ピットレーン（スタート直後の直線、内周側＝観客席の反対側）：舗装の帯・区画線・ボックス・制限速度の表示
@@ -1785,11 +1797,17 @@ function disposeKart(g){if(!g||!g.root)return;const seen=new Set();
     for(const m of ms){if(m.userData.shared||seen.has(m))continue;seen.add(m);m.dispose();}});
   (g.own||[]).forEach(t=>t.dispose());}
 // 同じ材質の部品を1つにまとめて描画回数を減らす
-function mergeByMaterial(grp){const by=new Map();for(const m of grp.children.slice()){if(!m.isMesh||m.material.map||m.userData.keep)continue;if(!by.has(m.material))by.set(m.material,[]);by.get(m.material).push(m);}
-  for(const [mat,list] of by){if(list.length<2)continue;const P=[],Nn=[];
-    for(const m of list){m.updateMatrix();let g=m.geometry.index?m.geometry.toNonIndexed():m.geometry.clone();g.applyMatrix4(m.matrix);P.push(...g.attributes.position.array);Nn.push(...g.attributes.normal.array);grp.remove(m);}
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(P,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(Nn,3));
+// uv＝1 なら絵の付いた材質もまとめる（β0.66.0。ゼッケン・ステッカー・ナンバー）
+function mergeByMaterial(grp,uv){const by=new Map();for(const m of grp.children.slice()){if(!m.isMesh||Array.isArray(m.material)||m.material.map&&!(uv&&m.geometry.attributes.uv)||m.userData.keep)continue;if(!by.has(m.material))by.set(m.material,[]);by.get(m.material).push(m);}
+  for(const [mat,list] of by){if(list.length<2)continue;
+    const g=mergeGeos(list.map(m=>{m.updateMatrix();grp.remove(m);return [m.geometry,m.matrix];}));
     const mm=new THREE.Mesh(g,mat);mm.castShadow=SHADOWS;grp.add(mm);}}
+// 形をつなげて1つにする（[形, 行列] の並び。行列で位置・向きを焼き込む。全部に uv があれば uv も）
+function mergeGeos(items){const gs=items.map(([g0,mx])=>{const g=g0.index?g0.toNonIndexed():g0.clone();g.applyMatrix4(mx);return g;});
+  const uv=gs.every(g=>g.attributes.uv),n=gs.reduce((a,g)=>a+g.attributes.position.count,0);
+  const P=new Float32Array(n*3),Nn=new Float32Array(n*3),U=uv?new Float32Array(n*2):null;let o=0;
+  for(const g of gs){const c=g.attributes.position.count;P.set(g.attributes.position.array,o*3);if(g.attributes.normal)Nn.set(g.attributes.normal.array,o*3);if(uv)U.set(g.attributes.uv.array,o*2);o+=c;g.dispose();}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(P,3));g.setAttribute('normal',new THREE.BufferAttribute(Nn,3));if(uv)g.setAttribute('uv',new THREE.BufferAttribute(U,2));return g;}
 const _swg={};function sideWallGeo(r){if(!_swg[r]){_swg[r]=new THREE.RingGeometry(r*.7,r,24);_swg[r].userData.shared=1;}return _swg[r];}
 const _wfg={};function wfaceGeo(r){if(!_wfg[r]){_wfg[r]=new THREE.CircleGeometry(r*.74,24);_wfg[r].userData.shared=1;}return _wfg[r];}
 const _wm=[];
@@ -1868,7 +1886,24 @@ function makeFormula(dr,num){
   let blob=null;if(!SHADOWS){blob=new THREE.Mesh(new THREE.PlaneGeometry(2.1,5.0),new THREE.MeshBasicMaterial({map:blobTex(),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.05;root.add(blob);}
   heads.forEach(m=>m.userData.keep=1);mergeByMaterial(body);linAll(root);scene.add(root);
   return {root,body,wheels,disc,discG:0,wheelS:new THREE.Object3D(),flames,headParts:heads,tail:tl,head:hl,paint,paintBase:paint.color.clone(),dmgShown:0,car:FCI,own,hlx:.3,hly:.3,hlz:2.3,formula:1,camF:-.42,camY:1.16};}
-const makeCar=(dr,num,ci)=>ci===FCI?makeFormula(dr,num):makeKart(dr,num,ci);
+const makeCar=(dr,num,ci)=>carLod(ci===FCI?makeFormula(dr,num):makeKart(dr,num,ci));
+// 軽量化（β0.66.0）：車の細かい部品（絵の付いた板・運転席・ホイールの中・キャリパー）を「細部」の組 g.det へ移す。
+// 遠い車（LODD m より先。望遠ほど遠くまで）とミラーでは細部を描かない。タイヤの部品は1つにまとめ、小さな部品・細部は影を落とさない
+let LODD=55;
+function carLod(g){const det=g.det=[];g.detOn=true;const mk=p=>{const d=new THREE.Group();p.add(d);det.push(d);return d;};
+  // 遠くでも残す物：塗装・ガラス・ライト・車全体に広がる部品（黒い部分・カーボン・ストライプなど、半径 1.2m 以上）。ほかの小さな部品は細部へ
+  const keep=m=>{if(m.material===g.paint||m.material===g.tail||m.material===g.head||m.material.transparent&&!m.material.map)return true;if(!m.geometry.boundingSphere)m.geometry.computeBoundingSphere();return m.geometry.boundingSphere.radius>=1.2;};
+  const bd=mk(g.body);for(const m of g.body.children.slice()){if(m===bd)continue;if(m.isMesh&&!Array.isArray(m.material)&&(m.material.map||!keep(m))||m.isGroup&&g.headParts.includes(m))bd.add(m);}
+  mergeByMaterial(bd,1);
+  for(const w of g.wheels){const rub=w.spin.children[0].material;mergeByMaterial(w.spin);const dw=mk(w.spin);for(const m of w.spin.children.slice())if(m.isMesh&&m.material!==rub)dw.add(m);
+    const dc=mk(w.piv);for(const m of w.piv.children.slice())if(m.isMesh)dc.add(m);}
+  for(const d of det)d.traverse(o=>{o.castShadow=false;});
+  g.root.traverse(o=>{if(o.isMesh&&o.castShadow){if(!o.geometry.boundingSphere)o.geometry.computeBoundingSphere();if(o.geometry.boundingSphere.radius<.27)o.castShadow=false;}});
+  return g;}
+function carDet(g,on){if(!g||!g.det||g.detOn===on)return;g.detOn=on;for(const d of g.det)d.visible=on;}
+// カメラからの距離で細部の表示を切り替える（far＝1 なら全部の車で隠す。ミラー用）
+function lodCars(cam,far){const f=cam.fov/60,L2=LODD*LODD;const one=g=>{if(!g||!g.root.visible)return;const dx=g.root.position.x-cam.position.x,dz=g.root.position.z-cam.position.z;carDet(g,!far&&(dx*dx+dz*dz)*f*f<L2);};
+  for(const k of karts)one(k.g);one(ghostMesh);one(SC.g);}
 // 運転席の視点（フォーミュラ）：寝そべった姿勢の目の高さ。見えるのはハンドル（表示つき）と、車体のモノコック・ハロー・前輪・ミラー（車体のものがそのまま）
 function ckBuildF(p){const grp=new THREE.Group();grp.visible=false;const M=(col,r=.7,m=.1)=>new THREE.MeshStandardMaterial({color:col,roughness:r,metalness:m});
   CK.ex=0;CK.ey=.83;CK.ez=-.06;
@@ -1879,7 +1914,7 @@ function ckBuildF(p){const grp=new THREE.Group();grp.visible=false;const M=(col,
    const pn=new THREE.Mesh(new THREE.PlaneGeometry(.17,.064),pm);pn.position.set(0,.005,.019);rot.add(pn);
    linAll(grp);ckHold.add(grp);Object.assign(CK,{g:grp,k:p,ci:FCI,wheel:rot,cv,tex,t:0,key:''});}}
 const carOf=d=>isForm()?FCI:(d===playerChoice?myCar:CPU_CAR[d]); // T50 その席の車種（フォーミュラなら全員 FCI）
-linAll(scene);[sun.color,hemi.color,hemi.groundColor,scene.fog.color].forEach(c=>c.convertSRGBToLinear());
+bakeStatic();linAll(scene);[sun.color,hemi.color,hemi.groundColor,scene.fog.color].forEach(c=>c.convertSRGBToLinear());
 /* ================= 状態 ================= */
 let karts=[];
 let state='title',raceTime=0,countdown=0,playerChoice=0,ccChoice=1,finishOrder=[],afterFinish=0;
@@ -2522,7 +2557,7 @@ function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const a=aiControl(k,dt);con
    残骸が片付き（gone）、出動から SCMIN 秒たったら「この周で戻る」。セーフティカーが線の 60m 手前でピットへ戻ったら再開。自分が追い越したら＋5秒。scMode＝0 で出ない */
 let scMode=1,SCV0=30,SCG=16,SCL=26,SCMIN=25;const SC={on:false,d:0,t:0,u:0,inLap:false,g:null,x:0,z:0,h:0,ahead:null,n:0};
 function SC_reset(){SC.on=false;SC.inLap=false;SC.t=0;SC.ahead=null;if(SC.g)SC.g.root.visible=false;for(const k of karts)k.scV=null;}
-function scMesh(){if(SC.g)return SC.g;const g=makeKart({name:'SAFETY',color:0xdfe2e6,accent:0xff7a1a},'SC',0);
+function scMesh(){if(SC.g)return SC.g;const g=carLod(makeKart({name:'SAFETY',color:0xdfe2e6,accent:0xff7a1a},'SC',0));
   g.lb=[0xff8a00,0x2a7bff].map((c,i)=>{const m=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2});const b=new THREE.Mesh(new THREE.BoxGeometry(.46,.12,.22),m);b.position.set(i?.25:-.25,CARS[0].roofY+.07,-.1);g.body.add(b);return m;});
   g.root.visible=false;SC.g=g;return g;}
 function scDeploy(){if(!scMode||SC.on||sess!=='race'||state!=='race')return;const rk=ranking().filter(k=>!k.dnf&&!k.finished);const ld=rk[0];if(!ld||ld.lap>=LAPS)return;
@@ -2795,7 +2830,7 @@ function ckHide(){if(CK.g)CK.g.visible=false;}
 const ckScene=new THREE.Scene(),ckHold=new THREE.Group();ckHold.matrixAutoUpdate=false;ckScene.add(ckHold);
 const ckHemi=new THREE.HemisphereLight(),ckSun=new THREE.DirectionalLight();ckScene.add(ckHemi,ckSun,ckSun.target);
 // 普通の描画（rMain）：運転席視点の時は、そのあと奥行きを消して室内を上から描く。室内の明るさは外の光（空の光・太陽）を少し弱めて写す
-function rMain(){renderer.render(scene,camera);if(!CK.g||!CK.g.visible||!CK.k||!CK.k.g)return;
+function rMain(){lodCars(camera);renderer.render(scene,camera);if(!CK.g||!CK.g.visible||!CK.k||!CK.k.g)return;
   ckHold.matrix.copy(CK.k.g.body.matrixWorld);ckHold.matrixWorldNeedsUpdate=true;
   ckHemi.color.copy(hemi.color);ckHemi.groundColor.copy(hemi.groundColor);ckHemi.intensity=hemi.intensity*.8;ckSun.color.copy(sun.color);ckSun.intensity=sun.intensity*.45;
   ckSun.position.copy(sun.position);ckSun.target.position.copy(sun.target.position);ckSun.target.updateMatrixWorld();ckScene.environment=scene.environment;
@@ -2848,14 +2883,15 @@ function updateCameraIn(dt){
   if(camMode===5){seatCam(p,dt,false);followSun(p.x,p.z);return;}
   const travel=Math.hypot(p.vx,p.vz)>4?Math.atan2(p.vx,p.vz):p.h;
   const aim=p.spin>0?camH:(p.u<-1?p.h:travel+angDiff(p.h,travel)*.55);
-  camH+=angDiff(aim,camH)*Math.min(1,dt*4.2);
+  const dtS=dt*(autoPlay&&sess!=='drag'&&(state==='race'||state==='finished')?spdMul:1); // 倍速の時は、車が進んだ時間の分だけ追いかける（β0.66.0：以前は1倍の速さで追い、×5 では 30m 以上も後ろに置いていかれた）
+  camH+=angDiff(aim,camH)*Math.min(1,dtS*4.2);
   const r=Math.max(0,p.u)/p.top;const far=camMode===2;
   // T140 速度感：加速で少し引いて視野を広げ、ブレーキで少し寄せて狭める（camAx＝前後の加速度を -1〜1 にならして追従。SPK＝0 で無効、動きを減らす設定 RM でも無効）
   camAx+=(Math.max(-1,Math.min(1,p.ax/SPA))-camAx)*Math.min(1,dt*3);const sx=SPK>0&&!RM?camAx*Math.min(1,Math.max(0,p.u)/15):0;
   const dist=(far?13:8.2)+r*1.2+camKick*1.2+sx*SPD;
   const tgt=tmpV.set(p.x-Math.sin(camH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(camH)*dist);
   {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WALL+.2;if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
-  camPos.lerp(tgt,Math.min(1,dt*9));camera.position.copy(camPos);
+  camPos.lerp(tgt,Math.min(1,dtS*9));camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake*.7;}}
   camera.lookAt(p.x+Math.sin(camH)*8,1.1,p.z+Math.cos(camH)*8);
@@ -2880,13 +2916,15 @@ let mirKey='';const mirSkyTmp=new THREE.Vector3();function mirLayout(){const cmM
   f.style.width=w+'px';f.style.height=h+'px';document.body.style.setProperty('--mirH',(h+6)+'px');
   const top=f.getBoundingClientRect().top+3;mirRect={x:Math.round(innerWidth/2-w/2),y:Math.round(innerHeight-top-h),w,h};
   mirCam.aspect=w/h;mirCam.updateProjectionMatrix();const pr=renderer.getPixelRatio();const rw=Math.round(w*Math.min(pr,1.5)),rh=Math.round(h*Math.min(pr,1.5));if(mirRT.width!==rw||mirRT.height!==rh)mirRT.setSize(rw,rh);}
+// ミラーの中身（mirRT）は2フレームに1回描き直す（軽量化 β0.66.0。画面への貼り付けは毎フレーム）
+let mirF=0;
 function renderMirror(){if(!mirRect)return;const p=camTarget();if(!p||!p.g)return;
-  const fx=Math.sin(p.h),fz=Math.cos(p.h);
+  if(mirF^=1){const fx=Math.sin(p.h),fz=Math.cos(p.h);
   mirCam.position.set(p.x+fx*.2,1.35,p.z+fz*.2);mirCam.lookAt(p.x-fx*40,.9,p.z-fz*40);
   const vis=p.g.root.visible;p.g.root.visible=false;const au=renderer.shadowMap.autoUpdate;renderer.shadowMap.autoUpdate=false;
   const sp=mirSkyTmp.copy(sky.position);sky.position.copy(mirCam.position);
-  renderer.setRenderTarget(mirRT);renderer.render(scene,mirCam);renderer.setRenderTarget(null);
-  sky.position.copy(sp);p.g.root.visible=vis;renderer.shadowMap.autoUpdate=au;
+  lodCars(mirCam,1);renderer.setRenderTarget(mirRT);renderer.render(scene,mirCam);renderer.setRenderTarget(null);
+  sky.position.copy(sp);p.g.root.visible=vis;renderer.shadowMap.autoUpdate=au;}
   renderer.autoClear=false;renderer.setScissorTest(true);renderer.setScissor(mirRect.x,mirRect.y,mirRect.w,mirRect.h);renderer.setViewport(mirRect.x,mirRect.y,mirRect.w,mirRect.h);
   renderer.render(mirScene,mirOrtho);
   renderer.setScissorTest(false);renderer.setViewport(0,0,innerWidth,innerHeight);renderer.autoClear=true;}
@@ -3697,7 +3735,7 @@ function frame(now){
   requestAnimationFrame(frame);
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw); // 時刻が戻った時（負の時間）は進めない（β0.60.0：β0.59.0 ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
   pollPad();bgmTick(dt);
-  if(state==='title'){titleStep(dt);envStep(dt,false);renderer.render(scene,camera);mirLayout();updateEngine();return;}
+  if(state==='title'){titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);}
   if(state==='paused'){rMain();mirLayout();renderMirror();updateEngine();return;}
   if(state==='replay'){rpTime+=dt*rpSpeed;while(rpI<rpBuf.length-2&&rpBuf[rpI+1].t<=rpTime)rpI++;
