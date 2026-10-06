@@ -76,6 +76,7 @@ body.touch #tower{display:none}
 .note{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.5}.note:empty{display:none}.note b{color:var(--paper)}
 tr.hd td{font-family:var(--dot);color:var(--muted);font-size:13px}
 td.b{color:var(--muted)}
+#slights{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 92px);transform:translateX(-50%);display:flex;gap:clamp(5px,1.1vw,12px);padding:clamp(5px,.9vw,9px);background:#0d0e11;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.5);pointer-events:none;z-index:3}#slights[hidden]{display:none}#slights i{display:grid;gap:clamp(4px,.7vw,7px);padding:clamp(3px,.5vw,5px);background:#1c1d22;border-radius:4px}#slights b{width:clamp(15px,2.8vw,28px);aspect-ratio:1;border-radius:50%;background:#3a0a07;box-shadow:inset 0 0 0 2px #000}#slights i.on b{background:radial-gradient(circle at 40% 35%,#ffb4a4,#ff2a12 45%,#a80d00);box-shadow:0 0 14px 3px rgba(255,40,20,.65)} /* T178③ */
 #banner{position:absolute;left:0;right:0;top:32%;text-align:center;font-family:var(--num);font-weight:800;font-style:italic;font-size:clamp(56px,13vw,140px);letter-spacing:.02em;color:var(--paper);transform-origin:center}
 #banner.pop{animation:pop .5s ease-out}
 #banner.chq::before,#banner.chq::after{content:'';display:inline-block;width:.8em;height:.55em;margin:0 .25em;vertical-align:.1em;background:repeating-conic-gradient(#111 0 25%,#f2f2f2 0 50%) 0 0/.18em .18em;border:2px solid #f2f2f2;transform-origin:left center;animation:wave .5s ease-in-out infinite alternate} /* T178③ チェッカーフラッグ */
@@ -440,6 +441,15 @@ body.touch #tyreCv{width:44px;height:70px;right:calc(100% + 4px);bottom:2px}body
 body.touch #coach{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + clamp(78px,21vw,110px) + 30px);font-size:12px;white-space:normal;text-align:center;max-width:calc(100vw - 2*(2*clamp(64px,17vw,92px) + 40px))}body.replay #coach,body.drag #coach{display:none}
 /* T50 フォーミュラ：車種と駆動方式は使わない */
 body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-events:none}
+body.na #tkRow,body.na #icRow{opacity:.35;pointer-events:none}
+#drvSeg button:disabled{opacity:.3;cursor:not-allowed;text-decoration:line-through} /* T221 車種に合わない駆動方式 */
+/* T213 GARAGE の説明文（ヒント）を隠す：項目名とボタンだけの詰まった表示。隠している間は項目名を押す（PC はカーソルを合わせる）とその説明だけ出る */
+#setup h2{display:flex;align-items:baseline;gap:0}#hintBtn{margin-left:auto;align-self:center}
+body.hidehint #setup .label .hint,body.hidehint #setup #tuneNote{display:none}
+body.hidehint #setup .label:has(.hint){cursor:help}body.hidehint #setup .label:has(.hint)::after{content:' ⓘ';color:var(--muted);font-weight:500}
+body.hidehint #setup .label.open .hint{display:block}
+@media (hover:hover){body.hidehint #setup .label:hover .hint{display:block}}
+body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209 過給機の欄はターボのエンジンの時だけ */
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -470,6 +480,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
   <div id="rpInfo" hidden><b>REPLAY</b><span id="rpName"></span></div>
   <div id="rpBar" hidden><button class="mini" id="rpPrev" type="button">◀ 前の車</button><button class="mini" id="rpNext" type="button">次の車 ▶</button><button class="mini" id="rpCam" type="button">視点 中継</button><button class="mini" id="rpSpd" type="button">倍速 ×1</button><button class="mini" id="rpEnd" type="button">リプレイ終了</button></div>
   <div id="corner"><button class="mini" id="mnBtn" type="button" aria-expanded="false">メニュー</button><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">表示を減らす</button><button class="mini" id="cpBtn" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
+  <div id="slights" hidden aria-hidden="true"><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i></div>
   <div id="topbtns"><button class="mini" id="rwBtn" type="button">巻き戻し</button><button class="mini" id="pitBtn" type="button" aria-pressed="false">ピット</button><button class="mini" id="lineBtn" type="button" aria-pressed="true">ライン ON</button><button class="mini" id="camBtn" type="button">視点 後方</button><button class="mini" id="mirBtn" type="button" aria-pressed="false">ミラー OFF</button><button class="mini" id="autoBtn" type="button" aria-pressed="false">オート運転 OFF</button><button class="mini" id="spdBtn" type="button" hidden>倍速 ×1</button><button class="mini" id="pauseBtn" type="button">ポーズ</button><button class="mini" id="muteBtn" type="button">音 ON</button><button class="mini" id="bgmBtn" type="button">BGM ON</button></div>
 </div>
 
@@ -491,7 +502,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.71.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.75.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -505,7 +516,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
     </nav>
   </div>
   <section id="setup" class="panel" hidden>
-    <h2>GARAGE<small>車・設定</small></h2>
+    <h2>GARAGE<small>車・設定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
     <div id="specBox"></div>
     <div id="garTop"><div class="label">遊びやすさ<span class="hint">かんたん＝摩耗なし・ダメージは見た目だけ・アシスト強／ほんかく＝摩耗とダメージあり・アシスト標準</span></div><div class="seg" id="presetSeg"><button type="button" data-v="0">かんたん</button><button type="button" data-v="1">ほんかく</button></div></div>
     <div id="garTabs" role="tablist" aria-label="GARAGE のタブ"><button type="button" data-t="0" aria-pressed="true">車</button><button type="button" data-t="1">セッティング</button><button type="button" data-t="2">レース</button><button type="button" data-t="3">表示・操作</button><button type="button" data-t="4">0-400m</button></div>
@@ -517,7 +528,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
     <div class="label">車種<span class="hint">形・車重・回りやすさが違う。重いほど加速とブレーキが鈍い。ミッドシップは向きが変わりやすいが限界を超えると急に回る</span></div>
     <div class="seg" id="carSeg"></div>
     <p class="note" id="carNote"></p>
-    <div class="label">エンジン<span class="hint">最高速と加速が変わる。ターボは速いが扱いがむずかしい</span></div>
+    <div class="label">エンジン<span class="hint">最高速と加速が変わる。ターボは速いが扱いがむずかしい（過給機の種類はセッティングで選ぶ）</span></div>
     <div class="seg" id="ccSeg">
       <button type="button" data-cc="0">1600cc</button>
       <button type="button" data-cc="1" aria-pressed="true">2000cc</button>
@@ -530,7 +541,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
     </div>
     <div class="gtab" id="gtab1" hidden>
       <div class="setrow tune">
-        <div><div class="label">駆動方式<span class="hint">どのタイヤでエンジンの力を伝えるか（FF＝前／FR＝後ろ／4WD＝4輪）</span></div><div class="seg" id="drvSeg"><button type="button" data-v="0">FF</button><button type="button" data-v="1">FR</button><button type="button" data-v="2">4WD</button></div></div>
+        <div><div class="label">駆動方式<span class="hint">どのタイヤでエンジンの力を伝えるか（FF＝前／FR＝後ろ／4WD＝4輪。MR＝真ん中のエンジンで後ろ）。車種に合わない組み合わせは選べない</span></div><div class="seg" id="drvSeg"><button type="button" data-v="0">FF</button><button type="button" data-v="1">FR</button><button type="button" data-v="2">4WD</button></div></div>
         <div><div class="label">ギア比<span class="hint">変速のギアの掛け方。加速寄り＝出足が速い／最高速寄り＝直線で伸びる</span></div><div class="seg" id="gearSeg"><button type="button" data-v="0">加速寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">最高速寄り</button></div></div>
         <div><div class="label">ウイング<span class="hint">ダウンフォース（走ると車を地面へ押さえつける力）。多いとコーナーに強く、直線は遅い</span></div><div class="seg" id="wingSeg"><button type="button" data-v="0">少なめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">多め</button></div></div>
         <div><div class="label">ブレーキバランス<span class="hint">前輪と後輪のブレーキの強さの配分</span></div><div class="seg" id="bbSeg"><button type="button" data-v="0">前寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">後ろ寄り</button></div></div>
@@ -538,6 +549,8 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
         <div><div class="label">冷却（ラジエーター）<span class="hint">エンジンの冷え方。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="coolSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
         <div><div class="label">デフ<span class="hint">左右のタイヤの回転差を抑える仕組み。オープン＝出口で内側が空転しやすい／1.5way＝加速の時だけ効く（標準）／2way＝減速中も効いて安定するが、入口で曲がりにくい</span></div><div class="seg" id="difSeg"><button type="button" data-v="0">オープン</button><button type="button" data-v="1">1.5way</button><button type="button" data-v="2">2way</button></div></div>
         <div><div class="label">エンジン特性<span class="hint">トルクの出方。低回転型＝コーナーの立ち上がりが速いが最高速が伸びない／高回転型＝低速は弱いが上まで回って直線が速い</span></div><div class="seg" id="enSeg"><button type="button" data-v="0">低回転型</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">高回転型</button></div><canvas id="tqCv" width="440" height="120" style="width:100%;max-width:440px;height:auto;margin-top:6px;background:rgba(8,10,13,.6);border-radius:3px" aria-label="トルク曲線のグラフ"></canvas></div>
+        <div id="tkRow"><div class="label">過給機（ターボのエンジンだけ）<span class="hint">ターボの種類。小径＝早く効くが上は控えめ／大径＝効くまで遅いが上まで強い／ツイン＝遅れが少なく上も伸びるが重い／スーパーチャージャー＝遅れなし、低回転から太いが上は控えめ</span></div><div class="seg small" id="tkSeg"><button type="button" data-v="0">小径</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大径</button><button type="button" data-v="3">ツイン</button><button type="button" data-v="4">スーパーチャージャー</button></div><p class="note" id="tkNote"></p></div>
+        <div id="icRow"><div class="label">インタークーラー（ターボのエンジンだけ）<span class="hint">過給で熱くなった空気を冷やす。なし＝10kg 軽いが、全開が続くと吸気が熱くなって出力が最大 約1割落ちる</span></div><div class="seg" id="icSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">スタビライザー<span class="hint">左右の傾きを抑える棒の硬さ。前硬め＝曲がりにくいが安定／後ろ硬め＝よく曲がるがお尻が出やすい</span></div><div class="seg" id="sbSeg"><button type="button" data-v="0">前硬め</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">後ろ硬め</button></div></div>
         <div><div class="label">タイヤの幅<span class="hint">太い＝グリップが高いが空気抵抗が増え、雨で滑りやすい／細い＝その逆</span></div><div class="seg" id="twSeg"><button type="button" data-v="0">細め</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">太め</button></div></div>
         <div><div class="label">ブレーキ冷却<span class="hint">強いブレーキを続けると熱でききが落ちる。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="bcSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
@@ -574,6 +587,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
         <div><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div><div class="label">ピット無線</div><div class="seg" id="radSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">BGMの雰囲気<span class="hint">おまかせ＝レースは都市、0-400mはロック。曲は全部オリジナル（Bキーでオン・オフ）</span></div><div class="seg" id="bgSeg"><button type="button" data-v="0">おまかせ</button><button type="button" data-v="1">都市</button><button type="button" data-v="2">峠</button><button type="button" data-v="3">景色</button><button type="button" data-v="4">ラリー</button></div></div>
+        <div><div class="label">BGMの音量<span class="hint">レース中のエンジン音とのつり合い。中＝エンジンやタイヤの音が聞こえやすい大きさ（β0.73.0 までの大きさは「大」）</span></div><div class="seg" id="bvSeg"><button type="button" data-v="0">小</button><button type="button" data-v="1">中</button><button type="button" data-v="2">大</button></div></div>
         <div><div class="label">スマホのハンドル</div><div class="seg" id="tiltSeg"><button type="button" data-v="0">ボタン</button><button type="button" data-v="1">傾ける</button></div><p class="note" id="tiltNote"></p><div class="label" style="margin-top:8px">傾きの感度</div><div class="seg" id="tsSeg"><button type="button" data-v="0">弱い</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
       </div>
     </div>
@@ -630,7 +644,7 @@ body.form #carSeg,body.form #carNote,body.form #drvSeg{opacity:.35;pointer-event
         <span>開始前の設定</span><span>GARAGEで、スタート時の視点・オート運転・走行ライン・バックミラーを決めておける。レースのカウントダウン中も、Cキー・ボタンで視点、Oキー・ボタンでオート運転を切り替えられる</span>
         <span>不具合報告</span><span>GARAGE とポーズ画面の「不具合報告」で、今の状況・設定・起きたエラー・無線の履歴を文章にまとめてコピー／.txt 保存できる（自動では送られない）</span>
         <span><kbd>E</kbd>／<kbd>Q</kbd></span><span>手動変速（GARAGE の「変速」を「手動」に）：E＝シフトアップ、Q＝シフトダウン（スマホは画面右下の▲▼）。マウスのホイールも使える（手前に回す＝アップ、奥に回す＝ダウン）。パッドは右スティック（手前に引く＝アップ、奥に倒す＝ダウン）。0-400m の手動変速のアップも E・ホイールで。回転計の上限（約8700）を超える落とし方はできない。回転を合わせずに落とすと、駆動輪にショックが出る（アシスト「なし」でアクセルを煽らない時だけ。落とす時にアクセルを踏んでいればブリップで合う）。止まりかけると自動で1速に戻る。オート運転（Oキー）にすると変速も自動になる</span>
-        <span>エンジン</span><span>アクセルを踏むと回転がすぐ上がる（停車・発進・変速中は車速から離れて吹け上がり、離すとすぐ落ちる）。ターボは過給圧が上がるまで少し遅れる（アクセルを戻した直後は特に）。水温・油温が高すぎると出力が落ちる（ひどい傷み・低速の全開が長いと）。雨や走行風・ピット停車で下がる。落とす（シフトダウン）のはブレーキの中盤〜後半</span>
+        <span>エンジン</span><span>アクセルを踏むと回転がすぐ上がる（停車・発進・変速中は車速から離れて吹け上がり、離すとすぐ落ちる）。ターボは過給圧が上がるまで少し遅れる（アクセルを戻した直後は特に）。ターボのエンジンは GARAGE のセッティングで過給機の種類を選べる：小径（早く効くが上は控えめ）・標準・大径（効くまで遅いが上まで強い）・ツイン（遅れが少なく上も伸びるが重い）・スーパーチャージャー（遅れなし、低回転から太い、独特のうなり）。インタークーラーなしは軽いが、全開が続くと吸気が熱くなって出力が落ちる。水温・油温が高すぎると出力が落ちる（ひどい傷み・低速の全開が長いと）。雨や走行風・ピット停車で下がる。落とす（シフトダウン）のはブレーキの中盤〜後半</span>
         <span><kbd>Esc</kbd>／<kbd>P</kbd></span><span>ポーズ</span>
         <span><kbd>O</kbd></span><span>オート運転の切り替え（レース中いつでも）</span>
         <span><kbd>T</kbd></span><span>倍速（オート運転の間だけ。×1→×2→×3→×5。ボタン「倍速」でも。音は止まり、自分で運転に戻すと×1に戻る。0-400mでは使えない）</span>
@@ -764,6 +778,18 @@ const rpmOf=p=>(p.erpm??p.rpm)+(p.blip>0?BLIPR*p.blip:0); // 表示・エンジ�
 // lo＝0回転でのトルク（ピークを1として）、pk＝ピークの回転、hi＝end 回転での値、end＝落ち切る回転。下は sin、上は cos でなめらかにつなぐ
 // ru・rd＝エンジンの回転の上がる・下がる速さ（回転/秒。T106：小さいエンジンは軽くて鋭く、ターボは重くて少し鈍い）
 const TQC=[{n:'1600cc',lo:.65,pk:5200,hi:.6,end:9000,ru:16000,rd:10500},{n:'2000cc',lo:.55,pk:4500,hi:.55,end:9000,ru:14000,rd:9000},{n:'ターボ',lo:.38,pk:5600,hi:.66,end:9500,ru:11000,rd:7500,tb:1}];
+// T209 過給機の種類（ターボのエンジンだけ。GARAGE「過給機」）。b0＝過給が立ち上がり始める回転、bs＝全部かかるまでの回転の幅、bmax＝最大の過給圧(bar)、up＝過給圧の上がる速さ（大きいほどラグが短い）、tbw＝過給が足りない時に落ちるトルクの割合、
+// m＝トルクの倍率、kg＝重さ（前に積む）、wd＝重心のずれ（m、負＝前）、hc＝重心の高さの倍率（荷重移動の大きさ。スーパーチャージャーは V型エンジンの車だけエンジンの上に載る＝scTop）、wh＝笛の高さの倍率、sc＝スーパーチャージャー（エンジンで回すので遅れなし、回転に比例して過給）。トルク曲線は過給が全部かかった時の形。標準ターボは従来のターボと同じ
+const TKS=[{n:'小径ターボ',lo:.46,pk:4800,hi:.66,end:9300,ru:12500,rd:8500,tb:1,b0:1900,bs:2100,bmax:1.1,up:4,tbw:.2,m:.96,kg:12,wd:-.01,wh:1.35,d:'3000回転あたりから早く効き、アクセルへの反応がよい。上の伸びは控えめ'},
+ {n:'標準ターボ',lo:.38,pk:5600,hi:.66,end:9500,ru:11000,rd:7500,tb:1,b0:2800,bs:3000,bmax:1.3,up:2.2,tbw:.25,m:1,kg:15,wd:-.01,wh:1,d:'効き始めと伸びのバランス型（従来のターボ）'},
+ {n:'大径ターボ',lo:.3,pk:6300,hi:.76,end:9700,ru:9500,rd:6500,tb:1,b0:3900,bs:2700,bmax:1.6,up:1.3,tbw:.36,m:1.03,kg:20,wd:-.015,wh:.7,d:'効くまで遅い（ラグが大きい）が、効くと強く上まで伸びる。最高速が一番'},
+ {n:'ツインターボ',lo:.44,pk:5300,hi:.7,end:9500,ru:11000,rd:7500,tb:1,b0:2100,bs:2900,bmax:1.35,up:3.2,tbw:.2,m:1,kg:30,wd:-.02,wh:1.15,d:'小さいターボ2つで遅れが少なく、上も伸びる。そのぶん重い'},
+ {n:'スーパーチャージャー',lo:.62,pk:4300,hi:.63,end:9300,ru:12000,rd:8000,tb:1,sc:1,bmax:.95,up:12,tbw:.1,m:.99,kg:18,wd:-.01,wh:1,hc:1.04,d:'エンジンの力で回すので遅れがなく、低回転から太い。上ではその力を食うので伸びは控えめ。V型エンジンの車では左右のシリンダーの間（上）に載るので重心が少し高い（直列などは横の低い所に付くので変わらない）。独特のうなり'}];
+// インタークーラー（T209）：過給で熱くなった空気を冷やす。IC_KG＝重さ。なしだと全開が続くと吸気温度 k.iat が上がり、ICL まで出力が落ちる。ありでも長く全開だとコア k.ict が熱をためて少し上がる（ヒートソーク）
+let setK=1,setIC=1;const IC_KG=10;let ICL=.12;
+const scTop=ci=>/V/.test((ENGV[ci]||{}).n||''); // T209 スーパーチャージャーがエンジンの上に載る車（V型エンジン）
+const tkExtraKg=(tk,ic)=>ccChoice===2?TKS[tk].kg+(ic?IC_KG:0):0;
+const ccName=()=>ccChoice===2?CC[2].name+'（'+TKS[setK].n+(setIC?'':'・IC なし')+'）':CC[ccChoice].name;
 const torque=(rpm,c)=>{c=c||TQC[1];const r=Math.min(rpm,c.end);return (c.m||1)*(r<c.pk?c.lo+(1-c.lo)*Math.sin(Math.PI/2*r/c.pk):c.hi+(1-c.hi)*Math.cos(Math.PI/2*(r-c.pk)/(c.end-c.pk)));};
 // 手動変速の最適なシフト回転（今のギアと次のギアの駆動力が等しくなる回転。上限 REDLINE-100）
 function optShift(c){const o=[];for(let g=0;g<TOPG;g++){let best=REDLINE-100,bd=1e9;for(let r=5000;r<=REDLINE-100;r+=10){const d=Math.abs(torque(r,c)*RATIO[g]-torque(r*RATIO[g+1]/RATIO[g],c)*RATIO[g+1]);if(d<bd){bd=d;best=r;}}o.push(best);}return o;}
@@ -783,7 +809,7 @@ const SETC=[{n:'小さめ',hf:1.3,cdm:.97},{n:'標準',hf:1,cdm:1},{n:'大きめ
 const TYRE=['自動','スリック','レイン'];
 // T88 エンジン特性：トルク曲線を差し替える（低回転型＝ピークが低く中低速が太い・高回転で頭打ち／高回転型＝低速は細いが上まで伸びる）。最高速の釣り合いは標準の曲線で決めるので、高回転型は直線で伸び、低回転型は立ち上がりが速い
 const SETE=[{n:'低回転型',lo:.2,pk:-1000,hi:-.02,end:-200,m:1.06},{n:'標準',lo:0,pk:0,hi:0,end:0,m:1},{n:'高回転型',lo:-.13,pk:700,hi:.05,end:300,m:.98}]; // m＝トルク全体の倍率
-const _tqM=new Map();function tqOf(cc,e){const b=TQC[cc],m=SETE[e==null?1:e];if(!m||e===1||e==null)return b;const key=cc+'_'+e;let c=_tqM.get(key);if(!c){c={...b,m:m.m,n:b.n+'・'+m.n,lo:Math.max(.2,b.lo+m.lo),pk:b.pk+m.pk,hi:Math.max(.25,b.hi+m.hi),end:b.end+m.end};_tqM.set(key,c);}return c;}
+const _tqM=new Map();function tqOf(cc,e,tk){const b=cc===2?TKS[tk==null?1:tk]:TQC[cc],m=SETE[e==null?1:e];if(!m||e===1||e==null)return b;const key=cc+'_'+e+'_'+(cc===2?tk:'');let c=_tqM.get(key);if(!c){c={...b,m:(b.m||1)*m.m,n:b.n+'・'+m.n,lo:Math.max(.2,b.lo+m.lo),pk:b.pk+m.pk,hi:Math.max(.25,b.hi+m.hi),end:b.end+m.end};_tqM.set(key,c);}return c;}
 // T186 B3 スタビライザー：硬い側の軸は横グリップが少し落ち、反対の軸が少し増える（前硬め＝アンダー寄りで安定／後ろ硬め＝曲がりやすいがお尻が出やすい）
 const SETS=[{n:'前硬め',f:.965,r:1.03},{n:'標準',f:1,r:1},{n:'後ろ硬め',f:1.03,r:.965}];
 // T186 B4 タイヤの幅：太い＝横グリップ増・空気抵抗増・雨で浮きやすい／細い＝その逆
@@ -1182,7 +1208,7 @@ function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='
   for(let j=0;j<150;j++){const i=wrap(p.idx+j);const need=u*u-(VP[i]*VP[i]+2*aB*j*SP);setC(i,u<=VP[i]+.3?LC.g:need>0?LC.r:need>-2*aB*28?LC.y:LC.g);}
   lineMesh.geometry.attributes.color.needsUpdate=true;lineMesh.geometry.attributes.position.needsUpdate=true;}
 // 中継カメラの位置（コース脇の高い所）
-let GS_SIDE=1;
+let GS_SIDE=1,CRW=null; // CRW＝観客（T178④）
 const TVS=[];{const step=Math.round(85/SP);for(let i=0;i<N;i+=step){const side=CORNER[wrap(i+12)]?OUTS[wrap(i+12)]:(TVS.length%2?1:-1);const lat=(WALL+5.5+(i%3))*side;TVS.push({i,x:TX[i]+NX[i]*lat,y:8+(TVS.length%3)*2.2,z:TZ[i]+NZ[i]*lat});}}
 // 軽量化（β0.66.0）：動かない景色（STATIC に入れた物）を、同じ見た目の材質ごとに1つの形へまとめて描画回数を減らす。
 // 見えない物（旗など、あとで出す物）・材質が複数の物・インスタンス描画の物はそのまま残す。bakeStatic は linAll(scene) の直前で1回
@@ -1244,7 +1270,8 @@ const dragGrp=new THREE.Group();
   dragGrp.add(grp);return grp;};
  mkCourse(400,[100,200,300],'FINISH  400m');mkCourse(201.17,[50,100,150],'FINISH  1/8 MILE');
  dragGrp.visible=false;scene.add(dragGrp);}
-let lampTO=0;function setLamps(n,green){(startGrp.userData.lamps||[]).forEach((l,i)=>l.material.color.setHex(green?0x22ff55:(i<n?0xff2211:0x330000)));}
+let lampTO=0;function setLamps(n,green){(startGrp.userData.lamps||[]).forEach((l,i)=>l.material.color.setHex(green?0x22ff55:(i<n?0xff2211:0x330000)));
+  document.querySelectorAll('#slights i').forEach((e,i)=>e.classList.toggle('on',!green&&i<n));} // T178③ 画面上のランプ（消灯＝スタート）
 
 // ガードレール（直線・コーナー内側）とタイヤバリア（コーナー外側）
 {const steel=new THREE.MeshStandardMaterial({color:0xb4b9c0,metalness:.75,roughness:.35});
@@ -1338,15 +1365,26 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   // ピットは内周側（コースの重心がある側）、観客席はその反対の外周側（T82）
   let mx=0,mz=0;for(let i=0;i<N;i++){mx+=TX[i];mz+=TZ[i];}mx/=N;mz/=N;
   const inner=((mx-TX[i0])*NX[i0]+(mz-TZ[i0])*NZ[i0])>0?1:-1;const side=-inner;GS_SIDE=side;
-  const crowd=canvasTex(512,64,(g,w,h)=>{g.fillStyle='#3a3d45';g.fillRect(0,0,w,h);const cs=['#d8d4cc','#2c3e70','#8c2a22','#e0b24a','#3d6b3a','#f0f0f0','#555'];for(let y=6;y<h;y+=10)for(let x=2;x<w;x+=5){if(Math.random()<.15)continue;g.fillStyle=cs[Math.random()*cs.length|0];g.fillRect(x,y,3,4);g.fillStyle='#c9a184';g.fillRect(x,y-3,3,3);}});
   const i1=wrap(Math.round((PIT_BX+22)/SP)),hd=heading(i1);/* T206 ピットビルと観客席はボックスの後ろ（線をまたぐ） */const put=(obj,lat,al)=>{obj.position.set(TX[i1]+NX[i1]*lat+FX[i1]*al,obj.position.y,TZ[i1]+NZ[i1]*lat+FZ[i1]*al);obj.rotation.y=hd;scene.add(obj);};
   const len=70;const conc=new THREE.MeshStandardMaterial({color:0xa9a9a4,roughness:.9});
   const st=new THREE.Group();
   for(let r=0;r<5;r++){const step=new THREE.Mesh(new THREE.BoxGeometry(2.4,1.2,len),conc);step.position.set(-side*(r*2.4),r*1.2+.6,0);step.castShadow=true;step.receiveShadow=true;st.add(step);
-   const cr=new THREE.Mesh(new THREE.PlaneGeometry(len,1.1),new THREE.MeshLambertMaterial({map:crowd}));cr.position.set(-side*(r*2.4-1.21),r*1.2+1.7,0);cr.rotation.y=side>0?Math.PI/2:-Math.PI/2;st.add(cr);}
+}
   const roof=new THREE.Mesh(new THREE.BoxGeometry(15,.4,len+4),new THREE.MeshStandardMaterial({color:0xdadde2,metalness:.4,roughness:.5}));roof.position.set(-side*6,10.2,0);roof.castShadow=true;st.add(roof);
   for(const z of[-len/2,-len/6,len/6,len/2]){const pl=new THREE.Mesh(new THREE.BoxGeometry(.5,10,.5),new THREE.MeshStandardMaterial({color:0x50535a,metalness:.6,roughness:.4}));pl.position.set(-side*12.5,5,z);pl.castShadow=true;st.add(pl);}
   put(st,(WALL+4)*side,0);STATIC.push(st);
+  // T178④ 観客：以前の「人を描いた板」をやめ、段ごとに座った人形（体・頭、1割弱は旗を持つ）を並べる。InstancedMesh 3つ＝描画3回。動きは crowdStep
+  {const cg=new THREE.Group(),rnd=Math.random,body=[];let nf=0;
+   for(let r=0;r<5;r++)for(let z=-len/2+.4;z<len/2-.3;z+=.62){if(rnd()<.14)continue;const f=rnd()<.08;body.push({x:-side*(r*2.4)+side*(.3+rnd()*.5),y:r*1.2+1.2,z:z+(rnd()-.5)*.16,ph:rnd()*6.28,a:rnd()<.75?1:.35,fi:f?nf++:-1});}
+   const n=body.length,BC=['#d8d4cc','#2c3e70','#8c2a22','#e0b24a','#3d6b3a','#f0f0f0','#555b63','#c8201a','#1f5fa8','#e8e8e8','#f29a1f'],SK=['#c9a184','#e0bc9a','#a87c5a','#3a2a20','#2a2420','#d6b08c'],FC=['#e8342a','#ffffff','#1f5fa8','#f5c400','#2fa84f','#111111'];
+   const mk=(g,m,c)=>{const o=new THREE.InstancedMesh(g,m,c);o.frustumCulled=false;o.castShadow=false;o.receiveShadow=false;o.instanceMatrix.setUsage(THREE.DynamicDrawUsage);cg.add(o);return o;};
+   const bm=mk(new THREE.BoxGeometry(.4,.56,.3),new THREE.MeshLambertMaterial({color:0xffffff}),n),hm=mk(new THREE.BoxGeometry(.22,.24,.22),new THREE.MeshLambertMaterial({color:0xffffff}),n);
+   const fg=new THREE.BufferGeometry(),P=[],Cl=[],q=(a,b,c,d,col)=>{for(const v of[a,b,c,a,c,d]){P.push(...v);Cl.push(...col);}},w=[1,1,1],k=[.12,.12,.12];
+   q([0,.5,0],[0,.5,.66],[0,.92,.66],[0,.92,0],w);q([-.015,0,0],[.015,0,0],[.015,.93,0],[-.015,.93,0],k);q([0,0,-.015],[0,0,.015],[0,.93,.015],[0,.93,-.015],k); // 旗（コースから見える向き）と竿
+   fg.setAttribute('position',new THREE.Float32BufferAttribute(P,3));fg.setAttribute('color',new THREE.Float32BufferAttribute(Cl,3));fg.computeVertexNormals();
+   const fm=mk(fg,new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide}),Math.max(1,nf));
+   const col=new THREE.Color();body.forEach((b,i)=>{bm.setColorAt(i,col.set(BC[rnd()*BC.length|0]));hm.setColorAt(i,col.set(SK[rnd()*SK.length|0]));if(b.fi>=0)fm.setColorAt(b.fi,col.set(FC[rnd()*FC.length|0]));});
+   put(cg,(WALL+4)*side,0);CRW={cg,bm,hm,fm,body,sd:side,ex:0,t:0,pt:0,st:'',cx:cg.position.x,cz:cg.position.z,posed:0};}
   // ピットビル（反対側）
   const win=canvasTex(512,128,(g,w,h)=>{g.fillStyle='#e6e6e2';g.fillRect(0,0,w,h);for(let x=8;x<w;x+=32){g.fillStyle='#3d5873';g.fillRect(x,14,24,40);g.fillStyle='rgba(255,255,255,.25)';g.fillRect(x,14,24,8);}
    for(let x=4;x<w;x+=64){g.fillStyle='#55585e';g.fillRect(x,70,56,58);g.fillStyle='#6b6e75';for(let y=72;y<128;y+=6)g.fillRect(x,y,56,2);}});
@@ -1564,6 +1602,11 @@ const CARS=[
  mir:{z:.85,y:.9},ex:[-.5,.5],ey:.2,wh:{k:2,r:.35,w:.32,x:.88,z:[1.42,-1.3],xr:.95},bump:0,vent:0,canard:1,intake:{z:-.85,y:.6},rvent:1}
 ];
 const CPU_CAR=[5,1,7,3,9,2,8,4];let myCar=0;
+// T221 車種ごとに選べる駆動方式（DRV_KEYS の番号。最初が既定）。実車にほとんどない組み合わせ（ミッドシップの FF、マッスルGT の FF・4WD など）は選べない。フォーミュラは後輪駆動だけ
+const CAR_DRV=[[1,0,2],[1,0,2],[0,2],[1,2],[1,0],[1,0,2],[1],[2,0],[1],[1,2]];
+const drvAllowed=ci=>ci===FCI?[1]:CAR_DRV[ci]||[1,0,2];
+const drvFit=(ci,d)=>{const a=drvAllowed(ci);return a.includes(d)?d:a[0];};
+const drvLabel=(ci,d)=>ci===FCI?'後輪駆動':ci===9&&d===1?'MR':DRV_KEYS[d]; // ミッドシップの後輪駆動は MR
 // 車重（T154）：車種ごとの重さの比（セダン＝1＝約1250kg）と、駆動方式ごとの重さ（DRV の ms）。MGK＝1で有効（0で全車同じ）。重いほど加速が鈍く（エンジンの力・空気抵抗とも質量で割るので最高速は同じ）、ブレーキは MGB 乗、横グリップは MGP 乗で少し落ちる（荷重感度）。ぶつかる時の質量にも使う
 const CARM=[1,.95,.9,1,1.1,1.08,.92,1.05,1.12,.9,.62]; /* 11番目（FCI）はフォーミュラ（約780kg） */let MGK=1,MGB=.3,MGP=.12;
 const carMass=(ci,drv)=>MGK?CARM[ci]*((DRV[drv]&&DRV[drv].ms)||1):1;
@@ -1954,10 +1997,10 @@ bakeStatic();linAll(scene);[sun.color,hemi.color,hemi.groundColor,scene.fog.colo
 /* ================= 状態 ================= */
 let karts=[];
 let state='title',raceTime=0,countdown=0,playerChoice=0,ccChoice=1,finishOrder=[],afterFinish=0;
-let camH=0,camPos=new THREE.Vector3(),shake=0,camKick=0,autoPlay=false;
+const CLAGV=60;let camH=0,camPos=new THREE.Vector3(),shake=0,camKick=0,autoPlay=false;
 const input={left:false,right:false,accel:false,brake:false,drift:false};
 const prevIn={drift:false};
-let accelDownAt=null;
+let accelDownAt=null,cdHold=0; // T178③ 5つ点いてから消えるまでの待ち（0.2〜1.5秒のランダム。実際のライトアウトと同じく読めない）
 let autoAccel=isTouch;
 
 function setupRace(){
@@ -1973,13 +2016,13 @@ function setupRace(){
     const top=CC[ccChoice].top*st.top;const Fp=4.9*Math.pow(top/61,.45)*PWS;
     const k={id:gridPos,name:dr.name,dr,st,isPlayer:d===playerChoice,
       x:TX[i]+NX[i]*lat,z:TZ[i]+NZ[i]*lat,h:heading(i),u:0,vl:0,r:0,delta:0,ax:0,ay:0,speed:0,vx:0,vz:0,
-      gear:0,rpm:1500,shiftT:0,top,Fp,tq:tqOf(ccChoice,d===playerChoice||sess==='drag'?setE:evSet?evSet[d].e:1),cd:Fp*torque(SHIFT_UP,TQC[ccChoice])/(top*top),cls:st.t,wheelspin:0,slipF:0,slipR:0,surf:'road',
+      gear:0,rpm:1500,shiftT:0,top,Fp,tki:d===playerChoice||sess==='drag'?setK:evSet&&evSet[d].tk!=null?evSet[d].tk:1,ic:d===playerChoice||sess==='drag'?setIC:evSet&&evSet[d].ic!=null?evSet[d].ic:1,tq:tqOf(ccChoice,d===playerChoice||sess==='drag'?setE:evSet?evSet[d].e:1,d===playerChoice||sess==='drag'?setK:evSet&&evSet[d].tk!=null?evSet[d].tk:1),cd:Fp*torque(SHIFT_UP,TQC[ccChoice])/(top*top),cls:st.t,wheelspin:0,slipF:0,slipR:0,surf:'road',
       idx:i,prevIdx:i,lap:0,cp:true,lat,sl:lat-IL[i],
       drifting:false,driftDir:0,driftCharge:0,spin:0,
       finished:false,finishTime:0,lane:SLK>0&&sess==="race"?lat-IL[i]:lat*.5,laneT:SLK>0&&sess==="race"?lat:lat*.5,laneTimer:0,skill:d===playerChoice?1:evSkill[d],lapBad:false,lapStart:0,best:0,lastLap:0,launchT:0,locked:false,aiItemT:0,bump:0,power:1,aiDriven:false,
       prevWheel:null,g:makeCar(dr,d===playerChoice?myNo(d):d+1,carOf(d))};
-    if(d===playerChoice)applySetup(k,isForm()?1:setDrv,setG,setW,setB,setT,setC,setDf,setBC,setE,setS,setTW);else if(sess==='drag')applySetup(k,isForm()?1:setDrv,1,1,1,0,1,1,1,setE);else{const es=evSet?evSet[d]:{g:1,w:1,e:1};applySetup(k,isForm()?1:(evDrv?evDrv[d]:CPU_DRV[d]),es.g,es.w,1,0,1,1,1,es.e);}
-    k.fuel=fuelStart();k.fm=1+(k.fuel-FREF)/1250;k.mm=carMass(carOf(d),k.drv);applyCar(k,carOf(d));k.st=Object.assign({},k.st,{acc:k.st.acc/k.mm,grip:k.st.grip*Math.pow(k.mm,-MGP)}); // T154 車重
+    if(d===playerChoice)applySetup(k,isForm()?1:drvFit(myCar,setDrv),setG,setW,setB,setT,setC,setDf,setBC,setE,setS,setTW);else if(sess==='drag')applySetup(k,isForm()?1:drvFit(carOf(d),setDrv),1,1,1,0,1,1,1,setE);else{const es=evSet?evSet[d]:{g:1,w:1,e:1};applySetup(k,isForm()?1:(evDrv?evDrv[d]:CPU_DRV[d]),es.g,es.w,1,0,1,1,1,es.e);}
+    k.fuel=fuelStart();k.fm=1+(k.fuel-FREF)/1250;k.mm=carMass(carOf(d),k.drv);applyCar(k,carOf(d));if(ccChoice===2){const T=TKS[k.tki];k.mm*=1+tkExtraKg(k.tki,k.ic)/1250;const w=T.wd-(k.ic?.008:0);k.ka+=w;k.kb-=w;if(T.hc&&scTop(k.ci))k.hcm=(k.hcm||1)*T.hc;} /* T209 過給機とインタークーラーの重さ（前に積む） */k.st=Object.assign({},k.st,{acc:k.st.acc/k.mm,grip:k.st.grip*Math.pow(k.mm,-MGP)}); // T154 車重
     karts.push(k);
   });
   const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);
@@ -2049,9 +2092,9 @@ function stepKart(k,dt,ctl){
   let Fd=0,Fb=0;
   if(k.spin<=0){
     // T95：ターボは過給圧（k.bst）が足りないほど TBW 割まで弱い（低回転・アクセルを戻した直後のラグ）。水温・油温が高いと出力が落ちる（heatK）
-    const tbF=!!(k.tq&&k.tq.tb)&&k.bst!=null?1-TBW*(1-Math.max(0,Math.min(1,k.bst/1.3))):1;
+    const tbF=!!(k.tq&&k.tq.tb)&&k.bst!=null?1-(k.tq.tbw??TBW)*(1-Math.max(0,Math.min(1,k.bst/(k.tq.bmax||1.3)))):1; // T209 過給機の種類ごと
     const reT=ERQ&&Math.abs(k.u)<ERC?Math.max(k.rpm,k.erpm):k.rpm; // 発進でクラッチが滑っている間は、上がったエンジン回転のトルクを使う
-    const drv=()=>{const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual)?0:1;return k.Fp/(k.gf||1)*(k.pw||1)*(k.powK||1)*(k.heatK||1)*tbF*k.st.acc/(k.fm||1)*RATIO[k.gear]*torque(reT,k.tq)*lim*(ctl.thr??1)*(k.aiDriven?(k.power||1):1);};
+    const drv=()=>{const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual)?0:1;return k.Fp/(k.gf||1)*(k.pw||1)*(k.powK||1)*(k.heatK||1)*(k.icK||1)*tbF*k.st.acc/(k.fm||1)*RATIO[k.gear]*torque(reT,k.tq)*lim*(ctl.thr??1)*(k.aiDriven?(k.power||1):1);};
     if(ctl.brake&&k.u>.8){Fb=G*BRKG*(ctl.brk??1)*Math.pow((k.mm||1)*(k.fm||1),-MGB)*(k.bfK||1);if(ctl.accel&&k.shiftT<=0)Fd=drv();} // アクセルを開けたままブレーキ（トレイルブレーキ）
     else if(ctl.brake&&k.u<=.8)Fd=-5;
     else if(ctl.accel&&k.shiftT<=0)Fd=drv();
@@ -2109,8 +2152,13 @@ function stepKart(k,dt,ctl){
    if(FUELK&&k.fuel!=null){if(sess==='race'&&state==='race')k.fuel=Math.max(0,k.fuel-FBR*(.08+thr*(.25+.75*Math.min(1.1,k.rpm/8000)))*dt);k.fm=1+(k.fuel-FREF)/(1250*(k.mm||1));}
    if(k.tb==null)k.tb=150;{const Ta=30;k.tb+=(BHK*Fb*Math.abs(k.u)*(k.mm||1)-(k.tb-Ta)*(BC0+BC1*Math.abs(k.u))*(k.bck||1)*(1+cw*.04+pc*2))*dt;k.tb=Math.max(Ta,Math.min(1100,k.tb));k.bfK=1-BFD*Math.max(0,Math.min(1,(k.tb-BFT)/BFR));}
    k.heatK=1-OHL*Math.max(Math.max(0,Math.min(1,(k.tw-OHT)/OHF)),Math.max(0,Math.min(1,(k.to-OIT)/OHF)));
-   const turbo=!!(k.tq&&k.tq.tb),bt=thr>.02?(turbo?Math.min(1.3,Math.max(0,(k.rpm-2800)/3000)*1.3):0)*thr+(thr-1)*.05:-.85+.8*thr*Math.min(1,k.rpm/4000)-.1*(1-rn);
-   const up=turbo?2.2:12;k.bst+=(bt-k.bst)*Math.min(1,dt*(bt>k.bst?up:7));}
+   const T=k.tq||{},turbo=!!T.tb,bm=T.bmax||1.3,bt=thr>.02?(turbo?(T.sc?bm*Math.min(1,.45+.55*k.rpm/6000):Math.min(bm,Math.max(0,(k.rpm-(T.b0||2800))/(T.bs||3000))*bm)):0)*thr+(thr-1)*.05:-.85+.8*thr*Math.min(1,k.rpm/4000)-.1*(1-rn);
+   const up=turbo?(T.up||2.2):12;k.bst+=(bt-k.bst)*Math.min(1,dt*(bt>k.bst?up:7));
+   // T209 吸気温度：過給で空気が熱くなる。インタークーラーなしは過給に比例して速く上がる。ありでも全開が続くとコア k.ict が熱をためる（走行風・雨で冷える）
+   {const Ta=25-8*(ENV.wet||0),pb=turbo?Math.max(0,k.bst)/1.3:0;if(k.iat==null){k.iat=Ta;k.ict=Ta;}
+    k.ict+=(Ta+45*pb*thr-k.ict)*Math.min(1,dt*(pb*thr>.3?.035:.02+.03*air));
+    const tg=k.ic===0?Ta+55*pb*(T.sc?1.15:1):Ta+10*pb+.35*Math.max(0,k.ict-Ta);k.iat+=(tg-k.iat)*Math.min(1,dt*(k.ic===0?1.2:.8));
+    k.icK=turbo?1-ICL*Math.max(0,Math.min(1,(k.iat-35)/50)):1;}}
   if(k.spin>0){k.spin-=dt;if(k.spin<=0){k.r*=.25;k.vl*=.4;syncWorld(k);}}
   // トラック位置と壁
   k.prevIdx=k.idx;k.idx=nearest(k.x,k.z,k.idx,16);k.lat=lateralAt(k.idx,k.x,k.z);
@@ -2160,9 +2208,9 @@ let tlOn=true,fastLap=null;
 let evSet=null,evCls=null,CSR=1;let sess='race',modeSel=0,gridMode=0,gridOrder=null,evSkill=null,qualiRes=null,lastPc=null,gridInfo=null; // gridInfo＝予選のタイム順（決勝の最初に「予選 N位」と出す。T153）
 const solo=()=>sess!=='race';
 const QREF=[70.0,67.7,63.2],QK=[.6,.5,.5]; /* T207 コースが長くなった分（測定で 1600cc ×1.157・2000cc ×1.167・ターボ ×1.13。従来 60.5・58.0・55.9） */ // CPUの予選タイムの目安（強さ1で1周の秒数、強さによる伸び）
-function newEvent(){evDrv=CPU_DRV.slice();if(DSHUF)for(let i=7;i>0;i--){const j=Math.random()*(i+1)|0;[evDrv[i],evDrv[j]]=[evDrv[j],evDrv[i]];}evSkill={};for(let d=0;d<8;d++)evSkill[d]=AILV[aiLv].lo+Math.random()*(AILV[aiLv].hi-AILV[aiLv].lo);
+function newEvent(){evDrv=CPU_DRV.slice();if(DSHUF)for(let i=7;i>0;i--){const j=Math.random()*(i+1)|0;[evDrv[i],evDrv[j]]=[evDrv[j],evDrv[i]];}for(let d=0;d<8;d++){const a=drvAllowed(CPU_CAR[d]);if(!a.includes(evDrv[d]))evDrv[d]=a[Math.random()*a.length|0];} /* T221 */evSkill={};for(let d=0;d<8;d++)evSkill[d]=AILV[aiLv].lo+Math.random()*(AILV[aiLv].hi-AILV[aiLv].lo);
   // T191：CPU のギア比・ウイング・エンジン特性をレースごとにくじ引き（直線が速い車とコーナーが速い車が混ざる）。CSR＝0で全員標準
-  evSet={};for(let d=0;d<8;d++){const r=()=>CSR?Math.random()*3|0:1;evSet[d]={g:r(),w:r(),e:r()};}
+  evSet={};for(let d=0;d<8;d++){const r=()=>CSR?Math.random()*3|0:1;evSet[d]={g:r(),w:r(),e:r(),tk:CSR?Math.random()*5|0:1,ic:CSR&&Math.random()<.15?0:1};}
   // T164 混走：自分のクラスに3台、もう一方のクラスに4台（自分を入れて4台ずつ）
   evCls={};{const my=mixSel===2?'GT':'ツーリング',ot=my==='GT'?'ツーリング':'GT';const o=[];for(let d=0;d<8;d++)if(d!==playerChoice)o.push(d);for(let i=o.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[o[i],o[j]]=[o[j],o[i]];}
    for(let d=0;d<8;d++)evCls[d]='ツーリング';if(mixSel){evCls[playerChoice]=my;o.forEach((d,i)=>evCls[d]=i<3?my:ot);}}gridOrder=null;qualiRes=null;gridInfo=null;}
@@ -2219,7 +2267,7 @@ function recordReplay(dt){rpT+=dt;if(rpT<.1&&rpBuf.length)return;rpT=0;const a=n
   karts.forEach((k,j)=>{const o=j*RP_N;a[o]=k.x;a[o+1]=k.z;a[o+2]=k.h;a[o+3]=k.u;a[o+4]=k.delta;a[o+5]=k.ay;a[o+6]=k.ax;a[o+7]=k.rpm;
     a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0);a[o+9]=k.lap;a[o+10]=k.vl;const c=k.dnf&&k.cr;if(c){a[o+11]=c.y;a[o+12]=c.px;a[o+13]=c.pz;}});
   rpBuf.push({t:raceTime,a});if(sess==='ta'&&rpBuf.length>6000)rpBuf.shift();}
-const camTarget=()=>state==='replay'?karts[rpFocus]:state==='title'?(titleMode==='garage'?karts[0]:(karts.length?ranking()[0]:null)):player();
+const camTarget=()=>state==='replay'?karts[rpFocus]:state==='title'?(titleMode==='garage'?karts[0]:(karts.length?(tvFoc&&karts.includes(tvFoc)&&!tvFoc.gone?tvFoc:ranking()[0]):null)):player();
 function applyReplay(){const f0=rpBuf[rpI],f1=rpBuf[Math.min(rpBuf.length-1,rpI+1)];const w=f1.t>f0.t?Math.max(0,Math.min(1,(rpTime-f0.t)/(f1.t-f0.t))):0;
   karts.forEach((k,j)=>{const o=j*RP_N,A=f0.a,B=f1.a;const L2=(q)=>A[o+q]+(B[o+q]-A[o+q])*w;
     k.x=L2(0);k.z=L2(1);k.h=A[o+2]+angDiff(B[o+2],A[o+2])*w;k.u=L2(3);k.delta=L2(4);k.ay=L2(5);k.ax=L2(6);k.rpm=L2(7);k.erpm=k.rpm;k.blip=0;k.vl=L2(10);k.lap=A[o+9];
@@ -2321,6 +2369,7 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
   if(p.dmg<.05)RDS.dmg=0;
   if(!RDS.heat&&(p.heatK||1)<.97){RDS.heat=1;radio(p.tw>=OHT?'水温が上がっている。出力が落ちているぞ、少し緩めて冷やそう':'油温が高い。出力が落ちている、少し緩めて冷やそう','heat',30);}
   if((p.heatK||1)>.99)RDS.heat=0;
+  if(!RDS.iat&&(p.icK||1)<.95){RDS.iat=1;radio(p.ic===0?'吸気温度が高い。インタークーラーなしだと全開が続くと出力が落ちる':'インタークーラーが熱をためている。直線で少し冷やそう','iat',40);}if((p.icK||1)>.985)RDS.iat=0; // T209
   if(TTK&&!RDS.tth&&p.tt>ttWin(p)[1]+12){RDS.tth=1;radio('タイヤがオーバーヒートしている。滑らせずに走って冷やそう','tth',40);}if(p.tt<ttWin(p)[1])RDS.tth=0; // T183
   if(TTK&&RDS.pitTT!==p.pitDone&&p.pit===0&&p.pitDone&&p.ttK<.96){RDS.pitTT=p.pitDone;radio('新しいタイヤはまだ冷たい。最初の数コーナーは慎重に','ttc',20);}
   if(!RDS.brk&&(p.bfK||1)<.95){RDS.brk=1;radio('ブレーキが熱を持って、ききが落ちている。早めに踏んで、直線で冷やそう','brk',40);} // T184
@@ -2489,7 +2538,7 @@ function aiControl(k,dt){
   // T186 A3 曲がりながらのブレーキは、舵を切るほど抜く（タイヤの力をブレーキと曲がるのに分け合う）
   const atb=ATB>0&&brake&&!hard&&sess!=='drag'&&Math.abs(steer)>.15?Math.max(ATBM,1-ATBK*(Math.abs(steer)-.15)):undefined;
   // T186 B7：ターボの CPU はコーナーの中で、踏み始める少し前から軽くアクセルを開けて過給を立ち上げておく（出口のラグを減らす）
-  const tbe=TBE>0&&!!(k.tq&&k.tq.tb)&&sess!=='drag'&&!accel&&!brake&&!follow&&!k.yieldF&&u>15&&u<vAllow+TBE&&RADL[k.idx]<260;
+  const tbe=TBE>0&&!!(k.tq&&k.tq.tb&&!k.tq.sc)&&sess!=='drag'&&!accel&&!brake&&!follow&&!k.yieldF&&u>15&&u<vAllow+TBE&&RADL[k.idx]<260;
   // 立ち往生からの復帰（バックで向きを直す）
   const wrongWay=Math.abs(angDiff(heading(k.idx),k.h))>1.2;
   if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;}else if(k.spin<=0&&(Math.abs(k.u)<3&&!(follow&&raceTime<12)||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
@@ -2598,7 +2647,7 @@ function togglePit(){const p=player();if(!p||p.pit||p.finished||p.dnf||autoPlay|
 let startMode=0,raceT0=0,RSD=420,RSG=14,ROLL_V=22,RGRN=150,RTW2=2.2;const ROLL={on:false,green:false};
 function rollStep(dt){if(!ROLL.on||ROLL.green||sess!=='race'||state!=='race')return;const ld=karts.find(k=>k.id===0)||karts[0];
   if(TTK)for(const k of karts)if(k.tt!=null&&k.u>8)k.tt=Math.min(TTS+32,k.tt+RTW2*dt);
-  if(progress(ld)>=L-RGRN){ROLL.green=true;raceT0=raceTime;clearTimeout(lampTO);setLamps(0,true);showBanner('GO!');sfx('go');lampTO=setTimeout(()=>setLamps(0,false),1500);telop('GREEN','グリーン！ レーススタート');}}
+  if(progress(ld)>=L-RGRN){ROLL.green=true;raceT0=raceTime;clearTimeout(lampTO);setLamps(0,true);showBanner('GO!');sfx('go');crowdCheer(1);lampTO=setTimeout(()=>setLamps(0,false),1500);telop('GREEN','グリーン！ レーススタート');}}
 function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const a=aiControl(k,dt);const ah=karts.find(o=>o.id===k.id-1);let v=ROLL_V;
   if(ah){const g=progress(ah)-progress(k);v=Math.max(0,Math.min(ROLL_V+5,Math.max(0,ah.u)+(g-RSG/2)*.6));}
   return {steer:a.steer,accel:k.u<v-.3,brake:k.u>v+1.5,brk:.5,drift:false,thr:.7};}
@@ -2761,9 +2810,27 @@ function syncVisuals(dt){
   }
   {const f=startGrp.userData.chq;if(f){f.visible=sess==='race'&&finishOrder.length>0&&(state==='race'||state==='finished'||state==='replay');if(f.visible)f.rotation.z=Math.sin(clockT*9)*.7;}} // T178③ チェッカーを振る
   {const g=SC.g;if(g){g.root.visible=SC.on&&state!=='replay';if(g.root.visible){g.root.position.set(SC.x,0,SC.z);g.root.rotation.y=SC.h;const on=Math.floor(clockT*6)%2;g.lb[0].emissiveIntensity=on?3:.15;g.lb[1].emissiveIntensity=on?.15:3;for(const w of g.wheels)w.spin.rotation.x+=SC.u/w.r*dt;}}} // T157
-  stepSmoke(dt);stepSparks(dt);
+  stepSmoke(dt);stepSparks(dt);crowdStep(dt);
 }
-let tvI=-1;
+// T178④ 観客の盛り上がり CRW.ex（0〜1、毎秒0.3ずつ冷める）：スタート（ライトアウト）・観客席の前後130mでの追い抜き・ゴール（チェッカー）で上がり、
+// 前を速く通る車でも少し。盛り上がると立ち上がって跳ね、旗を大きく振る。拍手と歓声はカメラが観客席に近いほど大きい
+let crwRk=new Map(),crwT=0,crwFin=0;
+const CM4=new THREE.Matrix4(),CQ=new THREE.Quaternion(),CE=new THREE.Euler(),CV=new THREE.Vector3(),CS1=new THREE.Vector3(1,1,1);
+function crowdCheer(v){if(CRW)CRW.ex=Math.max(CRW.ex,v);}
+function crowdPose(C){const t=C.t,ex=C.ex;
+  C.body.forEach((b,i)=>{const j=ex*b.a*(.14+.24*Math.max(0,Math.sin(t*7+b.ph)));CM4.makeTranslation(b.x,b.y+.33+j,b.z);C.bm.setMatrixAt(i,CM4);CM4.makeTranslation(b.x,b.y+.76+j,b.z);C.hm.setMatrixAt(i,CM4);
+    if(b.fi>=0){CE.set(Math.sin(t*(3.5+3*ex)+b.ph)*(.15+.75*ex),0,0);CQ.setFromEuler(CE);CM4.compose(CV.set(b.x+C.sd*.24,b.y+.42+j,b.z),CQ,CS1);C.fm.setMatrixAt(b.fi,CM4);}});
+  C.bm.instanceMatrix.needsUpdate=C.hm.instanceMatrix.needsUpdate=C.fm.instanceMatrix.needsUpdate=true;}
+function crowdStep(dt){const C=CRW;if(!C)return;C.t+=dt;
+  if(C.st!==state||crwRk.size>40){crwRk.clear();C.st=state;crwFin=finishOrder.length;}
+  const live=state==='race'||state==='finished'||state==='replay'||state==='title'&&titleMode==='attract';
+  if(live&&karts.length){crwT-=dt;if(crwT<=0){crwT=.25;ranking().forEach((k,i)=>{const o=crwRk.get(k),d=Math.hypot(k.x-C.cx,k.z-C.cz);if(o!=null&&i<o&&d<130&&!k.dnf)crowdCheer(.85);if(d<45&&Math.abs(k.u)>20)crowdCheer(.3);crwRk.set(k,i);});}
+    if(sess==='race'&&finishOrder.length>crwFin)crowdCheer(1);crwFin=finishOrder.length;}
+  C.ex=Math.max(0,C.ex-dt*.3);
+  const cd=Math.hypot(camera.position.x-C.cx,camera.position.z-C.cz);C.pt-=dt;if((cd<420||!C.posed)&&C.pt<=0){C.pt=1/30;C.posed=1;crowdPose(C);}
+  if(envS&&envS.clap&&ac){const pr=Math.max(0,1-cd/220),ok=!muted&&!(spdMul>1&&autoPlay)&&(state==='race'||state==='finished'||state==='replay'||state==='countdown'),t=ac.currentTime;
+    envS.clap.g.gain.setTargetAtTime(ok?pr*(.006+.1*C.ex):0,t,.15);envS.roar.g.gain.setTargetAtTime(ok?pr*(.01+.07*C.ex):0,t,.25);}}
+let tvI=-1,tvFoc=null;
 /* ================= 中継ディレクター（数秒ごとにカットで切り替わる） ================= */
 const DIR={sub:'',last:'',t:0,anc:null,ang:0,side:1,ph:0,snap:true,pos:new THREE.Vector3(),look:new THREE.Vector3(),fov:40};
 const CAMLBL={tower:'やぐら望遠',heli:'ヘリ上空',onboard:'車載',drone:'ドローン',pit:'ピット定点',head:'正面望遠'};
@@ -2901,12 +2968,18 @@ function cockpitCam(p,dt,snap){
   camera.up.set(-lx*roll*.6,1,-lz*roll*.6);
   camera.lookAt(p.x+fx*30,cY-.25-pitch*18-hdX*5,p.z+fz*30);camera.up.set(0,1,0);
   const f=(innerWidth<innerHeight?88:72);if(snap)camera.fov=f;else camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();camH=p.h;}
+// T178① デモの中継：カットの頭で映す車を決め、カットの間は同じ車を追う（以前は常に先頭を追い、先頭が入れ替わるとカットの途中で別の車へ飛んだ）。
+// 接戦（前の車と1.2秒以内）を8割で優先し、上位ほど・前のカットと違う車ほど選ばれやすい。残りは先頭か上位5台から
+function tvPickFoc(){const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit);if(!rk.length)return null;const c=[];
+  for(let i=1;i<rk.length;i++){const gp=(progress(rk[i-1])-progress(rk[i]))/Math.max(15,rk[i].u);if(gp<1.2)c.push({k:rk[i],w:(1.3-gp)*(i<=3?1.5:1)*(rk[i]===tvFoc?.4:1)});}
+  if(c.length&&Math.random()<.8){let t=0;for(const o of c)t+=o.w;let x=Math.random()*t;for(const o of c){x-=o.w;if(x<=0)return o.k;}return c[0].k;}
+  return Math.random()<.5?rk[0]:rk[Math.random()*Math.min(rk.length,5)|0];}
 function directorCam(p,dt){
   if(tvI<0){DIR.t=0;DIR.sub='';tvI=0;}
   DIR.t-=dt;let s=DIR.sub;const fc=camMode===4?'head':'';if(fc&&s!==fc)DIR.t=0;
   if(s==='tower'||s==='pit'||s==='head'){const a=DIR.anc;const rel=relIdx(p.idx,a.i),d=Math.hypot(p.x-a.x,p.z-a.z);
     if((s==='tower'&&rel>35)||(s==='pit'&&rel>60)||(s==='head'&&(d<16||rel>22)))DIR.t=0;}
-  if(DIR.t<=0||!s){s=fc||dirPick(p);dirStart(p,s);if(fc)DIR.t=99;}
+  if(DIR.t<=0||!s){if(state==='title'){const f=tvPickFoc();if(f){tvFoc=f;p=f;}}s=fc||dirPick(p);dirStart(p,s);if(fc)DIR.t=99;}
   const snap=DIR.snap;DIR.snap=false;const sp=Math.hypot(p.vx,p.vz);
   p.g.headParts.forEach(m=>m.visible=s!=='onboard');
   const setFov=f=>{if(snap)camera.fov=f;else camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();};
@@ -2944,6 +3017,7 @@ function updateCameraIn(dt){
   const dist=(far?13:8.2)+r*1.2+camKick*1.2+sx*SPD;
   const tgt=tmpV.set(p.x-Math.sin(camH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(camH)*dist);
   {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WALL+.2;if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
+  {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
   camPos.lerp(tgt,Math.min(1,dtS*9));camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake;camera.position.y+=(Math.random()-.5)*shake*.7;}}
@@ -3159,10 +3233,13 @@ function engDrive(v,k,rpm,thr,ts,dop,fresh){const t=ac.currentTime,e=v.e,c=ENGC[
 let turbo=null;
 function turboInit(noise){const o=ac.createOscillator();o.type='sine';o.frequency.value=2400;const g=ac.createGain();g.gain.value=0;o.connect(g);g.connect(master);o.start();
   turbo={o,g,noise,pb:0};}
-function turboStep(p,on,thr,cv){if(!turbo)return;const t=ac.currentTime,tb=on&&p&&p.tq&&p.tq.tb&&ENGK,b=tb?Math.max(0,p.bst||0):0;
-  turbo.o.frequency.setTargetAtTime(1800+2600*Math.min(1.6,b),t,.08);turbo.g.gain.setTargetAtTime(tb?.012*Math.min(1.4,b)*thr*cv:0,t,.06);
+function turboStep(p,on,thr,cv){if(!turbo)return;const t=ac.currentTime,tb=on&&p&&p.tq&&p.tq.tb&&ENGK,b=tb?Math.max(0,p.bst||0):0,T=p&&p.tq||{};
+  // T209 スーパーチャージャーはエンジンの回転に比例するうなり（ブローオフなし）。ターボは種類で笛の高さ（小径は高く、大径は低く大きい）
+  const sc=!!T.sc,ty=sc?'sawtooth':'sine';if(turbo.o.type!==ty)turbo.o.type=ty;
+  if(sc){const r=p?rpmOf(p):0;turbo.o.frequency.setTargetAtTime(r*.3,t,.03);turbo.g.gain.setTargetAtTime(tb?.006*Math.min(1,r/7000)*(.4+.6*thr)*cv:0,t,.05);turbo.pb=0;return;}
+  turbo.o.frequency.setTargetAtTime((1800+2600*Math.min(1.6,b))*(T.wh||1),t,.08);turbo.g.gain.setTargetAtTime(tb?.012*Math.min(1.4,b)*thr*cv*(T.wh<1?1.4:1):0,t,.06);
   if(tb&&turbo.pb>.55&&thr<.5&&!muted&&!(spdMul>1&&autoPlay)){const s=ac.createBufferSource();s.buffer=turbo.noise;const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=3200;f.Q.value=.9;const g=ac.createGain();
-    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.07*cv*Math.min(1,turbo.pb),t+.012);g.gain.exponentialRampToValueAtTime(.001,t+.38);f.frequency.exponentialRampToValueAtTime(1400,t+.35);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.07*cv*Math.min(1.3,turbo.pb),t+.012);g.gain.exponentialRampToValueAtTime(.001,t+.38);f.frequency.exponentialRampToValueAtTime(1400,t+.35);
     s.connect(f);f.connect(g);g.connect(master);s.start(t,Math.random()*.5);s.stop(t+.4);turbo.pb=0;}
   turbo.pb=tb&&thr>.5?b:Math.min(turbo.pb,b);}
 function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webkitAudioContext;
@@ -3174,7 +3251,11 @@ function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webki
   // T178① 風切り・縁石のゴロゴロ・砂利と芝・雨の音（同じ雑音を帯域を変えて使う）
   {const mk=(type,f,q,off)=>{const s2=ac.createBufferSource();s2.buffer=b;s2.loop=true;const fl=ac.createBiquadFilter();fl.type=type;fl.frequency.value=f;fl.Q.value=q;const g2=ac.createGain();g2.gain.value=0;s2.connect(fl);fl.connect(g2);g2.connect(master);s2.start(0,off);return{g:g2,f:fl};};
    envS={wind:mk('lowpass',700,.7,.11),grav:mk('bandpass',520,.9,.53),rain:mk('highpass',3200,.5,.79)};
-   const ro=ac.createOscillator();ro.type='square';ro.frequency.value=30;const rf=ac.createBiquadFilter();rf.type='lowpass';rf.frequency.value=220;const rg=ac.createGain();rg.gain.value=0;ro.connect(rf);rf.connect(rg);rg.connect(master);ro.start();envS.rumb={g:rg,o:ro};}
+   const ro=ac.createOscillator();ro.type='square';ro.frequency.value=30;const rf=ac.createBiquadFilter();rf.type='lowpass';rf.frequency.value=220;const rg=ac.createGain();rg.gain.value=0;ro.connect(rf);rf.connect(rg);rg.connect(master);ro.start();envS.rumb={g:rg,o:ro};
+   // T178④ 観客：歓声（雑音の中域）と拍手（短い破裂音を2秒に170個ならべてくり返す）
+   const cb=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate),cdd=cb.getChannelData(0),CL=ac.sampleRate*.012|0;for(let n=0;n<170;n++){const s0=Math.random()*(cdd.length-CL)|0,a=.35+Math.random()*.65;for(let i=0;i<CL;i++)cdd[s0+i]+=(Math.random()*2-1)*a*Math.exp(-i/(CL*.22));}
+   const cs=ac.createBufferSource();cs.buffer=cb;cs.loop=true;const cf=ac.createBiquadFilter();cf.type='highpass';cf.frequency.value=900;const cgn=ac.createGain();cgn.gain.value=0;cs.connect(cf);cf.connect(cgn);cgn.connect(master);cs.start();
+   envS.clap={g:cgn};envS.roar=mk('bandpass',650,.7,.29);}
   // T174 擦れる音（壁・車）：同じ雑音を高めの帯域で
   {const s2=ac.createBufferSource();s2.buffer=b;s2.loop=true;s2.loopStart=.37;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=2600;f2.Q.value=1.4;const g2=ac.createGain();g2.gain.value=0;s2.connect(f2);f2.connect(g2);g2.connect(master);s2.start(0,.37);scrape={g:g2,f:f2};}
   // T174 ほかの車のエンジン音（カメラに近い2台。左右の位置とドップラー）
@@ -3215,7 +3296,8 @@ const BGMS={
 for(const n of['euro','sun','rock'])BGMS[n+'F']=Object.assign({},BGMS[n],{bpm:BGMS[n].bpm+12,key:2,sec:0});
 // 雰囲気（bgStyle：0おまかせ 1都市 2峠 3景色 4ラリー）→ レース曲・ファイナル曲
 const BGSTY=[null,['race','final'],['euro','euroF'],['sun','sunF'],['rock','rockF']];
-let bgStyle=0;
+let bgStyle=0,bgmVol=1; // T178② BGM の音量（0 小／1 中／2 大。保存キー bv）。β0.74.0 より前の大きさは「大」
+const BGV_R=[.26,.4,.7],BGV_T=[.6,.85,1]; // レース中／それ以外（タイトル・結果・ポーズ）
 // ★コースが増えたら、コースごとの既定の雰囲気をここへ（おまかせの時に使う）。0-400m はロック調
 const bgAuto=()=>sess==='drag'?4:1;
 // ドラム16ステップ：K=キック S=スネア h=ハット o=オープン g=ゴースト
@@ -3278,7 +3360,7 @@ function bgmWant(){if(state==='title')return'title';if(state==='results'||state=
   if(state==='race'||state==='replay'){const p=player();const fin=sess==='race'&&LAPS>1&&p&&p.lap>=LAPS&&!p.finished&&state==='race';return BGSTY[bgStyle||bgAuto()][fin?1:0];}
   if(state==='paused')return bgmTrk;return'';}
 function bgmTick(dt){if(!ac||!bgmBus)return;const want=(bgmOn&&!muted)?bgmWant():'';bgmSet(want);
-  const lv=(!want?0:state==='paused'?.35:want==='title'?1:want==='result'?.9:.7)*((BGMS[want]&&BGMS[want].vol)||1);
+  const race=want&&state!=='paused'&&want!=='title'&&want!=='result';const lv=(!want?0:state==='paused'?.35:want==='title'?1:want==='result'?.9:BGV_R[bgmVol])*(race?1:BGV_T[bgmVol])*((BGMS[want]&&BGMS[want].vol)||1);
   bgmBus.gain.setTargetAtTime(lv*.9,ac.currentTime,.08);if(!bgmTimer)bgmTimer=setInterval(bgmSched,30);}
 function updateEngine(){if(!eng)return;const p=state==='replay'?camTarget():player();const on=!muted&&p&&(state==='race'||state==='finished'||state==='countdown'||state==='replay');
   const rpm=p?rpmOf(p):1400;const thr=p&&(accelHeld()||autoAccel&&sess!=='drag'||autoPlay)?1:.4;
@@ -3296,6 +3378,7 @@ function updateEngine(){if(!eng)return;const p=state==='replay'?camTarget():play
    envS.wind.g.gain.setTargetAtTime(ok&&p?.075*Math.pow(Math.min(1.1,sp/60),2)*(ck?.6:1)*cv:0,t,.15);envS.wind.f.frequency.setTargetAtTime(400+sp*14,t,.2);
    const cb=ok&&p&&(p.surf==='curb'||p.surf==='saus')&&sp>6;envS.rumb.g.gain.setTargetAtTime(cb?(p.surf==='saus'?.17:.09)*cv:0,t,.03);envS.rumb.o.frequency.setTargetAtTime(Math.max(24,sp/.8),t,.05);
    const gv=ok&&p&&(p.surf==='gravel'||p.surf==='grass')&&sp>3?(p.surf==='gravel'?.16:.07)*Math.min(1,sp/20):0;envS.grav.g.gain.setTargetAtTime(gv*cv,t,.05);
+   if(envS.clap&&!(state==='race'||state==='finished'||state==='replay'||state==='countdown')){envS.clap.g.gain.setTargetAtTime(0,t,.2);envS.roar.g.gain.setTargetAtTime(0,t,.2);}
    envS.rain.g.gain.setTargetAtTime(!muted&&!quiet&&state!=='title'?.045*ENV.rain*(ck?1.5:1):0,t,.3);}
   npcAudio(on&&!quiet,p);}
 // T174 ほかの車のエンジン音：カメラ（聞く位置）に近い2台を、距離の音量・左右の位置・ドップラー（近づくと高く、離れると低く）で鳴らす
@@ -3414,14 +3497,17 @@ DRIVERS.forEach((d,i)=>{const b=document.createElement('button');b.type='button'
   charsEl.appendChild(b);});
 function segWire(id,set,cur){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.v===cur));b.addEventListener('click',()=>{set(+b.dataset.v);el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));saveSettings();});});}
 var watchCam=null; // 観戦の前の視点（観戦の中継視点は保存しない）
-function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:watchCam??camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode,sc:setC,df:setDf,bc:setBC,mt:manualMode,sp:SPK,bg:bgStyle,jg:judgeOn?1:0,en:setE,sb2:setS,tw:setTW,mx:mixSel,rs:startMode,scm:scMode,pm:pitMan,co:coachMode,ca:catSel}));}catch(_){}}
+function saveSettings(){try{localStorage.setItem('popkart',JSON.stringify({p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:watchCam??camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode,sc:setC,df:setDf,bc:setBC,mt:manualMode,sp:SPK,bg:bgStyle,bv:bgmVol,jg:judgeOn?1:0,en:setE,sb2:setS,hh:hideHint,tk:setK,ic:setIC,tw:setTW,mx:mixSel,rs:startMode,scm:scMode,pm:pitMan,co:coachMode,ca:catSel}));}catch(_){}}
 try{if(localStorage.getItem('popkart')===null){wearMode=0;dmgMode=1;}}catch(_){} // 初めて起動した時は、かんたん設定（摩耗なし・ダメージは見た目だけ。保存済みの設定は変えない）
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.as!=null)assistLv=sv.as;if(sv.ai5!=null)aiLv=sv.ai5;else if(sv.ai!=null)aiLv=sv.ai+1;if(sv.cam!=null)camMode=sv.cam;if(sv.tl!=null)tlOn=!!sv.tl;if(sv.mc!=null)myBody=sv.mc;if(sv.ma!=null)myAcc=sv.ma;if(sv.mn!=null)myNum=sv.mn;if(sv.rd!=null)radioOn=!!sv.rd;if(sv.mr!=null)mirOn=!!sv.mr;if(sv.md!=null)modeSel=sv.md;if(sv.gd!=null)gridMode=sv.gd;}catch(_){}
-try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;if(sv.sc!=null&&SETC[sv.sc])setC=sv.sc;if(sv.df!=null&&SETD[sv.df])setDf=sv.df;if(sv.bc!=null&&SETBC[sv.bc])setBC=sv.bc;if(sv.mt!=null)manualMode=sv.mt?1:0;if(sv.sp!=null)SPK=sv.sp?1:0;if(sv.bg!=null&&sv.bg>=0&&sv.bg<=4)bgStyle=sv.bg|0;if(sv.jg!=null)judgeOn=!!sv.jg;if(sv.en!=null)setE=sv.en;if(sv.sb2!=null)setS=sv.sb2;if(sv.tw!=null)setTW=sv.tw;if(sv.mx!=null)mixSel=sv.mx;if(sv.rs!=null)startMode=sv.rs;if(sv.scm!=null)scMode=sv.scm?1:0;if(sv.pm!=null)pitMan=sv.pm?1:0;if(sv.co!=null&&sv.co>=0&&sv.co<=2)coachMode=sv.co|0;if(sv.ca===1)catSel=1;}catch(_){}
-const reTune=()=>{if(titleMode==='garage')garageSetup();updSpec();$('carNote').innerHTML=carDesc(myCar);};
-segWire('drvSeg',v=>{setDrv=v;reTune();},setDrv);segWire('gearSeg',v=>{setG=v;reTune();},setG);segWire('wingSeg',v=>{setW=v;reTune();},setW);segWire('bbSeg',v=>{setB=v;reTune();},setB);segWire('tyreSeg',v=>{setT=v;reTune();},setT);segWire('coolSeg',v=>{setC=v;reTune();},setC);segWire('difSeg',v=>{setDf=v;reTune();},setDf);segWire('bcSeg',v=>{setBC=v;reTune();},setBC);segWire('enSeg',v=>{setE=v;reTune();},setE);segWire('sbSeg',v=>{setS=v;reTune();},setS);segWire('twSeg',v=>{setTW=v;reTune();},setTW);segWire('mixSeg',v=>{mixSel=v;if(v&&catSel){catSel=0;markSeg('catSeg',0);document.body.classList.remove('form');reTune();}},mixSel);segWire('stSeg',v=>{startMode=v;},startMode);segWire('scSeg',v=>{scMode=v;},scMode);segWire('pmSeg',v=>{pitMan=v;},pitMan);segWire('coSeg',v=>{coachMode=v;},coachMode);segWire('catSeg',v=>{catSel=v;if(v&&mixSel){mixSel=0;markSeg('mixSeg',0);}document.body.classList.toggle('form',!!v);reTune();},catSel);document.body.classList.toggle('form',!!catSel);if(isTouch){const mb=$('mtSeg').querySelector('[data-v="1"]');if(mb)mb.textContent='手動（画面の▲▼）';}
+try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(sv.cr!=null&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;if(sv.sc!=null&&SETC[sv.sc])setC=sv.sc;if(sv.df!=null&&SETD[sv.df])setDf=sv.df;if(sv.bc!=null&&SETBC[sv.bc])setBC=sv.bc;if(sv.mt!=null)manualMode=sv.mt?1:0;if(sv.sp!=null)SPK=sv.sp?1:0;if(sv.bg!=null&&sv.bg>=0&&sv.bg<=4)bgStyle=sv.bg|0;if(sv.bv!=null&&sv.bv>=0&&sv.bv<=2)bgmVol=sv.bv|0;if(sv.jg!=null)judgeOn=!!sv.jg;if(sv.en!=null)setE=sv.en;if(sv.sb2!=null)setS=sv.sb2;if(sv.tw!=null)setTW=sv.tw;if(sv.p!=null)playerChoice=sv.p;if(sv.cc!=null)ccChoice=sv.cc;if(sv.tk!=null&&TKS[sv.tk])setK=sv.tk;if(sv.ic!=null)setIC=sv.ic?1:0;if(sv.mx!=null)mixSel=sv.mx;if(sv.rs!=null)startMode=sv.rs;if(sv.scm!=null)scMode=sv.scm?1:0;if(sv.pm!=null)pitMan=sv.pm?1:0;if(sv.co!=null&&sv.co>=0&&sv.co<=2)coachMode=sv.co|0;if(sv.ca===1)catSel=1;}catch(_){}
+// T221 駆動方式の欄を車種に合わせる（合わない駆動方式なら既定へ替え、選べないボタンを押せなくする）
+function syncDrv(){if(!isForm())setDrv=drvFit(myCar,setDrv);const ci=isForm()?FCI:myCar,a=drvAllowed(ci),ed=isForm()?1:setDrv;
+  $('drvSeg').querySelectorAll('button').forEach(b=>{const v=+b.dataset.v;b.disabled=!a.includes(v);b.setAttribute('aria-pressed',String(v===ed));b.textContent=v===1&&ci===9?'MR':DRV_KEYS[v];b.title=b.disabled?(isForm()?'フォーミュラは後輪駆動だけ':CARS[myCar].name+'では選べない'):'';});}
+const reTune=()=>{syncDrv();if(titleMode==='garage')garageSetup();updSpec();$('carNote').innerHTML=carDesc(myCar);};
+segWire('drvSeg',v=>{setDrv=v;reTune();},setDrv);segWire('gearSeg',v=>{setG=v;reTune();},setG);segWire('wingSeg',v=>{setW=v;reTune();},setW);segWire('bbSeg',v=>{setB=v;reTune();},setB);segWire('tyreSeg',v=>{setT=v;reTune();},setT);segWire('coolSeg',v=>{setC=v;reTune();},setC);segWire('difSeg',v=>{setDf=v;reTune();},setDf);segWire('bcSeg',v=>{setBC=v;reTune();},setBC);segWire('enSeg',v=>{setE=v;reTune();},setE);segWire('tkSeg',v=>{setK=v;reTune();},setK);segWire('icSeg',v=>{setIC=v;reTune();},setIC);segWire('sbSeg',v=>{setS=v;reTune();},setS);segWire('twSeg',v=>{setTW=v;reTune();},setTW);segWire('mixSeg',v=>{mixSel=v;if(v&&catSel){catSel=0;markSeg('catSeg',0);document.body.classList.remove('form');reTune();}},mixSel);segWire('stSeg',v=>{startMode=v;},startMode);segWire('scSeg',v=>{scMode=v;},scMode);segWire('pmSeg',v=>{pitMan=v;},pitMan);segWire('coSeg',v=>{coachMode=v;},coachMode);segWire('catSeg',v=>{catSel=v;if(v&&mixSel){mixSel=0;markSeg('mixSeg',0);}document.body.classList.toggle('form',!!v);reTune();},catSel);document.body.classList.toggle('form',!!catSel);if(isTouch){const mb=$('mtSeg').querySelector('[data-v="1"]');if(mb)mb.textContent='手動（画面の▲▼）';}
 const setMtClass=()=>document.body.classList.toggle('mt',!!manualMode&&isTouch);setMtClass();
-segWire('mtSeg',v=>{manualMode=v;setMtClass();updSpec();},manualMode);segWire('bgSeg',v=>{bgStyle=v;},bgStyle);
+segWire('mtSeg',v=>{manualMode=v;setMtClass();updSpec();},manualMode);segWire('bgSeg',v=>{bgStyle=v;},bgStyle);segWire('bvSeg',v=>{bgmVol=v;},bgmVol);
 // 画面の▲▼：押した瞬間に1段（マニュアルの時だけ。shiftReq が受け付ける）
 for(const [id,dir] of[['shUp',1],['shDn',-1]]){const el=$(id);el.addEventListener('pointerdown',e=>{e.preventDefault();el.classList.add('on');initAudio();shiftReq(dir);});
   const off=()=>el.classList.remove('on');el.addEventListener('pointerup',off);el.addEventListener('pointercancel',off);el.addEventListener('pointerleave',off);el.addEventListener('contextmenu',e=>e.preventDefault());}
@@ -3445,9 +3531,9 @@ $('numUp').addEventListener('click',()=>{myNum=myNo(playerChoice)%99+1;myColorCh
 $('numTeam').addEventListener('click',()=>{myNum=0;myColorChanged();});
 myColorUi();
 {const el=$('carSeg');CARS.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.dataset.v=i;b.textContent=c.name;el.appendChild(b);});$('carNote').textContent=CARS[myCar].d;}
-segWire('carSeg',v=>{myCar=v;$('carNote').innerHTML=carDesc(v);reTune();},myCar);
+segWire('carSeg',v=>{myCar=v;$('carNote').innerHTML=carDesc(v);reTune();},myCar); /* T221 合わない駆動方式は syncDrv が替え、segWire が保存 */
 // β0.67.0 T200 車種のボタンにカーソルを合わせる（キーボード・パッドで選ぶ）と、その車種の特徴を下に出す。離すと選んでいる車種に戻す
-function carDesc(ci){const c=CARS[ci],h=CHD[ci],kg=Math.round(1250*carMass(ci,DRV_KEYS[setDrv])/10)*10;
+function carDesc(ci){const c=CARS[ci],h=CHD[ci],kg=Math.round((1250*carMass(ci,DRV_KEYS[setDrv])+tkExtraKg(setK,setIC))/10)*10;
   return `<b>${c.name}</b>：${c.d}<br>車重 約${kg}kg・${aeroTxt(ci)}・${h.iz<.9?'向きが変わりやすい（限界を超えると急に回る）':h.iz>1.06?'回りにくく、滑り出しがゆっくり':'回りやすさ ふつう'}・重心 ${h.hc>1.05?'高め':h.hc<.95?'低め':'ふつう'}・エンジン音 ${ENGV[ci].n}`;}
 $('carSeg').querySelectorAll('button').forEach(b=>{const v=+b.dataset.v,on=()=>{$('carNote').innerHTML=carDesc(v);},off=()=>{$('carNote').innerHTML=carDesc(myCar);};
   b.addEventListener('mouseenter',on);b.addEventListener('focus',on);b.addEventListener('mouseleave',off);b.addEventListener('blur',off);});
@@ -3465,22 +3551,24 @@ function setLine(v){showLine=v;$('lineBtn').textContent='ライン '+(v?'ON':'OF
 $('lineBtn').addEventListener('click',()=>setLine(!showLine));$('rwBtn').addEventListener('click',doRewind);$('pitBtn').addEventListener('click',togglePit);
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.ln!=null)showLine=sv.ln;}catch(_){}setLine(showLine);
 if(tiltOn&&!(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'))tiltStart();
-$('ccSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ccChoice=+b.dataset.cc;$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));showRec();}));
+const syncNA=()=>document.body.classList.toggle('na',ccChoice!==2);
+$('ccSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ccChoice=+b.dataset.cc;syncNA();$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));showRec();}));
 /* 開始前の設定（T69）：視点・オート・ライン・ミラーをGARAGEで決める。HUDのボタンで変えたら、開いた時に表示を合わせる */
 function markSeg(id,cur){$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===cur)));}
-function syncStartUi(){syncPreset();markSeg('camSeg',camMode);markSeg('autoSeg',autoStart);markSeg('lnSeg',showLine?1:0);markSeg('mrSeg',mirOn?1:0);}
+function syncStartUi(){syncDrv();syncPreset();markSeg('camSeg',camMode);markSeg('autoSeg',autoStart);markSeg('lnSeg',showLine?1:0);markSeg('mrSeg',mirOn?1:0);}
 segWire('camSeg',v=>setCam(v),camMode);segWire('autoSeg',v=>autoStart=v,autoStart);segWire('lnSeg',v=>setLine(!!v),showLine?1:0);segWire('mrSeg',v=>setMir(!!v),mirOn?1:0);segWire('spSeg',v=>SPK=v,SPK);
 function showRec(){$('dragRec').textContent=dragRecText();ghLoad();$('taRec').textContent=ghost?`${CC[ccChoice].name}　ベスト ${fmt(ghost.t)}`:`${CC[ccChoice].name}　記録なし`;updSpec();}
 
-try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.p!=null){playerChoice=sv.p;charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===sv.p?'true':'false'));}if(sv.cc!=null){ccChoice=sv.cc;$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.cc===sv.cc?'true':'false'));}}catch(_){}
+/* β0.72.0 不具合：ドライバーとエンジンは、設定を読む最初の所（下の setCam などが保存し直す前）で読む。ここでは表示を合わせるだけ（以前はここで読んでいて、setCam の保存で上書きされた後だったため、毎回 早瀬・2000cc に戻っていた） */
+charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===playerChoice?'true':'false'));$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.cc===ccChoice?'true':'false'));
 {const fx=(v,n,d,lo=0)=>Number.isInteger(v)&&v>=lo&&v<n?v:d; // 保存した設定の範囲を確かめる（β0.54.2）
  assistLv=fx(assistLv,ASSIST.length,1);aiLv=fx(aiLv,AILV.length,2);camMode=fx(camMode,CAMN.length,0);ccChoice=fx(ccChoice,CC.length,1);playerChoice=fx(playerChoice,DRIVERS.length,0);
  setDrv=fx(setDrv,DRV_KEYS.length,1);setG=fx(setG,SETG.length,1);setW=fx(setW,SETW.length,1);setB=fx(setB,SETB.length,1);setT=fx(setT,3,0);setDf=fx(setDf,SETD.length,1);setBC=fx(setBC,SETBC.length,1);setE=fx(setE,SETE.length,1);setS=fx(setS,SETS.length,1);setTW=fx(setTW,SETTW.length,1);mixSel=fx(mixSel,3,0);startMode=fx(startMode,2,0);lapsSel=fx(lapsSel,LAPSET.length,0);wearMode=fx(wearMode,3,1);dmgMode=fx(dmgMode,3,2);
  modeSel=fx(modeSel,3,0);dragDist=fx(dragDist,2,0);dragRivalSel=fx(dragRivalSel,DRIVERS.length,-1,-1);gridMode=fx(gridMode,3,0);tiltSens=fx(tiltSens,TILT_S.length,1);todSel=fx(todSel,TOD.length,1);wxSel=fx(wxSel,WXN.length,0);
  myBody=fx(myBody,MYPAL.length,-1,-1);myAcc=fx(myAcc,MYPAL.length,-1,-1);if(!Number.isInteger(myNum)||myNum<0||myNum>99)myNum=0;}
 myColorUi();
-for(const [id,v] of [['catSeg',catSel],['coSeg',coachMode],['enSeg',setE],['sbSeg',setS],['twSeg',setTW],['mixSeg',mixSel],['stSeg',startMode],['scSeg',scMode],['pmSeg',pitMan]])markSeg(id,v);
-showRec();
+for(const [id,v] of [['catSeg',catSel],['coSeg',coachMode],['enSeg',setE],['tkSeg',setK],['icSeg',setIC],['sbSeg',setS],['twSeg',setTW],['mixSeg',mixSel],['stSeg',startMode],['scSeg',scMode],['pmSeg',pitMan]])markSeg(id,v);
+syncNA();syncDrv();showRec();
 
 let cdShown=-1;
 function startRace(){
@@ -3488,7 +3576,7 @@ function startRace(){
   initAudio();if(ac&&ac.state==='suspended')ac.resume();
   setSpd(1);ROLL.on=startMode===1&&sess==='race';ROLL.green=false;raceT0=0;SC_reset();SC.n=0;setupRace();
   $('titleScreen').hidden=true;$('resultScreen').hidden=true;$('pauseScreen').hidden=true;hud.hidden=false;pad.hidden=false;
-  radioReset();state='countdown';countdown=ROLL.on?2:4.99;accelDownAt=null;cdShown=-1;$('toast').textContent='';clearBanner();bannerTimer=0;steerSm=0;rwBuf=[];rwT=0;holdT=0;rwCount=0;tvI=-1;
+  radioReset();state='countdown';cdHold=ROLL.on||sess==='drag'?0:.2+Math.random()*1.3;countdown=ROLL.on?2:4.99+cdHold;$('slights').hidden=true;accelDownAt=null;cdShown=-1;$('toast').textContent='';clearBanner();bannerTimer=0;steerSm=0;rwBuf=[];rwT=0;holdT=0;rwCount=0;tvI=-1;
   rpBuf=[];rpT=0;ghStart();ghLoad();ghDelta=null;if(ghostMesh)ghostMesh.root.visible=false;$('raceBtn').hidden=true;$('againBtn').hidden=false;
   fastLap=null;teleQ.length=0;teleT=0;if(teleEl){teleEl.remove();teleEl=null;}$('tele').innerHTML='';posShown=0;posPend=0;leadShown=null;leadPend=null;flagHud='x';flagWarnT=-9;$('flag').hidden=true;for(const p of POSTS){p.c=-1;}
   {const P=TOD[ENV.tod],w=WXN[ENV.wx];telop('CONDITION',`${P.n}・${w.n}　路面 ${ENV.wet>.6?'ウェット':ENV.wet>.2?'少し濡れている':'ドライ'}`);}
@@ -3587,7 +3675,7 @@ function showResults(){setSpd(1);SC_reset();
   resultCamStart();
   const f0=finishOrder[0],lt=f0&&!f0.ret?f0.finishTime+(f0.pen||0):null; // 先頭とのタイム差（β0.55.0 T180⑭）
   const cpos={},crk=new Map();finishOrder.forEach(k=>{cpos[k.cls]=(cpos[k.cls]||0)+1;crk.set(k,cpos[k.cls]);});
-  const setTxt=k=>k.isPlayer?'':`<br><span style="opacity:.6;font-size:.72em">${k.drv}・${carName(k.ci||0)}・ギア${['加速','標準','最高速'][k.gi??1]}・ウイング${['少','標準','多'][k.wi??1]}・${SETE[k.en??1].n}</span>`; // T191 CPU のセッティング
+  const setTxt=k=>k.isPlayer?'':`<br><span style="opacity:.6;font-size:.72em">${drvLabel(k.ci||0,DRV_KEYS.indexOf(k.drv))}・${carName(k.ci||0)}・ギア${['加速','標準','最高速'][k.gi??1]}・ウイング${['少','標準','多'][k.wi??1]}・${SETE[k.en??1].n}${ccChoice===2?'・'+TKS[k.tki??1].n+(k.ic===0?'（IC なし）':''):''}</span>`; // T191 CPU のセッティング
   const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${mixSel?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls} ${crk.get(k)}位</small>`:''}${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${TRAITS[k.dr.tr??2].n}</span>${setTxt(k)}${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime-raceT0+(k.pen||0))+(k.est?'*':'')}${k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${i&&!k.ret&&lt!=null?'+'+(k.finishTime+(k.pen||0)-lt).toFixed(3):''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}${k.ipt?`<br><small style="color:var(--gold)">事故点 ${+k.ipt.toFixed(1)}</small>`:''}</td></tr>`).join('');
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">タイム</td><td class="t">差</td><td class="t">ベストラップ</td><td class="t">接触</td></tr>'+rows;
   const r=finishOrder.indexOf(player())+1,pcr=crk.get(player());
@@ -3676,21 +3764,21 @@ function showDrag(){state='results';resultCamStart();$('replayBtn').hidden=rpBuf
 
 /* ================= ループ ================= */
 /* ================= タイトル画面（デモ走行・ガレージ・メニュー） ================= */
-const TIPS=['GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート','大クラッシュが起きるとセーフティカーが出る。追い越し禁止、前の車について行こう','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
+const TIPS=['ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ','GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート','大クラッシュが起きるとセーフティカーが出る。追い越し禁止、前の車について行こう','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
 let titleMode='attract',attT=0,attNeed=true,garT=0,tipT=0,tipI=0,tStage=0,setupOpen=false;
 const tScr=$('titleScreen');
-function attractSetup(){sess='race';LAPS=999;ROLL.on=false;raceT0=0;SC_reset();document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;DIR.last='';}
+function attractSetup(){sess='race';LAPS=999;ROLL.on=false;raceT0=0;SC_reset();document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;tvFoc=null;DIR.last='';}
 function garageSetup(){sess='ta';ROLL.on=false;LAPS=999;newEvent();setupRace();garT=0;attNeed=false;}
 // β0.67.0 T201 GARAGE の左（回っている車の上と下）に、今の設定での性能とレースのルールをまとめて出す（0.2秒ごとに作り、変わった時だけ書き換える）
 let giT=0,giKey='';
 function updGarInfo(dt){giT-=dt;if(giT>0)return;giT=.2;
   const d=myDr(playerChoice),c=CC[ccChoice],ci=carOf(playerChoice),fm=isForm(),h=CHD[ci]||CHD[0];
-  const v=Math.round(c.top*3.6*(fm?1.15*Math.sqrt(1.12):1)),kg=Math.round(1250*carMass(ci,fm?'FR':DRV_KEYS[setDrv])/10)*10;
+  const v=Math.round(c.top*3.6*(fm?1.15*Math.sqrt(1.12):1)),kg=Math.round((1250*carMass(ci,fm?'FR':DRV_KEYS[setDrv])+tkExtraKg(setK,setIC))/10)*10;
   const bar=(l,f,t)=>`<div class="giBar"><i>${l}</i><u><s style="width:${Math.max(4,Math.min(100,f*100)).toFixed(0)}%"></s></u><em>${t}</em></div>`,it=(l,t)=>`<div><i>${l}</i><em>${t}</em></div>`;
   const acc=(c.top/84)*(1250/kg)*(fm?1.12:1)/(1250/780*1.12);
-  const top=`<div class="giH"><b>${carName(ci)}</b><span>${d.name}　No.${myNo(playerChoice)}　${c.name}${fm?'　後輪駆動':'　'+DRV_KEYS[setDrv]}</span></div>`
+  const top=`<div class="giH"><b>${carName(ci)}</b><span>${d.name}　No.${myNo(playerChoice)}　${ccName()}　${drvLabel(ci,setDrv)}</span></div>`
    +bar('最高速',v/320,v+' km/h')+bar('加速',acc,['★★★','★★★★','★★★★★'][ccChoice])+bar('車重',kg/1500,kg+' kg')
-   +`<div class="giG">${it('空気抵抗',CAE[ci].cd<.99?'少なめ':CAE[ci].cd>1.01?'多め':'ふつう')+it('ダウンフォース',CAE[ci].df<.97?'少なめ':CAE[ci].df>1.03?'多め':'ふつう')+it('回りやすさ',h.iz<.9?'鋭い':h.iz>1.06?'おだやか':'ふつう')+it('エンジン',SETE[setE].n)+it('ギア',SETG[setG].n)+it('ウイング',SETW[setW].n)+it('ブレーキ',SETB[setB].n)+it('タイヤ',TYRE[setT]+'・'+SETTW[setTW].n)+it('デフ',SETD[setDf].n)+it('スタビ',SETS[setS].n)+it('冷却',SETC[setC].n+'／'+SETBC[setBC].n)+it('変速',manualMode?'手動':'自動')}</div>`;
+   +`<div class="giG">${it('空気抵抗',CAE[ci].cd<.99?'少なめ':CAE[ci].cd>1.01?'多め':'ふつう')+it('ダウンフォース',CAE[ci].df<.97?'少なめ':CAE[ci].df>1.03?'多め':'ふつう')+it('回りやすさ',h.iz<.9?'鋭い':h.iz>1.06?'おだやか':'ふつう')+it('エンジン',SETE[setE].n)+it('過給機',ccChoice===2?TKS[setK].n.replace('ターボ','')+(setIC?'':'・IC なし'):'なし（自然吸気）')+it('ギア',SETG[setG].n)+it('ウイング',SETW[setW].n)+it('ブレーキ',SETB[setB].n)+it('タイヤ',TYRE[setT]+'・'+SETTW[setTW].n)+it('デフ',SETD[setDf].n)+it('スタビ',SETS[setS].n)+it('冷却',SETC[setC].n+'／'+SETBC[setBC].n)+it('変速',manualMode?'手動':'自動')}</div>`;
   const on=x=>x?'あり':'なし';
   const bot=`<div class="giT">RACE RULES</div><div class="giG">${it('周回',LAPSET[lapsSel]+'周')+it('CPU',AILV[aiLv].name)+it('アシスト',ASSIST[assistLv].name)+it('スタート位置',['最後尾','ランダム','予選'][gridMode])+it('スタート',startMode?'ローリング':'静止')+it('時間帯',['朝焼け','昼','夕方','夜','おまかせ'][todSel])+it('天気',['晴れ','くもり','雨','霧','変わる','おまかせ'][wxSel])+it('混走',['なし','あり（ツーリング）','あり（GT）'][mixSel])+it('タイヤ摩耗',['なし','あり','速い'][wearMode])+it('ダメージ',['なし','見た目だけ','性能にも'][dmgMode])+it('大事故',on(crashMode))+it('審判',on(judgeOn))+it('セーフティカー',on(scMode))+it('ピット速度',pitMan?'自分で':'自動')+it('コース外',on(tlOn))+it('無線',on(radioOn))}</div>`;
   const key=top+bot;if(key===giKey)return;giKey=key;$('giTop').innerHTML=top;$('giBot').innerHTML=bot;}
@@ -3714,6 +3802,11 @@ function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(
 menuItems().forEach(el=>el.addEventListener('mouseenter',()=>{if(!setupOpen)el.focus();}));
 /* T210 GARAGE のタブ（車／セッティング／レース／表示・操作／0-400m）。開き直しても同じタブ */
 let garTab=0;const GTN=5;
+// T213 説明を隠す（保存キー hh）。隠している間は項目名を押すとその説明が開く／閉じる
+let hideHint=0;try{hideHint=JSON.parse(localStorage.getItem('popkart')||'{}').hh?1:0;}catch(_){}
+function setHint(v){hideHint=v?1:0;document.body.classList.toggle('hidehint',!!hideHint);const b=$('hintBtn');b.textContent=hideHint?'説明を出す':'説明を隠す';b.setAttribute('aria-pressed',String(!!hideHint));$('setup').querySelectorAll('.label.open').forEach(l=>l.classList.remove('open'));}
+$('hintBtn').addEventListener('click',()=>{setHint(!hideHint);saveSettings();});setHint(hideHint);
+$('setup').addEventListener('click',e=>{if(!hideHint)return;const l=e.target.closest('.label');if(l&&l.querySelector('.hint'))l.classList.toggle('open');});
 function setGarTab(n,focus){garTab=(n+GTN)%GTN;const bs=$('garTabs').querySelectorAll('button');bs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===garTab)));for(let i=0;i<GTN;i++)$('gtab'+i).hidden=i!==garTab;if(focus){document.body.classList.add('kbnav');bs[garTab].focus({preventScroll:true});}}
 function garTabStep(d){setGarTab(garTab+d,true);tone(880,.03,'square',.06);}
 $('garTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGarTab(+b.dataset.t);});
@@ -3748,7 +3841,7 @@ function bugInfo(){
     if(state==='title'||!p){L.push('（レースをしていない）');return;}
     L.push('周回: '+Math.min(p.lap+1,LAPS)+(LAPS<900?' / '+LAPS:'')+'・経過 '+brClock(raceTime)+(sess==='drag'?'':'・順位 '+(rankOf(p)+1)+' / '+karts.length));
     L.push('燃料: '+(p.fuel!=null?p.fuel.toFixed(1)+'kg（重さの比 '+(p.fm||1).toFixed(3)+'）':'-')+'・ソーセージ縁石 '+(p.saus||0)+'回');
-    L.push('自車: 速度 '+Math.round(Math.abs(p.u)*3.6)+'km/h・'+(p.gear+1)+'速・'+Math.round(p.rpm)+'回転（エンジン '+Math.round(p.erpm||p.rpm)+'）・水温 '+Math.round(p.tw||0)+'・油温 '+Math.round(p.to||0)+'・出力 '+Math.round((p.heatK||1)*100)+'%・路面 '+p.surf+'・摩耗 '+Math.round((p.wear||0)*100)+'%・傷み '+Math.round((p.dmg||0)*100)+'%'+(p.pit?'・ピット中':'')+'・ベスト '+brLap(p.best)+'・前周 '+brLap(p.lastLap));
+    L.push('自車: 速度 '+Math.round(Math.abs(p.u)*3.6)+'km/h・'+(p.gear+1)+'速・'+Math.round(p.rpm)+'回転（エンジン '+Math.round(p.erpm||p.rpm)+'）・水温 '+Math.round(p.tw||0)+'・油温 '+Math.round(p.to||0)+'・出力 '+Math.round((p.heatK||1)*100)+'%'+(p.tq&&p.tq.tb?'・過給 '+(p.bst||0).toFixed(2)+'bar・吸気 '+Math.round(p.iat||0)+'℃（出力 '+Math.round((p.icK||1)*100)+'%）':'')+'・路面 '+p.surf+'・摩耗 '+Math.round((p.wear||0)*100)+'%・傷み '+Math.round((p.dmg||0)*100)+'%'+(p.pit?'・ピット中':'')+'・ベスト '+brLap(p.best)+'・前周 '+brLap(p.lastLap));
     const rk=ranking().slice(0,8).map((k,i)=>(i+1)+'.'+k.name+(k.isPlayer?'(自車)':'')+'/'+carName(k.g.car||0)).join(' ');
     L.push('順位: '+rk);
     const T=TOD[ENV.tod],W=WXN[ENV.wx];
@@ -3756,8 +3849,8 @@ function bugInfo(){
   });
   sec('車と設定');
   safe(()=>{
-    L.push('ドライバー: '+DRIVERS[playerChoice].name+'・車種 '+(isForm()?'フォーミュラ':CARS[myCar].name)+'・エンジン '+CC[ccChoice].name+'・駆動 '+DRV_KEYS[setDrv]);
-    L.push('セッティング: ギア '+SETG[setG].n+'・ウイング '+SETW[setW].n+'・ブレーキ '+SETB[setB].n+'・タイヤ '+TYRE[setT]+'・冷却 '+SETC[setC].n+'・デフ '+SETD[setDf].n+'・ブレーキ冷却 '+SETBC[setBC].n+'・エンジン '+SETE[setE].n+'・スタビ '+SETS[setS].n+'・タイヤ幅 '+SETTW[setTW].n+'・混走 '+['なし','ツーリング','GT'][mixSel]+'・変速 '+(manualMode?'手動':'自動'));
+    L.push('ドライバー: '+DRIVERS[playerChoice].name+'・車種 '+(isForm()?'フォーミュラ':CARS[myCar].name)+'・エンジン '+CC[ccChoice].name+'・駆動 '+drvLabel(isForm()?FCI:myCar,setDrv));
+    L.push('セッティング: ギア '+SETG[setG].n+'・ウイング '+SETW[setW].n+'・ブレーキ '+SETB[setB].n+'・タイヤ '+TYRE[setT]+'・冷却 '+SETC[setC].n+'・デフ '+SETD[setDf].n+'・ブレーキ冷却 '+SETBC[setBC].n+'・エンジン '+SETE[setE].n+'・スタビ '+SETS[setS].n+'・タイヤ幅 '+SETTW[setTW].n+'・過給機 '+(ccChoice===2?TKS[setK].n+(setIC?'':'（IC なし）'):'—')+'・混走 '+['なし','ツーリング','GT'][mixSel]+'・変速 '+(manualMode?'手動':'自動'));
     L.push('ルール: アシスト '+ASSIST[assistLv].name+'・CPU '+AILV[aiLv].name+'・'+LAPSET[lapsSel]+'周・摩耗 '+['なし','あり','多め'][wearMode]+'・ダメージ '+['なし','見た目','性能にも'][dmgMode]+'・大事故 '+(crashMode?'あり':'なし')+'・審判 '+(judgeOn?'あり':'なし')+'・スタート '+(startMode?'ローリング':'静止')+'・SC '+(scMode?'あり':'なし')+'（出動 '+SC.n+'回）・ピット '+(pitMan?'自分で':'自動')+'・コース外 '+(tlOn?'あり':'なし')+'・無線 '+(radioOn?'あり':'なし')+'・ミラー '+(mirOn?'ON':'OFF')+'・傾きハンドル '+(tiltOn?'ON':'OFF'));
     let sv='';try{sv=localStorage.getItem('popkart')||'';}catch(_){}
     L.push('保存された設定: '+(sv||'（なし）'));
@@ -3797,16 +3890,16 @@ function drawTq(){const cv=$('tqCv');if(!cv)return;const g=cv.getContext('2d'),W
   const X=r=>14+(W2-28)*(r-1000)/8000,Y=v=>H2-16-(H2-40)*v/1.08;g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;for(let r=2000;r<=9000;r+=1000){g.beginPath();g.moveTo(X(r),8);g.lineTo(X(r),H2-16);g.stroke();}
   g.fillStyle='rgba(200,206,214,.75)';g.font='12px sans-serif';g.textAlign='center';for(let r=2000;r<=8000;r+=2000)g.fillText(r+'回転',X(r),H2-3);g.textAlign='left';g.fillText('トルク（灰＝標準'+(setE!==1?'・赤＝'+SETE[setE].n:'')+'）',16,15);
   const line=(c,col,w)=>{g.beginPath();for(let r=1000;r<=REDLINE;r+=100){const x=X(r),y=Y(torque(r,c));r===1000?g.moveTo(x,y):g.lineTo(x,y);}g.strokeStyle=col;g.lineWidth=w;g.stroke();};
-  line(TQC[ccChoice],'rgba(220,224,230,.55)',2);if(setE!==1)line(tqOf(ccChoice,setE),'#e8342a',2.6);
+  line(ccChoice===2?TKS[setK]:TQC[ccChoice],'rgba(220,224,230,.55)',2);if(setE!==1)line(tqOf(ccChoice,setE,setK),'#e8342a',2.6);
   g.strokeStyle='rgba(79,180,255,.75)';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(SHIFT_UP),20);g.lineTo(X(SHIFT_UP),H2-16);g.stroke();g.setLineDash([]);}
 function updSpec(){const d=myDr(playerChoice),c=CC[ccChoice];const v=Math.round(c.top*3.6*(isForm()?1.15*Math.sqrt(1.12):1)); /* フォーミュラは最高速も高い（CLS の top と acc） */const hex=d.color.toString(16).padStart(6,'0');
-  $('specBox').innerHTML=`<div class="spHead"><i style="background:#${hex}"></i><div><b>${d.name}</b><span>No.${myNo(playerChoice)}　${c.name}</span></div></div>
+  $('specBox').innerHTML=`<div class="spHead"><i style="background:#${hex}"></i><div><b>${d.name}</b><span>No.${myNo(playerChoice)}　${ccName()}</span></div></div>
 <div class="bar"><label>最高速</label><u><s style="width:${Math.min(100,c.top/84*100).toFixed(0)}%"></s></u><em>${v} km/h</em></div>
 <div class="bar"><label>加速</label><u><s style="width:${Math.min(100,c.top/84*100-6).toFixed(0)}%"></s></u><em>${['★★★','★★★★','★★★★★'][ccChoice]}</em></div>
 <div class="bar"><label>扱いやすさ</label><u><s style="width:${[92,76,58][ccChoice]}%"></s></u><em>${['やさしい','ふつう','じゃじゃ馬'][ccChoice]}</em></div>
-<p>車種 ${carName(carOf(playerChoice))}（車重 約${Math.round(1250*carMass(carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])/10)*10}kg・${aeroTxt(carOf(playerChoice))}・音 ${ENGV[carOf(playerChoice)]?ENGV[carOf(playerChoice)].n:''}）　駆動 ${isForm()?'後輪（エンジンは運転席の後ろ）':DRV_KEYS[setDrv]}　6速${manualMode?'手動':'自動'}変速　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}（幅 ${SETTW[setTW].n}）　デフ ${SETD[setDf].n}　エンジン ${SETE[setE].n}　スタビ ${SETS[setS].n}</p>`;
-  drawTq();
-  $('tuneNote').innerHTML=`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（傷んだ時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}${['オープンデフ＝踏みながら曲がりやすいが、きつい出口で内側のタイヤが空転する。','','2wayデフ＝ブレーキ中も安定するが、入口で曲がりにくい。'][setDf]}${['ブレーキ冷却小さめ＝空気抵抗が少ないが、ブレーキが熱でききにくくなりやすい。','','ブレーキ冷却大きめ＝ブレーキが熱くなりにくいが空気抵抗が増える。'][setBC]}${['低回転型エンジン＝立ち上がりが速いが最高速が伸びない。','','高回転型エンジン＝上まで回って直線が速いが、低速の立ち上がりは弱い。'][setE]}${['スタビ前硬め＝安定するが曲がりにくい。','','スタビ後ろ硬め＝よく曲がるがお尻が出やすい。'][setS]}${['細いタイヤ＝グリップは下がるが空気抵抗が減り、雨に強い。','','太いタイヤ＝グリップが高いが空気抵抗が増え、雨に弱い。'][setTW]}${CHD[myCar].iz<.9?CARS[myCar].name+'は回りやすいが、限界を超えると急にスピンする。':CHD[myCar].iz>1.06?CARS[myCar].name+'は回りにくく、滑り出しがゆっくり。':''}`;}
+<p>車種 ${carName(carOf(playerChoice))}（車重 約${Math.round(1250*carMass(carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])/10)*10}kg・${aeroTxt(carOf(playerChoice))}・音 ${ENGV[carOf(playerChoice)]?ENGV[carOf(playerChoice)].n:''}）　駆動 ${isForm()?'後輪（エンジンは運転席の後ろ）':drvLabel(myCar,setDrv)}　6速${manualMode?'手動':'自動'}変速　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}（幅 ${SETTW[setTW].n}）　デフ ${SETD[setDf].n}　エンジン ${SETE[setE].n}　スタビ ${SETS[setS].n}</p>`;
+  drawTq();{const n=$('tkNote');if(n)n.innerHTML=ccChoice===2?`<b>${TKS[setK].n}</b>：${TKS[setK].d}（重さ ＋${tkExtraKg(setK,setIC)}kg${setIC?'・インタークーラー込み':''}${TKS[setK].hc?(scTop(carOf(playerChoice))?'。この車（'+ENGV[carOf(playerChoice)].n+'）は上に載る：重心 少し高い':'。この車（'+ENGV[carOf(playerChoice)].n+'）は横に付く：重心 変わらない'):''}）`:'自然吸気のエンジンでは使わない（エンジンで「ターボ」を選ぶと使える）';}
+  $('tuneNote').innerHTML=`${isForm()?'<b>後輪駆動</b>：フォーミュラはエンジンが運転席の後ろの後輪駆動（駆動方式は選べない）。':myCar===9&&setDrv===1?'<b>MR</b>：エンジンを真ん中に積んだ後輪駆動。曲がりやすいが、限界を超えると急に回る。':`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。`}${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（傷んだ時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}${['オープンデフ＝踏みながら曲がりやすいが、きつい出口で内側のタイヤが空転する。','','2wayデフ＝ブレーキ中も安定するが、入口で曲がりにくい。'][setDf]}${['ブレーキ冷却小さめ＝空気抵抗が少ないが、ブレーキが熱でききにくくなりやすい。','','ブレーキ冷却大きめ＝ブレーキが熱くなりにくいが空気抵抗が増える。'][setBC]}${['低回転型エンジン＝立ち上がりが速いが最高速が伸びない。','','高回転型エンジン＝上まで回って直線が速いが、低速の立ち上がりは弱い。'][setE]}${['スタビ前硬め＝安定するが曲がりにくい。','','スタビ後ろ硬め＝よく曲がるがお尻が出やすい。'][setS]}${['細いタイヤ＝グリップは下がるが空気抵抗が減り、雨に強い。','','太いタイヤ＝グリップが高いが空気抵抗が増え、雨に弱い。'][setTW]}${CHD[myCar].iz<.9?CARS[myCar].name+'は回りやすいが、限界を超えると急にスピンする。':CHD[myCar].iz>1.06?CARS[myCar].name+'は回りにくく、滑り出しがゆっくり。':''}`;}
 function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(tStage===0){if(any)enterMenu();return;}
   if(!$('helpScreen').hidden){if(edge(1)||edge(0))closeHelp();return;}
@@ -3834,13 +3927,13 @@ function frame(now){
     if(sess==='drag')dragCountdown(dt);else{
     countdown-=dt;
     // シグナル：1秒ごとに赤ランプが点き、全部消えたらスタート
-    const n=Math.min(5,Math.floor(4.99-countdown+1));
-    if(n!==cdShown&&countdown>0&&!ROLL.on){cdShown=n;setLamps(n,false);sfx('cd');}
+    const n=Math.min(5,Math.floor(5.99+cdHold-countdown));
+    if(n!==cdShown&&countdown>0&&!ROLL.on){cdShown=n;setLamps(n,false);$('slights').hidden=false;sfx('cd');}
     if(accelHeld()&&accelDownAt===null)accelDownAt=countdown;
     if(!accelHeld())accelDownAt=null;
     // 空ぶかし
     const p=player();if(p){const rev=(accelHeld()?6500:1500);p.rpm+=(rev-p.rpm)*Math.min(1,dt*4);const e0=p.erpm??p.rpm;p.erpm=ERQ?e0+Math.max(-ERD*dt,Math.min(ERU*dt,rev-e0)):p.rpm;}
-    if(countdown<=0){state='race';if(!ROLL.on){setLamps(0,true);showBanner('GO!');sfx('go');lampTO=setTimeout(()=>setLamps(0,false),1500);
+    if(countdown<=0){state='race';if(!ROLL.on){setLamps(0,true);showBanner('GO!');sfx('go');crowdCheer(1);lampTO=setTimeout(()=>setLamps(0,false),1500);setTimeout(()=>{if(state!=='countdown')$('slights').hidden=true;},800);
       for(const k of karts)if(!k.isPlayer||autoPlay)k.launchT=.12+Math.random()*.35;}}}
     envStep(dt,false);syncVisuals(dt);updateCamera(dt);updateHud(dt);updateLine(player());
   }
