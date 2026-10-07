@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.88.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.88.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -925,6 +925,7 @@ function terrGLSL(){const f=n=>(+n).toFixed(3);let g='float terrH(vec2 p){float 
  C.project_vertex=C.project_vertex.replace('mvPosition = modelViewMatrix * mvPosition;','#ifndef NO_TERR\nmvPosition = modelMatrix * mvPosition;mvPosition.y += terrH(mvPosition.xz);mvPosition = viewMatrix * mvPosition;\n#else\nmvPosition = modelViewMatrix * mvPosition;\n#endif');
  C.worldpos_vertex=C.worldpos_vertex.replace('worldPosition = modelMatrix * worldPosition;','worldPosition = modelMatrix * worldPosition;\n\t#ifndef NO_TERR\n\tworldPosition.y += terrH(worldPosition.xz);\n\t#endif');
  C.sprite_vert=C.sprite_vert.replace('vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );','vec4 mvPosition = modelMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );\n#ifndef NO_TERR\nmvPosition.y += terrH(mvPosition.xz);\n#endif\nmvPosition = viewMatrix * mvPosition;');
+ if(THREE.ShaderLib&&THREE.ShaderLib.sprite)THREE.ShaderLib.sprite.vertexShader=C.sprite_vert;for(const M of[THREE.SpriteMaterial,THREE.PointsMaterial])if(M&&M.prototype)M.prototype.skinning=true;if(THREE.MeshDepthMaterial&&THREE.MeshDepthMaterial.prototype)Object.defineProperty(THREE.MeshDepthMaterial.prototype,'skinning',{get(){return true;},set(_){},configurable:true}); /* 影を作る材質（MeshDepthMaterial）も同じ。作る時に skinning＝false を入れるので、読む時はいつも true を返す */ /* 上の式は viewMatrix を使うが、three.js は板の絵・点の絵の材質には viewMatrix を送らない（送るのは Mesh の材質と skinning の材質だけ）。skinning の印を付けて送らせる（骨のない物なので形は変わらない） */ // β0.88.2：板の絵（水しぶき・煙・砂ぼこり・夜のライトの光）の頂点の式は、three.js が読み込み時に ShaderLib へ写しているので、写した方も差し替える（以前は坂の上でしぶきが地面より下の高さに出ていた。ご本人の指摘）
  // 画面に入っているかの判定（見えない物を描かない処理）も持ち上げた位置で行う（坂の上の車が消えないように）
  const is=THREE.Frustum.prototype.intersectsSphere,tS=new THREE.Sphere();
  THREE.Frustum.prototype.intersectsSphere=function(s){if(!TERK)return is.call(this,s);tS.copy(s);tS.center.y+=TH(s.center.x,s.center.z);tS.radius+=Math.min(30,s.radius*.08)+.3;return is.call(this,tS);};}
@@ -1309,10 +1310,10 @@ const startGrp=new THREE.Group();
  startGrp.position.set(TX[0],0.06,TZ[0]);startGrp.rotation.y=heading(0);
  const m=new THREE.Mesh(new THREE.PlaneGeometry(W*2,2.2),new THREE.MeshLambertMaterial({map:t}));m.rotation.x=-Math.PI/2;m.receiveShadow=true;startGrp.add(m);
  const steel=new THREE.MeshStandardMaterial({color:0x8b9099,metalness:.6,roughness:.45});
- for(const s of[-1,1]){const pole=new THREE.Mesh(new THREE.BoxGeometry(.8,10,.8),steel);pole.position.set(s*(W+3),5,0);pole.castShadow=true;startGrp.add(pole);}
+ for(const s of[-1,1]){const pole=new THREE.Mesh(new THREE.BoxGeometry(.8,10,.8),steel);pole.position.set(s*(W+3),5,0);pole.castShadow=true;startGrp.add(pole);(startGrp.userData.poles=startGrp.userData.poles||[]).push(pole);}
  const bt=canvasTex(1024,96,(g,w,h)=>{g.fillStyle='#16182a';g.fillRect(0,0,w,h);g.fillStyle='#f2f2f2';g.font='italic 800 66px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('HIGASHI RACEWAY',w/2,h/2+3);g.fillStyle='#c8201a';g.fillRect(0,h-8,w,8);});
  const dark=new THREE.MeshStandardMaterial({color:0x16182a,roughness:.6});
- const ban=new THREE.Mesh(new THREE.BoxGeometry(W*2+7,2.4,.5),[dark,dark,dark,dark,new THREE.MeshBasicMaterial({map:bt}),new THREE.MeshBasicMaterial({map:bt})]);ban.position.set(0,9.2,0);ban.castShadow=true;startGrp.add(ban);
+ const ban=new THREE.Mesh(new THREE.BoxGeometry(W*2+7,2.4,.5),[dark,dark,dark,dark,new THREE.MeshBasicMaterial({map:bt}),new THREE.MeshBasicMaterial({map:bt})]);ban.position.set(0,9.2,0);ban.castShadow=true;startGrp.add(ban);ban.userData.w=W*2+7;startGrp.userData.ban=ban;
  // スタートシグナル
  const lampM=new THREE.MeshBasicMaterial({color:0x330000});
  for(let i=0;i<5;i++){const l=new THREE.Mesh(new THREE.CircleGeometry(.45,14),lampM.clone());l.position.set(-3.2+i*1.6,7.3,.26);startGrp.add(l);(startGrp.userData.lamps=startGrp.userData.lamps||[]).push(l);
@@ -1506,6 +1507,11 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   ids.forEach((i,c)=>{const x=TX[i]+NX[i]*PS*PWL+FX[i]*SP/2,z=TZ[i]+NZ[i]*PS*PWL+FZ[i]*SP/2,h=Math.atan2(FX[i]+FX[wrap(i+1)],FZ[i]+FZ[wrap(i+1)]);
    D.position.set(x,.5,z);D.rotation.set(0,h,0);D.updateMatrix();wm.setMatrixAt(c,D.matrix);D.position.set(x,1.8,z);D.rotation.set(0,h+Math.PI/2,0);D.updateMatrix();fn.setMatrixAt(c,D.matrix);});
   wm.castShadow=true;wm.receiveShadow=true;scene.add(wm);scene.add(fn);}
+ // T236 スタートゲートのピット側の柱をピットウォールの上へ（ピットレーンの通り道に立っていた）。ゲートのローカルの +x はコースの右向き NX の逆
+ {const u=startGrp.userData,pp=u.poles[-PS>0?1:0],op=u.poles[-PS>0?0:1],pw=-PS*PWL,ox=op.position.x,bw=Math.abs(ox-pw)+.8;
+  pp.position.x=pw;pp.scale.set(.5,1,.5);u.ban.scale.x=bw/u.ban.userData.w;u.ban.position.x=(ox+pw)/2;
+  u.chq.position.x=pw;u.chq.scale.x=-PS;} // 旗振りもピットウォールの上で、コース側へ振る
+
 }
 
 /* ================= スキッド跡と煙 ================= */
