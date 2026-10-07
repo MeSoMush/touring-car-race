@@ -60,7 +60,7 @@ body.touch #gaps{top:calc(env(safe-area-inset-top,0px) + 62px)}
 body.touch #autoBadge{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 108px)}
 .mini[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
 #tower{position:absolute;left:14px;top:calc(env(safe-area-inset-top,0px) + 16px + 3.9*clamp(16px,2.6vw,22px));display:grid;gap:2px;font-size:13px;min-width:150px}
-.tw{display:grid;grid-template-columns:1.6em 4px 1fr auto auto;gap:7px;align-items:center;background:rgba(12,14,18,.72);padding:3px 8px 3px 0;font-weight:500;font-variant-numeric:tabular-nums}
+.tw{display:grid;grid-template-columns:1.6em 4px auto minmax(0,1fr) auto;gap:7px;align-items:center;background:rgba(12,14,18,.72);padding:3px 8px 3px 0;font-weight:500;font-variant-numeric:tabular-nums}
 .tw b{font-family:var(--num);font-weight:800;color:var(--paper);background:rgba(255,255,255,.1);text-align:center;align-self:stretch;display:grid;place-items:center}
 .tw i{width:6px;height:14px;border-radius:2px}
 .tw u{text-decoration:none;font-size:10px;font-weight:700;color:var(--muted);border:1px solid rgba(255,255,255,.25);border-radius:2px;padding:0 3px;line-height:14px}
@@ -463,7 +463,22 @@ body.hidehint #setup .label .hint,body.hidehint #setup #tuneNote{display:none}
 body.hidehint #setup .label:has(.hint){cursor:help}body.hidehint #setup .label:has(.hint)::after{content:' ⓘ';color:var(--muted);font-weight:500}
 body.hidehint #setup .label.open .hint{display:block}
 @media (hover:hover){body.hidehint #setup .label:hover .hint{display:block}}
-body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209 過給機の欄はターボのエンジンの時だけ */
+body.hidehint #setup .setrow{gap:6px}
+/* β0.87.0 T238：タブの列は横送りの箱（スクロールできる箱）だったので、GARAGE の縦の並びの中で中身より低く縮められ、ボタンが下へずれて見えなかった（ホイールでその中だけスクロールした）。箱をやめ、入りきらない時は2段に折り返す */
+#garTabs{overflow:visible;grid-auto-flow:row;grid-template-columns:repeat(auto-fit,minmax(min(100%,76px),1fr))}
+/* β0.87.0 T239：順位表の幅は固定（以前は IP・ツケの印が付くたびに 188↔214px と変わり、表が動いて見えた） */
+.tw em span.d{overflow:visible} /* 差の数字の枠に、名前を「…」で切る指定（.tw span の overflow:hidden）がかかって、数字だけ浮き上がっていた */
+#tower,#tower.ip{width:214px}body.mix #tower,body.mix #tower.ip{width:252px}
+@media (max-height:560px){#tower,#tower.ip{width:194px}body.mix #tower,body.mix #tower.ip{width:232px}}
+@media (min-width:1600px) and (min-height:900px){#tower,#tower.ip{width:256px}body.mix #tower,body.mix #tower.ip{width:296px}}
+/* β0.87.0 T240：キーボードで押せるボタンに、そのキーを小さく出す（タッチの端末では出さない） */
+body:not(.touch) [data-key]::after{content:attr(data-key);display:inline-block;margin-left:6px;padding:0 4px;min-width:.9em;text-align:center;border:1px solid currentColor;border-radius:3px;font:700 10px/1.45 var(--num);letter-spacing:.02em;opacity:.65;vertical-align:1px}
+body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
+.kbh{display:block;font-family:var(--dot);font-style:normal;font-size:11px!important;letter-spacing:.04em!important;color:var(--muted);margin:2px 0 0!important}body.touch .kbh{display:none}
+#garTabs{grid-template-columns:repeat(auto-fit,minmax(min(100%,62px),1fr))}#garTabs button{font-size:13px;padding:9px 0;letter-spacing:-.03em} /* T241 タブが6つになったので1段に収める */
+.recLine{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:rgba(232,52,42,.12);border-left:3px solid var(--gold);padding:6px 10px;font-size:13px;line-height:1.5}.recLine b{color:var(--gold)}.recLine .recB{margin-left:auto;display:flex;gap:6px}
+.recT{font-size:13px}.recT td{padding:4px 6px}.recT td:first-child{font-family:var(--dot);font-style:normal;font-weight:700;font-size:13px;width:auto;white-space:nowrap}.recT tr.df td{background:rgba(232,52,42,.14)}.recT tr.on td{background:rgba(232,52,42,.14)}.recT tr.hd td{color:var(--muted);font-size:12px}.recT b{color:#fff}
+#setup h2 .kbh{margin-left:12px!important;align-self:center}.tsk{margin:0;padding-left:4px}body.hidehint #setup .gtab{gap:6px} /* T209 過給機の欄はターボのエンジンの時だけ */
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -493,11 +508,11 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
   <div id="flag" hidden><i></i><span></span></div>
   </div>
   <div id="rpInfo" hidden><b>REPLAY</b><span id="rpName"></span></div>
-  <div id="rpBar" hidden><button class="mini" id="rpPrev" type="button">◀ 前の車</button><button class="mini" id="rpNext" type="button">次の車 ▶</button><button class="mini" id="rpCam" type="button">視点 中継</button><button class="mini" id="rpSpd" type="button">倍速 ×1</button><button class="mini" id="rpEnd" type="button">リプレイ終了</button></div>
-  <div id="corner"><button class="mini" id="mnBtn" type="button" aria-expanded="false">メニュー</button><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">表示を減らす</button><button class="mini" id="cpBtn" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
+  <div id="rpBar" hidden><button class="mini" id="rpPrev" data-key="←" type="button">◀ 前の車</button><button class="mini" id="rpNext" data-key="→" type="button">次の車 ▶</button><button class="mini" id="rpCam" data-key="C" type="button">視点 中継</button><button class="mini" id="rpSpd" data-key="Space" type="button">倍速 ×1</button><button class="mini" id="rpEnd" data-key="Esc" type="button">リプレイ終了</button></div>
+  <div id="corner"><button class="mini" id="mnBtn" type="button" aria-expanded="false">メニュー</button><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">表示を減らす</button><button class="mini" id="cpBtn" data-key="Esc" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
   <div id="spotL" class="spot" aria-hidden="true"></div><div id="spotR" class="spot" aria-hidden="true"></div>
   <div id="slights" hidden aria-hidden="true"><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i></div>
-  <div id="topbtns"><button class="mini" id="rwBtn" type="button">巻き戻し</button><button class="mini" id="pitBtn" type="button" aria-pressed="false">ピット</button><button class="mini" id="fuelBtn" type="button" aria-pressed="false">燃料 標準</button><button class="mini" id="lineBtn" type="button" aria-pressed="true">ライン ON</button><button class="mini" id="camBtn" type="button">視点 後方</button><button class="mini" id="mirBtn" type="button" aria-pressed="false">ミラー OFF</button><button class="mini" id="autoBtn" type="button" aria-pressed="false">オート運転 OFF</button><button class="mini" id="spdBtn" type="button" hidden>倍速 ×1</button><button class="mini" id="pauseBtn" type="button">ポーズ</button><button class="mini" id="muteBtn" type="button">音 ON</button><button class="mini" id="bgmBtn" type="button">BGM ON</button></div>
+  <div id="topbtns"><button class="mini" id="rwBtn" data-key="R" type="button">巻き戻し</button><button class="mini" id="pitBtn" data-key="I" type="button" aria-pressed="false">ピット</button><button class="mini" id="fuelBtn" data-key="G" type="button" aria-pressed="false">燃料 標準</button><button class="mini" id="lineBtn" data-key="L" type="button" aria-pressed="true">ライン ON</button><button class="mini" id="camBtn" data-key="C" type="button">視点 後方</button><button class="mini" id="mirBtn" data-key="M" type="button" aria-pressed="false">ミラー OFF</button><button class="mini" id="autoBtn" data-key="O" type="button" aria-pressed="false">オート運転 OFF</button><button class="mini" id="spdBtn" data-key="T" type="button" hidden>倍速 ×1</button><button class="mini" id="pauseBtn" data-key="Esc" type="button">ポーズ</button><button class="mini" id="muteBtn" type="button">音 ON</button><button class="mini" id="bgmBtn" data-key="B" type="button">BGM ON</button></div>
 </div>
 
 <div id="pad" hidden>
@@ -518,7 +533,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.86.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.88.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -530,13 +545,15 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
       <button class="mi" id="setupBtn" type="button"><b>GARAGE</b><span>車・設定</span></button>
       <button class="mi" id="helpBtn" type="button"><b>HOW TO</b><span>操作方法</span></button>
     </nav>
+    <p class="kbh tsk">↑↓ で選んで Enter</p>
   </div>
   <section id="setup" class="panel" hidden>
-    <h2>GARAGE<small>車・設定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
+    <h2>GARAGE<small>車・設定</small><small class="kbh">←→ タブ　↑↓ 項目　Esc 決定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
     <div id="specBox"></div>
     <div id="garTop"><div class="label">遊びやすさ<span class="hint">かんたん＝摩耗なし・ダメージは見た目だけ・アシスト強／ほんかく＝摩耗とダメージあり・アシスト標準</span></div><div class="seg" id="presetSeg"><button type="button" data-v="0">かんたん</button><button type="button" data-v="1">ほんかく</button></div></div>
-    <div id="garTabs" role="tablist" aria-label="GARAGE のタブ"><button type="button" data-t="0" aria-pressed="true">車</button><button type="button" data-t="1">セッティング</button><button type="button" data-t="2">レース</button><button type="button" data-t="3">表示・操作</button><button type="button" data-t="4">0-400m</button></div>
+    <div id="garTabs" role="tablist" aria-label="GARAGE のタブ"><button type="button" data-t="0" aria-pressed="true">車</button><button type="button" data-t="1">セッティング</button><button type="button" data-t="2">レース</button><button type="button" data-t="3">表示・操作</button><button type="button" data-t="4">0-400m</button><button type="button" data-t="5">おすすめ</button></div>
     <div class="gtab" id="gtab0">
+    <div id="recLine" class="recLine"></div>
     <div class="label">ドライバー</div>
     <div class="chars" id="chars"></div>
     <div class="label">カテゴリー<span class="hint">フォーミュラ＝8台すべてが1人乗りのオープンホイールの車（軽く、ダウンフォースが大きく、とても速い。後輪駆動）。車種と駆動方式の選択は使わない</span></div>
@@ -620,7 +637,8 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
         <div><div class="label">相手</div><div class="seg small" id="drSeg"></div></div>
       </div>
     </div>
-    <div class="row"><button class="btn" id="setupClose" type="button">決定</button><button class="btn alt" id="bugOpenG" type="button">不具合報告</button></div>
+    <div class="gtab" id="gtab5" hidden><div id="recBox"></div></div>
+    <div class="row"><button class="btn" id="setupClose" data-key="Esc" type="button">決定</button><button class="btn alt" id="bugOpenG" type="button">不具合報告</button></div>
   </section>
   <div id="garInfo" aria-live="off"><div id="giTop"></div><div id="giBot"></div></div>
   <div class="tsBar tsBot"><b>TIPS</b><span id="tsTip"></span></div>
@@ -685,6 +703,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
         <span>車ごとの違い</span><span>車種ごとに空気抵抗とダウンフォースが違う（GARAGE に表示）。空気抵抗が少ない車は直線が速く、ダウンフォースが多い車は高速コーナーが速い。CPU はレースごとにギア比・ウイング・エンジン特性がくじ引きで変わり、直線が速い車とコーナーが速い車が混ざる（結果画面に各車のセッティング）</span>
         <span>フォーミュラ</span><span>GARAGE の「カテゴリー」でフォーミュラにすると、8台すべてが1人乗りのオープンホイールの車になる。軽く（約780kg）、ダウンフォースがとても大きいので、速いコーナーほどツーリングカーより速く曲がれる。後輪駆動。運転席の視点ではハンドルの表示とハロー（頭を守る輪）が見える。混走クラスとは一緒に使えない</span>
         <span>混走クラス</span><span>GARAGE の「混走クラス」で、速い GT クラスとツーリングクラスが同じレースを走る。GT は前のグリッドから出て、遅いクラスを周回遅れにしながら抜いていく。順位表と結果にクラスの印とクラス内の順位</span>
+        <span>おすすめ</span><span>GARAGE の「おすすめ」タブ（「車」タブの上の1行からも）で、今のレースの内容（周回数・天気・タイヤ摩耗・エンジン）と選んだ選手の性格に合う車種とセッティングを、理由つきで出す。「この設定にする」で全部そろう。中身はこのコースを自動運転で走らせて測った値（1周のタイムとタイヤの減り）。差がわずかな所は、選手の性格の好み（ぐいぐい＝加速寄り、慎重＝安定、マイペース＝タイヤ長持ちなど）で選ぶ</span>
         <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、タイヤの幅、ブレーキ冷却、変速を選べる。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）</span>
         <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、レイン 35〜65℃）で一番グリップする。熱すぎても滑り、早く減る。スタート直後とピットで替えた直後は冷えているので、最初の1周は慎重に（曲がる・ブレーキで温まる）。雨では冷えやすく、スリックは温まらない。メーターの上（スマホは左）の「TYRE」に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分</span>
         <span>アップダウン</span><span>コースには上り下り（最大約6%）と、コーナーの軽いバンク（外側が少し高い）がある。上りはよく止まり、下りは止まりにくい。峠（盛り上がった所）を速く越えると車が軽くなってグリップが減るので、峠の上では強く曲がらない・ブレーキしない。くぼみでは押し付けられてグリップが増える</span>
@@ -694,7 +713,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
         <span>天気</span><span>雨は路面が濡れてグリップが落ちる（左下に ドライ／少し濡れ／ウェット）。夜はヘッドライトが点く</span>
       </div>
     </details>
-    <div class="row"><button class="btn" id="helpClose" type="button">閉じる</button></div>
+    <div class="row"><button class="btn" id="helpClose" data-key="Esc" type="button">閉じる</button></div>
   </div>
 </section>
 
@@ -702,7 +721,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
   <div class="panel">
     <h2>ポーズ中</h2>
     <div class="row">
-      <button class="btn" id="resumeBtn" type="button">つづける</button>
+      <button class="btn" id="resumeBtn" data-key="Esc" type="button">つづける</button>
       <button class="btn alt" id="restartBtn" type="button">最初から</button>
       <button class="btn alt" id="bugOpenP" type="button">不具合報告</button>
       <button class="btn alt" id="retireBtn" type="button">タイトルへ</button>
@@ -717,7 +736,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
     <div id="lapRead" aria-live="polite"></div>
     <canvas id="lapCv" aria-label="速度・タイム差・アクセル・ブレーキのグラフ"></canvas>
     <p class="note" id="lapSum"></p>
-    <div class="row"><button class="btn" id="lapClose" type="button">閉じる</button></div>
+    <div class="row"><button class="btn" id="lapClose" data-key="Esc" type="button">閉じる</button></div>
   </div>
 </section>
 
@@ -734,7 +753,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
       <button class="btn" id="bugCopy" type="button">コピー</button>
       <button class="btn alt" id="bugSave" type="button">.txt を保存</button>
       <button class="btn alt" id="bugRefresh" type="button">作り直す</button>
-      <button class="btn alt" id="bugClose" type="button">閉じる</button>
+      <button class="btn alt" id="bugClose" data-key="Esc" type="button">閉じる</button>
     </div>
   </div>
 </section>
@@ -748,7 +767,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
       <button class="btn" id="raceBtn" type="button" hidden>決勝スタート</button>
       <button class="btn" id="againBtn" type="button">もう一度</button>
       <button class="btn alt" id="replayBtn" type="button">リプレイ</button>
-      <button class="btn alt" id="photoBtn" type="button">フォト</button>
+      <button class="btn alt" id="photoBtn" data-key="F" type="button">フォト</button>
       <button class="btn alt" id="lapBtn" type="button" hidden>ラップ比較</button>
       <button class="btn alt" id="menuBtn" type="button">車を選ぶ</button>
     </div>
@@ -3393,7 +3412,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   const rk=ranking();const r=rk.indexOf(p)+1;H('rank').innerHTML=r+'<small>位</small>';
   towerT-=.05;if(towerT<=0){towerT=.25;const lead=rk[0];const pace=p.top*.62;
     H('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&!k.dnf&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
-      const tg=tkTag(k);return `<div class="tw${k.isPlayer?' me':''}${judgeOn&&sess==='race'&&(k.ipt||k.pen||k.dt)||tg?' hasip':''}" data-k="${k.id}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><span>${mixSel&&sess==='race'?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls}</small>`:''}${k.name}</span><u title="${TRAITS[k.dr.tr??2].n}">${TRAITS[k.dr.tr??2].n[0]}</u><em>${ipTag(k)}${tg}${tn(gap)}</em></div>`;}).join('');$('tower').classList.toggle('ip',judgeOn&&sess==='race'&&rk.some(k=>k.ipt||k.pen||k.dt)||rk.some(k=>tkState(k).length));
+      const tg=tkTag(k);return `<div class="tw${k.isPlayer?' me':''}${judgeOn&&sess==='race'&&(k.ipt||k.pen||k.dt)||tg?' hasip':''}" data-k="${k.id}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><u title="${TRAITS[k.dr.tr??2].n}">${TRAITS[k.dr.tr??2].n[0]}</u><span>${mixSel&&sess==='race'?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls}</small>`:''}${k.name}</span><em>${ipTag(k)}${tg}${tn(gap)}</em></div>`;}).join('');$('tower').classList.toggle('ip',judgeOn&&sess==='race'&&rk.some(k=>k.ipt||k.pen||k.dt)||rk.some(k=>tkState(k).length));
     H('laps').innerHTML=p.lastLap?`前の周 ${tn(fmt(p.lastLap))}<br>ベスト ${p.best?tn(fmt(p.best)):'—'}`:'';
     const me=rk.indexOf(p),a=rk[me-1],b=rk[me+1];const g=(x,y)=>Math.max(0,(progress(x)-progress(y))/pace).toFixed(1);
     if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);H('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動');
@@ -4161,14 +4180,14 @@ function showDrag(){state='results';resultCamStart();$('replayBtn').hidden=rpBuf
 
 /* ================= ループ ================= */
 /* ================= タイトル画面（デモ走行・ガレージ・メニュー） ================= */
-const TIPS=['ぐいぐい・強引な CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時','コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい','ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ','GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート','大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
+const TIPS=['GARAGE の「おすすめ」タブで、レースの内容と選手に合う車種とセッティングを理由つきで出せる。「この設定にする」でそろう','ぐいぐい・強引な CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時','コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい','ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ','GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート','大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
 let titleMode='attract',attT=0,attNeed=true,garT=0,tipT=0,tipI=0,tStage=0,setupOpen=false;
 const tScr=$('titleScreen');
 function attractSetup(){sess='race';LAPS=999;ROLL.on=false;raceT0=0;SC_reset();document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;tvFoc=null;DIR.last='';}
 function garageSetup(){sess='ta';ROLL.on=false;LAPS=999;newEvent();setupRace();garT=0;attNeed=false;}
 // β0.67.0 T201 GARAGE の左（回っている車の上と下）に、今の設定での性能とレースのルールをまとめて出す（0.2秒ごとに作り、変わった時だけ書き換える）
 let giT=0,giKey='';
-function updGarInfo(dt){giT-=dt;if(giT>0)return;giT=.2;
+function updGarInfo(dt){giT-=dt;if(giT>0)return;giT=.2;recUi();
   const d=myDr(playerChoice),c=CC[ccChoice],ci=carOf(playerChoice),fm=isForm(),h=CHD[ci]||CHD[0];
   const v=Math.round(c.top*3.6*(fm?1.15*Math.sqrt(1.12):1)),kg=Math.round((1250*carMass(ci,fm?'FR':DRV_KEYS[setDrv])+tkExtraKg(setK,setIC))/10)*10;
   const bar=(l,f,t)=>`<div class="giBar"><i>${l}</i><u><s style="width:${Math.max(4,Math.min(100,f*100)).toFixed(0)}%"></s></u><em>${t}</em></div>`,it=(l,t)=>`<div><i>${l}</i><em>${t}</em></div>`;
@@ -4198,7 +4217,63 @@ addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true)
 function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?0:(i+d+it.length)%it.length;it[i].focus();tone(880,.03,'square',.06);}
 menuItems().forEach(el=>el.addEventListener('mouseenter',()=>{if(!setupOpen)el.focus();}));
 /* T210 GARAGE のタブ（車／セッティング／レース／表示・操作／0-400m）。開き直しても同じタブ */
-let garTab=0;const GTN=5;
+/* ===== T241（β0.88.0）お勧めの車種とセッティング：GARAGE の「車」タブの上に1行、「おすすめ」タブにくわしく（理由つき）。「この設定にする」で全部そろえる。
+   中身は思い込みではなく測った値（開発用/テスト/mrec.js：自分の車もオートで5周・接触なし・摩耗あり、2回ずつの平均）。REC.d＝晴れ、REC.w＝雨。
+   car['車種_駆動']・base（セダン FR 標準）・f['変数名＋値']（セダン FR で1つだけ変えた時）・tk（ターボの過給機）・F（フォーミュラ）＝[1周の平均（2〜5周目）, 5周後のタイヤの摩耗]。
+   選び方：周回数・摩耗の設定から、レース全体の時間（1周のタイム×周＋タイヤの減りで落ちる分）を見積もり、いちばん短いもの。差が RECT 秒/周 未満なら同じとみなし、選手の性格の好み（RECP）、なければ標準 */
+const REC={"d":{"car":{"2_0":[63.65,0.37],"3_2":[64.45,0.487],"2_2":[63.81,0.421],"1_1":[64.02,0.415],"0_1":[64.44,0.444],"0_0":[64.87,0.418],"1_0":[64.43,0.39],"0_2":[65.05,0.473],"1_2":[64.64,0.441],"3_1":[63.82,0.458],"4_1":[66.27,0.485],"6_1":[63.83,0.396],"5_1":[65.54,0.482],"9_1":[63.12,0.392],"7_2":[65.33,0.508],"5_2":[66.21,0.513],"5_0":[65.95,0.454],"7_0":[65.1,0.448],"4_0":[66.66,0.456],"9_2":[63.73,0.421],"8_1":[66.15,0.501]},"f":{"sg0":[64.41,0.445],"sg2":[64.41,0.444],"sw2":[64.06,0.456],"sw0":[64.84,0.433],"sb0":[64.44,0.444],"en2":[63.9,0.448],"en0":[64.67,0.443],"df2":[64.47,0.444],"sb2":[64.42,0.444],"df0":[64.41,0.444],"sb20":[64.49,0.445],"sb22":[64.35,0.444],"tw2":[63.69,0.458],"tw0":[65.19,0.431],"sc0":[64.33,0.445],"sc2":[64.56,0.443],"bc0":[64.41,0.445],"bc2":[64.47,0.444]},"base":[64.42,0.444],"Fbase":[48.83,0.289],"tk":{"tk0":[62.29,0.472],"tk1":[61.88,0.474],"tk3":[61.86,0.484],"tk2":[62.09,0.472],"tk4":[62.55,0.47],"cc2base":[61.89,0.474],"tk1ic0":[62.32,0.467]},"F":{"sg0":[48.87,0.29],"sg2":[48.83,0.289],"sw2":[47.81,0.286],"sb2":[48.83,0.289],"sb0":[48.83,0.289],"df0":[48.81,0.289],"sw0":[50.73,0.288],"en2":[48.27,0.29],"df2":[48.85,0.289],"en0":[49.04,0.289],"sb22":[48.77,0.288],"sb20":[48.9,0.291],"tw0":[49.53,0.289],"tw2":[48.16,0.289],"sc0":[48.7,0.289],"sc2":[48.98,0.289],"bc0":[48.78,0.289],"bc2":[48.87,0.289]}},"w":{"car":{"1_1":[68.77,0.344],"0_1":[69.23,0.369],"0_0":[69.65,0.35],"0_2":[69.88,0.392],"1_0":[69.23,0.328],"1_2":[69.38,0.365],"2_0":[68.51,0.311],"2_2":[68.61,0.346],"3_2":[69.34,0.402],"3_1":[68.7,0.378],"4_1":[70.97,0.409],"6_1":[68.54,0.328],"5_1":[70.36,0.405],"5_0":[70.75,0.385],"7_2":[70.17,0.423],"5_2":[70.95,0.431],"4_0":[71.35,0.389],"9_1":[67.96,0.324],"7_0":[69.94,0.376],"9_2":[68.56,0.348],"8_1":[70.9,0.421]},"f":{"sg0":[69.19,0.369],"sg2":[69.27,0.369],"sw2":[68.99,0.377],"sw0":[69.57,0.361],"sb0":[69.23,0.369],"df0":[69.24,0.369],"df2":[69.3,0.368],"sb2":[69.24,0.369],"en2":[68.72,0.371],"en0":[69.45,0.368],"sb22":[69.18,0.37],"sb20":[69.33,0.368],"tw0":[69.27,0.369],"tw2":[69.28,0.369],"sc0":[69.14,0.369],"sc2":[69.37,0.368],"bc0":[69.22,0.369],"bc2":[69.27,0.369]},"base":[69.25,0.369]}};
+let RECT=.12;
+// [変数, ボタンの列, 名前の表, 表示名, 測定のキー]
+const RECG=[['setG','gearSeg',SETG,'ギア比','sg'],['setW','wingSeg',SETW,'ウイング','sw'],['setB','bbSeg',SETB,'ブレーキバランス','sb'],['setDf','difSeg',SETD,'デフ','df'],['setE','enSeg',SETE,'エンジン特性','en'],['setS','sbSeg',SETS,'スタビライザー','sb2'],['setTW','twSeg',SETTW,'タイヤの幅','tw'],['setC','coolSeg',SETC,'冷却','sc'],['setBC','bcSeg',SETBC,'ブレーキ冷却','bc']];
+const RECV={setG:[()=>setG,v=>setG=v],setW:[()=>setW,v=>setW=v],setB:[()=>setB,v=>setB=v],setDf:[()=>setDf,v=>setDf=v],setE:[()=>setE,v=>setE=v],setS:[()=>setS,v=>setS=v],setTW:[()=>setTW,v=>setTW=v],setC:[()=>setC,v=>setC=v],setBC:[()=>setBC,v=>setBC=v]};
+// 選手の性格（TRAITS の番号）ごとの好み：差がわずかな時だけ、この値を選ぶ。w＝タイヤの減りの少ない方を選ぶ
+const RECP=[{t:'きれいに走る。差がわずかな所は安定する側に',sw:2,sb2:1},{t:'慎重。差がわずかな所は止まりやすく安定する側に',sw:2,sb:0,sb2:0},{t:'自分のペース。差がわずかな所はタイヤが長持ちする側に',w:1},
+  {t:'前に出たい。差がわずかな所は加速と曲がりやすさの側に',sg:0,sb2:2},{t:'強引に抜く。差がわずかな所はブレーキで差しやすい側に',sb:2,sg:0},{t:'直線で守る。差がわずかな所は最高速の側に',sg:2,sw:0}];
+function recCost(v,L,wk){if(!v)return 1e9;const wpl=v[1]/5*wk;let t=0;for(let j=1;j<=L;j++)t+=v[0]*(1+lapLossK(Math.min(.6,wpl*(j-.5)),0));return t;}
+function recCalc(){const L=LAPSET[lapsSel],wk=!wearMode?0:L<=12?wearMode:wearMode===1?Math.pow(12/L,1.5):1.5,fm=isForm();
+  const wet=wxSel===2,unk=wxSel===4||wxSel===5,D=REC[wet?'w':'d']||REC.d,tr=DRIVERS[playerChoice].tr??2,P=RECP[tr]||{},TT=RECT*L;
+  const out={L,wet,unk,tr,items:[],fm,wk};const cost=v=>recCost(v,L,wk);
+  // 車種と駆動方式
+  if(!fm){let best=null;const all=[];for(const k in D.car){const [ci,dv]=k.split('_').map(Number);if(!drvAllowed(ci).includes(dv))continue;const c=cost(D.car[k]);all.push({ci,dv,c,v:D.car[k]});if(!best||c<best.c)best={ci,dv,c,v:D.car[k]};}
+    all.sort((a,b)=>a.c-b.c);out.cars=all.slice(0,4);out.car=best;}
+  // セッティング（測った基準の車で1つずつ）
+  const B=fm?(REC.d.Fbase):D.base,FF=fm?REC.d.F:D.f;
+  for(const [vn,seg,tb,lab,key] of RECG){const cand=[1,0,2].map(v=>{const m=v===1?B:FF[key+v];return{v,m,c:cost(m)};}).filter(o=>o.m);if(!cand.length)continue;
+    let b=cand.reduce((a,o)=>o.c<a.c?o:a,cand[0]);const near=cand.filter(o=>o.c-b.c<TT);let why='';
+    if(near.length>1){const pv=P.w?near.reduce((a,o)=>o.m[1]<a.m[1]?o:a,near[0]).v:P[key];const pick=near.find(o=>o.v===pv);
+      if(pick&&pick.v!==1){b=pick;why='p';}else{const s=near.find(o=>o.v===1);if(s){b=s;why='s';}}}
+    const d=b.m&&B?[b.m[0]-B[0],b.m[1]-B[1]]:[0,0];out.items.push({vn,seg,tb,lab,v:b.v,cur:RECV[vn][0](),why,d});}
+  // ターボの過給機・インタークーラー
+  if(ccChoice===2&&REC.d.tk){let best=null;for(let t=0;t<5;t++){const m=REC.d.tk['tk'+t];if(!m)continue;const c=cost(m);if(!best||c<best.c)best={t,c,m};}
+    if(best){out.tk=best.t;const a=REC.d.tk.tk1,b=REC.d.tk.tk1ic0;out.ic=a&&b&&cost(b)<cost(a)-TT?0:1;}}
+  return out;}
+const recOn=(r,o)=>o.v!==o.cur;
+function recDiff(r){const a=[];if(!r.fm&&r.car&&(r.car.ci!==myCar||r.car.dv!==setDrv))a.push(carName(r.car.ci)+'（'+drvLabel(r.car.ci,r.car.dv)+'）');
+  for(const o of r.items)if(o.v!==o.cur)a.push(o.lab+' '+o.tb[o.v].n);if(r.tk!=null&&r.tk!==setK)a.push(TKS[r.tk].n);if(r.ic!=null&&ccChoice===2&&r.ic!==setIC)a.push(r.ic?'インタークーラーあり':'インタークーラーなし');return a;}
+function recApply(){const r=recCalc();if(!r.fm&&r.car){myCar=r.car.ci;setDrv=r.car.dv;markSeg('carSeg',myCar);}
+  for(const o of r.items){RECV[o.vn][1](o.v);markSeg(o.seg,o.v);}if(r.tk!=null){setK=r.tk;markSeg('tkSeg',setK);}if(r.ic!=null&&ccChoice===2){setIC=r.ic;markSeg('icSeg',setIC);}
+  setT=0;markSeg('tyreSeg',0);reTune();saveSettings();recKey='';recMsg='おすすめの設定にしました';clearTimeout(recApply.t);recApply.t=setTimeout(()=>{recMsg='';},4000);recUi();tone(880,.06,'square',.14);}
+let recKey='',recMsg='';
+const recSec=x=>(x>0?'+':'−')+Math.abs(x).toFixed(2)+'秒';
+function recWhy(r,o){if(o.why==='p')return '差はわずか（'+TRAITS[r.tr].n+'の走り方に合わせた）';if(o.why==='s'||o.v===1&&Math.abs(o.d[0])<.05)return 'ほかと差がわずか（標準のまま）';
+  const t=[];if(Math.abs(o.d[0])>=.05)t.push('1周 '+recSec(o.d[0]));if(wearMode&&Math.abs(o.d[1])>=.01)t.push('タイヤの減り '+(o.d[1]>0?'+':'−')+Math.round(Math.abs(o.d[1])/Math.max(.01,(r.fm?REC.d.Fbase:REC[r.wet?'w':'d'].base)[1])*100)+'%');return (o.v===1?'標準が一番：':'標準より ')+(t.join('・')||'差がわずか');}
+function recUi(){const line=$('recLine'),box=$('recBox');if(!line||!box)return;const r=recCalc();
+  const key=JSON.stringify([r,myCar,setDrv,setK,setIC,ccChoice,playerChoice,recMsg]);if(key===recKey)return;recKey=key;
+  const df=recDiff(r),dr=DRIVERS[playerChoice],trn=TRAITS[r.tr].n;
+  line.innerHTML=(df.length?'<b>おすすめ</b>　'+df.slice(0,4).join('・')+(df.length>4?' ほか'+(df.length-4)+'つ':''):'<b>おすすめ</b>　今の設定がおすすめどおり')+'<span class="recB">'+(df.length?'<button type="button" class="tsB" data-rec="apply">この設定にする</button>':'')+'<button type="button" class="tsB" data-rec="more">くわしく</button></span>';
+  const cond=`${r.L}周・${['晴れ','くもり','雨','霧','変わる','おまかせ'][wxSel]}・タイヤ摩耗 ${['なし','あり','速い'][wearMode]}・${r.fm?'フォーミュラ':CC[ccChoice].name}`;
+  let h=`<p class="note"><b>レースの内容</b>　${cond}　<b>選手</b>　${dr.name}（${trn}）：${(RECP[r.tr]||{}).t||''}</p>`;
+  if(r.unk)h+='<p class="note">天気が「変わる」「おまかせ」の時は晴れの値で選んでいる（タイヤは「自動」で路面に合わせる）</p>';
+  if(!r.fm&&r.cars){h+='<div class="label">車種と駆動方式（速い順）</div><table class="recT">'+r.cars.map((c,i)=>`<tr class="${i?'':'on'}"><td>${i+1}</td><td>${carName(c.ci)}（${drvLabel(c.ci,c.dv)}）</td><td class="t">1周 ${fmt(c.v[0])}</td><td class="t">${wearMode?'タイヤ '+(c.v[1]/5*r.wk*100).toFixed(1)+'%/周':''}</td></tr>`).join('')+'</table>';}
+  h+='<div class="label">セッティング</div><table class="recT"><tr class="hd"><td>項目</td><td>今</td><td>おすすめ</td><td>理由</td></tr>'+r.items.map(o=>`<tr class="${o.v!==o.cur?'df':''}"><td>${o.lab}</td><td>${o.tb[o.cur].n}</td><td><b>${o.tb[o.v].n}</b></td><td>${recWhy(r,o)}</td></tr>`).join('')
+    +(r.tk!=null?`<tr class="${r.tk!==setK?'df':''}"><td>過給機</td><td>${TKS[setK].n}</td><td><b>${TKS[r.tk].n}</b></td><td>このコースでいちばん速い</td></tr>`:'')
+    +`<tr><td>タイヤ</td><td>${TYRE[setT]}</td><td><b>自動</b></td><td>路面が濡れていればレイン</td></tr></table>`;
+  h+=`<p class="note">自動運転（オート）で、このコースを5周ずつ走らせて測った値（${r.fm?'フォーミュラ':'セッティングはセダン FR で1つずつ変えて'}）。自分で運転すると変わることがある。差が1周 ${RECT}秒未満は同じとみなす。</p>`;
+  h+=`<div class="row"><button type="button" class="btn" data-rec="apply">この設定にする</button></div>`+(recMsg?`<p class="note"><b>${recMsg}</b></p>`:'');
+  box.innerHTML=h;}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest?e.target.closest('[data-rec]'):null;if(!b)return;if(b.dataset.rec==='apply')recApply();else setGarTab(5,true);});
+
+let garTab=0;const GTN=6;
 // T213 説明を隠す（保存キー hh）。隠している間は項目名を押すとその説明が開く／閉じる
 let hideHint=0;try{hideHint=JSON.parse(localStorage.getItem('popkart')||'{}').hh?1:0;}catch(_){}
 function setHint(v){hideHint=v?1:0;document.body.classList.toggle('hidehint',!!hideHint);const b=$('hintBtn');b.textContent=hideHint?'説明を出す':'説明を隠す';b.setAttribute('aria-pressed',String(!!hideHint));$('setup').querySelectorAll('.label.open').forEach(l=>l.classList.remove('open'));}
