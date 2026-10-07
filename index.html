@@ -518,7 +518,7 @@ body.hidehint #setup .setrow{gap:6px}body.hidehint #setup .gtab{gap:6px} /* T209
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.85.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.85.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -793,7 +793,7 @@ const TRAITS=[{n:'クリーン',room:3.0,gap:1.25,yld:.8,bm:-.6,ag:-.3,sd:.9},{n
 // ①攻め方 ag（性格）：AGL＝曲がる速さの加減（CPU は元から限界近くなので、＋側はほとんど速くならない。−側〔慎重・クリーン〕はタイヤをいたわって少し遅い）、AGB＝ブレーキを遅く強く、AGW＝滑らせる・強く踏む分のタイヤの摩耗・温度とブレーキの熱の増え方（CPU のみ。AGK＝0 で無効）
 // ⑤スタミナ k.stam（CPU のみ）：前後 STB m 以内に車がいる間（すぐ横は1.5倍）STD×性格の sd ずつ減り、一人なら STR ずつ戻る（下限 STMIN）。減るとミスの確率×(1＋STE×減り)＋STA×減り、ラインのぶれ＋STW m、曲がる速さ−STL×減り（STK＝0 で無効）
 // ⑥ダーティエア k.dirty：前の車の DAD m 後ろまで。ダウンフォースが最大 DAK 割減り、タイヤが（1＋DAT×dirty）倍温まる。水温も上がる（DAK＝0 で無効）
-let AGK=1,AGL=.018,AGB=.04,AGW=.5,STK=1,STD=1/220,STR=1/150,STB=22,STMIN=.25,STE=1,STA=.025,STW=1.2,STL=.012,DAK=.35,DAD=35,DAT=.5;
+let BATT=30,OBS2=150,AGK=1,AGL=.018,AGB=.04,AGW=.5,STK=1,STD=1/400,STR=1/150,STB=22,STMIN=.25,STE=1,STA=.025,STW=1.2,STL=.012,DAK=.35,DAD=35,DAT=.5;
 const agOf=k=>AGK&&!k.isPlayer&&sess==='race'&&k.dr?(TRAITS[k.dr.tr??2].ag||0):0;
 // マイカラー（T53）：-1＝チームの色。num 0＝チームの番号
 const MYPAL=[0xf2f2f2,0x111114,0x4a4f57,0xb8bcc2,0xc9a23a,0xd8231c,0x8c1020,0xf06a14,0xf2c200,0x9ad40f,0x178a44,0x16a8c8,0x1e5bd8,0x131f5c,0x6d2fc2,0xe0529a];
@@ -1390,7 +1390,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   mk(bushT,cross(3.4,1.7),320,()=>{const p=spot(WALL+4,110);return p&&[p[0],p[1],.6+rnd()*.9];});
  }
  // 丘
- {const hm=new THREE.MeshLambertMaterial({color:0x4b5f34});for(let i=0;i<16;i++){const p=spot(WALL+45,280);if(!p)continue;const r=22+rnd()*34;const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,10,0,Math.PI*2,0,Math.PI/2),hm);m.scale.y=.28+rnd()*.3;m.position.set(p[0],-.6,p[1]);m.receiveShadow=true;scene.add(m);STATIC.push(m);}}
+ {const hm=new THREE.MeshLambertMaterial({color:0x4b5f34});for(let i=0;i<16;i++){const p=spot(WALL+45,280);if(!p)continue;const r=22+rnd()*34;if(!farFromTrack(p[0],p[1],WALL+12+r)){rnd();continue;} /* β0.85.2 T235：丘の縁がコースにかぶさらないように（以前は中心だけ見ていて、半径53mの丘が複合コーナーの出口でコースの上へ張り出していた） */const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,10,0,Math.PI*2,0,Math.PI/2),hm);m.scale.y=.28+rnd()*.3;m.position.set(p[0],-.6,p[1]);m.receiveShadow=true;scene.add(m);STATIC.push(m);}}
  // 岩
  {const rm=new THREE.MeshLambertMaterial({color:0x85817a,flatShading:true});for(let i=0;i<50;i++){const p=spot(WALL+4,80);if(!p)continue;const m=new THREE.Mesh(new THREE.DodecahedronGeometry(.8+rnd()*2,0),rm);m.position.set(p[0],.3,p[1]);m.scale.y=.6;m.rotation.set(rnd()*3,rnd()*3,0);m.castShadow=true;m.receiveShadow=true;scene.add(m);STATIC.push(m);}}
  // 池
@@ -1402,12 +1402,14 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   for(let i=0;i<26;i++){const s=new THREE.Sprite(new THREE.SpriteMaterial({map:ct,fog:false,depthWrite:false,opacity:.85}));const a=rnd()*6.28,r=400+rnd()*900;s.position.set(CX+Math.cos(a)*r,120+rnd()*120,CZ+Math.sin(a)*r);const sc=120+rnd()*160;s.scale.set(sc,sc*.5,1);scene.add(s);CLOUDS.push(s);}}
  // 遠くの山なみ（輪になった稜線。高さで色を変え、霞に溶ける）
  // β0.71.1：コースが南北に長い（T207）ので、丸い輪だと第1コーナー・最終コーナーの先で山が近すぎた。向きごとにコースの張り出し（sup）だけ外へずらし、どの向きでもコースの端からの距離をそろえる。RGO＝ずらしの基準（東西の張り出しと同じくらい）
- {const RGO=290,sup=a=>{const ca=Math.cos(a),sa=Math.sin(a);let m=0;for(let i=0;i<N;i+=4)m=Math.max(m,(TX[i]-CX)*ca+(TZ[i]-CZ)*sa);return m;};
+ // β0.85.1 T230：高さはコースからの距離 d の RHK 倍（見上げる角度 約12°）で頭打ち（高い所だけ、なだらかに）。以前は奥の輪が最大 680m あり、第1コーナーの出口などで約20°の壁のようにそびえて見えた
+ {const RGO=290,RHK=.21,sup=a=>{const ca=Math.cos(a),sa=Math.sin(a);let m=0;for(let i=0;i<N;i+=4)m=Math.max(m,(TX[i]-CX)*ca+(TZ[i]-CZ)*sa);return m;};
   const ridge=(R0,depth,base,amp,seed,cols)=>{let sd=seed;const r=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};
    const ph=[...Array(6)].map(()=>r()*6.28);const S=220,rows=5;const pos=[],col=[],idx=[];const c=new THREE.Color();
    const H=a=>base+amp*(.5+.25*Math.sin(a*3+ph[0])+.18*Math.sin(a*7+ph[1])+.12*Math.sin(a*13+ph[2])+.07*Math.sin(a*29+ph[3])+.04*Math.sin(a*61+ph[4]));
-   for(let i=0;i<=S;i++){const a=i/S*Math.PI*2;const h=H(a),ro=Math.max(0,sup(a)-RGO);for(let j=0;j<rows;j++){const t=j/(rows-1);const rr=R0+ro+depth*(1-t)*.5+depth*t*.1;const y=-10+(h+10)*Math.pow(Math.sin(t*Math.PI/2),1.3);
-     pos.push(CX+Math.cos(a)*rr,y,CZ+Math.sin(a)*rr);const e=y/(base+amp);c.set(cols[0]).lerp(new THREE.Color(cols[1]),Math.min(1,e*1.2));if(e>.82)c.lerp(new THREE.Color(0xe6ecf0),Math.min(1,(e-.82)*5));c.convertSRGBToLinear();col.push(c.r,c.g,c.b);}}
+   for(let i=0;i<=S;i++){const a=i/S*Math.PI*2,ro=Math.max(0,sup(a)-RGO),fx=CX+Math.cos(a)*(R0+ro+depth*.5),fz=CZ+Math.sin(a)*(R0+ro+depth*.5);let dt=1e9;for(let q=0;q<N;q+=3)dt=Math.min(dt,Math.hypot(TX[q]-fx,TZ[q]-fz));
+    const cap=RHK*dt,h0=H(a),h=h0<cap*.7?h0:cap*.7+cap*.3*(1-Math.exp(-(h0-cap*.7)/(cap*.3)));for(let j=0;j<rows;j++){const t=j/(rows-1);const rr=R0+ro+depth*(1-t)*.5+depth*t*.1;const y=-10+(h+10)*Math.pow(Math.sin(t*Math.PI/2),1.3);
+     pos.push(CX+Math.cos(a)*rr,y,CZ+Math.sin(a)*rr);const e=y/Math.min(base+amp,RHK*1700);c.set(cols[0]).lerp(new THREE.Color(cols[1]),Math.min(1,e*1.2));if(e>.82)c.lerp(new THREE.Color(0xe6ecf0),Math.min(1,(e-.82)*5));c.convertSRGBToLinear();col.push(c.r,c.g,c.b);}}
    for(let i=0;i<S;i++)for(let j=0;j<rows-1;j++){const a=i*rows+j,b=(i+1)*rows+j;idx.push(a,b,a+1,a+1,b,b+1);}
    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));g.setIndex(idx);g.computeVertexNormals();
    const m=new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.DoubleSide}));m.material.userData.lin=1;scene.add(m);};
@@ -2050,7 +2052,7 @@ bakeStatic();linAll(scene);[sun.color,hemi.color,hemi.groundColor,scene.fog.colo
 /* ================= 状態 ================= */
 let karts=[];
 let state='title',raceTime=0,countdown=0,playerChoice=0,ccChoice=1,finishOrder=[],afterFinish=0;
-const CLAGV=60;let camH=0,camPos=new THREE.Vector3(),shake=0,camKick=0,autoPlay=false;
+const CLAGV=30; /* β0.85.2 T235：60→30（後方視点が遠い。200km/h で約15m→約12m） */let camH=0,camPos=new THREE.Vector3(),shake=0,camKick=0,autoPlay=false;
 const input={left:false,right:false,accel:false,brake:false,drift:false};
 const prevIn={drift:false};
 let accelDownAt=null,cdHold=0; // T178③ 5つ点いてから消えるまでの待ち（0.2〜1.5秒のランダム。実際のライトアウトと同じく読めない）
@@ -2431,7 +2433,7 @@ function stepTelop(dt){if(teleT>0){teleT-=dt;if(teleT<=.3&&teleEl&&!teleEl.class
 let radioOn=true;const radioQ=[];let radioT=0;const RAD_ST={};
 function radio(text,key,cool){if(!radioOn||sess!=='race')return;const now=raceTime;if(key){if(RAD_ST[key]&&now-RAD_ST[key]<(cool||25))return;RAD_ST[key]=now;}
   logAdd('無線',text);if(radioQ.length>2)radioQ.shift();radioQ.push(text);}
-function radioReset(){radioQ.length=0;radioT=0;for(const k in RAD_ST)delete RAD_ST[k];RDS.a=RDS.b=9;RDS.st=0;RDS.wear=RDS.dmg=0;RDS.grid=0;RDS.tkA=RDS.tkB=null;RDS.dirtyT=0;RDS.dirty=0;const el=$('radio');if(el)el.hidden=true;}
+function radioReset(){radioQ.length=0;radioT=0;for(const k in RAD_ST)delete RAD_ST[k];RDS.a=RDS.b=9;RDS.st=0;RDS.wear=RDS.dmg=0;RDS.grid=0;RDS.tkS={};RDS.dirtyT=0;RDS.dirty=0;RDS.batK=null;RDS.batT=0;RDS.batS={};const el=$('radio');if(el)el.hidden=true;}
 const RDS={a:9,b:9,st:0,wear:0,dmg:0,grid:0};
 function stepRadio(dt){const el=$('radio');if(radioT>0){radioT-=dt;if(radioT<=0)el.hidden=true;return;}
   const t=radioQ.shift();if(!t)return;el.lastChild.textContent=t;el.hidden=false;el.style.animation='none';void el.offsetWidth;el.style.animation='';radioT=3.4;
@@ -2443,11 +2445,21 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
   if(raceTime-raceT0<14||ROLL.on&&!ROLL.green){RDS.a=RDS.b=0;return;}
   if(a&&!a.finished){const g=(progress(a)-progress(p))/pace;if(a!==RDS.aK){RDS.aK=a;RDS.a=g;}if(g<1&&RDS.a>=1.6)radio(`前の ${a.name} まで ${Math.max(.1,g).toFixed(1)}秒。射程圏内`,'ahead',22);RDS.a=g;}
   if(b&&!b.finished){const g=(progress(p)-progress(b))/pace;if(b!==RDS.bK){RDS.bK=b;RDS.b=g;}if(g<.7&&RDS.b>=1.3)radio(`後ろの ${b.name} が ${Math.max(.1,g).toFixed(1)}秒差。ラインを守って`,'behind',22);RDS.b=g;}
-  // T228③ 前後1.5秒以内の車のツケ（タイヤ・ブレーキ・熱・疲れ）を知らせる。同じ車の同じ印は1回
-  if(a&&!a.finished&&(progress(a)-progress(p))/pace<1.5){const st=tkState(a);if(st.length&&RDS.tkA!==a.id+st[0][0]){RDS.tkA=a.id+st[0][0];radio('前の '+a.name+'、'+{t:'タイヤがきつそうだ。コーナーの出口で差を詰めよう',b:'ブレーキが熱そうだ。ブレーキングで仕掛けられるぞ',h:'エンジンが熱そうだ。直線が伸びていない',s:'疲れてミスが出始めている。後ろから離れずについていこう'}[st[0][0]],'tka',25);}}
-  if(b&&!b.finished&&(progress(p)-progress(b))/pace<1.5){const st=tkState(b);if(st.length&&RDS.tkB!==b.id+st[0][0]){RDS.tkB=b.id+st[0][0];radio('後ろの '+b.name+' は'+{t:'タイヤがきつそうだ。コーナーで粘れば離せる',b:'ブレーキが熱そうだ。ブレーキングで無理には来られない',h:'エンジンが熱そうだ。直線は守れる',s:'疲れてきている。焦らずラインを守ろう'}[st[0][0]],'tkb',25);}}
+  // β0.85.2 T235 競り合いの読み：前後1.2秒以内の同じ相手と BATT 秒競り合ったら、相手の走り方（性格の ag・前後を挟まれているか）から、この先どうなりそうかを1回だけ言う
+  {const ga=a&&!a.finished?(progress(a)-progress(p))/pace:9,gb=b&&!b.finished?(progress(p)-progress(b))/pace:9,o=ga<1.2?a:gb<1.2?b:null,ah=o===a;
+   if(o&&!o.isPlayer){if(RDS.batK!==o){RDS.batK=o;RDS.batT=0;}RDS.batT+=dt;RDS.batS=RDS.batS||{};
+    if(RDS.batT>BATT&&!RDS.batS[o.id]&&p.lap<LAPS){RDS.batS[o.id]=1;const ag=TRAITS[o.dr.tr??2].ag||0,ok=karts.some(q=>q!==o&&q!==p&&!q.dnf&&!q.pit&&Math.abs(progress(q)-progress(o))<STB*1.2&&(ah?progress(q)>progress(o):progress(q)<progress(o)));
+     radio(ok?(ah?'前の '+o.name+' は前後を挟まれて競り合いが続いている。そのうち集中が切れるはずだ、その時を逃すな':'後ろの '+o.name+' も前後を挟まれている。焦って仕掛けてくるかもしれない、ラインを守ろう')
+      :ag>=.5?(ah?'前の '+o.name+' はかなり攻めている。このまま競り合えばタイヤもブレーキも向こうが先に音を上げるはずだ。焦らず後ろでプレッシャーを':'後ろの '+o.name+' はかなり攻めてきている。無理に付き合わなければ、向こうのタイヤが先にたれてくるはずだ')
+      :ag<0?(ah?'前の '+o.name+' はタイヤをいたわって走っている。後半は手ごわいぞ、抜くなら今のうちだ':'後ろの '+o.name+' はタイヤを残して走っている。後半に来るぞ、今のうちに差を広げよう')
+      :(ah?'前の '+o.name+' とは同じくらいのペースだ。競り合いが長引くと、無理をした方がタイヤを先に使う':'後ろの '+o.name+' とは同じくらいのペースだ。無理に守りすぎるとタイヤを使うぞ'),'bat',40);}}
+   else{RDS.batK=null;RDS.batT=0;}}
+  const early=raceTime-raceT0<OBS2;
+  // T228③ 前後1.5秒以内の車のツケ（タイヤ・ブレーキ・熱・疲れ）を知らせる。同じ車の同じ印は1回（β0.85.2：序盤は言わない）
+  if(!early&&a&&!a.finished&&(progress(a)-progress(p))/pace<1.5){const st=tkState(a);const kA=st.length?a.id+st[0][0]:"";if(st.length&&!RDS.tkS[kA]){RDS.tkS[kA]=1;radio('前の '+a.name+'、'+{t:'タイヤがきつそうだ。コーナーの出口で差を詰めよう',b:'ブレーキが熱そうだ。ブレーキングで仕掛けられるぞ',h:'エンジンが熱そうだ。直線が伸びていない',s:'競り合いで集中が切れてきたようだ。ミスを誘えるぞ、離れずについていこう'}[st[0][0]],'tk',25);}}
+  if(!early&&b&&!b.finished&&(progress(p)-progress(b))/pace<1.5){const st=tkState(b);const kB=st.length?b.id+st[0][0]:"";if(st.length&&!RDS.tkS[kB]){RDS.tkS[kB]=1;radio('後ろの '+b.name+' は'+{t:'タイヤがきつそうだ。コーナーで粘れば離せる',b:'ブレーキが熱そうだ。ブレーキングで無理には来られない',h:'エンジンが熱そうだ。直線は守れる',s:'競り合いで集中が切れてきている。焦らずラインを守ればミスが出る'}[st[0][0]],'tk',25);}}
   // T228⑥ 前の車の乱れた空気の中でコーナーを回り続けている
-  if(DAK>0){if((p.dirty||0)>.35&&CORNER[p.idx])RDS.dirtyT=(RDS.dirtyT||0)+dt;else RDS.dirtyT=Math.max(0,(RDS.dirtyT||0)-dt*.2);if(RDS.dirtyT>12&&!RDS.dirty){RDS.dirty=1;radio('前の車の乱れた空気で、コーナーでフロントが逃げている。タイヤが熱くなるぞ、少し離れて仕掛け所を作ろう','dirty',60);}if(RDS.dirtyT<1)RDS.dirty=0;}
+  if(DAK>0&&!early){if((p.dirty||0)>.35&&CORNER[p.idx])RDS.dirtyT=(RDS.dirtyT||0)+dt;else RDS.dirtyT=Math.max(0,(RDS.dirtyT||0)-dt*.2);if(RDS.dirtyT>12&&!RDS.dirty){RDS.dirty=1;radio('前の車の乱れた空気で、コーナーでフロントが逃げている。タイヤが熱くなるぞ、少し離れて仕掛け所を作ろう','dirty',60);}if(RDS.dirtyT<1)RDS.dirty=0;}
   if(wearMode&&!RDS.wear&&p.wear>.55&&!p.pitReq&&p.lap<LAPS){const pl=pitPlan(p);if(pl.left>=1){RDS.wear=1;radio(!PWK||pl.ok?'タイヤがかなり減っている。ピットを考えて'+PITK():`タイヤがかなり減っているが、残り${pl.left}周。ピットは損だ、このまま行こう`);}}
   if(wearMode&&p.wear<.1)RDS.wear=0;
   if(dmgMode&&!RDS.dmg&&p.dmg>.35){RDS.dmg=1;radio(dmgMode===2?'車にダメージ。ペースが落ちる、ピットで直せる':'ぶつけたな、大丈夫か？ 無理しないで');}
@@ -3242,7 +3254,7 @@ function updateCameraIn(dt){
   const r=Math.max(0,p.u)/p.top;const far=camMode===2;
   // T140 速度感：加速で少し引いて視野を広げ、ブレーキで少し寄せて狭める（camAx＝前後の加速度を -1〜1 にならして追従。SPK＝0 で無効、動きを減らす設定 RM でも無効）
   camAx+=(Math.max(-1,Math.min(1,p.ax/SPA))-camAx)*Math.min(1,dt*3);const sx=SPK>0&&!RM?camAx*Math.min(1,Math.max(0,p.u)/15):0;
-  const dist=(far?13:8.2)+r*1.2+camKick*1.2+sx*SPD;
+  const dist=(far?13:7.6)+r*1.2+camKick*1.2+sx*SPD;
   const tgt=tmpV.set(p.x-Math.sin(camH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(camH)*dist);
   {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WALL+.2;if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
   {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
@@ -3307,7 +3319,7 @@ let lastHud=0,towerT=0;
 // β0.84.1 IPのポップアップ：順位表の行（印のある車）にカーソルを合わせると、記録 k.jh を新しい順に出す
 // T228③ ツケの印：タ＝タイヤ（摩耗・熱）、ブ＝ブレーキの熱、熱＝水温・油温・吸気温度、疲＝スタミナ（CPU）。[class, 字, 説明]
 function tkState(k){if(sess!=='race'||state==='results'||k.dnf||k.finished||k.gone)return [];const a=[];
-  if(wearMode&&k.wear>.55||TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+10){const ow=wearMode&&k.wear>.55,oh=TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+10;a.push(['t','タ','タイヤがきつい（'+[ow?'摩耗 '+Math.round(k.wear*100)+'%':'',oh?'温度 '+Math.round(k.tt)+'℃':''].filter(x=>x).join('・')+'）']);}
+  if(wearMode&&k.wear>.55||TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+15){const ow=wearMode&&k.wear>.55,oh=TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+15;a.push(['t','タ','タイヤがきつい（'+[ow?'摩耗 '+Math.round(k.wear*100)+'%':'',oh?'温度 '+Math.round(k.tt)+'℃':''].filter(x=>x).join('・')+'）']);}
   if((k.bfK||1)<.96)a.push(['b','ブ','ブレーキが熱い（'+Math.round(k.tb)+'℃、ききが '+Math.round((1-k.bfK)*100)+'% 落ちている）']);
   if((k.heatK||1)<.97||(k.icK||1)<.95)a.push(['h','熱','エンジンが熱い（水温 '+Math.round(k.tw)+'℃・油温 '+Math.round(k.to)+'℃）']);
   if(STK&&!k.isPlayer&&(k.stam??1)<.5)a.push(['s','疲','疲れている（スタミナ '+Math.round(k.stam*100)+'%。競り合いが続くと減り、ミスが増える）']);
@@ -3432,9 +3444,10 @@ function drawFx(){const p=player();const w=Math.round(innerWidth/2),h=Math.round
   if(fxDrawn){fctx.clearRect(0,0,w,h);fxDrawn=false;}if(!p||state==='countdown'||RM)return; // 何も描かないフレームは消さない（軽量化 β0.54.2）
   // T140：後方・遠めの視点で速いほど、画面の周辺にだけ薄い線（中央の車の周りは避ける）
   const sp=SPK>0&&camMode<=2&&state==='race'?Math.max(0,Math.min(1,(Math.max(0,p.u)/p.top-SPL)/(1-SPL))):0;
-  if(sp<=0)return;fxDrawn=true;fctx.lineCap='round';
+  if(sp<=0)return;fxDrawn=true;fctx.lineCap='round';const mfE=$('mirFrame'),mR=mfE.hidden?null:mfE.getBoundingClientRect(); // β0.85.2 T235：バックミラーの上には描かない
   for(let i=0;i<Math.round(sp*18);i++){const ang=Math.random()*Math.PI*2,k0=.62+Math.random()*.2,k1=k0+(.12+Math.random()*.12)*(.6+sp*.6); // 画面の楕円の外周近くに、外向きの短い線
     fctx.strokeStyle=`rgba(255,255,255,${(.22+Math.random()*.2)*(.5+sp*.5)})`;fctx.lineWidth=1.6+Math.random()*1.6;
+    if(mR){const In=(f)=>{const x=(w/2+Math.cos(ang)*w/2*f)*innerWidth/w,y=(h/2+Math.sin(ang)*h/2*f)*innerHeight/h;return x>mR.left-10&&x<mR.right+10&&y>mR.top-10&&y<mR.bottom+10;};if(In(k0)||In(k1)||In((k0+k1)/2))continue;}
     fctx.beginPath();fctx.moveTo(w/2+Math.cos(ang)*w/2*k0,h/2+Math.sin(ang)*h/2*k0);fctx.lineTo(w/2+Math.cos(ang)*w/2*k1,h/2+Math.sin(ang)*h/2*k1);fctx.stroke();}}
 let bannerTimer=0,toastTimer=0;
 const toastT2=t=>toast(t);
