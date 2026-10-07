@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.92.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.93.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -606,7 +606,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
         <div><div class="label">スタートの燃料<span class="hint">作戦どおり＝次のピットまでの分だけ積む（軽くて速い。ピットで給油）／満タン＝ゴールまでの分（タンクに入るだけ。重いがピットを減らせる）。燃料モードはレース中に Gキー・燃料のボタン</span></div><div class="seg" id="fuelSeg"><button type="button" data-v="0">作戦どおり</button><button type="button" data-v="1">満タン</button></div></div>
         <div><div class="label">ダメージ</div><div class="seg" id="dmgSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">見た目だけ</button><button type="button" data-v="2">性能にも</button></div></div>
         <div><div class="label">大事故<span class="hint">高速でぶつかると吹っ飛んでリタイア</span></div><div class="seg" id="crSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
-        <div><div class="label">セーフティカー・FCY<span class="hint">大クラッシュが起きたら。短め：まず FCY（全体が 80km/h 制限・追い越し禁止）、片付かない・続けて起きたらセーフティカー。実際どおり：セーフティカーがピット出口から先頭の前に出て、隊列で約2周。どちらも抜くと＋5秒。セーフティカーがピットへ入っても、コントロールラインを越えるまでは追い越し禁止</span></div><div class="seg" id="scSeg"><button type="button" data-v="1">短め</button><button type="button" data-v="2">実際どおり</button><button type="button" data-v="0">なし</button></div></div>
+        <div><div class="label">セーフティカー・FCY<span class="hint">大クラッシュが起きたら。短め：まず FCY（全体が 80km/h 制限・追い越し禁止）、片付かない・続けて起きたらセーフティカー。実際どおり：セーフティカーがピット出口から先頭の前に出て、隊列で約2周（周回遅れは合図が出たら前の車とセーフティカーを抜いて隊列の後ろへ。最終周までに片付かなければセーフティカーのままゴール）。セーフティカー中はピットの損が小さい。どちらも抜くと＋5秒。セーフティカーがピットへ入っても、コントロールラインを越えるまでは追い越し禁止</span></div><div class="seg" id="scSeg"><button type="button" data-v="1">短め</button><button type="button" data-v="2">実際どおり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">赤旗<span class="hint">10秒以内に2台以上が大クラッシュしたらレース中断。セーフティカーの後ろに並んでホームストレートで止まり、残骸が片付いたらセーフティカーの後ろで再開</span></div><div class="seg" id="rfSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">ピットレーンの速度<span class="hint">制限は 80km/h。自動＝ピットのブレーキも自動／自分で＝ピットレーンの線までに自分で 80km/h に落とす（超えると＋5秒。線の先はリミッターが自動）</span></div><div class="seg" id="pmSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">自分で</button></div></div>
         <div><div class="label">審判<span class="hint">実際のレースの考え方で、危険な当て・ブロックにインシデントポイント（IP。追突は後ろの車、並走中は相手の方へ寄った側、並ばれた・並びかけられたのにスペースを残さなかった側、並べていないのに突っ込んだ側）。順位表に各車の IP。2点で警告、4点で＋5秒、6点でドライブスルー。IP の付いたCPUは慎重になる</span></div><div class="seg" id="jgSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
@@ -2274,9 +2274,9 @@ function computeDraft(){for(const k of karts){let d=0,da=0;const fx=Math.sin(k.h
     if(DAK>0&&f<=DAD&&!o.dnf){const w=1.6+f*.04;if(sd<=w)da=Math.max(da,(1-(f-3)/(DAD-3))*(1-sd/w*.5));}}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;k.dirty=(k.dirty||0)+(da-(k.dirty||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
-const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA'];
+const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav'];
 let rwBuf=[],rwT=0,holdT=0,rwCount=0,rwSel=0;const RWL=[1e9,3,0]; // T128③ rwSel：0 無制限／1 3回まで／2 なし（保存キー rw）
-function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,fl:fastLap,sc:{on:SC.on,ph:SC.ph,d:SC.d,t:SC.t,t1:SC.t1,lp:SC.lp,u:SC.u,inLap:SC.inLap,out:SC.out,ret:SC.ret,rf:SC.rf,rfD:SC.rfD,rfT:SC.rfT},fcy:{on:FCY.on,ph:FCY.ph,t:FCY.t},ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
+function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,fl:fastLap,sc:{on:SC.on,ph:SC.ph,d:SC.d,t:SC.t,t1:SC.t1,lp:SC.lp,u:SC.u,inLap:SC.inLap,out:SC.out,ret:SC.ret,rf:SC.rf,rfD:SC.rfD,rfT:SC.rfT,wv:SC.wv,fin:SC.fin},fcy:{on:FCY.on,ph:FCY.ph,t:FCY.t},ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
 function doRewind(){if(sess==='drag'||ROLL.on&&(!ROLL.green||raceTime-5<raceT0))return;if(state!=='race'||holdT>0||rwBuf.length<3)return;if(rwCount>=RWL[rwSel]){toast(rwSel===2?'巻き戻しは使わない設定です（GARAGE のレース）':'巻き戻しは使い切りました（'+RWL[rwSel]+'回まで）');sfx('warn');return;}const target=raceTime-5;let s=rwBuf[0];for(const b of rwBuf)if(b.t<=target)s=b;
   rwBuf.length=rwBuf.indexOf(s)+1;raceTime=s.t;finishOrder.length=s.fo;fastLap=s.fl||null;karts.forEach((k,j)=>RW_KEYS.forEach((n,q)=>k[n]=s.ks[j][q]));if(s.sc){Object.assign(SC,s.sc);SC.ahead=null;NPZ.ahead=null;NPZ.owe=NPZ.owe.filter(w=>w.t<=raceTime);if(s.fcy)Object.assign(FCY,s.fcy);if(SC.on||SC.ret)scPos();if(!cau())for(const k of karts)k.scV=null;for(const k of karts){k.fcyC=null;k.rfC=null;}}
   telRewind();for(const k of karts){k.prevWheel=null;k.co=null;k.ct={};k.rl={};k.lostT=0;k.sc=null;k.enc={};k.errT=0;k.yT=0;}holdT=1.2;rwCount++;rpBuf=rpBuf.filter(f=>f.t<=raceTime);if(solo()){const p=player();if(p.lap>=1&&!p.lapBad){p.lapBad=true;telop('REWIND','巻き戻したのでこのラップは無効','yellow');}}toast('5秒巻き戻し'+(rwSel===1?'（残り '+(RWL[1]-rwCount)+'回）':''));steerSm=0;const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;}
@@ -2622,12 +2622,12 @@ function aiControl(k,dt){
   for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;const osl=SPW>0&&!o.dnf&&(o.spin>0||Math.abs(o.vl)>Math.abs(o.u)*SPB&&Math.abs(o.u)>3||o.u<-3);if(fwd>(o.dnf||osl?30+u*3.5:Math.max(26,8+Math.max(0,u-Math.max(0,o.u))*CLK))||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
     if(fwd<=5.5&&Math.abs(side)<tr.room+.6&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
       // 並走の権利（T117）：半車身以上前に出ている方が権利を持ち（ラインを守る）、後ろ側が下がる（コーナーの中・手前は必ず譲る）
-      const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
+      const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=k.wav&&!o.wav?0:o.wav&&!k.wav?1:u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
       const ek=o.id+(trail?'t':lead?'l':'n'); // 前後の関係（後ろ側・前側・中立）が変わるたびに、もう一度譲るかを決める
       if(!(k.enc[ek]>raceTime-1.5)&&Math.random()<py){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[ek]=raceTime;
       const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2)));
       if(!lead){if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;}
-      if(fwd>-3&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;}
+      if(fwd>-3&&!(k.wav&&!o.wav)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;}
     if(fwd<=0||Math.abs(side)>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1); // T73（β0.82.0）横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大事故の最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFT（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
@@ -2674,7 +2674,7 @@ function aiControl(k,dt){
      for(const [o,ds] of wk)if((Math.abs(o.lat-k.lat)<2.2||Math.abs(o.lat-best)<2.4)&&u*u>2*DNFA*Math.max(.5,ds-9))hard=true;}}
   // 周回遅れは道を譲る（T85）：青旗（後ろから周回遅れにする車が近づいた）が出たら、ラインを外して少し緩め、先に行かせる。譲る側はコーナーの外側へ、直線ではラインから3m外へ寄る
   k.yieldF=false;
-  if(k.blue&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g2=progress(o)-progress(k);
+  if(k.blue&&!k.wav&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g2=progress(o)-progress(k);
     if(g2>L-YLD_D&&g2<L+4){const side=(k.lat-IL[k.idx])>=0?1:-1;const s2=side;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,IL[k.idx]+s2*3.4));k.laneTimer=1;k.ovr=true;k.yieldF=true;break;}}}
   if(k.laneT!==lt0)k.ovr=true;
   if(k.launchT>0){k.launchT-=dt;return {steer,accel:false,brake:false,drift:false};}
@@ -2813,11 +2813,11 @@ function lapLossK(w,d){const g=(1-.22*Math.pow(w,1.3))*(dmgMode===2?1-DMGG*d:1),
 // left＝ピット作業のあとに走る周の数（1＝ファイナルラップの頭で作業、0＝もう入れない）。gain＝取り戻せる秒、loss＝失う秒
 const tyreWet=()=>ENV.wet>.45||ENV.tr>.5; // 今の路面に合うタイヤ（true＝レイン）。ピットでは設定に関係なくこちらへ替わる
 function tyreMis(k){const o=wetMul('road',{rain:tyreWet()});return Math.min(1,wetMul('road',k)/o);} // 今のタイヤのグリップ÷合うタイヤのグリップ（1＝合っている）
-function pitPlan(k){const r0=relLine(k),rel=r0<0&&k.idx<=10?0:r0,nx=rel>PIT_A-310&&rel<0?1:0,left=LAPS-k.lap-nx; // 周が変わった直後は rel がまだ少し負なので 0 として扱う
+function pitPlan(k,m){const r0=relLine(k),rel=r0<0&&k.idx<=10?0:r0,nx=rel>PIT_A-310&&rel<0?1:0,left=LAPS-k.lap-nx; // 周が変わった直後は rel がまだ少し負なので 0 として扱う
   const run=Math.max(.5,k.lap-1+(rel<0?rel+L:rel)/L-(k.pLap0||0)),gw=!wearMode?0:run<1.5?WPL*wearK():Math.min(.5,k.wear/run); /* T47 前のピットからの摩耗の速さ（走り始めは目安） */
   const w0=Math.min(1,k.wear+gw*((rel<0?-rel:L-rel)/L+nx));let gain=0;
   for(let j=1;j<=Math.min(left,12);j++)gain+=lapLossK(Math.min(1,w0+gw*(j-.5)),k.dmg)-lapLossK(Math.min(1,gw*(j-.5)),0)+PWG*(1/tyreMis(k)-1);
-  gain*=k.best||60;const ad=Math.max(0,Math.min(FCAP,fuelNeed(left,k.fplB))-k.fuel),loss=PITL-PIT_STOP+Math.max(PTY,ad>.5?FCON+ad/FRATE:0)+(dmgMode?k.dmg*7:0); /* T47 給油の時間も */return{left,gain,loss,ok:left>=1&&gain>loss*PITM};}
+  gain*=k.best||60;const ad=Math.max(0,Math.min(FCAP,fuelNeed(left,k.fplB))-k.fuel),loss=PITL-PIT_STOP+Math.max(PTY,ad>.5?FCON+ad/FRATE:0)+(dmgMode?k.dmg*7:0); /* T47 給油の時間も */return{left,gain,loss,ok:left>=1&&gain>loss*PITM*(m||1)};}
 // T47 作戦：ピットの回数 n ごとに、ピットの損・タイヤの落ち・燃料の重さの合計を見積もり、いちばん小さい n を選ぶ（CPU はレース前だけ、差 2.5秒以内からくじ引き。ピットでの立て直しはいちばん良いもの）。
 // 入る周（その周の終わりに入る）は等分＋CPU は ±1周。10周より短いレースは作戦を立てず（n=0）従来どおり、摩耗やダメージを見てから決める
 function stratCost(laps,n,lt,f){const s=laps/(n+1),fu=fuelNeed(s,f);if(fu>FCAP+.01)return 1e9;const wl=WPL*wearK();let c=0;
@@ -2842,9 +2842,12 @@ function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'|
   if(cpu&&FUELK&&fuelLaps(k)<1.25+(1-(lapsDoneF(k)%1))&&fuelShort(k)>0){k.fuelEm=1;if(!k.pitReq){k.pitReq=true;k.pitAuto=2;}} // T47 燃料が次の周まで持たない
   if(cpu&&!k.pitReq&&((wearMode&&k.wear>(k.plan&&k.plan.n?.8:.62))||(dmgMode&&k.dmg>.5))&&(!PWK||pitPlan(k).ok)){k.pitReq=true;k.pitAuto=1;}
   if((!k.isPlayer||autoPlay)&&!k.pitReq&&k.rain!==tyreWet()&&tyreMis(k)<.97&&pitPlan(k).ok){k.pitReq=true;k.pitAuto=1;} // 路面とタイヤが合わない（T149）
+  {const scp=SCPK&&SC.on&&SC.ph===1&&!SC.rf&&!SC.fin&&!k.wav&&LAPS-k.lap>=1,pn=k.plan&&k.plan.i<k.plan.laps.length?k.plan.laps[k.plan.i]-k.lap:99,wn=wearMode&&k.wear>.25||dmgMode&&k.dmg>.15; // T237 セーフティカー中はピットの損が小さい
+   if(scp&&cpu&&!k.pitReq&&(pn<=SCPN||wn&&pitPlan(k,SCPK).ok)){k.pitReq=true;k.pitAuto=3;}
+   if(scp&&!cpu&&!k.pitReq&&k.scpR!==SC.n&&(pn<=SCPN||wn)){k.scpR=SC.n;radio('セーフティカー中はピットの損が小さい。タイヤを替えるなら今だ','scpit',5);}}
   if(k.dt&&!k.pitReq){k.pitReq=true;k.pitAuto=0;} // T176 ドライブスルーは自動でピットを予約
   if(k.pitReq){const rel=relLine(k);if(rel>PIT_A-460&&rel<PIT_A-310){if(FCY.on&&!k.fuelEm){if(k.isPlayer&&!autoPlay)radio('FCY 中はピットの入口が閉まっている。解除を待とう','fcyp',20);return;}
-    if(PWK&&k.pitAuto===1&&!pitPlan(k).ok){k.pitReq=false;k.pitAuto=0;if(k.isPlayer)$('pitBtn').setAttribute('aria-pressed','false');return;} // 混雑で入れずに周を重ねた時など、入る直前にもう一度比べる
+    if(PWK&&(k.pitAuto===1||k.pitAuto===3&&!(SC.on&&SC.ph===1))&&!pitPlan(k).ok){k.pitReq=false;k.pitAuto=0;if(k.isPlayer)$('pitBtn').setAttribute('aria-pressed','false');return;} // 混雑で入れずに周を重ねた時など、入る直前にもう一度比べる
     if(!(PQ&&!k.isPlayer&&!k.fuelEm&&pitBusy()>=PQN)){const fin=LAPS-k.lap===1;k.pit=1;if(PBX)pitAssignBox(k);k.pitReq=false;k.pitAuto=0;if(k.isPlayer){toast(k.dt?'ドライブスルー（ピット内は自動で走る）':fin?'ファイナルラップにピットイン（ピット内は自動で走る）':'ピットイン（ピット内は自動で走る）');$('pitBtn').setAttribute('aria-pressed','false');}else telop('PIT IN',k.name+(fin?'　ファイナルラップにピットイン':'　ピットイン'));}}}}
 // T47 ピット作業：給油・タイヤ4本・修理を別々に。給油とタイヤは同時に始め、修理はそのあと。CPU は残りの周で作戦を立て直して、次のピットまでの燃料を入れる（自分は次の予定のピット＋1周分、予定がなければゴールまで。タンクに入るだけ）
 function pitStart(k){const rel=relLine(k),left=Math.max(0,LAPS-k.lap+(rel>=0?1:0)),cpu=!k.isPlayer||autoPlay;let st=left;k.fuelEm=0;
@@ -2933,13 +2936,18 @@ function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const a=aiControl(k,dt);con
    先頭が合流点（PIT_D）の SCW0〜SCW1 m 手前に来て、間にほかの車がいなければ、ピットレーンを走って本線へ出る（SC.ph＝1、SC.out）。先頭が拾われる。
    隊列：コース上ですぐ前の車（先頭はセーフティカー）に SCG m（先頭は SCL m）。追いつくまでは VP の SCCK 倍まで。戻る：残骸が片付き、隊列が詰まったら（すき間が SCQG m 未満、または SCQT 秒）「この周で戻る」。
    ピットの入口（PIT_A）でピットレーンへ入り（SC.ret）、再開。自分が追い越したら＋5秒。赤旗はその場に出す（scPlace）。
+   T237（β0.93.0）周回遅れ（実際どおりのみ、SCWV）：隊列が詰まって SCWT 秒たったら、隊列の中で自分より後ろに「1周以上先の車」がいる車（k.wav＝1）は前の車とセーフティカーを抜いてよい。
+   抜いたら k.wav＝2（隊列の後ろへ追いつくまで）、追いついたら 0。全員が済むまで「この周で戻る」にしない。
+   SC 中のピット（SCPK）：CPU はピットの損を SCPK 倍で見積もる・予定のピットが SCPN 周以内なら今入る（k.pitAuto＝3）。
+   SC のままゴール（実際どおりのみ、SCFN）：先頭がファイナルラップに入った時に戻る条件がそろっていなければ、追い越し禁止のままゴール（SC.fin）。SC は最終周の入口でピットへ（SC.ph＝2）、その後は SC のペースで。
    FCY：FCYW 秒の予告のあと 80km/h（FCYV）制限・追い越し禁止・ピットの入口は閉鎖。残骸が片付き FCYMIN 秒たったら FCYW 秒の予告で解除。FCYSC 秒たっても片付かなければセーフティカーへ */
 let scMode=1,SCV0=46,SCVK=.8,SCG=16,SCL=26,SCMIN=25,SCDK=.65,SCDV=42,SCW0=260,SCW1=450,SCCK=.85,SCQT=45,SCQG=45;
 let FCYV=22.2,FCYW=3,FCYMIN=10,FCYSC=30,FCYD=6;
-const SC={on:false,ph:1,d:0,t:0,t1:0,u:0,lp:0,inLap:false,out:false,ret:false,g:null,x:0,z:0,h:0,ahead:null,n:0,rf:0,rfD:0,rfT:0,rfn:0};
+let SCWV=1,SCWT=8,SCWK=1,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
+const SC={on:false,ph:1,d:0,t:0,t1:0,u:0,lp:0,inLap:false,out:false,ret:false,wv:0,fin:false,g:null,x:0,z:0,h:0,ahead:null,n:0,rf:0,rfD:0,rfT:0,rfn:0};
 const FCY={on:false,ph:0,t:0,n:0};
 const cau=()=>SC.on||FCY.on,SCN=['なし','短め','実際どおり'];
-function SC_reset(){SC.on=false;SC.ret=false;SC.out=false;SC.inLap=false;SC.t=0;SC.ahead=null;SC.rf=0;FCY.on=false;crashTimes.length=0;if(SC.g)SC.g.root.visible=false;for(const k of karts){k.scV=null;k.fcyC=null;k.npz=false;}NPZ.ahead=null;NPZ.owe=[];}
+function SC_reset(){SC.on=false;SC.ret=false;SC.out=false;SC.inLap=false;SC.wv=0;SC.fin=false;SC.t=0;SC.ahead=null;SC.rf=0;FCY.on=false;crashTimes.length=0;if(SC.g)SC.g.root.visible=false;for(const k of karts){k.scV=null;k.fcyC=null;k.npz=false;k.wav=0;}NPZ.ahead=null;NPZ.owe=[];}
 function scMesh(){if(SC.g)return SC.g;const g=carLod(makeKart({name:'SAFETY',color:0xdfe2e6,accent:0xff7a1a},'SC',0));
   g.lb=[0xff8a00,0x2a7bff].map((c,i)=>{const m=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2});const b=new THREE.Mesh(new THREE.BoxGeometry(.46,.12,.22),m);b.position.set(i?.25:-.25,CARS[0].roofY+.07,-.1);g.body.add(b);return m;});
   g.root.visible=false;SC.g=g;return g;}
@@ -2948,7 +2956,7 @@ function cauDeploy(){if(!scMode||SC.on)return;if(scMode===1&&!FCY.on)fcyDeploy()
 function fcyDeploy(){if(FCY.on||SC.on||sess!=='race'||state!=='race')return;FCY.on=true;FCY.ph=0;FCY.t=0;FCY.n++;SC.ahead=null;for(const k of karts)k.fcyC=null;
   telop('FCY','フルコースイエロー　まもなく 80km/h 制限','yellow');radio('FCY が出るぞ。80km/h まで落として、追い越し禁止','fcy',10);sfx('warn');}
 function scDeploy(force,inst){if(!scMode&&!force||SC.on||sess!=='race'||state!=='race')return;const rk=ranking().filter(k=>!k.dnf&&!k.finished);const ld=rk[0];if(!ld||ld.lap>=LAPS)return;
-  const fc=FCY.on;FCY.on=false;SC.on=true;SC.t=0;SC.t1=0;SC.lp=0;SC.inLap=false;SC.out=false;SC.ret=false;SC.n++;SC.ahead=null;scMesh();
+  const fc=FCY.on;FCY.on=false;SC.on=true;SC.t=0;SC.t1=0;SC.lp=0;SC.inLap=false;SC.out=false;SC.ret=false;SC.wv=0;SC.fin=false;for(const k of karts)k.wav=0;SC.n++;SC.ahead=null;scMesh();
   if(inst){scPlace(ld);return;}
   SC.ph=0;SC.u=0;SC.d=progress(ld)+((((PIT_C-40)-trkPos(ld))%L)+L)%L;scPos(); // ピット出口の手前で待つ
   telop('SAFETY CAR',(fc?'FCY からセーフティカーに切り替え':'セーフティカー出動')+'　ペースを落として追い越し禁止','yellow');radio('セーフティカーだ。ペースを落として追い越し禁止。先頭の前にピット出口から出てくる','sc',10);sfx('warn');}
@@ -2967,7 +2975,7 @@ function scPos(){const dd=((SC.d%L)+L)%L,f=dd/SP,i=Math.floor(f)%N,j=wrap(i+1),t
   SC.x=TX[i]+(TX[j]-TX[i])*t+NX[i]*l;SC.z=TZ[i]+(TZ[j]-TZ[i])*t+NZ[i]*l;SC.h=heading(i);SC.idx=i;}
 const trkPos=k=>((progress(k)%L)+L)%L;
 // 自分の追い越し：前にいた車（走っている車）を抜いたら＋5秒（セーフティカー・FCY 共通）
-function cauPass(run,nm){const p=player();if(p&&!autoPlay&&!p.dnf&&!p.finished&&!(p.pit>0)){const now=new Set(run.filter(o=>o!==p&&progress(o)>progress(p)).map(o=>o.id));
+function cauPass(run,nm){const p=player();if(p&&!autoPlay&&!p.dnf&&!p.finished&&!(p.pit>0)&&!p.wav){const now=new Set(run.filter(o=>o!==p&&progress(o)>progress(p)).map(o=>o.id));
     if(SC.ahead)for(const id of SC.ahead){if(now.has(id))continue;const o=karts.find(q=>q.id===id);if(o&&!o.dnf&&!o.finished&&!(o.pit>0)&&progress(o)<progress(p)){p.pen=(p.pen||0)+5;jLog(p,nm+'中の追い越し　＋5秒','p');telop('PENALTY',nm+'中の追い越し　＋5秒');sfx('pen');radio(nm+'中は抜いちゃだめだ。＋5秒','scpen',3);}}
     SC.ahead=now;}else SC.ahead=null;}
 function fcyStep(dt){if(!FCY.on||state!=='race'&&state!=='finished')return;FCY.t+=dt;const clr=!karts.some(k=>k.dnf&&!k.gone);
@@ -2984,28 +2992,42 @@ function scStep(dt){fcyStep(dt);
   if(SC.ret){SC.u=Math.max(PIT_V,SC.u-6*dt);SC.d+=SC.u*dt;scPos();const r=scRel();if(r>PIT_B+40&&r<100)SC.ret=false;} // ピットレーンへ戻って隠れる
   if(!SC.on)return;if(state!=='race'&&state!=='finished')return;SC.t+=dt;
   const run=karts.filter(k=>!k.dnf&&!k.finished&&!(k.pit>0));const ld=run.slice().sort((a,b)=>progress(b)-progress(a))[0];
+  if(!karts.some(k=>!k.dnf&&!k.finished)){SC.on=false;SC.fin=false;for(const k of karts){k.scV=null;k.wav=0;}return;} // T237 全員ゴールしたら終わり
+  const clr0=!karts.some(k=>k.dnf&&!k.gone);
   if(!SC.ph){ // ピット出口で待つ：先頭が来たら出る
     if(ld){while(SC.d<progress(ld)-5)SC.d+=L;const dm=SC.d+(PIT_D-(PIT_C-40))-progress(ld),lp=trkPos(ld);
       if(dm>SCW0&&dm<SCW1&&!run.some(o=>o!==ld&&((trkPos(o)-lp+L)%L)<dm+30)){SC.ph=1;SC.out=true;SC.t1=0;telop('SAFETY CAR','セーフティカーがコースへ　先頭はその後ろへ','yellow');}}
-    if(ld&&ld.lap>=LAPS){SC.on=false;for(const k of karts)k.scV=null;telop('GREEN','ファイナルラップ　セーフティカーは出ずに解除');sfx('go');return;}
+    if(ld&&ld.lap>=LAPS&&!SC.fin){if(SCFN&&scMode===2&&!clr0){SC.fin=true;telop('SAFETY CAR','ファイナルラップ　黄旗のままゴール（追い越し禁止）','yellow');radio('このまま黄旗でゴールだ。追い越しは禁止','scfin',10);} // T237 片付いていなければ黄旗のままゴール
+      else{SC.on=false;for(const k of karts){k.scV=null;k.wav=0;}telop('GREEN','ファイナルラップ　セーフティカーは出ずに解除');sfx('go');return;}}
     scPos();}
-  else{SC.t1+=dt;
-    let vt=Math.min(SCV0,VP[SC.idx||0]*SCVK);if(SC.out&&scRel()<PIT_C)vt=Math.min(vt,PIT_V);if(ld&&SC.d-progress(ld)>130)vt*=.6; // 先頭が遠い間はゆっくり走って隊列を詰める
+  else if(SC.ph===1){SC.t1+=dt;
+    let vt=Math.min(SCV0,VP[SC.idx||0]*SCVK);if(SC.out&&scRel()<PIT_C)vt=Math.min(vt,PIT_V);if(ld&&SC.d-progress(ld)>130)vt*=.6;if(SC.wv===1&&karts.some(k=>k.wav===1))vt*=SCWS; // 先頭が遠い間はゆっくり走って隊列を詰める
     if(SC.rf===1){vt=Math.min(vt,RFV,Math.sqrt(2*2.5*Math.max(0,SC.rfD-SC.d)));if(SC.rfD-SC.d<.8){SC.rf=2;SC.rfT=0;SC.u=0;telop('RED FLAG','赤旗　隊列で止まって待つ（残骸を片付け中）','red');}}
     if(SC.rf===2){vt=0;SC.u=0;SC.rfT+=dt;if(SC.rfT>RFH&&!karts.some(k=>k.dnf&&!k.gone)){SC.rf=0;SC.t=SCMIN;SC.t1=SCQT;SC.lp=Math.max(SC.lp,1);telop('RESTART','赤旗解除　セーフティカーの後ろで再開（1周後にグリーン）','yellow');radio('再開だ。セーフティカーについて行こう','rfgo',10);sfx('go');}}
     const sp0=((SC.d%L)+L)%L;SC.u+=Math.max(-6*dt,Math.min(5*dt,vt-SC.u));SC.d+=SC.u*dt;scPos();if(((SC.d%L)+L)%L<sp0)SC.lp++;}
   // それぞれの車の目標の速さ。出動を待つ間は黄旗のペース（前の車に近ければ合わせる）。コースに出たら、コース上ですぐ前の車（周回は関係なく、物理的に前）について行く
   const sp=((SC.d%L)+L)%L;let mx=0;
-  for(const k of karts){k.scV=null;if(k.dnf||k.finished||k.pit>0)continue;const me=trkPos(k);let best=1e9,au=0,isSC=false;
-    if(SC.ph){best=(sp-me+L)%L;au=SC.u;isSC=true;}
+  for(const k of karts){k.scV=null;if(k.dnf||k.finished||k.pit>0){k.wav=0;continue;}const me=trkPos(k);let best=1e9,au=0,isSC=false;
+    if(SC.ph===1){best=(sp-me+L)%L;au=SC.u;isSC=true;}
+    if(k.wav===1){if(SC.ph!==1||best>L/2){k.wav=2;}else{k.scV=Math.min(70,VP[k.idx]*SCWK);continue;}} // T237 周回遅れ：前の車とセーフティカーを抜く（抜いたら隊列の後ろへ）
     for(const o of run){if(o===k)continue;const g=(trkPos(o)-me+L)%L;if(g>0&&g<best){best=g;au=Math.max(0,o.u);isSC=false;}}
+    if(k.wav===2&&best<SCG+15)k.wav=0;
+    if(SC.ph===2&&best>L/2){k.scV=Math.min(SCV0,VP[k.idx]*SCVK);continue;} // T237 SC がピットへ入った後（SC のままゴール）は SC のペース
     if(!SC.ph){const cap=Math.min(SCDV,VP[k.idx]*SCDK);k.scV=best<60?Math.min(cap,Math.max(0,au+(best-SCG)*.5)):cap;continue;}
-    mx=Math.max(mx,best);if(best>L/2)continue;k.scV=Math.max(0,Math.min(60,au+(best-(isSC?SCL:SCG))*.5));if(best>60)k.scV=Math.min(k.scV,VP[k.idx]*SCCK);if(SC.rf&&isSC){k.rfC=Math.max(k.scV,(k.rfC??Math.max(0,k.u))-RFD*dt);k.scV=k.rfC;}else k.rfC=null;} // 隊列に追いつくまでも全開にはしない
+    if(!k.wav)mx=Math.max(mx,best);if(best>L/2)continue;k.scV=Math.max(0,Math.min(60,au+(best-(isSC?SCL:SCG))*.5));if(best>60)k.scV=Math.min(k.scV,VP[k.idx]*(k.wav?SCWK:SCCK));if(SC.rf&&isSC){k.rfC=Math.max(k.scV,(k.rfC??Math.max(0,k.u))-RFD*dt);k.scV=k.rfC;}else k.rfC=null;} // 隊列に追いつくまでも全開にはしない
   cauPass(run,'セーフティカー');
   // 戻る：残骸が片付き、隊列が詰まったら（実際どおりは先頭が1周ついて行ってから）この周で戻る。先頭がファイナルラップならすぐ
-  const clr=!karts.some(k=>k.dnf&&!k.gone),qd=mx<SCQG||SC.t1>SCQT;
-  if(SC.ph&&!SC.inLap&&!SC.rf&&(ld&&ld.lap>=LAPS||clr&&qd&&(scMode===1||SC.lp>=1&&SC.t>SCMIN))){SC.inLap=true;telop('SAFETY CAR','セーフティカーはこの周で戻る','yellow');radio('セーフティカーはこの周で戻る。再開に備えよう','scin',10);}
-  if(SC.inLap&&sp>L+PIT_A-20&&sp<L+PIT_A+20){SC.on=false;SC.ret=true;for(const k of karts)k.scV=null;telop('GREEN','セーフティカーがピットへ　コントロールラインを越えたら追い越し可');sfx('go');for(const k of karts)k.npz=!k.dnf&&!k.finished&&trkPos(k)>L/2;NPZ.ahead=null;NPZ.owe=[];}}
+  const clr=clr0,qd=mx<SCQG||SC.t1>SCQT,fin=ld&&ld.lap>=LAPS;
+  // T237 周回遅れの追い越し許可（隊列の中で、自分より後ろに1周以上先の車がいる車）
+  if(SCWV&&scMode===2&&SC.ph===1&&!SC.wv&&!SC.inLap&&!SC.rf&&!fin&&clr&&qd&&SC.t1>SCWT){const q=run.slice().sort((a,b)=>((sp-trkPos(a)+L)%L)-((sp-trkPos(b)+L)%L));let n=0;
+    q.forEach((k,i)=>{if(q.slice(i+1).some(o=>progress(o)>progress(k)+L/2)){k.wav=1;n++;}});SC.wv=n?1:2;
+    if(n){telop('SAFETY CAR','周回遅れの車は追い越してよい（前の車とセーフティカーを抜いて隊列の後ろへ）','yellow');const p=player();if(p&&p.wav&&!autoPlay)radio('周回遅れは抜いていい。前の車とセーフティカーを抜いて、隊列の後ろへ回ろう','scwv',10);}}
+  const wv=karts.some(k=>k.wav===1&&!k.dnf&&!k.finished&&!(k.pit>0)); // 全員がセーフティカーを抜いたら戻ってよい（隊列の後ろに追いつくのは待たない）if(fin&&wv)for(const k of karts)k.wav=0;
+  if(SC.ph===1&&!SC.inLap&&!SC.rf){const back=clr&&qd&&!wv&&(scMode===1||SC.lp>=1&&SC.t>SCMIN&&(!SCWV||SC.wv));
+    if(fin&&SCFN&&scMode===2&&!back){SC.inLap=true;SC.fin=true;telop('SAFETY CAR','ファイナルラップ　セーフティカーのままゴール（追い越し禁止）','yellow');radio('セーフティカーのままゴールだ。追い越しは禁止','scfin',10);}
+    else if(fin||back){SC.inLap=true;telop('SAFETY CAR','セーフティカーはこの周で戻る','yellow');radio('セーフティカーはこの周で戻る。再開に備えよう','scin',10);}}
+  if(SC.fin&&SC.ph===1&&SC.inLap&&sp>L+PIT_A-20&&sp<L+PIT_A+20){SC.ph=2;SC.ret=true;SC.inLap=false;} // T237 SC のままゴール：SC はピットへ、追い越し禁止のまま
+  if(SC.inLap&&sp>L+PIT_A-20&&sp<L+PIT_A+20){SC.on=false;SC.ret=true;for(const k of karts){k.scV=null;k.wav=0;}telop('GREEN','セーフティカーがピットへ　コントロールラインを越えたら追い越し可');sfx('go');for(const k of karts)k.npz=!k.dnf&&!k.finished&&trkPos(k)>L/2;NPZ.ahead=null;NPZ.owe=[];}}
 function scCap(k,pc){if(!cau()||k.scV==null||autoPlay)return pc;if((SC.rf||FCY.on)&&k.u>k.scV+3)return {...pc,accel:false,brake:true,brk:Math.min(1,(k.u-k.scV)/10)};return k.u>k.scV+1.5?{...pc,accel:false}:pc;}
 /* ===== T165 ピットレーンの速度制限：ピットレーンの線（PIT_B）で 80km/h＋PIT_TOL を超えていたら＋5秒。pitMan＝1 なら、線までのブレーキは自分で（線を越えたらリミッターで自動） */
 let pitMan=0,PIT_TOL=2.2;
@@ -3166,7 +3188,7 @@ function syncVisuals(dt){
     else{k.prevWheel=null;if(near&&(surf==='gravel'||surf==='grass')&&Math.abs(k.u)>8&&Math.random()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
   }
   {const f=startGrp.userData.chq;if(f){f.visible=sess==='race'&&finishOrder.length>0&&(state==='race'||state==='finished'||state==='replay');if(f.visible)f.rotation.z=Math.sin(clockT*9)*.7;}} // T178③ チェッカーを振る
-  {const g=SC.g;if(g){g.root.visible=(SC.on||SC.ret)&&state!=='replay';if(g.root.visible){g.root.position.set(SC.x,0,SC.z);g.root.rotation.y=SC.h;const on=Math.floor(clockT*6)%2;g.lb[0].emissiveIntensity=on?3:.15;g.lb[1].emissiveIntensity=on?.15:3;for(const w of g.wheels)w.spin.rotation.x+=SC.u/w.r*dt;}}} // T157
+  {const g=SC.g;if(g){g.root.visible=(SC.on&&SC.ph!==2||SC.ret)&&state!=='replay';if(g.root.visible){g.root.position.set(SC.x,0,SC.z);g.root.rotation.y=SC.h;const on=Math.floor(clockT*6)%2;g.lb[0].emissiveIntensity=on?3:.15;g.lb[1].emissiveIntensity=on?.15:3;for(const w of g.wheels)w.spin.rotation.x+=SC.u/w.r*dt;}}} // T157
   stepSmoke(dt);stepSparks(dt);debStep(dt);crowdStep(dt);crewStep();
 }
 // T178④ 観客の盛り上がり CRW.ex（0〜1、毎秒0.3ずつ冷める）：スタート（ライトアウト）・観客席の前後130mでの追い抜き・ゴール（チェッカー）で上がり、
@@ -3444,7 +3466,7 @@ let mmT;
  const[sx,sy]=mmT(TX[0],TZ[0]);g.fillStyle='#e8342a';g.fillRect(sx-9,sy-3,18,6);}
 function drawMinimap(){mctx.clearRect(0,0,340,340);mctx.drawImage(mmBase,0,0);
   for(const k of karts){if(k.gone)continue;const[x,y]=mmT(k.x,k.z);mctx.beginPath();mctx.arc(x,y,k.isPlayer?10:7,0,Math.PI*2);mctx.fillStyle='#'+k.dr.color.toString(16).padStart(6,'0');mctx.fill();mctx.lineWidth=k.isPlayer?4:3;mctx.strokeStyle=k.isPlayer?'#fffaf0':'#0d1030';mctx.stroke();}
-  if(SC.on||SC.ret){const[x,y]=mmT(SC.x,SC.z);mctx.fillStyle='#ffb000';mctx.strokeStyle='#111';mctx.lineWidth=3;mctx.fillRect(x-8,y-8,16,16);mctx.strokeRect(x-8,y-8,16,16);}}
+  if(SC.on&&SC.ph!==2||SC.ret){const[x,y]=mmT(SC.x,SC.z);mctx.fillStyle='#ffb000';mctx.strokeStyle='#111';mctx.lineWidth=3;mctx.fillRect(x-8,y-8,16,16);mctx.strokeRect(x-8,y-8,16,16);}}
 function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60),c=Math.floor((t*100)%100);return `${m}'${String(s).padStart(2,'0')}"${String(c).padStart(2,'0')}`;}
 let lastHud=0,towerT=0;
 // T223 順位表のIPの印：点数（2点から黒白旗の色）、加算されたペナルティ秒、ドライブスルー待ちは DT
