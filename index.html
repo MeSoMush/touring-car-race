@@ -78,7 +78,7 @@ body.touch #tower{display:none}
 .note{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.5}.note:empty{display:none}.note b{color:var(--paper)}
 tr.hd td{font-family:var(--dot);color:var(--muted);font-size:13px}
 td.b{color:var(--muted)}
-.spot{position:absolute;top:30%;height:34%;width:clamp(10px,1.6vw,18px);opacity:0;transition:opacity .15s;pointer-events:none;z-index:2}#spotL{left:0;background:linear-gradient(90deg,rgba(255,150,20,.95),rgba(255,150,20,0))}#spotR{right:0;background:linear-gradient(270deg,rgba(255,150,20,.95),rgba(255,150,20,0))}.spot.on{opacity:1}.spot.near{background-color:transparent;filter:saturate(1.4) hue-rotate(-25deg)}body.replay .spot,body.hudmin .spot{display:none} /* T128② スポッター */
+.spot{position:absolute;top:30%;height:34%;width:clamp(10px,1.6vw,18px);opacity:0;transition:opacity .15s;pointer-events:none;z-index:2}#spotL{left:0;background:linear-gradient(90deg,rgba(255,150,20,.95),rgba(255,150,20,0))}#spotR{right:0;background:linear-gradient(270deg,rgba(255,150,20,.95),rgba(255,150,20,0))}.spot.on{opacity:1}.spot.near{background-color:transparent;filter:saturate(1.4) hue-rotate(-25deg)}body.replay .spot,body.hudmin .spot{display:none}#prsEdge{position:absolute;left:0;right:0;bottom:0;height:18%;pointer-events:none;background:linear-gradient(0deg,rgba(255,60,40,.6),rgba(255,60,40,0));opacity:0;transition:opacity .3s;z-index:1}body.replay #prsEdge,body.hudmin #prsEdge,body.photo #prsEdge{display:none} /* T246③ 迫られている */ /* T128② スポッター */
 #slights{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 92px);transform:translateX(-50%);display:flex;gap:clamp(5px,1.1vw,12px);padding:clamp(5px,.9vw,9px);background:#0d0e11;border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.5);pointer-events:none;z-index:3}#slights[hidden]{display:none}#slights i{display:grid;gap:clamp(4px,.7vw,7px);padding:clamp(3px,.5vw,5px);background:#1c1d22;border-radius:4px}#slights b{width:clamp(15px,2.8vw,28px);aspect-ratio:1;border-radius:50%;background:#3a0a07;box-shadow:inset 0 0 0 2px #000}#slights i.on b{background:radial-gradient(circle at 40% 35%,#ffb4a4,#ff2a12 45%,#a80d00);box-shadow:0 0 14px 3px rgba(255,40,20,.65)} /* T178③ */
 #banner{position:absolute;left:0;right:0;top:32%;text-align:center;font-family:var(--num);font-weight:800;font-style:italic;font-size:clamp(56px,13vw,140px);letter-spacing:.02em;color:var(--paper);transform-origin:center}
 #banner.pop{animation:pop .5s ease-out}
@@ -510,7 +510,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
   <div id="rpInfo" hidden><b>REPLAY</b><span id="rpName"></span></div>
   <div id="rpBar" hidden><button class="mini" id="rpPrev" data-key="←" type="button">◀ 前の車</button><button class="mini" id="rpNext" data-key="→" type="button">次の車 ▶</button><button class="mini" id="rpCam" data-key="C" type="button">視点 中継</button><button class="mini" id="rpSpd" data-key="Space" type="button">倍速 ×1</button><button class="mini" id="rpEnd" data-key="Esc" type="button">リプレイ終了</button></div>
   <div id="corner"><button class="mini" id="mnBtn" type="button" aria-expanded="false">メニュー</button><button class="mini" id="fsBtn" type="button">全画面</button><button class="mini" id="hudBtn" type="button" aria-pressed="false">表示を減らす</button><button class="mini" id="cpBtn" data-key="Esc" type="button">ポーズ</button><button class="mini" id="ctBtn" type="button">タイトルへ</button></div>
-  <div id="spotL" class="spot" aria-hidden="true"></div><div id="spotR" class="spot" aria-hidden="true"></div>
+  <div id="spotL" class="spot" aria-hidden="true"></div><div id="spotR" class="spot" aria-hidden="true"></div><div id="prsEdge" aria-hidden="true"></div>
   <div id="slights" hidden aria-hidden="true"><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i></div>
   <div id="topbtns"><button class="mini" id="rwBtn" data-key="R" type="button">巻き戻し</button><button class="mini" id="pitBtn" data-key="I" type="button" aria-pressed="false">ピット</button><button class="mini" id="fuelBtn" data-key="G" type="button" aria-pressed="false">燃料 標準</button><button class="mini" id="lineBtn" data-key="L" type="button" aria-pressed="true">ライン ON</button><button class="mini" id="camBtn" data-key="C" type="button">視点 後方</button><button class="mini" id="mirBtn" data-key="M" type="button" aria-pressed="false">ミラー OFF</button><button class="mini" id="autoBtn" data-key="O" type="button" aria-pressed="false">オート運転 OFF</button><button class="mini" id="spdBtn" data-key="T" type="button" hidden>倍速 ×1</button><button class="mini" id="pauseBtn" data-key="Esc" type="button">ポーズ</button><button class="mini" id="muteBtn" type="button">音 ON</button><button class="mini" id="bgmBtn" data-key="B" type="button">BGM ON</button></div>
 </div>
@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.93.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.94.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -819,7 +819,7 @@ let BATT=30,OBS2=150,AGK=1,AGL=.018,AGB=.04,AGW=.5,STK=1,STD=1/400,STR=1/150,STB
 // ⑨プレッシャー k.prs（CPU）：すぐ後ろ PZD m か PZG 秒以内に車がいる間 PZT 秒で 1 まで溜まり、いなければ PZR 秒で抜ける。ミスの確率×(1＋PZE×prs×性格の pr)＋PZA×prs×pr（慎重は動じにくく、強引は崩れやすい。PZK＝0 で無効）
 // ⑩エンジンの使いすぎ k.eng（手動変速の自分の車。摩耗「あり」の時）：レブリミット（REDLINE−60 以上）でアクセルを踏み続けると EGL／秒、回転を合わせないシフトダウンで回転の差が EGJ を超えた分 1000 回転ごとに EGS 傷み、出力が EGP×eng 落ちる（ピットでは直らない。EGK＝0 で無効）
 // ⑪ピット作業のミス：タイヤを替える時、PMP の確率でナットが締まらず PMX0〜PMX0+PMX1 秒遅れる（PMK＝0 で無効）
-let MBK=1,MBD=3,MBA=.5,MBU=.15,MBG=.06,MBR=.08,MBT=150,DMK=1,DMS=5,DWA=.035,DAA=.05,DWK=.6,DWF=.05,DAL=.01,DAM=.08,DAR=.15,RPW=4,PZK=1,PZD=10,PZG=.6,PZT=15,PZR=8,PZE=.8,PZA=.008,EGK=1,EGL=.012,EGJ=1200,EGS=.03,EGP=.12,PMK=1,PMP=.04,PMX0=2.5,PMX1=4;
+let MBK=1,MBD=3,MBA=.5,MBU=.15,MBG=.06,MBR=.08,MBT=150,DMK=1,DMS=5,DWA=.035,DAA=.05,DWK=.6,DWF=.05,DAL=.01,DAM=.08,DAR=.15,RPW=4,PZK=1,PZP=1,PZD=10,PZG=.6,PZT=15,PZR=8,PZE=.8,PZA=.008,EGK=1,EGL=.012,EGJ=1200,EGS=.03,EGP=.12,PMK=1,PMP=.04,PMX0=2.5,PMX1=4;
 const prOf=k=>TRAITS[k.dr?.tr??2].pr??1;
 const agOf=k=>AGK&&!k.isPlayer&&sess==='race'&&k.dr?(TRAITS[k.dr.tr??2].ag||0):0;
 // マイカラー（T53）：-1＝チームの色。num 0＝チームの番号
@@ -1714,6 +1714,9 @@ const SETD=[{n:'オープン',lo:1},{n:'1.5way',lo:0},{n:'2way',lo:0,dw:1}];let 
 // T184 ブレーキの熱：強く踏むほど・重い車ほど熱くなり、走行風で冷える。BFT℃を超えると BFR℃かけて最大 BFD 割ききが落ちる（フェード）。冷却ダクト（SETBC）は大きいほど冷えるが空気抵抗が増える
 const SETBC=[{n:'小さめ',k:.65,cdm:.99},{n:'標準',k:1,cdm:1},{n:'大きめ',k:1.4,cdm:1.012}];// T183 タイヤの温度（℃）：TTK＝1で有効。スタートは TTS（予選・タイムアタックは TTQ、ピットで替えたタイヤは TTP）。横G・滑り・ブレーキで温まり、走行風と雨で冷える。ちょうど良い温度（スリック 80〜105、レイン 35〜65）より冷たいと最大 TKC、熱すぎると最大 TKH グリップが落ち、熱いと早く減る
 let TTK=1,TTS=45,TTQ=72,TTP=55,TTH=1.9,TTSL=.4,TTB=.8,TC0=.004,TC1=.0006,TKC=.08,TKH=.08;
+// T83（β0.94.0）タイヤの温め方：セーフティカー・FCY 中、CPU は直線（先 WVL m にコーナーなし）でタイヤがちょうど良い温度より WVM ℃以上冷たい間、左右に振る（振れ幅 WVA m、周期 WVP 秒）。WVK＝0 で無効
+// 雨の日の立ち上がり：濡れた路面では、自動の変速は低いギア（WSG 速まで）を WSU 回転早く上げる（1段高いギアで力を抑えてホイールスピンを防ぐ）。WSU＝0 で無効
+let WVK=1,WVA=2.2,WVP=1.8,WVL=45,WVM=5,WVG=.3,WVH=2.2,WSU=1800,WSG=3;
 // T185 雨のライン：RWG＝濡れた路面ではラバー（ゴムの乗ったライン）がこの割合まで滑る、RWW＝雨でラバーが流れる速さ、WLW＝CPU が雨の日にラインを外へずらす量(m)、LDRY＝雨がやんだ後にライン上が先に乾く割合
 let RWG=.1,RWW=.006,WLW=2.2,LDRY=.45;
 let BHK=.13,BC0=.012,BC1=.0011,BFT=600,BFR=200,BFD=.2,WMK=1.5,TBE=1.5;
@@ -2157,7 +2160,7 @@ function stepKart(k,dt,ctl){
   let gtv=TOPG,vrefD=k.u;if(EBK&&!k.manual&&k.u>6){let vref=k.u;for(let j=0;j<=100;j+=4){const v=VC[wrap(k.idx+j)];if(v<vref)vref=v;}
     vrefD=vref;gtv=0;for(let g=TOPG;g>0;g--){if(vref*RATIO[g]*K>=SHIFT_BK){gtv=g;break;}}}
   // 次のコーナーでまた落とすことになるギアには上げない（複合コーナーで上げ下げを繰り返さない）。回転が REDLINE 近くまで来たら上げる
-  if(k.rpm>SHIFT_UP&&k.gear<TOPG&&k.shiftT<=0&&!k.manual&&(k.gear+1<=gtv||k.rpm>REDLINE-150)){k.gear++;k.shiftT=.14;if(k.isPlayer&&ctl.accel){sfx('shift');camKick=.3;}}
+  if(k.rpm>(WSU&&k.gear<WSG&&ENV.wet>.2?SHIFT_UP-WSU*Math.min(1,(ENV.wet-.2)/.5):SHIFT_UP)&&k.gear<TOPG&&k.shiftT<=0&&!k.manual&&(k.gear+1<=gtv||k.rpm>REDLINE-150)){k.gear++;k.shiftT=.14;if(k.isPlayer&&ctl.accel){sfx('shift');camKick=.3;}}
   else if(k.rpm<SHIFT_DN&&k.gear>0&&!k.manual){k.gear--;}
   // ブレーキ・アクセルオフ中は、ひとつ下のギアでも回転が上がりすぎなければ先に落とす（エンジンブレーキ、出口で力のある回転域に備える）
   // 回転が SHIFT_BK まで下がってきた時だけ、1段ずつ DSCD 秒あけて落とす（一瞬抜いただけで連続して落ちない。落とした後は力のある回転域に入る）
@@ -2239,6 +2242,8 @@ function stepKart(k,dt,ctl){
    // T184 ブレーキの温度 tb（℃）：ブレーキの仕事率（減速×速さ×重さ）で上がり、走行風（速さ）と冷却ダクト（bck）で冷える。雨で冷えやすい。BFT を超えるとききが落ちる（bfK）
    // T183 タイヤの温度：横G（の2乗）・滑り・ブレーキで温まり、速さ（走行風）と雨で冷える。ピットの停車中は少し冷える
    if(k.tt==null)k.tt=TTS;{const sp=Math.abs(k.u),Ta=25-8*(ENV.wet||0),ayg=Math.min(1.6,Math.abs(k.ay||0)/G),sl=Math.max(0,Math.max(sF,sR)-.04);
+    {const ay=k.ay||0;if(Math.abs(ay)>WVG*G&&Math.sign(ay)!==k.wvS){k.wvS=Math.sign(ay);k.wvT=raceTime;}} // T83 セーフティカー・FCY 中に左右へ切り返している間（横G WVG 以上で向きが変わってから WVP 秒以内）は、タイヤが WVH ℃/秒 温まる（ちょうど良い温度の下の端まで）
+    if(WVH&&cau()&&raceTime-(k.wvT??-99)<WVP&&k.tt<ttWin(k)[0])k.tt+=WVH*dt;
     k.tt+=(TTH*ayg*ayg*Math.min(1,sp/25)*(1+DAT*(k.dirty||0)+AGW*agOf(k))+TTSL*sl*sp+TTB*(Fb/G)*Math.min(1,sp/20)+(ws?4:0)-(k.tt-Ta)*(TC0+TC1*sp)*(1+(ENV.wet||0))*(pc?2:1))*dt;k.tt=Math.max(Ta,Math.min(150,k.tt));k.ttK=ttGrip(k);}
    // T186 C2 燃料：アクセルと回転で減り（FBR kg/秒が全開・8000回転）、減った分だけ車が軽くなる（k.fm＝FREF kg の時の重さとの比。重さはエンジンの力・空気抵抗・ブレーキ・グリップに効く）
    if(FUELK&&k.fuel!=null){if(sess==='race'&&state==='race'){const b=FBR*(.08+thr*(.25+.75*Math.min(1.1,k.rpm/8000)))*dt;k.fuel=Math.max(0,k.fuel-b*FMF[k.fmode??1]);k.fbN=(k.fbN||0)+b;} // T47 燃料モードで減りが変わる。k.fbN＝この周の減り（標準に換算）
@@ -2581,7 +2586,9 @@ function aiControl(k,dt){
   k.lane+=dlane;
   // T185 雨の日のライン：濡れたラバーは滑るので、コーナーではゴムの乗った帯を車1台分ほど外す（雨がやんで乾いていく間はラインへ戻る）
   {const wl=WLW>0&&ENV.rain>=.15&&CORNER[t]?Math.max(0,Math.min(1,(ENV.wet-.3)/.4))*Math.min(1,RUB[t]/.25):0;const tg=wl*WLW*(OUTS[t]||1);k.wo=(k.wo||0)+(tg-(k.wo||0))*Math.min(1,dt*.8);}
-  const lane=Math.max(-W+2.2,Math.min(W-2.2,IL[t]+k.lane+(k.wo||0)));
+  {let wt=0;if(WVK&&TTK&&cau()&&k.scV!=null&&!k.wav&&!k.pit&&sess==='race'&&u>12&&k.tt!=null&&k.tt<ttWin(k)[0]-WVM){let st=!CORNER[k.idx];for(let j=4;st&&j<=Math.round(WVL/SP);j+=4)if(CORNER[wrap(k.idx+j)])st=false; // T83 タイヤを左右に振って温める
+    if(st){k.wph=(k.wph??Math.random()*6.28)+dt*6.283/WVP;wt=WVA*Math.sin(k.wph);}}k.wvo=(k.wvo||0)+(wt-(k.wvo||0))*Math.min(1,dt*2);}
+  const lane=Math.max(-W+2.2,Math.min(W-2.2,IL[t]+k.lane+(k.wo||0)+(k.wvo||0)));
   let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h);
   const dist=Math.max(4,Math.hypot(tx-k.x,tz-k.z));
@@ -2730,6 +2737,10 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(sess!=='race
   // T234⑨ プレッシャー（CPU）：0.25秒ごとに、すぐ後ろ PZD m 以内に車がいるか
   if(PZK&&!k.isPlayer&&!k.finished&&!k.dnf){k.prT=(k.prT||0)-dt;if(k.prT<=0){k.prT=.25;let b=0;if(!k.pit&&k.u>15&&!cau()&&!(ROLL.on&&!ROLL.green)){const pk=progress(k);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit||o.finished)continue;const g=pk-progress(o);if(g>0&&g<Math.max(PZD,k.u*PZG)){b=1;break;}}}k.prB=b;}
     k.prs=k.prB?Math.min(1,(k.prs||0)+dt/PZT):Math.max(0,(k.prs||0)-dt/PZR);}
+  if(PZP&&k.isPlayer&&!autoPlay&&sess==='race'&&!k.finished&&!k.dnf){k.pqT=(k.pqT||0)-dt;if(k.pqT<=0){k.pqT=.25;let b=0;if(!k.pit&&k.u>15&&!cau()&&!(ROLL.on&&!ROLL.green)){const pk=progress(k);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit||o.finished)continue;const g=pk-progress(o);if(g>0&&g<Math.max(PZD,k.u*PZG)){b=1;break;}}}k.pqB=b;} // T246③ 自分が迫られている（CPU のプレッシャーと同じ数え方。自分の腕前には効かない）
+    k.pq=k.pqB?Math.min(1,(k.pq||0)+dt/PZT):Math.max(0,(k.pq||0)-dt/PZR);if(k.pq>.5&&!k.pqR){k.pqR=1;radio('後ろにぴったりつかれている。焦らず、ブレーキは早めに','prs',30);}else if(k.pq<.15)k.pqR=0;}
+  else if(k.isPlayer)k.pq=0;
+  if(WVK&&TTK&&k.isPlayer&&!autoPlay&&cau()&&!k.pit&&k.tt!=null&&k.tt<ttWin(k)[0]-20)radio('タイヤが冷えてきた。直線で左右に振って温めておこう','ttw',45); // T83
   // T234⑦ マーブル：コーナーでラインの外を走るとタイヤにゴムかすが付く
   if(MBK&&wearMode>0&&!k.finished&&!k.dnf){const off=Math.abs(k.lat-IL[k.idx])-MBD,run=k.u>12&&!k.pit&&k.surf==='road'&&ENV.wet<.3&&!cau()&&!(ROLL.on&&!ROLL.green);
     if(run&&off>0&&CORNER[k.idx]){const m0=k.mbl||0;k.mbl=Math.min(1,m0+dt*MBA*Math.min(1,off/2)*Math.min(1,RUB[k.idx]/MBU)*Math.min(1,Math.max(0,raceTime-raceT0)/MBT));if(k.isPlayer&&m0<.5&&k.mbl>=.5)radio('ラインの外でタイヤにゴムかすを拾った。数コーナーはグリップが落ちる','mbl',60);}
@@ -2808,16 +2819,16 @@ function dmgHit(k,v){if(!dmgMode||sess!=='race'||state!=='race')return;if(v>3)k.
 // ピットに入るか：CPU・オートは摩耗かダメージで判断、自分はIキーで予約
 // T145：ピットの損得。ピットで失う時間（PITL 秒＋修理）と、残りの周で取り戻せる時間（今のタイヤ・傷みのまま走る場合との差）を比べる。
 // PWK＝1で有効（0 で従来＝しきい値だけ）、PITL＝ピット1回の損(秒)、PITM＝入るのに要る余裕の倍率、PWG・PWP＝グリップ・出力の低下が周回タイムに効く割合（測定から）
-let PWK=1,PITL=12,PITM=1.15,PWG=.72,PWP=.12;
+let PWK=1,PITL=12,PITM=1.15,PWG=.72,PWP=.12,DLW=.007,DLA=.0145; // T246② DLW・DLA＝ウイング・アライメントの傷み（全損）で1周が遅くなる割合（測定 +0.43秒・+0.9秒／62.5秒）
 function lapLossK(w,d){const g=(1-.22*Math.pow(w,1.3))*(dmgMode===2?1-DMGG*d:1),p=dmgMode===2?1-DMGP*d:1;return PWG*(1/g-1)+PWP*(1/p-1);}
 // left＝ピット作業のあとに走る周の数（1＝ファイナルラップの頭で作業、0＝もう入れない）。gain＝取り戻せる秒、loss＝失う秒
 const tyreWet=()=>ENV.wet>.45||ENV.tr>.5; // 今の路面に合うタイヤ（true＝レイン）。ピットでは設定に関係なくこちらへ替わる
 function tyreMis(k){const o=wetMul('road',{rain:tyreWet()});return Math.min(1,wetMul('road',k)/o);} // 今のタイヤのグリップ÷合うタイヤのグリップ（1＝合っている）
 function pitPlan(k,m){const r0=relLine(k),rel=r0<0&&k.idx<=10?0:r0,nx=rel>PIT_A-310&&rel<0?1:0,left=LAPS-k.lap-nx; // 周が変わった直後は rel がまだ少し負なので 0 として扱う
   const run=Math.max(.5,k.lap-1+(rel<0?rel+L:rel)/L-(k.pLap0||0)),gw=!wearMode?0:run<1.5?WPL*wearK():Math.min(.5,k.wear/run); /* T47 前のピットからの摩耗の速さ（走り始めは目安） */
-  const w0=Math.min(1,k.wear+gw*((rel<0?-rel:L-rel)/L+nx));let gain=0;
-  for(let j=1;j<=Math.min(left,12);j++)gain+=lapLossK(Math.min(1,w0+gw*(j-.5)),k.dmg)-lapLossK(Math.min(1,gw*(j-.5)),0)+PWG*(1/tyreMis(k)-1);
-  gain*=k.best||60;const ad=Math.max(0,Math.min(FCAP,fuelNeed(left,k.fplB))-k.fuel),loss=PITL-PIT_STOP+Math.max(PTY,ad>.5?FCON+ad/FRATE:0)+(dmgMode?k.dmg*7:0); /* T47 給油の時間も */return{left,gain,loss,ok:left>=1&&gain>loss*PITM*(m||1)};}
+  const w0=Math.min(1,k.wear+gw*((rel<0?-rel:L-rel)/L+nx));let gain=0;const dwa=dmgMode===2?DLW*(k.dmW||0)+DLA*Math.abs(k.dmA||0):0; // T246② ウイング・アライメントの傷みで遅くなる分（1周の割合）
+  for(let j=1;j<=Math.min(left,12);j++)gain+=lapLossK(Math.min(1,w0+gw*(j-.5)),k.dmg)-lapLossK(Math.min(1,gw*(j-.5)),0)+PWG*(1/tyreMis(k)-1)+dwa;
+  gain*=k.best||60;const ad=Math.max(0,Math.min(FCAP,fuelNeed(left,k.fplB))-k.fuel),loss=PITL-PIT_STOP+Math.max(PTY,ad>.5?FCON+ad/FRATE:0)+(dmgMode?k.dmg*7+((k.dmW||0)+Math.abs(k.dmA||0))*RPW:0); /* T47 給油の時間も。T246② 傷みの修理も */return{left,gain,loss,ok:left>=1&&gain>loss*PITM*(m||1)};}
 // T47 作戦：ピットの回数 n ごとに、ピットの損・タイヤの落ち・燃料の重さの合計を見積もり、いちばん小さい n を選ぶ（CPU はレース前だけ、差 2.5秒以内からくじ引き。ピットでの立て直しはいちばん良いもの）。
 // 入る周（その周の終わりに入る）は等分＋CPU は ±1周。10周より短いレースは作戦を立てず（n=0）従来どおり、摩耗やダメージを見てから決める
 function stratCost(laps,n,lt,f){const s=laps/(n+1),fu=fuelNeed(s,f);if(fu>FCAP+.01)return 1e9;const wl=WPL*wearK();let c=0;
@@ -3494,6 +3505,7 @@ const tn=s=>String(s).replace(/\d/g,'<span class="d">$&</span>'); // 数字を1�
 const TM={set textContent(s){H('time').innerHTML=tn(s);}};
 // T128② スポッター（実際のレースの「横にいる」の声の代わり）：すぐ横（前後 HZ×2.2 m・横 1.3〜4.6m）に車がいる側の画面の端を光らせる。ごく近い（横 2.6m 未満）は赤寄り。中継・リプレイ・0-400m では出さない。spotOn（保存キー so）
 let spotOn=1;
+let prsV=-1;
 function spotStep(p){let L=0,Rt=0;if(spotOn&&p&&!p.finished&&(state==='race'||state==='countdown')&&sess!=='drag'&&!isTV(camEff())){const fx=Math.sin(p.h),fz=Math.cos(p.h);
   for(const o of karts){if(o===p||o.gone||o.pit===2)continue;const dx=o.x-p.x,dz=o.z-p.z,fw=dx*fx+dz*fz;if(Math.abs(fw)>HZ*2.2)continue;const sd=dx*Math.cos(p.h)-dz*Math.sin(p.h),a=Math.abs(sd);if(a<1.3||a>4.6)continue;const v=a<2.6?2:1;if(sd>0)L=Math.max(L,v);else Rt=Math.max(Rt,v);}}
   const set=(id,v)=>{const e=$(id);e.classList.toggle('on',v>0);e.classList.toggle('near',v>1);};set('spotL',L);set('spotR',Rt);}
@@ -3521,7 +3533,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   // シフトランプ
   {const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP;const f=(p.rpm-5600)/(sp-5600);const n=Math.max(0,Math.min(10,Math.round(f*10)));const flash=p.rpm>sp-150&&p.gear<TOPG&&Math.floor(clockT*12)%2===0;
    [...$('leds').children].forEach((el,i)=>{el.className=flash?'b':(i<n?(i<4?'g':i<7?'y':'r'):'');});}
-  $('slip').classList.toggle('on',(p.draft||0)>.25);spotStep(p);carHud(p);drawGauge(p);drawTyre(p,.05);
+  $('slip').classList.toggle('on',(p.draft||0)>.25);spotStep(p);{const v=Math.round((p.pq||0)*10)/10*.75;if(v!==prsV){prsV=v;$('prsEdge').style.opacity=v;}}carHud(p);drawGauge(p);drawTyre(p,.05);
   drawMinimap();
 }
 /* ===== メーター（右下）：回転計の針＋速度（大）＋ギア、右に水温・油温・ブースト圧（グランツーリスモ・Forza・Assetto Corsa などの計器表現を参考にした自作） ===== */
