@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.94.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.95.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -678,7 +678,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
         <span>フォト</span><span>結果画面の「フォト」（Fキー／パッドのX）で表を消して、優勝車（1人で走るモードは自分の車）の周りをカメラがゆっくり回る。タップかキーで戻る</span>
         <span>マイカラー</span><span>GARAGEで自分の車のボディ色・差し色・ゼッケン番号を選べる（「チーム」でドライバーの元の色に戻る）</span>
         <span>性格</span><span>CPUには6種類の性格がある（クリーン・慎重・マイペース・ぐいぐい・強引・ブロッカー）。ドライバーを選ぶ画面と結果に出る。順位表の名前の横の1文字は性格の頭文字（ク・慎・マ・ぐ・強・ブ）。ブロッカーは直線で後ろから迫られると、1度だけこちらのラインへ寄って前に出させない（当ててはこない。少し外へ振ってから抜く）</span>
-        <span>ツケ</span><span>無理をした分は後で返ってくる（謎の追いつき補正はない）。ぐいぐい・強引な CPU はタイヤを滑らせ、ブレーキを遅く強く踏むので前半は速いが、タイヤ（摩耗「あり」の長いレース）とブレーキが早く傷んで後半にペースが落ちる。クリーン・慎重は前半は遅めでも最後まで落ちにくい。CPU は競り合い（すぐ前後・横に車がいる）が続くとスタミナが減ってミスが増え、一人で走ると戻る（強引・ぐいぐいは減りやすく、マイペースは減りにくい）。コーナーで前の車のすぐ後ろ（約35m以内）につくと、乱れた空気でダウンフォースが減って曲がれる速さが落ち、タイヤと水温が上がる（直線のスリップストリームとは逆。ずっと後ろにつくより、離れて仕掛け所を作る）。順位表の印：<b>タ</b>＝タイヤがきつい、<b>ブ</b>＝ブレーキが熱い、<b>熱</b>＝エンジンが熱い、<b>疲</b>＝疲れている、<b>迫</b>＝後ろから迫られ続けて焦っている（後ろにぴったりつき続けるとミスが増える。慎重は動じにくく、強引は崩れやすい）、<b>ゴ</b>＝タイヤにゴムかす（コーナーでラインから外れて走ると、外に溜まったゴムかす〔マーブル〕を拾って数コーナー滑る。抜くために外へ出るのにも損がある）、<b>傷</b>＝ウイング・アライメントの傷み（ダメージ「性能」で強く当たると、ダウンフォースが減る・片方へ流れる。ピットの修理で直る）、<b>エ</b>＝エンジンの傷み（手動変速でレブリミットに当て続ける・回転を合わせずに落とすと出力が落ちる。ピットでは直らない）（カーソルを合わせると中身。前後の車に出ると無線でも知らせる）。ピットではまれにナットが締まらず、作業が数秒遅れることがある</span>
+        <span>ツケ</span><span>無理をした分は後で返ってくる（謎の追いつき補正はない）。ぐいぐい・強引な CPU はタイヤを滑らせ、ブレーキを遅く強く踏むので前半は速いが、タイヤ（摩耗「あり」の長いレース）とブレーキが早く傷んで後半にペースが落ちる。クリーン・慎重は前半は遅めでも最後まで落ちにくい。CPU は競り合い（すぐ前後・横に車がいる）が続くとスタミナが減ってミスが増え、一人で走ると戻る（強引・ぐいぐいは減りやすく、マイペースは減りにくい）。コーナーで前の車のすぐ後ろ（約35m以内）につくと、乱れた空気でダウンフォースが減って曲がれる速さが落ち、タイヤと水温が上がる（直線のスリップストリームとは逆。ずっと後ろにつくより、離れて仕掛け所を作る）。順位表の印：<b>タ</b>＝タイヤがきつい、<b>ブ</b>＝ブレーキが熱い、<b>熱</b>＝エンジンが熱い、<b>疲</b>＝疲れている、<b>迫</b>＝後ろから迫られ続けて焦っている（後ろにぴったりつき続けるとミスが増える。慎重は動じにくく、強引は崩れやすい）、<b>ゴ</b>＝タイヤにゴムかす（コーナーでラインから外れて走ると、外に溜まったゴムかす〔マーブル〕を拾って数コーナー滑る。マーブルはコーナーの外側の黒い粒として見え、周を重ねるほど増え、雨で流れる。抜くために外へ出るのにも損がある）、<b>傷</b>＝ウイング・アライメントの傷み（ダメージ「性能」で強く当たると、ダウンフォースが減る・片方へ流れる。ピットの修理で直る）、<b>エ</b>＝エンジンの傷み（手動変速でレブリミットに当て続ける・回転を合わせずに落とすと出力が落ちる。ピットでは直らない）（カーソルを合わせると中身。前後の車に出ると無線でも知らせる）。ピットではまれにナットが締まらず、作業が数秒遅れることがある</span>
         <span>難易度</span><span>CPUの強さは入門・やさしい・ふつう・つよい・達人。弱いほど遅く、コーナーでブレーキが遅れてふくらむなどのミスが増える。達人はミスをせず、ブレーキを遅く強く踏んで、曲がる直前まで減速を残す</span>
         <span>ラバー</span><span>周回を重ねると走行ライン（理想のライン付近）にタイヤのゴムが乗って黒ずみ、グリップが最大で約3%上がる。ただし濡れるとゴムの乗った帯は逆に滑る（雨の日はコーナーでラインを車1台分ほど外すのが上手な走り方。CPU もそうする）。雨がやむとライン上から先に乾く。ゴムは雨でゆっくり流れる</span>
         <span>スリップ</span><span>前の車の真後ろにつくと空気抵抗が減って伸びる（SLIPSTREAM表示）</span>
@@ -814,7 +814,7 @@ const TRAITS=[{n:'クリーン',room:3.0,gap:1.25,yld:.8,bm:-.6,ag:-.3,sd:.9,pr:
 // ⑥ダーティエア k.dirty：前の車の DAD m 後ろまで。ダウンフォースが最大 DAK 割減り、タイヤが（1＋DAT×dirty）倍温まる。水温も上がる（DAK＝0 で無効）
 let BATT=30,OBS2=150,AGK=1,AGL=.018,AGB=.04,AGW=.5,STK=1,STD=1/400,STR=1/150,STB=22,STMIN=.25,STE=1,STA=.025,STW=1.2,STL=.012,DAK=.35,DAD=35,DAT=.5;
 // T234（β0.91.0）ツケの残り。どれも順位表の印・ポップアップ・無線で理由が分かる
-// ⑦マーブル k.mbl（全車。摩耗「あり」・乾いた路面だけ）：コーナーでライン（IL）から MBD m より外を走ると、外れた幅（2m で最大）×その所のラバーの量（RUB／MBU で頭打ち）×グリーンからの時間（MBT 秒で頭打ち＝周を重ねるほど外に溜まる）×MBA ずつタイヤにゴムかすが付き、グリップが MBG×mbl 落ちる。ラインの上では MBR ずつ、ほかでは MBR×.4 ずつ取れる（MBK＝0 で無効）
+// ⑦マーブル k.mbl（全車。摩耗「あり」・乾いた路面だけ）：コーナーでライン（IL）から MBD m より外を走ると、外れた幅（2m で最大）×その所のラバーの量（RUB／MBU で頭打ち）×グリーンからの時間（MBT 秒で頭打ち＝周を重ねるほど外に溜まる）×MBA ずつタイヤにゴムかすが付き、グリップが MBG×mbl 落ちる。ラインの上では MBR ずつ、ほかでは MBR×.4 ずつ取れる（MBK＝0 で無効）。見た目（コーナーの外の黒い粒）は「T246 ①マーブルの見た目」（rubTick の直前）
 // ⑧ダメージの中身（ダメージ「性能」）：DMS m/s を超える当たりは、半々でウイング k.dmW（ダウンフォース −DWK×dmW、前輪のグリップ −DWF×dmW＝アンダーステア）かアライメント k.dmA（−1〜1。切れ角が DAL×dmA ずれて片方へ流れ、タイヤが DAM×|dmA| 滑り、引きずる分の抵抗が DAR×|dmA| 増える）を傷める。同じ向きに傷みやすい。ピットの修理で直る（RPW 秒×傷みの分だけ長い。DMK＝0 で無効）
 // ⑨プレッシャー k.prs（CPU）：すぐ後ろ PZD m か PZG 秒以内に車がいる間 PZT 秒で 1 まで溜まり、いなければ PZR 秒で抜ける。ミスの確率×(1＋PZE×prs×性格の pr)＋PZA×prs×pr（慎重は動じにくく、強引は崩れやすい。PZK＝0 で無効）
 // ⑩エンジンの使いすぎ k.eng（手動変速の自分の車。摩耗「あり」の時）：レブリミット（REDLINE−60 以上）でアクセルを踏み続けると EGL／秒、回転を合わせないシフトダウンで回転の差が EGJ を超えた分 1000 回転ごとに EGS 傷み、出力が EGP×eng 落ちる（ピットでは直らない。EGK＝0 で無効）
@@ -1276,10 +1276,32 @@ const rubMesh=(()=>{const pos=[],col=[],idx=[];for(let i=0;i<=N;i++){const j=i%N
   const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,toneMapped:false,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,blending:THREE.CustomBlending,blendEquation:THREE.AddEquation,blendSrc:THREE.ZeroFactor,blendDst:THREE.SrcColorFactor,fog:false}));
   m.material.userData.lin=1;m.renderOrder=1;m.frustumCulled=false;scene.add(m);return m;})();
 function rubVis(){const c=rubMesh.geometry.attributes.color.array;for(let i=0;i<=N;i++){const v=1-.42*RUB[i%N];const o=i*9;c[o+3]=c[o+4]=c[o+5]=v;}rubMesh.geometry.attributes.color.needsUpdate=true;}
-function rubReset(){RUB.fill(0);rubVis();}
+function rubReset(){RUB.fill(0);rubVis();mbVis();}
 function rubStep(k){if(k.idx===k.prevIdx||k.surf!=='road'||Math.abs(k.u)<8)return;const off=Math.abs(k.lat-IL[k.idx]);if(off>2.5)return;const add=RUB_ADD*(1-off/2.5)*(1-ENV.wet);
   let i=k.prevIdx;for(let n=0;n<4&&i!==k.idx;n++){i=wrap(i+1);RUB[i]=Math.min(1,RUB[i]+add);}}
-function rubTick(dt){if(ENV.wet>.25){const f=1-dt*RWW*ENV.wet;for(let i=0;i<N;i++)RUB[i]*=f;}rubT+=dt;if(rubT>1){rubT=0;rubVis();}}
+// T246 ①マーブルの見た目（β0.95.0）：コーナーでラインから MBD m より外（タイヤにゴムかすが付く所）に黒いゴムかすの塊を置いておき、
+// その所の量 mbAt(i)（ラバーの量×グリーンからの時間。タイヤに付く量と同じ式＝コース側の量）が塊ごとのしきい値を超えたら見せる。周を重ねるほど増え、雨でラバーが流れると消える。
+// 外側に MBO の割合。きついコーナーほど早く・多く出る。塊は粒＋うすい汚れの絵を貼った板で、全部で描画1回（MBVK＝0 で無効。摩耗「なし」と 0-400m では出さない）
+let MBVK=1,MBO=.75,MBTV=300;const MBN=isTouch?1100:2400;
+const mbAt=i=>Math.min(1,RUB[i]/MBU)*Math.min(1,Math.max(0,raceTime-raceT0)/MBT);
+const mbMesh=(()=>{const t=canvasTex(128,128,(g,w,h)=>{let q=777;const r=()=>(q=(q*16807)%2147483647)/2147483647;
+    const gr=g.createRadialGradient(64,64,6,64,64,62);gr.addColorStop(0,'rgba(20,18,16,.22)');gr.addColorStop(1,'rgba(20,18,16,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);
+    for(let n=0;n<70;n++){const a=r()*6.283,d=Math.pow(r(),.7)*54,s=1.2+r()*r()*3.6;g.fillStyle='rgba(14,12,11,'+(.75+r()*.25)+')';g.beginPath();g.ellipse(64+Math.cos(a)*d,64+Math.sin(a)*d,s,s*(.6+r()*.4),r()*3,0,6.283);g.fill();}});
+  const m=new THREE.InstancedMesh(new THREE.PlaneGeometry(1.25,1.25).rotateX(-Math.PI/2),new THREE.MeshLambertMaterial({map:t,color:0x2a2622,transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3}),MBN);
+  m.renderOrder=2;m.frustumCulled=false;
+  // 置き場所：コーナーの点を半径の逆数の重みで選び、ラインから MBD+0.3 m より外〜道のふちの手前 0.5 m（ふちの方に多め。外側が MBO、残りは内側）。すき間がない所は選び直す。見せるのは mbAt×(1−e^(−グリーンからの秒/MBTV))＝3周で半分ほど、8周で8割ほど
+  const cs=[],cw=[];let tw=0;for(let i=0;i<N;i++)if(CORNER[i]){tw+=1/Math.max(40,RADL[i]||200);cs.push(i);cw.push(tw);}
+  let q=4242;const r=()=>(q=(q*16807)%2147483647)/2147483647,D=new THREE.Object3D(),zero=new THREE.Matrix4().makeScale(0,0,0);
+  const I=new Int32Array(MBN),T=new Float32Array(MBN),Mx=[];let c=0;
+  for(let tr=0;c<MBN&&tr<MBN*20&&cs.length;tr++){const x=r()*tw;let a=0,b=cs.length-1;while(a<b){const md=(a+b)>>1;if(cw[md]>=x)b=md;else a=md+1;}const i=cs[a];
+    const sd=r()<MBO?OUTS[i]:-OUTS[i],e=W-.5-sd*IL[i]-MBD-.3;if(e<.3)continue;const l=IL[i]+sd*(MBD+.3+Math.pow(r(),.6)*e);const f=r()*SP;
+    D.position.set(TX[i]+FX[i]*f+NX[i]*l,.06,TZ[i]+FZ[i]*f+NZ[i]*l);D.rotation.set(0,r()*6.283,0);const sc=.5+r()*.8;D.scale.set(sc,1,sc*(.7+r()*.6));D.updateMatrix();
+    I[c]=i;T[c]=.05+r()*.95*(1.35-.55*Math.min(1,95/Math.max(60,RADL[i]||200)));Mx.push(D.matrix.clone());m.setMatrixAt(c,zero);c++;}
+  m.count=c;m.userData={I,T,Mx,zero,on:new Uint8Array(MBN)};scene.add(m);return m;})();
+function mbVis(){const u=mbMesh.userData,en=MBVK&&MBK&&wearMode>0&&sess!=='drag',f=1-Math.exp(-Math.max(0,raceTime-raceT0)/MBTV);let ch=false;
+  for(let n=0;n<mbMesh.count;n++){const v=en&&mbAt(u.I[n])*f>u.T[n]?1:0;if(v!==u.on[n]){u.on[n]=v;mbMesh.setMatrixAt(n,v?u.Mx[n]:u.zero);ch=true;}}
+  if(ch)mbMesh.instanceMatrix.needsUpdate=true;}
+function rubTick(dt){if(ENV.wet>.25){const f=1-dt*RWW*ENV.wet;for(let i=0;i<N;i++)RUB[i]*=f;}rubT+=dt;if(rubT>1){rubT=0;rubVis();mbVis();}}
 let lnVer=-1,lnIdx=-1;const LC={g:[.05,.62,.14],y:[1,.62,0],r:[1,.05,.03]},LW_G=.25,LW_R=.62; // 走行ラインの半幅（緑・黄／赤）
 function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';apexMesh.visible=lineMesh.visible;if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const aB=G*1.25*wetMul('road',p),u=Math.max(0,p.u);
   const pp=lineMesh.geometry.attributes.position.array;
@@ -2743,7 +2765,7 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(sess!=='race
   if(WVK&&TTK&&k.isPlayer&&!autoPlay&&cau()&&!k.pit&&k.tt!=null&&k.tt<ttWin(k)[0]-20)radio('タイヤが冷えてきた。直線で左右に振って温めておこう','ttw',45); // T83
   // T234⑦ マーブル：コーナーでラインの外を走るとタイヤにゴムかすが付く
   if(MBK&&wearMode>0&&!k.finished&&!k.dnf){const off=Math.abs(k.lat-IL[k.idx])-MBD,run=k.u>12&&!k.pit&&k.surf==='road'&&ENV.wet<.3&&!cau()&&!(ROLL.on&&!ROLL.green);
-    if(run&&off>0&&CORNER[k.idx]){const m0=k.mbl||0;k.mbl=Math.min(1,m0+dt*MBA*Math.min(1,off/2)*Math.min(1,RUB[k.idx]/MBU)*Math.min(1,Math.max(0,raceTime-raceT0)/MBT));if(k.isPlayer&&m0<.5&&k.mbl>=.5)radio('ラインの外でタイヤにゴムかすを拾った。数コーナーはグリップが落ちる','mbl',60);}
+    if(run&&off>0&&CORNER[k.idx]){const m0=k.mbl||0;k.mbl=Math.min(1,m0+dt*MBA*Math.min(1,off/2)*mbAt(k.idx));if(k.isPlayer&&m0<.5&&k.mbl>=.5)radio('ラインの外でタイヤにゴムかすを拾った。数コーナーはグリップが落ちる','mbl',60);}
     else if(k.mbl)k.mbl=Math.max(0,k.mbl-dt*(run&&off<=0?MBR:MBR*.4));}
   // T234⑩ エンジンの使いすぎ（手動変速）：レブリミットに当て続けると傷む
   if(EGK&&wearMode>0&&k.manual&&k.rpm>REDLINE-60&&(k.thrV||0)>.5&&!k.finished)k.eng=Math.min(1,(k.eng||0)+dt*EGL);
@@ -4287,7 +4309,7 @@ function showDrag(){state='results';resultCamStart();$('replayBtn').hidden=rpBuf
 
 /* ================= ループ ================= */
 /* ================= タイトル画面（デモ走行・ガレージ・メニュー） ================= */
-const TIPS=['GARAGE の「おすすめ」タブで、レースの内容と選手に合う車種とセッティングを理由つきで出せる。「この設定にする」でそろう','ぐいぐい・強引な CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時','コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい','後ろにぴったりつき続けると、前の CPU は焦ってミスが増える（順位表の「迫」）。強引な性格ほど崩れやすい','抜くためにラインの外を走ると、ゴムかす（マーブル）を拾って数コーナー滑る。外から並ぶのは出口までに','手動変速でレブリミットに当て続けたり、回転を合わせずに落とすとエンジンが傷む。ピットでは直らない','ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ','GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','ブレーキは最初にしっかり踏んで、曲がり始めに向けてだんだん抜く。練習表示の棒グラフで踏み方が見える','後輪駆動は頂点を過ぎたらアクセルで後ろを少し流して向きを変えられる。開けすぎるとスピン','コーナーの内側と出口の赤白の縁石は乗ってよい。黄と黒の高い縁石と、雨の日の縁石は避ける','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート。抜いていいのは自分がスタートラインを越えてから','大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
+const TIPS=['GARAGE の「おすすめ」タブで、レースの内容と選手に合う車種とセッティングを理由つきで出せる。「この設定にする」でそろう','ぐいぐい・強引な CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時','コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい','後ろにぴったりつき続けると、前の CPU は焦ってミスが増える（順位表の「迫」）。強引な性格ほど崩れやすい','コーナーの外側の黒い粒はゴムかす（マーブル）。周を重ねるほど増え、上を走ると数コーナー滑る。外から並ぶのは出口までに','手動変速でレブリミットに当て続けたり、回転を合わせずに落とすとエンジンが傷む。ピットでは直らない','ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ','GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま','ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる','ブレーキは最初にしっかり踏んで、曲がり始めに向けてだんだん抜く。練習表示の棒グラフで踏み方が見える','後輪駆動は頂点を過ぎたらアクセルで後ろを少し流して向きを変えられる。開けすぎるとスピン','コーナーの内側と出口の赤白の縁石は乗ってよい。黄と黒の高い縁石と、雨の日の縁石は避ける','燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる','長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる','きついコーナーの内側の奥の黄と黒の高い縁石は、乗ると跳ねる。インを切りすぎない','GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート。抜いていいのは自分がスタートラインを越えてから','大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒','GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる','混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう','CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意','逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）','曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる','下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる','周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる','0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる','スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで','GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる','結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる','結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる','CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい','0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負','ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安','前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる','走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ','白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒','ミスしたら Rキーで5秒巻き戻し。使った回数は結果に残る','黄旗＝この先に止まった車がいる。減速して慎重に','スタート位置を「予選で決める」にすると、ポールを狙える','タイムアタックのゴーストは、エンジンごとにベストラップを保存','リプレイは結果画面から。中継カメラで見返せる','アシストを「なし」にすると、ABSもトラクション制御も自分で行う'];
 let titleMode='attract',attT=0,attNeed=true,garT=0,tipT=0,tipI=0,tStage=0,setupOpen=false;
 const tScr=$('titleScreen');
 function attractSetup(){sess='race';LAPS=999;ROLL.on=false;raceT0=0;SC_reset();document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;tvFoc=null;DIR.last='';}
