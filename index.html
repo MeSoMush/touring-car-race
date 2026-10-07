@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.91.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.92.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -983,11 +983,15 @@ function terrBank(){TBANK.length=0;if(!TBNK)return;const runs=[],KL0=1/190;let s
 terrBank();terrGLSL();
 const SAUS=new Uint8Array(N);let SAUK=1,SAUG=.55,SAUW0=.75,SAUW1=2.4,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
 // T206 ピットレーン（線からの距離 m。負＝線の手前）：実際のサーキットのように最終コーナーの内側（PIT_A）で分かれ、PIT_B（80km/h の線）から先はピットウォールの内側。
-// ボックスは線をまたいで並び（PIT_BX から 6.5m おき）、PIT_C（80km/h の線）を過ぎて PIT_D で本線に合流。PIT_LF＝ピットレーンの通り道、PIT_LB＝ボックス、PIT_EL＝分かれる・合流する時の本線側の位置、PWL＝ピットウォールの中心
-const PIT_A=-140,PIT_B=-90,PIT_C=70,PIT_D=130,PIT_BX=-28,PIT_V=22.2,PIT_LF=W+2.3,PIT_LB=W+5.0,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
+// ボックスは線をまたいで並び（PIT_BX から PBS＝7.5m おき。β0.92.0 T244 で 6.5→7.5）、PIT_C（80km/h の線）を過ぎて PIT_D で本線に合流。PIT_LF＝ピットレーンの通り道、PIT_LB＝ボックス、PIT_EL＝分かれる・合流する時の本線側の位置、PWL＝ピットウォールの中心
+const PIT_A=-140,PIT_B=-90,PIT_C=70,PIT_D=130,PIT_BX=-28,PIT_V=22.2,PIT_LF=W+3.3,PIT_LB=W+6.3,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
 const relOfI=i=>{const r=i*SP;return r>L/2?r-L:r;};
 let PS=-1;const PITZ=new Uint8Array(N),PWALL=new Uint8Array(N);for(let i=0;i<N;i++){const r=relOfI(i);PITZ[i]=(r>=PIT_A-5&&r<=PIT_D+10)?1:0;PWALL[i]=(r>=PIT_B+8&&r<=PIT_C-8)?1:0;}
-function surfaceAt(i,lat){const a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=WALL+1)return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return'gravel';return'grass';}
+// T244（β0.92.0）ピットレーンを外へ PEX m 広げる（壁・ガードレール・舗装・当たり）。PWX[i]＝その点のピット側の壁の外へのずれ（両端 30m でなめらかに）。PS（ピットの側）はここで決める（壁を作る前に要る）
+const PEX=2.5,PBS=7.5,PWX=new Float32Array(N);{const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};for(let i=0;i<N;i++){if(!PITZ[i])continue;const r=relOfI(i);PWX[i]=PEX*sm((r-(PIT_A-5))/30)*(1-sm((r-(PIT_D-20))/30));}
+ const i0=wrap(Math.round(N*.02));let mx=0,mz=0;for(let i=0;i<N;i++){mx+=TX[i];mz+=TZ[i];}mx/=N;mz/=N;PS=((mx-TX[i0])*NX[i0]+(mz-TZ[i0])*NZ[i0])>0?1:-1;}
+const wx=(i,s)=>s*PS>0?PWX[i]:0; // s の側の壁の外へのずれ
+function surfaceAt(i,lat){const a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=WALL+1+PWX[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return'gravel';return'grass';}
 
 /* ================= Three.js ================= */
 const canvas=document.getElementById('gl');
@@ -1304,7 +1308,7 @@ function bakeStatic(){const by=new Map();scene.updateMatrixWorld(true);
 // マーシャルポスト（旗を振る台）：コース外側に約180mおき
 const POSTS=[];{const step=Math.round(180/SP);const poleM=new THREE.MeshStandardMaterial({color:0xd8dadf,roughness:.5,metalness:.3});const boothM=new THREE.MeshStandardMaterial({color:0xf2f2f2,roughness:.7});const orange=new THREE.MeshStandardMaterial({color:0xe86a1a,roughness:.6});
  const fg=new THREE.PlaneGeometry(1.1,.75);fg.translate(.55,0,0);
- for(let i=Math.round(60/SP);i<N;i+=step){const side=CORNER[i]?OUTS[i]:(POSTS.length%2?1:-1);const lat=(WALL+3.2)*side;const x=TX[i]+NX[i]*lat,z=TZ[i]+NZ[i]*lat;
+ for(let i=Math.round(60/SP);i<N;i+=step){const side=CORNER[i]?OUTS[i]:(POSTS.length%2?1:-1);const lat=(WALL+3.2+wx(i,side))*side;const x=TX[i]+NX[i]*lat,z=TZ[i]+NZ[i]*lat;
   const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading(i);
   const booth=new THREE.Mesh(new THREE.BoxGeometry(1.4,2,1.2),boothM);booth.position.y=1;booth.castShadow=SHADOWS;g.add(booth);
   const band=new THREE.Mesh(new THREE.BoxGeometry(1.42,.25,1.22),orange);band.position.y=1.7;g.add(band);
@@ -1361,23 +1365,23 @@ let lampTO=0;function setLamps(n,green){(startGrp.userData.lamps||[]).forEach((l
  for(let i=0;i<N;i++)for(const s of[-1,1]){const tireSide=CORNER[i]&&s===OUTS[i];if(tireSide){if(i%1===0)tires.push([i,s]);}else{rail.push([i,s]);if(i%2===0)post.push([i,s]);}}
  const off=WALL+1.2;const D=new THREE.Object3D();
  const rm=new THREE.InstancedMesh(new THREE.BoxGeometry(.12,.34,SP*1.02),steel,rail.length*2);let c=0;
- for(const[i,s]of rail){for(const y of[.62,.3]){if(y===.3&&false)continue;D.position.set(TX[i]+NX[i]*off*s+FX[i]*SP/2,y+.1,TZ[i]+NZ[i]*off*s+FZ[i]*SP/2);D.rotation.set(0,Math.atan2(FX[i]+FX[wrap(i+1)],FZ[i]+FZ[wrap(i+1)]),0);D.scale.set(1,y>.5?1:.6,1);D.updateMatrix();rm.setMatrixAt(c++,D.matrix);}}
+ for(const[i,s]of rail){const o=off+(wx(i,s)+wx(wrap(i+1),s))/2;for(const y of[.62,.3]){if(y===.3&&false)continue;D.position.set(TX[i]+NX[i]*o*s+FX[i]*SP/2,y+.1,TZ[i]+NZ[i]*o*s+FZ[i]*SP/2);D.rotation.set(0,Math.atan2(FX[i]+FX[wrap(i+1)],FZ[i]+FZ[wrap(i+1)]),0);D.scale.set(1,y>.5?1:.6,1);D.updateMatrix();rm.setMatrixAt(c++,D.matrix);}}
  rm.count=c;rm.castShadow=true;rm.receiveShadow=true;scene.add(rm);
  const pm=new THREE.InstancedMesh(new THREE.BoxGeometry(.14,.95,.14),postM,post.length);c=0;
- for(const[i,s]of post){D.position.set(TX[i]+NX[i]*(off+.12)*s,.47,TZ[i]+NZ[i]*(off+.12)*s);D.rotation.set(0,heading(i),0);D.scale.set(1,1,1);D.updateMatrix();pm.setMatrixAt(c++,D.matrix);}
+ for(const[i,s]of post){const o=off+.12+wx(i,s);D.position.set(TX[i]+NX[i]*o*s,.47,TZ[i]+NZ[i]*o*s);D.rotation.set(0,heading(i),0);D.scale.set(1,1,1);D.updateMatrix();pm.setMatrixAt(c++,D.matrix);}
  pm.count=c;pm.castShadow=true;scene.add(pm);
  const tt=canvasTex(128,64,(g,w,h)=>{g.fillStyle='#1b1b1d';g.fillRect(0,0,w,h);for(let k=0;k<3;k++){g.fillStyle='#29292c';g.fillRect(0,k*h/3+2,w,h/3-6);g.fillStyle='#0e0e10';g.fillRect(0,k*h/3+h/3-4,w,4);}
    for(let x=0;x<w;x+=6){g.fillStyle='rgba(255,255,255,.05)';g.fillRect(x,0,2,h);}},true);
  const tm=new THREE.MeshLambertMaterial({map:tt});
  const tg=new THREE.CylinderGeometry(.55,.55,1.35,12,1,false);
  const im=new THREE.InstancedMesh(tg,tm,tires.length*2);c=0;
- for(const[i,s]of tires){for(let r=0;r<2;r++){const o=off-.1+r*1.05;D.position.set(TX[i]+NX[i]*o*s,.675,TZ[i]+NZ[i]*o*s);D.rotation.set(0,rndS()*6,0);D.scale.set(1,1,1);D.updateMatrix();im.setMatrixAt(c++,D.matrix);}}
+ for(const[i,s]of tires){for(let r=0;r<2;r++){const o=off-.1+r*1.05+wx(i,s);D.position.set(TX[i]+NX[i]*o*s,.675,TZ[i]+NZ[i]*o*s);D.rotation.set(0,rndS()*6,0);D.scale.set(1,1,1);D.updateMatrix();im.setMatrixAt(c++,D.matrix);}}
  im.count=c;im.castShadow=true;im.receiveShadow=true;scene.add(im);
  // タイヤバリア前面のベルト（ところどころ色付き）
  const beltT=canvasTex(256,32,(g,w,h)=>{g.fillStyle='#2455b8';g.fillRect(0,0,w,h);g.fillStyle='#e8e8e8';g.font='bold 22px sans-serif';g.textBaseline='middle';for(let x=6;x<w;x+=128)g.fillText('HIGASHI',x,h/2+1);},true);
  const bpos=[],buv=[],bidx=[];let vc=0;
- for(let i=0;i<N;i++){const j=wrap(i+1);if(!(CORNER[i]&&CORNER[j]))continue;const s=OUTS[i];if(OUTS[j]!==s)continue;const o=(off-.68)*s;
-   const x0=TX[i]+NX[i]*o,z0=TZ[i]+NZ[i]*o,x1=TX[j]+NX[j]*o,z1=TZ[j]+NZ[j]*o;const v0=i*SP/10,v1=(i+1)*SP/10;
+ for(let i=0;i<N;i++){const j=wrap(i+1);if(!(CORNER[i]&&CORNER[j]))continue;const s=OUTS[i];if(OUTS[j]!==s)continue;const o=(off-.68+wx(i,s))*s,oj=(off-.68+wx(j,s))*s;
+   const x0=TX[i]+NX[i]*o,z0=TZ[i]+NZ[i]*o,x1=TX[j]+NX[j]*oj,z1=TZ[j]+NZ[j]*oj;const v0=i*SP/10,v1=(i+1)*SP/10;
    bpos.push(x0,.15,z0,x0,1.25,z0,x1,.15,z1,x1,1.25,z1);buv.push(v0,0,v0,1,v1,0,v1,1);bidx.push(vc,vc+2,vc+1,vc+1,vc+2,vc+3);vc+=4;}
  const bg=new THREE.BufferGeometry();bg.setAttribute('position',new THREE.Float32BufferAttribute(bpos,3));bg.setAttribute('uv',new THREE.Float32BufferAttribute(buv,2));bg.setIndex(bidx);bg.computeVertexNormals();
  const bm=new THREE.Mesh(bg,new THREE.MeshLambertMaterial({map:beltT,side:THREE.DoubleSide}));bm.receiveShadow=true;scene.add(bm);}
@@ -1448,7 +1452,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   // ピットは内周側（コースの重心がある側）、観客席はその反対の外周側（T82）
   let mx=0,mz=0;for(let i=0;i<N;i++){mx+=TX[i];mz+=TZ[i];}mx/=N;mz/=N;
   const inner=((mx-TX[i0])*NX[i0]+(mz-TZ[i0])*NZ[i0])>0?1:-1;const side=-inner;GS_SIDE=side;
-  const i1=wrap(Math.round((PIT_BX+22)/SP)),hd=heading(i1);/* T206 ピットビルと観客席はボックスの後ろ（線をまたぐ） */const put=(obj,lat,al)=>{obj.position.set(TX[i1]+NX[i1]*lat+FX[i1]*al,obj.position.y,TZ[i1]+NZ[i1]*lat+FZ[i1]*al);obj.rotation.y=hd;scene.add(obj);};
+  const i1=wrap(Math.round((PIT_BX+3.5*PBS)/SP)),hd=heading(i1);/* T206 ピットビルと観客席はボックスの後ろ（線をまたぐ） */const put=(obj,lat,al)=>{obj.position.set(TX[i1]+NX[i1]*lat+FX[i1]*al,obj.position.y,TZ[i1]+NZ[i1]*lat+FZ[i1]*al);obj.rotation.y=hd;scene.add(obj);};
   const len=70;const conc=new THREE.MeshStandardMaterial({color:0xa9a9a4,roughness:.9});
   const st=new THREE.Group();
   for(let r=0;r<5;r++){const step=new THREE.Mesh(new THREE.BoxGeometry(2.4,1.2,len),conc);step.position.set(-side*(r*2.4),r*1.2+.6,0);step.castShadow=true;step.receiveShadow=true;st.add(step);
@@ -1474,16 +1478,16 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   const pb=new THREE.Mesh(new THREE.BoxGeometry(10,9,len),[new THREE.MeshLambertMaterial({color:0xd8d8d4}),new THREE.MeshLambertMaterial({color:0xd8d8d4}),new THREE.MeshLambertMaterial({color:0xb8b8b4}),new THREE.MeshLambertMaterial({color:0xd8d8d4}),new THREE.MeshLambertMaterial({color:0xd8d8d4}),new THREE.MeshLambertMaterial({color:0xd8d8d4})]);
   // 窓の面を道側へ
   const winM=new THREE.MeshLambertMaterial({map:win});win.wrapS=THREE.RepeatWrapping;win.repeat.set(3,1);pb.material[side>0?1:0]=winM;
-  pb.position.y=4.5;pb.castShadow=true;pb.receiveShadow=true;const pg=new THREE.Group();pg.add(pb);put(pg,-(WALL+9)*side,0);
+  pb.position.y=4.5;pb.castShadow=true;pb.receiveShadow=true;const pg=new THREE.Group();pg.add(pb);put(pg,-(WALL+9+PEX)*side,0);
   // 照明塔
   for(const al of[-60,-20,20,60])for(const s of[-1,1]){const g=new THREE.Group();const p=new THREE.Mesh(new THREE.CylinderGeometry(.18,.25,14,6),new THREE.MeshStandardMaterial({color:0x777b82,metalness:.7,roughness:.4}));p.position.y=7;p.castShadow=true;g.add(p);
-   const hdm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.9,.4),new THREE.MeshStandardMaterial({color:0x2c2f36}));hdm.position.set(-s*.8,14,0);g.add(hdm);const lf=new THREE.Mesh(new THREE.PlaneGeometry(2,.7),new THREE.MeshBasicMaterial({color:0xfff6e6}));lf.position.set(-s*.8,14,.21);g.add(lf);g.userData.s=s;put(g,(WALL+2.2)*s,al);TOWERS.push(g);STATIC.push(g);}}
+   const hdm=new THREE.Mesh(new THREE.BoxGeometry(2.2,.9,.4),new THREE.MeshStandardMaterial({color:0x2c2f36}));hdm.position.set(-s*.8,14,0);g.add(hdm);const lf=new THREE.Mesh(new THREE.PlaneGeometry(2,.7),new THREE.MeshBasicMaterial({color:0xfff6e6}));lf.position.set(-s*.8,14,.21);g.add(lf);g.userData.s=s;put(g,(WALL+2.2+(s*PS>0?PEX:0))*s,al);TOWERS.push(g);STATIC.push(g);}}
  // 看板（コーナー外側のフェンス上）
  {const ads=[['HIGASHI RACEWAY','#16182a','#f2f2f2'],['TURBO OIL','#f2f2f2','#c8201a'],['ホタテ急便','#1f5fa8','#ffffff'],['SKY RADIO 81.3','#e8e8e8','#1f3aa8'],['NEKO CAN','#e0b000','#16182a'],['TOKYO EAST','#1f7a44','#ffffff'],['カツサンド','#c8201a','#ffffff']];
   const texs=ads.map(a=>canvasTex(512,96,(g,w,h)=>{g.fillStyle=a[1];g.fillRect(0,0,w,h);g.fillStyle=a[2];g.font='italic 800 60px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(a[0],w/2,h/2+3);}));
   const legM=new THREE.MeshStandardMaterial({color:0x5a5e66,metalness:.6,roughness:.5});let n=0;
   for(let i=6;i<N;i+=Math.round(N/18)){const side=-(OUTS[i]||1);// 反対側（ガードレール側）に置く
-   const off=WALL+2.8;const x=TX[i]+NX[i]*off*side,z=TZ[i]+NZ[i]*off*side;if(!farFromTrack(x,z,WALL+2))continue;
+   const off=WALL+2.8+wx(i,side);const x=TX[i]+NX[i]*off*side,z=TZ[i]+NZ[i]*off*side;if(!farFromTrack(x,z,WALL+2))continue;
    const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=heading(i)+(side>0?Math.PI/2:-Math.PI/2);
    const m=new THREE.MeshLambertMaterial({map:texs[n%texs.length]});const b=new THREE.Mesh(new THREE.BoxGeometry(10,1.9,.12),[legM,legM,legM,legM,m,legM]);b.position.y=1.9;b.castShadow=true;g.add(b);
    for(const lx of[-4.4,4.4]){const l=new THREE.Mesh(new THREE.BoxGeometry(.12,1.4,.12),legM);l.position.set(lx,.7,0);g.add(l);}scene.add(g);STATIC.push(g);n++;}}
@@ -1493,12 +1497,12 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
 {PS=-GS_SIDE;
  const t=canvasTex(256,512,(g,w,h)=>{noiseFill(g,w,h,'#4f5157',.08,16000,2.2);g.fillStyle='#e9e9e4';g.fillRect(w*.985-4,0,8,h);g.fillStyle='rgba(233,233,228,.85)';for(let y=0;y<h;y+=64)g.fillRect(w*.5-3,y,6,34);g.fillStyle='rgba(240,190,20,.9)';g.fillRect(2,0,7,h);},true);
  const m=new THREE.MeshStandardMaterial({map:t,roughness:.93,metalness:0});
- ribbon(PS*(W+.02),PS*(WALL+.9),.043,m,14,i=>PITZ[i]);
+ ribbon(PS*(W+.02),i=>PS*(WALL+.9+PWX[i]),.043,m,14,i=>PITZ[i]);
  const hd=(i)=>heading(i);
  const at=(rel,lat)=>{const q=Math.round(rel/SP),i=wrap(q);return [TX[i]+NX[i]*lat+FX[i]*(rel-q*SP),TZ[i]+NZ[i]*lat+FZ[i]*(rel-q*SP),hd(i)];};
  const bt=n=>canvasTex(128,256,(g,w,h)=>{g.clearRect(0,0,w,h);g.strokeStyle='rgba(245,245,240,.95)';g.lineWidth=5;g.strokeRect(8,8,w-16,h-16);g.fillStyle='rgba(245,245,240,.9)';g.font='800 64px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.save();g.translate(w/2,h/2);g.rotate(-Math.PI/2);g.fillText(String(n),0,0);g.restore();});
- for(let n=0;n<8;n++){const p=at(PIT_BX+n*6.5,PS*PIT_LB);const gr=new THREE.Group();gr.position.set(p[0],.06,p[1]);gr.rotation.y=p[2];
-   const pm=new THREE.Mesh(new THREE.PlaneGeometry(2.7,5.8),new THREE.MeshBasicMaterial({map:bt(n+1),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));pm.rotation.x=-Math.PI/2;gr.add(pm);scene.add(gr);}
+ for(let n=0;n<8;n++){const p=at(PIT_BX+n*PBS,PS*PIT_LB);const gr=new THREE.Group();gr.position.set(p[0],.06,p[1]);gr.rotation.y=p[2];
+   const pm=new THREE.Mesh(new THREE.PlaneGeometry(3.1,6.4),new THREE.MeshBasicMaterial({map:bt(n+1),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2}));pm.rotation.x=-Math.PI/2;gr.add(pm);scene.add(gr);}
  // 進入路の路面に「PIT 80」
  {const p=at(PIT_B+14,PS*PIT_LF);const gr=new THREE.Group();gr.position.set(p[0],.062,p[1]);gr.rotation.y=p[2];
   const tx=canvasTex(128,256,(g,w,h)=>{g.clearRect(0,0,w,h);g.fillStyle='rgba(240,190,20,.95)';g.font='800 64px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.save();g.translate(w/2,h/2);g.rotate(-Math.PI/2);g.fillText('PIT 80',0,0);g.restore();});
@@ -1507,7 +1511,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
  {const wm=new THREE.MeshBasicMaterial({color:0xf2f2ee,polygonOffset:true,polygonOffsetFactor:-3});const sel=i=>{const r=relOfI(i);return (r>=PIT_A&&r<=PIT_B+9)||(r>=PIT_C-9&&r<=PIT_D);};
   ribbon(PS*(W+.08),PS*(W+.38),.05,wm,10,sel);
   // 80km/h の線（ピットレーンを横切る白い帯）
-  for(const r of[PIT_B,PIT_C]){const p=at(r,PS*(W+1.05+(WALL+.9-W-1.05)/2));const g=new THREE.Group(),m=new THREE.Mesh(new THREE.PlaneGeometry(WALL+.9-W-1.05,.45),wm);m.rotation.x=-Math.PI/2;g.add(m);g.rotation.y=p[2];g.position.set(p[0],.055,p[1]);scene.add(g);}}
+  for(const r of[PIT_B,PIT_C]){const p=at(r,PS*(W+1.05+(WALL+.9+PEX-W-1.05)/2));const g=new THREE.Group(),m=new THREE.Mesh(new THREE.PlaneGeometry(WALL+.9+PEX-W-1.05,.45),wm);m.rotation.x=-Math.PI/2;g.add(m);g.rotation.y=p[2];g.position.set(p[0],.055,p[1]);scene.add(g);}}
  // T206 ピットウォール（コンクリート＋上に金網。当たり判定は pitWallCollide）
  {const cm=new THREE.MeshStandardMaterial({color:0xd9d9d4,roughness:.85}),fm=new THREE.MeshBasicMaterial({color:0x8a8e94,transparent:true,opacity:.35,side:THREE.DoubleSide,depthWrite:false});const D=new THREE.Object3D();
   const ids=[];for(let i=0;i<N;i++)if(PWALL[i])ids.push(i);
@@ -2252,7 +2256,7 @@ function stepKart(k,dt,ctl){
   // トラック位置と壁
   k.prevIdx=k.idx;k.idx=nearest(k.x,k.z,k.idx,16);k.lat=lateralAt(k.idx,k.x,k.z);
   wallCollide(k);pitWallCollide(k);
-  if(Math.abs(k.lat)>WALL+.9){const s=Math.sign(k.lat);const push=Math.abs(k.lat)-WALL-.9;k.x-=NX[k.idx]*s*push;k.z-=NZ[k.idx]*s*push;k.lat=s*(WALL+1.2);}
+  {const s=Math.sign(k.lat),lw=WALL+.9+wx(k.idx,s);if(Math.abs(k.lat)>lw){const push=Math.abs(k.lat)-lw;k.x-=NX[k.idx]*s*push;k.z-=NZ[k.idx]*s*push;k.lat=s*(lw+.3);}}
   if(k.bump>0)k.bump-=dt;
   const a=k.prevIdx,b=k.idx;
   if(a>N*.8&&b<N*.2){k.npz=false;if(k.cp){k.lap++;k.cp=false;onLap(k);}} // T232 コントロールラインを越えたら追い越してよい
@@ -2686,7 +2690,9 @@ function aiControl(k,dt){
   const wrongWay=Math.abs(angDiff(heading(k.idx),k.h))>1.2;
   // T224：前へ加速している最中（ターボの出だしはゆっくり）と、スタートから12秒の間に道路の上で正しい向きの時は、遅くても立ち往生と数えない（前が詰まったら待つ）
   const gain=k.u-(k.uPrv??k.u)>.4*dt;k.uPrv=k.u;const startWait=raceTime-raceT0<12&&Math.abs(k.lat)<W&&!wrongWay;
-  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;}else if(k.spin<=0&&(Math.abs(k.u)<3&&!(follow&&raceTime<12)&&!startWait&&!(gain&&k.u>0)||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
+  // β0.91.1（T224 の続き）：赤旗・セーフティカーで止められている間（scV が QWV 未満）と、すぐ前 QWA〜QWB m に止まった車（残骸でない）が並んでいる間も、道路の上で正しい向きなら待つ。鼻先が刺さった（QWA m 未満）時の復帰はこれまでどおり
+  const qWait=()=>{if(Math.abs(k.lat)>=W||wrongWay)return false;if(SC.rf||cau()&&(k.scV??99)<QWV)return true;const pk=progress(k);for(const o of karts){if(o===k||o.dnf||o.gone||Math.abs(o.u)>=3)continue;const d=progress(o)-pk;if(d>QWA&&d<QWB)return true;}return false;};
+  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;}else if(k.spin<=0&&(Math.abs(k.u)<3&&!(follow&&raceTime<12)&&!startWait&&!(gain&&k.u>0)&&!qWait()||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
   if(k.stuckT>1.2&&!k.revT){k.revT=1.3;k.stuckT=0;}
   if(k.revT>0){k.revT-=dt;if(k.revT<=0){k.revT=0;k.fwdT=3;}const need=angDiff(heading(k.idx),k.h);return {steer:Math.sign(need)||1,accel:false,brake:true,drift:false};}
   // 立ち上がりのアクセル加減：前輪が滑って外へふくらみ始めたら踏み込みを弱める（FF車で特に効く）
@@ -2704,7 +2710,7 @@ function aiControl(k,dt){
 /* ================= タイヤ摩耗・ダメージ・ピットストップ（β0.13.0） ================= */
 const smoothS=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
 // T142：ボックスは先に入った車ほど奥（箱の番号が大きい）。k.box＝割り当てた番号（ピットを出たら null）
-const boxRelOf=k=>PIT_BX+(k.box!=null?k.box:k.id%8)*6.5;
+const boxRelOf=k=>PIT_BX+(k.box!=null?k.box:k.id%8)*PBS;
 function pitAssignBox(k){const used=new Set();for(const o of karts)if(o!==k&&o.pit>0&&o.box!=null)used.add(o.box);let b=7;while(b>0&&used.has(b))b--;k.box=b;}
 function relLine(k){let d=k.idx*SP+alongAt(k.idx,k.x,k.z);if(d>L/2)d-=L;return d;}
 function pitLatAt(k,rel){const box=boxRelOf(k);
@@ -2764,7 +2770,7 @@ function debStep(dt){if(!debLive)return;let any=0;
           if(!wh){d.rx+=(Math.round(d.rx/Math.PI)*Math.PI-d.rx)*.3;d.rz+=(Math.round(d.rz/Math.PI)*Math.PI-d.rz)*.3;}else{d.rz+=(Math.PI/2*Math.round(d.rz/(Math.PI/2))-d.rz)*.2;}
           if(Math.hypot(d.vx,d.vz)<.25&&Math.abs(d.vy)<.1){d.rest=1;if(!wh){d.rx=Math.round(d.rx/Math.PI)*Math.PI;d.rz=Math.round(d.rz/Math.PI)*Math.PI;}else d.rz=Math.PI/2*Math.round(d.rz/(Math.PI/2));}}
         // 壁より外へは飛ばない
-        {const ix=nearest(d.x,d.z,d.k.idx,40),lt=lateralAt(ix,d.x,d.z);if(Math.abs(lt)>WALL+.6){const sg=Math.sign(lt),p=Math.abs(lt)-WALL-.6;d.x-=NX[ix]*sg*p;d.z-=NZ[ix]*sg*p;const vn=d.vx*NX[ix]+d.vz*NZ[ix];if(vn*sg>0){d.vx-=1.5*vn*NX[ix];d.vz-=1.5*vn*NZ[ix];}}}
+        {const ix=nearest(d.x,d.z,d.k.idx,40),lt=lateralAt(ix,d.x,d.z);if(Math.abs(lt)>WALL+.6+wx(ix,Math.sign(lt))){const sg=Math.sign(lt),p=Math.abs(lt)-WALL-.6-wx(ix,sg);d.x-=NX[ix]*sg*p;d.z-=NZ[ix]*sg*p;const vn=d.vx*NX[ix]+d.vz*NZ[ix];if(vn*sg>0){d.vx-=1.5*vn*NX[ix];d.vz-=1.5*vn*NZ[ix];}}}
         ch=1;}}
     else ch=1;
     const sc=d.t>DEBL-1&&!d.k.dnf?Math.max(0,DEBL-d.t):1;
@@ -2900,7 +2906,7 @@ function togglePit(){const p=player();if(!p||p.pit||p.finished||p.dnf||autoPlay|
     radio(`ピットで約${Math.round(pl.loss)}秒失う。残り${pl.left}周で取り戻せるのは約${Math.max(0,Math.round(pl.gain))}秒。このまま行く方が速い（もう一度押すと取り消し）`,'pitadv',5);}}
 /* ===== T159 ローリングスタート：グリッドは線の RSD m 手前。隊列は自動で ROLL_V（約80km/h）、前の車と RSG/2 m おき。先頭が線の RGRN m 手前に来たらグリーン。
    隊列の間はタイヤを左右に振って温める（T186 A7、RTW2 ℃/秒、TTS+32℃まで）。表示する時間はグリーンからの時間（raceT0） */
-let startMode=0,raceT0=0,RSD=420,RSG=14,ROLL_V=22,RGRN=150,RTW2=2.2;const ROLL={on:false,green:false};
+let QWV=4,QWA=5.5,QWB=16;let startMode=0,raceT0=0,RSD=420,RSG=14,ROLL_V=22,RGRN=150,RTW2=2.2;const ROLL={on:false,green:false};
 function rollStep(dt){if(!ROLL.on||ROLL.green||sess!=='race'||state!=='race')return;const ld=karts.find(k=>k.id===0)||karts[0];
   if(TTK)for(const k of karts)if(k.tt!=null&&k.u>8)k.tt=Math.min(TTS+32,k.tt+RTW2*dt);
   if(progress(ld)>=L-RGRN){ROLL.green=true;raceT0=raceTime;clearTimeout(lampTO);setLamps(0,true);showBanner('GO!');sfx('go');crowdCheer(1);lampTO=setTimeout(()=>setLamps(0,false),1500);telop('GREEN','グリーン！ 自分がコントロールラインを越えるまで追い越し禁止');for(const k of karts)k.npz=!k.dnf;NPZ.ahead=null;NPZ.owe=[];}}
@@ -3087,7 +3093,7 @@ function pitWallCollide(k){if(!PWALL[k.idx]&&!PWALL[wrap(k.idx+2)]&&!PWALL[wrap(
   if(!dp)return;const sd=lane?PS:-PS;wallResp(k,dp,deep,NX[wi]*sd,NZ[wi]*sd);}
 function wallCollide(k){if(Math.abs(k.lat)<WALL-3)return; // 壁から遠い時は調べない（車の四隅は中心から最大2.5m。軽量化 β0.54.2）
   const cs=kCorners(k);let deep=0,dp=null,side=0,wi=k.idx;
-  for(const c of cs){const i=nearest(c[0],c[1],k.idx,8);const lat=lateralAt(i,c[0],c[1]);const s=Math.sign(lat);const face=(CORNER[i]&&s===OUTS[i])?WALL+.55:WALL+1.05;const pen=Math.abs(lat)-face;if(pen>deep){deep=pen;dp=c;side=s;wi=i;}}
+  for(const c of cs){const i=nearest(c[0],c[1],k.idx,8);const lat=lateralAt(i,c[0],c[1]);const s=Math.sign(lat);const face=((CORNER[i]&&s===OUTS[i])?WALL+.55:WALL+1.05)+wx(i,s);const pen=Math.abs(lat)-face;if(pen>deep){deep=pen;dp=c;side=s;wi=i;}}
   if(!dp)return;
   wallResp(k,dp,deep,-NX[wi]*side,-NZ[wi]*side);} // コース内向き
 function wallResp(k,dp,deep,nx,nz){
@@ -3213,7 +3219,7 @@ function dirStart(p,s){DIR.sub=s;DIR.last=s;DIR.snap=true;
   if(s==='tower'){let best=null,bd=1e9;for(const c of TVS){const d=relIdx(c.i,p.idx);if(d>25&&d<bd){bd=d;best=c;}}if(!best)best=TVS[0];DIR.anc=best;}
   else if(s==='head'){const hi=wrap(p.idx+Math.round(Math.min(170,85+Math.max(0,p.u)*1.6)/SP));const side=CORNER[hi]?-OUTS[hi]:(Math.random()<.5?1:-1);const lat=(WALL+4.5)*side;
     DIR.anc={x:TX[hi]+NX[hi]*lat,y:2.5,z:TZ[hi]+NZ[hi]*lat,i:hi};}
-  else if(s==='pit'){const side=-GS_SIDE,i=PIT_I;const lat=(WALL+2.6)*side;DIR.anc={x:TX[i]+NX[i]*lat,y:2.6,z:TZ[i]+NZ[i]*lat,i};}
+  else if(s==='pit'){const side=-GS_SIDE,i=PIT_I;const lat=(WALL+2.6+(side*PS>0?PEX:0))*side;DIR.anc={x:TX[i]+NX[i]*lat,y:2.6,z:TZ[i]+NZ[i]*lat,i};}
   else if(s==='heli'){DIR.ang=p.h+Math.PI+(Math.random()*2-1)*.9;}
   else if(s==='drone'){DIR.side=Math.random()<.5?-1:1;DIR.ph=Math.random()*6;}
   const t=$('camTag');t.textContent=CAMLBL[s];t.hidden=false;}
@@ -3382,7 +3388,7 @@ function updateCameraIn(dt){
   camAx+=(Math.max(-1,Math.min(1,p.ax/SPA))-camAx)*Math.min(1,dt*3);const sx=SPK>0&&!RM?camAx*Math.min(1,Math.max(0,p.u)/15):0;
   const dist=(far?13:7.6)+r*1.2+camKick*1.2+sx*SPD;
   const tgt=tmpV.set(p.x-Math.sin(camH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(camH)*dist);
-  {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WALL+.2;if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
+  {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WALL+.2+wx(ci,Math.sign(cl));if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
   {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
   camPos.lerp(tgt,Math.min(1,dtS*9));camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
