@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.88.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.88.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -2260,7 +2260,7 @@ const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','id
 let rwBuf=[],rwT=0,holdT=0,rwCount=0,rwSel=0;const RWL=[1e9,3,0]; // T128③ rwSel：0 無制限／1 3回まで／2 なし（保存キー rw）
 function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,fl:fastLap,sc:{on:SC.on,ph:SC.ph,d:SC.d,t:SC.t,t1:SC.t1,lp:SC.lp,u:SC.u,inLap:SC.inLap,out:SC.out,ret:SC.ret,rf:SC.rf,rfD:SC.rfD,rfT:SC.rfT},fcy:{on:FCY.on,ph:FCY.ph,t:FCY.t},ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
 function doRewind(){if(sess==='drag'||ROLL.on&&(!ROLL.green||raceTime-5<raceT0))return;if(state!=='race'||holdT>0||rwBuf.length<3)return;if(rwCount>=RWL[rwSel]){toast(rwSel===2?'巻き戻しは使わない設定です（GARAGE のレース）':'巻き戻しは使い切りました（'+RWL[rwSel]+'回まで）');sfx('warn');return;}const target=raceTime-5;let s=rwBuf[0];for(const b of rwBuf)if(b.t<=target)s=b;
-  rwBuf.length=rwBuf.indexOf(s)+1;raceTime=s.t;finishOrder.length=s.fo;fastLap=s.fl||null;karts.forEach((k,j)=>RW_KEYS.forEach((n,q)=>k[n]=s.ks[j][q]));if(s.sc){Object.assign(SC,s.sc);SC.ahead=null;if(s.fcy)Object.assign(FCY,s.fcy);if(SC.on||SC.ret)scPos();if(!cau())for(const k of karts)k.scV=null;for(const k of karts)k.fcyC=null;}
+  rwBuf.length=rwBuf.indexOf(s)+1;raceTime=s.t;finishOrder.length=s.fo;fastLap=s.fl||null;karts.forEach((k,j)=>RW_KEYS.forEach((n,q)=>k[n]=s.ks[j][q]));if(s.sc){Object.assign(SC,s.sc);SC.ahead=null;if(s.fcy)Object.assign(FCY,s.fcy);if(SC.on||SC.ret)scPos();if(!cau())for(const k of karts)k.scV=null;for(const k of karts){k.fcyC=null;k.rfC=null;}}
   telRewind();for(const k of karts){k.prevWheel=null;k.co=null;k.ct={};k.rl={};k.lostT=0;k.sc=null;k.enc={};k.errT=0;k.yT=0;}holdT=1.2;rwCount++;rpBuf=rpBuf.filter(f=>f.t<=raceTime);if(solo()){const p=player();if(p.lap>=1&&!p.lapBad){p.lapBad=true;telop('REWIND','巻き戻したのでこのラップは無効','yellow');}}toast('5秒巻き戻し'+(rwSel===1?'（残り '+(RWL[1]-rwCount)+'回）':''));steerSm=0;const p=player();camH=p.h;camPos.set(p.x-Math.sin(p.h)*8,3,p.z-Math.cos(p.h)*8);tvI=-1;}
 /* T162 ラップ比較の記録（テレメトリー）：各車、周ごとに 0.1秒おきの [周の中の距離 m, 速さ m/s, アクセル 0〜1, ブレーキ 0〜1, 周のはじめからの秒]。
    自分は全部の周（最大 TLM 周）、CPU はベストの周と前の周だけ残す。巻き戻すと、その時刻より先の記録を捨てる */
@@ -2749,7 +2749,7 @@ function debStep(dt){if(!debLive)return;let any=0;
 /* T73 赤旗：RFW 秒の間に RFN 台以上が大クラッシュしたら赤旗（rfMode＝0 で出さない。保存キー rf）。セーフティカーが先導して全車ゆっくり（RFV m/s）走り、
    ホームストレートの線の手前 RFS m に隊列で止まって待つ。残骸がすべて片付き、止まって RFH 秒たったら、セーフティカーの後ろで再開（1周後にグリーン）。
    赤旗中は残骸を寄せる速さが RFC 倍。先頭がファイナルラップの時は出さない（セーフティカーと同じ） */
-let rfMode=1,RFN=2,RFW=10,RFV=26,RFS=-60,RFH=10,RFC=2.5;const crashTimes=[];
+let rfMode=1,RFN=2,RFW=10,RFV=26,RFS=-60,RFH=10,RFC=2.5,RFD=5; /* β0.88.1：RFD＝赤旗で各車が速さを落とす上限（m/s²）。以前は先頭の約100m前にセーフティカーが出て、全車が一斉に急ブレーキしていた */const crashTimes=[];
 /* T73 残骸を寄せる：止まった残骸（着地から WR0 秒）を、近い方の道の外（W+WRD）へ WRV m/s で寄せる（ピットレーンの側は避ける）。寄せ終えた残骸（k.prk）は消さずに残す（当たり判定・順位表からは gone で外れる） */
 let WR0=3,WRD=3.4,WRV=1.4;
 /* T73 調査の対策：SPW＝1 で有効。横滑り（横の速さ÷前後の速さ）が SPB を超えた・スピン中・後ろ向きの前の車は、速さを SPH 倍に見積もって車間とブレーキを決める */
@@ -2902,7 +2902,7 @@ function scDeploy(force,inst){if(!scMode&&!force||SC.on||sess!=='race'||state!==
   if(inst){scPlace(ld);return;}
   SC.ph=0;SC.u=0;SC.d=progress(ld)+((((PIT_C-40)-trkPos(ld))%L)+L)%L;scPos(); // ピット出口の手前で待つ
   telop('SAFETY CAR',(fc?'FCY からセーフティカーに切り替え':'セーフティカー出動')+'　ペースを落として追い越し禁止','yellow');radio('セーフティカーだ。ペースを落として追い越し禁止。先頭の前にピット出口から出てくる','sc',10);sfx('warn');}
-function scPlace(ld){SC.ph=1;SC.out=false;SC.d=progress(ld)+SCL+70;SC.u=Math.max(16,ld.u*.8);scPos();}
+function scPlace(ld){SC.ph=1;SC.out=false;SC.d=progress(ld)+Math.max(SCL+70,(ld.u*ld.u-RFV*RFV)/(2*RFD)+SCL+30);SC.u=Math.max(16,ld.u*.8);scPos();}
 function rfCheck(){if(!rfMode||SC.rf||sess!=='race'||state!=='race')return;const n=crashTimes.filter(t=>raceTime-t<=RFW).length;if(n<RFN)return;
   scDeploy(true,true);if(!SC.on)return;if(!SC.ph){const ld=ranking().filter(k=>!k.dnf&&!k.finished)[0];if(ld)scPlace(ld);}
   SC.rf=1;SC.rfT=0;SC.rfn++;SC.inLap=false;const tp=(L+RFS)%L,cur=((SC.d%L)+L)%L;let dd=(tp-cur+L)%L;if(dd<150)dd+=L;SC.rfD=SC.d+dd;
@@ -2950,7 +2950,7 @@ function scStep(dt){fcyStep(dt);
     if(SC.ph){best=(sp-me+L)%L;au=SC.u;isSC=true;}
     for(const o of run){if(o===k)continue;const g=(trkPos(o)-me+L)%L;if(g>0&&g<best){best=g;au=Math.max(0,o.u);isSC=false;}}
     if(!SC.ph){const cap=Math.min(SCDV,VP[k.idx]*SCDK);k.scV=best<60?Math.min(cap,Math.max(0,au+(best-SCG)*.5)):cap;continue;}
-    mx=Math.max(mx,best);if(best>L/2)continue;k.scV=Math.max(0,Math.min(60,au+(best-(isSC?SCL:SCG))*.5));if(best>60)k.scV=Math.min(k.scV,VP[k.idx]*SCCK);} // 隊列に追いつくまでも全開にはしない
+    mx=Math.max(mx,best);if(best>L/2)continue;k.scV=Math.max(0,Math.min(60,au+(best-(isSC?SCL:SCG))*.5));if(best>60)k.scV=Math.min(k.scV,VP[k.idx]*SCCK);if(SC.rf&&isSC){k.rfC=Math.max(k.scV,(k.rfC??Math.max(0,k.u))-RFD*dt);k.scV=k.rfC;}else k.rfC=null;} // 隊列に追いつくまでも全開にはしない
   cauPass(run,'セーフティカー');
   // 戻る：残骸が片付き、隊列が詰まったら（実際どおりは先頭が1周ついて行ってから）この周で戻る。先頭がファイナルラップならすぐ
   const clr=!karts.some(k=>k.dnf&&!k.gone),qd=mx<SCQG||SC.t1>SCQT;
