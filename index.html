@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.96.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.96.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -2929,7 +2929,7 @@ function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'|
 // T47 ピット作業：給油・タイヤ4本・修理を別々に。給油とタイヤは同時に始め、修理はそのあと。CPU は残りの周で作戦を立て直して、次のピットまでの燃料を入れる（自分は次の予定のピット＋1周分、予定がなければゴールまで。タンクに入るだけ）
 function pitStart(k){const rel=relLine(k),left=Math.max(0,LAPS-k.lap+(rel>=0?1:0)),cpu=!k.isPlayer||autoPlay;let st=left;k.fuelEm=0;
   if(cpu){k.plan=stratPlan(k,left,LAPS-left);if(k.plan.n)st=k.plan.laps[0]-(LAPS-left);}else if(k.plan){while(k.plan.i<k.plan.laps.length&&k.plan.laps[k.plan.i]<=k.lap)k.plan.i++;if(!fuelFull&&k.plan.i<k.plan.laps.length)st=Math.min(left,k.plan.laps[k.plan.i]-(LAPS-left)+1);} // 自分は次の予定のピット＋1周分（満タンの設定ならゴールまで）
-  const add=!FUELK?0:Math.max(0,Math.min(FCAP,fuelNeed(st,k.fplB))-k.fuel),ty=k.wear>.12||k.rain!==tyreWet()||!wearMode&&k.rain!==tyreWet(),rp=dmgMode&&k.dmg>.02;
+  const add=!FUELK?0:Math.max(0,Math.min(FCAP,fuelNeed(st,k.fplB))-k.fuel),ty=k.wear>.12||k.rain!==tyreWet()||!wearMode&&k.rain!==tyreWet()||!cpu /* T251 自分で予約したピットはタイヤを必ず替える（以前は減りが 12% 未満だと「作業なし」で出てきて、ボタンが効いていないように見えた） */,rp=dmgMode&&k.dmg>.02;
   const mis=PMK&&ty&&sess==='race'&&Math.random()<PMP?PMX0+Math.random()*PMX1:0,mw=mis?['左前','右前','左後ろ','右後ろ'][Math.floor(Math.random()*4)]:''; // T234⑪ まれにナットが締まらず、タイヤ交換が遅れる
   const fT=add>.5?FCON+add/FRATE:0,tT=ty?PTY+mis:0,main=Math.max(fT,tT),rT=rp?k.dmg*7+((k.dmW||0)+Math.abs(k.dmA||0))*RPW:0;
   k.pw={add:add>.5?add:0,f0:k.fuel,fT,tT,rT,main,t:0,ty,rp,td:0,mis,mw};k.pitT=Math.max(1.2,main+rT);k.pitInLap=1;
