@@ -533,7 +533,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.95.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.95.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -671,7 +671,7 @@ body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
         <span>リプレイ</span><span>結果画面の「リプレイ」でレースを見返せる。←→（ボタン）で見る車、C で視点、倍速は×1／×2／×4（Space）、Esc で終了</span>
         <span><kbd>R</kbd></span><span>巻き戻し（5秒前に戻る。回数は結果に表示）</span>
         <span><kbd>L</kbd></span><span>走行ラインの表示（コースの幅を使うアウト・イン・アウトの線。コーナーの種類（だんだんきつい／緩い）や出口の直線の長さ、連続コーナーかどうかで頂点の位置が変わる。CPUもこの線を走る。緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ）</span>
-        <span>ピット</span><span>タイヤ摩耗（GARAGEで「あり」）でグリップが落ちる。Iキー（ボタン「ピット」）で予約すると、次の周回で最終コーナーの内側から分かれるピットレーンに自動で入り、作業する：給油（1kg 約0.3秒＋ノズル 1.2秒）とタイヤ4本の交換（約3秒）を同時に、修理（傷みに応じて）はそのあと。画面の中央に作業の進みが出る。ピットレーンの制限は 80km/h（ピットレーンの線で超えていると＋5秒。GARAGE の「ピットレーンの速度」を「自分で」にすると、線までのブレーキを自分で行う）。ピット1回で約12秒失うので、残りの周で取り戻せる時だけ入るのが得（予約すると無線が損得を教えてくれる）。CPUも同じ考えで、摩耗や傷みが進んでも残りが少なければ入らない。ピットレーンはゴールラインをまたぐので、ファイナルラップに入ってからは入れない（ピットレーンでゴールになるため）。「ピットレーンの速度」を「自分で」にしてブレーキが間に合わず、ピットウォールの手前で本線側に残った時は、その周は入らず次の周に入る</span>
+        <span>ピット</span><span>タイヤ摩耗（GARAGEで「あり」）でグリップが落ちる。Iキー（ボタン「ピット」）で予約すると、次の周回で最終コーナーの内側から分かれるピットレーンに自動で入り、作業する：給油（1kg 約0.3秒＋ノズル 1.2秒）とタイヤ4本の交換（約3秒）を同時に、修理（傷みに応じて）はそのあと。画面の中央に作業の進みが出る。ピットレーンの制限は 80km/h（ピットレーンの線で超えていると＋5秒。GARAGE の「ピットレーンの速度」を「自分で」にすると、線までのブレーキを自分で行う）。ピット1回で約12秒失うので、残りの周で取り戻せる時だけ入るのが得（予約すると無線が損得を教えてくれる）。CPUも同じ考えで、摩耗や傷みが進んでも残りが少なければ入らない。ピットを出たら、出口の先の直線はピット側の端を走って加速し、後ろから車が来ていないのを確かめてから走行ラインへ合流する（実際のピット出口の決まり。CPU もそうし、本線の CPU はピットに出入りする車がいる間はピット側を空ける。自分の前にピットへ入る車・出てくる車がいると無線で知らせる）。ピットレーンはゴールラインをまたぐので、ファイナルラップに入ってからは入れない（ピットレーンでゴールになるため）。「ピットレーンの速度」を「自分で」にしてブレーキが間に合わず、ピットウォールの手前で本線側に残った時は、その周は入らず次の周に入る</span>
         <span>大事故</span><span>高速で壁や他の車に強くぶつかる（目安は壁に時速約61km以上で垂直に当たる／車どうしは相対で約50km以上）と、車が跳ねて転がり、走れなくなってリタイア。順位表では最後に並び「リタイア」と出る（GARAGEで切れる）</span>
         <span>ダメージ</span><span>強くぶつけると車が傷んで、塗装がくすみ、ひどいと煙が出る。「性能にも」だとグリップと出力も落ちる。ピットで修理</span>
         <span>ピット無線</span><span>レース中、チームから「前の車まで0.8秒」「残り3周」「タイヤが限界」などの短い連絡が画面上に出る（GARAGEで切れる）</span>
@@ -2301,7 +2301,7 @@ function computeDraft(){for(const k of karts){let d=0,da=0;const fx=Math.sin(k.h
     if(DAK>0&&f<=DAD&&!o.dnf){const w=1.6+f*.04;if(sd<=w)da=Math.max(da,(1-(f-3)/(DAD-3))*(1-sd/w*.5));}}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;k.dirty=(k.dirty||0)+(da-(k.dirty||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
-const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav'];
+const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav','pxm'];
 let rwBuf=[],rwT=0,holdT=0,rwCount=0,rwSel=0;const RWL=[1e9,3,0]; // T128③ rwSel：0 無制限／1 3回まで／2 なし（保存キー rw）
 function recordRewind(dt){rwT+=dt;if(rwT<.1)return;rwT=0;rwBuf.push({t:raceTime,fo:finishOrder.length,fl:fastLap,sc:{on:SC.on,ph:SC.ph,d:SC.d,t:SC.t,t1:SC.t1,lp:SC.lp,u:SC.u,inLap:SC.inLap,out:SC.out,ret:SC.ret,rf:SC.rf,rfD:SC.rfD,rfT:SC.rfT,wv:SC.wv,fin:SC.fin},fcy:{on:FCY.on,ph:FCY.ph,t:FCY.t},ks:karts.map(k=>RW_KEYS.map(n=>k[n]))});if(rwBuf.length>110)rwBuf.shift();}
 function doRewind(){if(sess==='drag'||ROLL.on&&(!ROLL.green||raceTime-5<raceT0))return;if(state!=='race'||holdT>0||rwBuf.length<3)return;if(rwCount>=RWL[rwSel]){toast(rwSel===2?'巻き戻しは使わない設定です（GARAGE のレース）':'巻き戻しは使い切りました（'+RWL[rwSel]+'回まで）');sfx('warn');return;}const target=raceTime-5;let s=rwBuf[0];for(const b of rwBuf)if(b.t<=target)s=b;
@@ -2518,6 +2518,8 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
       :ag<0?(ah?'前の '+o.name+' はタイヤをいたわって走っている。後半は手ごわいぞ、抜くなら今のうちだ':'後ろの '+o.name+' はタイヤを残して走っている。後半に来るぞ、今のうちに差を広げよう')
       :(ah?'前の '+o.name+' とは同じくらいのペースだ。競り合いが長引くと、無理をした方がタイヤを先に使う':'後ろの '+o.name+' とは同じくらいのペースだ。無理に守りすぎるとタイヤを使うぞ'),'bat',40);}}
    else{RDS.batK=null;RDS.batT=0;}}
+  if(PXK&&!autoPlay)for(const o of karts){if(o===p||o.dnf||o.finished||!(o.pxm||o.pit===3&&relLine(o)>PIT_C-60))continue;const gp=progress(o)-progress(p);if(gp>0&&gp<PXR&&p.u>o.u+4){radio('ピット出口から '+o.name+' が合流してくる（'+(PS>0?'右':'左')+'側）。並ぶ時は注意','pex',10);break;}}
+  if(PXK&&!autoPlay)for(const o of karts){if(o===p||o.dnf||o.finished||o.pit!==1||relLine(o)>=PIT_B)continue;const gp=progress(o)-progress(p);if(gp>0&&gp<PXR&&p.u>o.u+3){radio('前の '+o.name+' がピットに入る。'+(PS>0?'右':'左')+'へ寄って減速するぞ','pin',10);break;}} // T249
   const early=raceTime-raceT0<OBS2;
   // T228③ 前後1.5秒以内の車のツケ（タイヤ・ブレーキ・熱・疲れ）を知らせる。同じ車の同じ印は1回（β0.85.2：序盤は言わない）
   if(!early&&a&&!a.finished&&(progress(a)-progress(p))/pace<1.5){const st=tkState(a);const kA=st.length?a.id+st[0][0]:"";if(st.length&&!RDS.tkS[kA]){RDS.tkS[kA]=1;radio('前の '+a.name+'、'+{t:'タイヤがきつそうだ。コーナーの出口で差を詰めよう',b:'ブレーキが熱そうだ。ブレーキングで仕掛けられるぞ',h:'エンジンが熱そうだ。直線が伸びていない',s:'競り合いで集中が切れてきたようだ。ミスを誘えるぞ、離れずについていこう',p:'焦ってきている。離れずに後ろから圧をかけ続けよう、ミスが出るぞ',m:'ラインの外でゴムかすを拾ったようだ。数コーナーは立ち上がりが鈍いぞ',d:'マシンが傷んでいる。コーナーが遅いぞ',e:'エンジンが弱っている。直線で並べるぞ'}[st[0][0]],'tk',25);}}
@@ -2602,6 +2604,8 @@ function aiControl(k,dt){
         if(sc<bs){bs=sc;bi=c;}}if(cx&&bi===1)k.cxN=(k.cxN||0)+1;
       k.altS=cand[bi];k.altO=bi===1;if(bi)k.altN=(k.altN||0)+1;}}
   else if(!k.pit)k.altS=0;
+  if(k.pxm){const r=relLine(k);if(!PXK||k.pit||k.dnf||sess!=='race'||r>PXL||r<PIT_C||pxClear(k,u))k.pxm=0;else{k.laneT=PS*PIT_EL;k.laneTimer=.5;k.ovr=true;}} // T249 ピット出口の合流待ち
+  else if(PXK&&sess==='race'&&!k.pit&&!k.finished&&!CORNER[k.idx]&&(IL[k.idx]+k.lane)*PS>PXS&&pxNear(k,u)){k.laneT=PS*PXS;k.laneTimer=.5;k.ovr=true;k.pxa=(k.pxa||0)+1;} // T249 ピットに出入りする車がいる間は、ピット側を走らない
   const devT=k.ovr?k.laneT-IL[k.idx]:slw>0?((k.sl*SLK)*slw+(k.wan||0)*(1-slw)):k.altS?k.altS*ALW+(k.wan||0)*.3:(k.wan||0)*(chased?DFW:1);let dlane=(devT-k.lane)*Math.min(1,dt*.8);
   // 復帰の切り返し（T148）：ラインへ戻る動きが、すぐ横（前後 RTF m・横 room＋RTW m 以内）の車の側へ向かう間は、戻るのを止める（接触するのは、譲り・取り返しのあと外側からラインへ戻る時に、横の車へ切り込む形が多い）
   if(RTK>0&&!k.ovr&&sess==='race'&&u>12&&dlane!==0){const rm=TRAITS[k.dr.tr??2].room+RTW;for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fw=dx*Math.sin(k.h)+dz*Math.cos(k.h);if(Math.abs(fw)>RTF)continue;const sd=o.lat-k.lat;if(Math.abs(sd)>rm)continue;if(sd*dlane>0){dlane=0;break;}}}
@@ -2907,6 +2911,14 @@ let pwUiT=0;function pitUi(k){const el=$('pitwork');if(!k){el.hidden=true;return
    +(!w.add&&!w.ty&&!w.rp?'<div><em>作業なし</em></div>':'');}
 // T103：ピット内の混雑。PQ＝1で有効、PQG＝止まる車間(m)、PQW＝同じ列とみなす横の差(m)、PQN＝同時にピットへ向かえる台数、PQX＝出る時に後ろを待つ距離(m)
 let PSK=1,CLK=2.2,PBX=1,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
+// T249（β0.95.1）ピット出口の合流（実際のサーキットのピット出口の白線＝ブレンドラインの考え方）：ピットを出た CPU（k.pxm）は、すぐ走行ラインへ寄らず、ピット側の端（PIT_EL）を走って加速し、
+// 後ろ（PXG m＋近づく速さ×PXT 秒の内側）に本線の車（ピット側へ PXW m より寄っている車）がいなくなってから合流する。線から PXL m を過ぎたら合流（その先は第1コーナーへ向けてラインもピット側へ寄る）。
+// 自分の車の前（PXR m 以内）にピットから車が出てくる時は無線で知らせる。PXK＝0 で従来（出たらすぐラインへ）
+// 本線の CPU：前 PXA m（＋近づく速さ×2秒）〜横に、ピットへ入ろうとしている車（pit＝1 で線 PIT_B より手前）か出口から出てくる車（pit＝3 で PIT_C−40 より先、または pxm）がいる間は、ピット側へ PXS m より寄らない（コーナーの中は除く）
+let PXK=1,PXL=470,PXG=12,PXT=3,PXW=-2.5,PXR=220,PXS=1.5,PXA=120;
+const pxOn=o=>!o.dnf&&!o.finished&&(o.pit===1&&relLine(o)<PIT_B+10||o.pit===3&&relLine(o)>PIT_C-40||o.pxm);
+function pxNear(k,u){const pk=progress(k);for(const o of karts){if(o===k||!pxOn(o))continue;const gp=progress(o)-pk;if(gp>-8&&gp<PXA+Math.max(0,u-o.u)*2)return true;}return false;}
+function pxClear(k,u){const pk=progress(k);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0||o.finished)continue;const gp=pk-progress(o);if(gp<-6||gp>200||o.lat*PS<PXW)continue;if(gp<PXG+Math.max(0,o.u-u)*PXT)return false;}return true;}
 function pitLat(o){const i=o.idx;return(o.x-TX[i])*NX[i]+(o.z-TZ[i])*NZ[i];}
 function pitBlocked(k,rel){for(const o of karts){if(o===k||o.gone||o.dnf||o.pit!==1)continue;const d=rel-relLine(o);if(d>-4&&d<PQX&&Math.abs(o.u)>2)return true;}return false;}
 function pitBusy(){let n=0;for(const o of karts)if(o.pit>0&&!o.gone)n++;return n;}
@@ -2920,7 +2932,7 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   else if(k.pit===1){vt=rel<PIT_B-30?Math.sqrt(PIT_V*PIT_V+2*G*.9*Math.max(0,PIT_B-30-rel)):PIT_V;const d=box-rel;vt=Math.min(vt,Math.sqrt(2*G*.8*Math.max(0,d-1.2))+.5);
     if(rel>PIT_A&&Math.abs(d)<3.5&&u<.9){k.pit=2;pitStart(k);k.aiBrake=false;return{steer:0,accel:false,brake:false,drift:false,thr:0};}
     if(d<-7){k.pit=3;}}
-  else if(k.pit===3){vt=rel<PIT_C?PIT_V:1e9;if(rel>PIT_D){k.pit=0;k.box=null;}}
+  else if(k.pit===3){vt=rel<PIT_C?PIT_V:1e9;if(rel>PIT_D){k.pit=0;k.box=null;if(PXK&&sess==='race'){k.pxm=1;k.lane=k.lat-IL[k.idx];k.laneT=k.lat;k.ovr=true;k.laneTimer=.5;if(k.isPlayer&&!autoPlay&&!pxClear(k,u))radio('ピットアウト。後ろから車が来ている、'+(PS>0?'右':'左')+'端を走って空いてから合流しよう','pxo',5);}}}
   if(PQ&&(k.pit===1||k.pit===3)){const lk=pitLat(k);for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ro=relLine(o),ds=ro-rel;if(ds>0&&ds<70&&o.pit>0&&Math.abs(pitLat(o)-lk)<PQW)vt=Math.min(vt,Math.max(0,o.u)+Math.sqrt(2*G*.7*Math.max(0,ds-PQG)));}}
   let ctl;
   if(k.pit===1&&rel<PIT_A-5){if(PSK&&rel>PIT_A-240){k.laneT=PS*PIT_EL;k.laneTimer=.5;k.ovr=true;}ctl=aiControl(k,dt);} // β0.53.1：ピットに入る車は、減速する前にピット側の端へ寄る（ラインの上で減速して追突されていた）
