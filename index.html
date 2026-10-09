@@ -729,7 +729,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.109.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.110.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1225,11 +1225,11 @@ terrBank();terrGLSL();
 const SAUS=new Uint8Array(N);let SAUK=1,SAUG=.55,SAUW0=.75,SAUW1=2.4,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
 // T206 ピットレーン（線からの距離 m。負＝線の手前）：実際のサーキットのように最終コーナーの内側（PIT_A）で分かれ、PIT_B（80km/h の線）から先はピットウォールの内側。
 // ボックスは線をまたいで並び（PIT_BX から PBS＝7.5m おき。β0.92.0 T244 で 6.5→7.5）、PIT_C（80km/h の線）を過ぎて PIT_D で本線に合流。PIT_LF＝ピットレーンの通り道、PIT_LB＝ボックス、PIT_EL＝分かれる・合流する時の本線側の位置、PWL＝ピットウォールの中心
-const PIT_A=-140,PIT_B=-90,PIT_C=70,PIT_D=130,PIT_BX=-28,PIT_V=22.2,PIT_LF=W+3.3,PIT_LB=W+6.3,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
+const PIT_A=-140,PIT_B=-90,PIT_C=70,PIT_D=130,PIT_BX=-50,PIT_V=22.2,PIT_LF=W+3.3,PIT_LB=W+6.3,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
 const relOfI=i=>{const r=i*SP;return r>L/2?r-L:r;};
 let PS=-1;const PITZ=new Uint8Array(N),PWALL=new Uint8Array(N);for(let i=0;i<N;i++){const r=relOfI(i);PITZ[i]=(r>=PIT_A-5&&r<=PIT_D+10)?1:0;PWALL[i]=(r>=PIT_B+8&&r<=PIT_C-8)?1:0;}
 // T244（β0.92.0）ピットレーンを外へ PEX m 広げる（壁・ガードレール・舗装・当たり）。PWX[i]＝その点のピット側の壁の外へのずれ（両端 30m でなめらかに）。PS（ピットの側）はここで決める（壁を作る前に要る）
-const PEX=2.5,PBS=7.5,PWX=new Float32Array(N);{const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};for(let i=0;i<N;i++){if(!PITZ[i])continue;const r=relOfI(i);PWX[i]=PEX*sm((r-(PIT_A-5))/30)*(1-sm((r-(PIT_D-20))/30));}
+const PEX=2.5,PBS=13,PBO=10,PWX=new Float32Array(N);{const sm=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};for(let i=0;i<N;i++){if(!PITZ[i])continue;const r=relOfI(i);PWX[i]=PEX*sm((r-(PIT_A-5))/30)*(1-sm((r-(PIT_D-20))/30));}
  const i0=wrap(Math.round(N*.02));let mx=0,mz=0;for(let i=0;i<N;i++){mx+=TX[i];mz+=TZ[i];}mx/=N;mz/=N;PS=((mx-TX[i0])*NX[i0]+(mz-TZ[i0])*NZ[i0])>0?1:-1;}
 const wx=(i,s)=>s*PS>0?PWX[i]:0; // s の側の壁の外へのずれ
 function surfaceAt(i,lat){const a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=WALL+1+PWX[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return'gravel';return'grass';}
@@ -2901,6 +2901,11 @@ function aiControl(k,dt){
   // ブロッカー（T147）：直線で後ろから迫る車のラインへ1度だけ寄って塞ぐ
   if(k.blkT>0)k.blkT-=dt;
   if(BKM>0&&(TRAITS[k.dr.tr??2].blk)&&!(judgeOn&&(k.ipt||0)>=JG1)&&sess==='race'&&!k.finished&&!k.pit&&!k.yieldF&&u>25&&!(k.blkT>0)&&!CORNER[k.idx]&&!CORNER[wrap(k.idx+8)]&&!CORNER[wrap(k.idx+16)]){for(const o of karts){if(o===k||o.dnf||o.pit>0||o.finished)continue;const dg=progress(k)-progress(o);if(dg<BKL||dg>BKD)continue;const dl=o.lat-k.lat;if(Math.abs(dl)<.8||Math.abs(dl)>BKX||o.u<u-2)continue;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat));k.laneTimer=1.4;k.ovr=true;k.blkT=BKC;k.blkN=(k.blkN||0)+1;break;}}
+  // T83（β0.110.0）インを閉める：迫られたら、減速の要るコーナーのブレーキの前に1回だけ内側へ寄る（並ばれた後・相手がもう内側にいる時は動かない＝1回の動きで、相手の方へ寄せて当てない）
+  if(CVK>0&&sess==='race'&&!k.finished&&!k.pit&&!k.yieldF&&!k.blue&&!cau()&&!k.npz&&u>25&&!CORNER[k.idx]&&!(k.atkT>0)){let dB=-1;for(let j=2;j<=CVL;j+=2)if(VP[wrap(k.idx+j)]<u-5){dB=j*SP;break;}
+    if(dB>0&&dB<u*CVT){let ci=-1;for(let j=2;j<=CVL+40;j+=2){const i=wrap(k.idx+j);if(CORNER[i]){ci=i;break;}}
+      if(ci>=0&&k.cvC!==ci){const sd=-OUTS[ci],ins=sd*(W-CVW);let at=null;for(const o of karts){if(o===k||o.dnf||o.pit>0||o.finished)continue;const dg=progress(k)-progress(o);if(dg>CVA&&dg<CVD&&(dg<CVN?o.u>u-1:o.u>u+CVV)){at=o;break;}}
+        if(at&&(at.lat-k.lat)*sd<1.2&&(ins-k.lat)*sd>1){k.laneT=ins;k.laneTimer=dB/Math.max(u,1)+.8;k.ovr=true;k.cvC=ci;k.cvN=(k.cvN||0)+1;}}}}
   // 守り（T117）：後ろから迫られている間は、横へふらつかない（1直線で動くのは1回まで）
   let chased=false;if(DFW<1&&sess==='race'&&!k.finished&&u>20){for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dg=progress(k)-progress(o);if(dg>0&&dg<DFD){chased=true;break;}}}
   // スタートの列（T169）：発進から第1コーナーのブレーキング手前までは、グリッドの列（左右）のラインを保ち、同じラインへ一斉に寄らない。SL0 m を過ぎたら SL1 m までに通常のラインへ戻す（SLK＝0 で無効）
@@ -3074,7 +3079,7 @@ function pitAssignBox(k){const used=new Set();for(const o of karts)if(o!==k&&o.p
 function relLine(k){let d=k.idx*SP+alongAt(k.idx,k.x,k.z);if(d>L/2)d-=L;return d;}
 function pitLatAt(k,rel){const box=boxRelOf(k);
   const base=smoothS((rel-PIT_A)/(PIT_B-PIT_A))*(1-smoothS((rel-PIT_C)/(PIT_D-PIT_C)));
-  const bx=k.dt?0:smoothS((rel-(box-16))/12)*(1-smoothS((rel-(box+4))/12));
+  const bx=k.dt?0:smoothS((rel-(box-16))/12)*(1-(k.pit===3?smoothS((rel-box+1)/PBO):smoothS((rel-(box+4))/12))); // β0.110.0 作業を終えたら（pit 3）すぐ走路へ出る
   return PS*(PIT_EL+(PIT_LF-PIT_EL)*base+(PIT_LB-PIT_LF)*bx);}
 function steerTo(k,tx,tz,u){const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h);const dist=Math.max(4,Math.hypot(tx-k.x,tz-k.z));
   const dl=Math.atan(2*KL*Math.sin(al)/dist);const dMax=.5/(1+u/26);return Math.max(-1,Math.min(1,-dl/dMax));}
@@ -3237,7 +3242,7 @@ let pwUiT=0;function pitUi(k){const el=$('pitwork');if(!k){el.hidden=true;return
    +row('タイヤ 4本',w.ty,w.t,w.tT,w.td?'交換済み（'+(k.rain?'レイン':'スリック')+'）':w.mis&&w.t>PTY*.6?w.mw+'のナットが締まらない（+'+w.mis.toFixed(1)+'秒）':'交換中')+row('修理',w.rp,w.t-w.main,w.rT,w.t<w.main?'待ち':w.t>=w.main+w.rT?'済み':'作業中')
    +(!w.add&&!w.ty&&!w.rp?'<div><em>作業なし</em></div>':'');}
 // T103：ピット内の混雑。PQ＝1で有効、PQG＝止まる車間(m)、PQW＝同じ列とみなす横の差(m)、PQN＝同時にピットへ向かえる台数、PQX＝出る時に後ろを待つ距離(m)
-let PSK=1,CLK=2.2,PBX=1,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
+let PSK=1,CLK=2.2,PBX=1,PQS=2.2,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
 // T249（β0.95.1）ピット出口の合流（実際のサーキットのピット出口の白線＝ブレンドラインの考え方）：ピットを出た CPU（k.pxm）は、すぐ走行ラインへ寄らず、ピット側の端（PIT_EL）を走って加速し、
 // 後ろ（PXG m＋近づく速さ×PXT 秒の内側）に本線の車（ピット側へ PXW m より寄っている車）がいなくなってから合流する。線から PXL m を過ぎたら合流（その先は第1コーナーへ向けてラインもピット側へ寄る）。
 // 自分の車の前（PXR m 以内）にピットから車が出てくる時は無線で知らせる。PXK＝0 で従来（出たらすぐラインへ）
@@ -3261,7 +3266,7 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
     if(rel>PIT_A&&d<3.5&&d>-7&&u<.9){k.pit=2;pitStart(k);k.aiBrake=false;return{steer:0,accel:false,brake:false,drift:false,thr:0};}
     if(d<-7){k.pit=3;}}
   else if(k.pit===3){vt=rel<PIT_C?PIT_V:1e9;if(rel>PIT_D){k.pit=0;k.box=null;if(PXK&&sess==='race'){k.pxm=1;k.lane=k.lat-IL[k.idx];k.laneT=k.lat;k.ovr=true;k.laneTimer=.5;if(k.isPlayer&&!autoPlay&&!pxClear(k,u))radio('ピットアウト。後ろから車が来ている、'+(PS>0?'右':'左')+'端を走って空いてから合流しよう','pxo',5);}}}
-  if(PQ&&(k.pit===1||k.pit===3)){const lk=pitLat(k);for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ro=relLine(o),ds=ro-rel;if(ds>0&&ds<70&&o.pit>0&&Math.abs(pitLat(o)-lk)<PQW)vt=Math.min(vt,Math.max(0,o.u)+Math.sqrt(2*G*.7*Math.max(0,ds-PQG)));}}
+  if(PQ&&(k.pit===1||k.pit===3)){const lk=pitLat(k);for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ro=relLine(o),ds=ro-rel;if(ds>0&&ds<70&&o.pit>0&&Math.abs(pitLat(o)-(o.pit===2?pitLatAt(k,ro):lk))<(o.pit===2?PQS:PQW))vt=Math.min(vt,Math.max(0,o.u)+Math.sqrt(2*G*.7*Math.max(0,ds-PQG)));}}
   let ctl;
   if(k.pit===1&&rel<PIT_A-5){if(PSK&&rel>PIT_A-240){k.laneT=PS*PIT_EL;k.laneTimer=.5;k.ovr=true;}ctl=aiControl(k,dt);} // β0.53.1：ピットに入る車は、減速する前にピット側の端へ寄る（ラインの上で減速して追突されていた）
   else{const ld=5+u*.5;const t=wrap(k.idx+Math.round(ld/SP));const lat=pitLatAt(k,relIdx(t,0));ctl={steer:steerTo(k,TX[t]+NX[t]*lat,TZ[t]+NZ[t]*lat,u),accel:true,brake:false,drift:false};}
@@ -3474,6 +3479,8 @@ function coLog(k,c){const bp=coBrake(c);COLOG.push({k:k.name,fs:k.fs,cid:c.cid,b
 // T83（β0.109.0）スリングショット（試して無効のまま。SGK＝1 で有効）：測定（晴れ・3周・ふつう・各96レース）で SGF＝1・SGM＝10・SGT＝1.5 は接触 5.20→5.23・入れ替わり 2.49→2.48（直線 0.90→0.97）で差が見えず、SGF＝.6・SGM なし・SGT＝1 は入れ替わり +30%（直線 0.79→1.25）だが接触 4.90→6.25・大事故 2→6台（48レース）。SGK＝1、SGF＝引っ張ってもらう間の車間の倍率、SGD＝前の車を見る距離(m)、SGL＝ブレーキの所を探す点の数（約3m おき）、SGX＝並ぶのに要る時間の上限(秒)、SGT＝ブレーキの所までに残す余裕(秒)、SGM＝横へ出てよい車間(中心の間 m。これより近いと相手の後ろの角に当たる)
 // 練習表示：LBA＝頂点の何 m 手前から左足ブレーキを数えるか、LBT＝これ以上の秒数なら表示
 let SGK=0,SGF=1,SGM=10,SGD=40,SGL=90,SGX=2.5,SGT=1.5,LBA=60,LBT=.2;
+// T83（β0.110.0）インを閉める：CVK＝1 で有効、CVA・CVD＝後ろの車との差（m。CVA 未満は並ばれている扱いで動かない）。CVN m より離れている時は、相手が CVV m/s 以上速く迫っている時だけ、CVT＝ブレーキの何秒手前から、CVW＝内側の道の端から何 m に寄せるか、CVL＝ブレーキの所を探す点の数（約3m おき）
+let CVK=1,CVA=5.5,CVD=12,CVN=9,CVV=.5,CVT=2.2,CVW=2.6,CVL=80;
 let TIS=3,TRT=.15,RRM=.2,RRK=.12,OBT=.3,OBB=.85,OBS=.1,BKS=1; // T83（β0.84.0）OBT＝ハンドルを OBS 以上切りながら、ブレーキを OBB 以上で踏み続けた秒数がこれを超えたら「ブレーキが強すぎてふくらんだ」（測定：120km/h でハンドル半分の時、ブレーキ 30% なら横G 1.7、100% だと 0.94＝曲がらない）。BKS＝CPU 全体のブレーキの強さ（測定用）
 function coachCorner(k,cid,ex){if(!coachMode||autoPlay)return;const me=k.crec[cid];let ref=null,who='';
   const only=()=>{if(ex)coachShow(`<i>第${cid+1}コーナー</i>${ex}`,4);};
