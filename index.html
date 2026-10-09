@@ -729,7 +729,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.107.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.107.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1396,21 +1396,26 @@ function terrAxis(lo,hi,st,g,cap,mn,mx){const a=[],n=Math.ceil((hi-lo)/st);for(l
  d=st;x=hi;const R=[];while(x<mx){d=Math.min(d*g,cap);x=Math.min(mx,x+d);if(mx-x<d*.4)x=mx;R.push(x);}return L.concat(a,R);}
 // [x の並び, z の並び]（どちらも小さい順。範囲は以前と同じ x −2720〜3280・z −3090〜2910）。PC 152×231、スマホ 124×194 の格子
 function terrGrid(){const st=isTouch?8:7,g=isTouch?1.3:1.25,cap=isTouch?200:120;return [terrAxis(-30,605,st,g,cap,-2720,3280),terrAxis(-700,525,st,g,cap,-3090,2910)];}
+// 不具合修正（β0.107.1 の後）：コースのそばの芝を下げる量（m）。中心線の点までの距離 d が W＋1.5 以下で 12cm、W＋2.5 で 0（見た目だけ。物理は TH を使う）
+// 網の頂点の間は平らな面なので、丘の頂上・急なバンクでは芝が道路の面に並ぶ・上に出る所があった（ご本人の報告「コース上に草地が見える」）
+function grassDrop(){const C=20,B=new Map(),key=(a,b)=>a*100000+b;for(let i=0;i<N;i++){const k=key(Math.floor(TX[i]/C),Math.floor(TZ[i]/C));let L=B.get(k);if(!L)B.set(k,L=[]);L.push(i);}
+ const D=.12,d0=W+1.5,d1=W+2.5;return (x,z)=>{const cx=Math.floor(x/C),cz=Math.floor(z/C);let d2=1e18;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){const L=B.get(key(cx+a,cz+b));if(L)for(const i of L){const dx=x-TX[i],dz=z-TZ[i],q=dx*dx+dz*dz;if(q<d2)d2=q;}}
+  const d=Math.sqrt(d2);return d<=d0?D:d>=d1?0:D*(d1-d)/(d1-d0);};}
 // 地面（芝。細かい模様＋広い範囲のむら）
 {const t=canvasTex(512,512,(g,w,h)=>{noiseFill(g,w,h,'#566b37',.08,12000,3);for(let i=0;i<2600;i++){g.fillStyle=rndS()<.5?'rgba(38,52,22,.35)':'rgba(120,138,72,.22)';g.fillRect(rndS()*w,rndS()*h,1,2+rndS()*4);}},true);
  t.repeat.set(300,300);const TG=TERK?terrGrid():null;const geo=new THREE.PlaneGeometry(2,2,TERK?TG[0].length-1:80,TERK?TG[1].length-1:80); /* β0.104.0 T262 格子はコースの範囲だけ細かく */const col=[];const p=geo.attributes.position;
  // T81 高低差：コースのまわりほど細かい格子（約7〜12m）にして、地面が道路より上に出ないように。外側は粗く 6000m 四方まで
  // β0.69.1：T207 でコースが南へ延びたので、細かい所の中心を (280,70)→(280,−90)（コースの真ん中）へ、格子を 200→260 に（第1コーナーの先の丘で芝が道路より最大 23cm 上に出ていた）
- {const sm=u=>3000*u,nx=TERK?TG[0].length:0;for(let i=0;i<p.count;i++){if(TERK){p.setX(i,TG[0][i%nx]);p.setY(i,-TG[1][Math.floor(i/nx)]);}else{p.setX(i,280+sm(p.getX(i)));p.setY(i,90+sm(p.getY(i)));}}p.needsUpdate=true;const uv=geo.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,(p.getX(i)-280+3000)/6000,(p.getY(i)-90+3000)/6000);uv.needsUpdate=true;geo.computeBoundingSphere();}
+ {const sm=u=>3000*u,nx=TERK?TG[0].length:0,dr=TERK?grassDrop():null;for(let i=0;i<p.count;i++){if(TERK){const gx=TG[0][i%nx],gz=TG[1][Math.floor(i/nx)];p.setX(i,gx);p.setY(i,-gz);p.setZ(i,-dr(gx,gz));}else{p.setX(i,280+sm(p.getX(i)));p.setY(i,90+sm(p.getY(i)));}}p.needsUpdate=true;const uv=geo.attributes.uv;for(let i=0;i<p.count;i++)uv.setXY(i,(p.getX(i)-280+3000)/6000,(p.getY(i)-90+3000)/6000);uv.needsUpdate=true;geo.computeBoundingSphere();}
  for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i);const v=.86+.1*Math.sin(x*.011+1.3)*Math.sin(y*.013)+.07*Math.sin(x*.031-y*.027)+.05*Math.sin(x*.07+y*.05);col.push(v,v*(1+.03*Math.sin(x*.02)),v*.95);}
  geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
- const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({map:t,vertexColors:true}));m.rotation.x=-Math.PI/2;if(TERK)m.position.y=-.04;/* β0.69.1 −.02→−.04（格子の間で芝が道路の面へ 1〜2cm 出る所をなくす） */m.receiveShadow=true;scene.add(m);}
+ const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({map:t,vertexColors:true,polygonOffset:true,polygonOffsetFactor:1,polygonOffsetUnits:2}));m.rotation.x=-Math.PI/2;if(TERK)m.position.y=-.04;/* β0.69.1 −.02→−.04（格子の間で芝が道路の面へ 1〜2cm 出る所をなくす） */m.receiveShadow=true;scene.add(m);}
 
 // 帯状メッシュ（l0,l1 は横位置。関数も可。mask で区間を選ぶ）
 function ribbon(l0,l1,y,mat,vScale,mask){
   const pos=[],uv=[],idx=[];let vc=0;const F=v=>typeof v==='function'?v:()=>v;const f0=F(l0),f1=F(l1);const Y=typeof y==='function'?y:()=>y;
   for(let i=0;i<N;i++){if(mask&&!mask(i))continue;const j=wrap(i+1);
-    const a0=f0(i),a1=f1(i),b0=f0(j),b1=f1(j);const lo0=Math.min(a0,a1),hi0=Math.max(a0,a1),lo1=Math.min(b0,b1),hi1=Math.max(b0,b1);
+    const a0=f0(i),a1=f1(i);let b0=f0(j),b1=f1(j);if((a0+a1)*(b0+b1)<0){b0=a0;b1=a1;} /* 不具合修正：側が入れ替わる区間で道路をまたいで張らない */const lo0=Math.min(a0,a1),hi0=Math.max(a0,a1),lo1=Math.min(b0,b1),hi1=Math.max(b0,b1);
     const v0=i*SP/vScale,v1=(i+1)*SP/vScale;
     pos.push(TX[i]+NX[i]*lo0,Y(lo0),TZ[i]+NZ[i]*lo0, TX[i]+NX[i]*hi0,Y(hi0),TZ[i]+NZ[i]*hi0, TX[j]+NX[j]*lo1,Y(lo1),TZ[j]+NZ[j]*lo1, TX[j]+NX[j]*hi1,Y(hi1),TZ[j]+NZ[j]*hi1);
     uv.push(0,v0,1,v0,0,v1,1,v1);idx.push(vc,vc+1,vc+2,vc+1,vc+3,vc+2);vc+=4;}
