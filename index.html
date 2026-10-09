@@ -560,7 +560,7 @@ body.touch.autoplay #pad{display:none}
 </div>
 
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.98.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.99.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div>
@@ -2566,8 +2566,10 @@ function radio(text,key,cool){if(!radioOn||sess!=='race')return;const now=raceTi
   logAdd('無線',text);if(radioQ.length>2)radioQ.shift();radioQ.push(text);}
 function radioReset(){radioQ.length=0;RDS.pitTT=RDS.heat=RDS.iat=RDS.tth=0;radioT=0;for(const k in RAD_ST)delete RAD_ST[k];RDS.a=RDS.b=9;RDS.st=0;RDS.wear=RDS.dmg=0;RDS.grid=0;RDS.tkS={};RDS.dirtyT=0;RDS.dirty=0;RDS.batK=null;RDS.batT=0;RDS.batS={};const el=$('radio');if(el)el.hidden=true;}
 const RDS={a:9,b:9,st:0,wear:0,dmg:0,grid:0};
-function stepRadio(dt){const el=$('radio');if(radioT>0){radioT-=dt;if(radioT<=0)el.hidden=true;return;}
-  const t=radioQ.shift();if(!t)return;el.lastChild.textContent=t;el.hidden=false;el.style.animation='none';void el.offsetWidth;el.style.animation='';radioT=3.4;
+// β0.99.0 無線の位置：タイム差の欄（#gaps）と横に重なる時は、その下端の 6px 下へ下げる（画面の大きさ・ミラー・スマホで欄の高さが変わるため、毎フレーム測る）
+function radioPlace(el){el.style.top='';const g=$('gaps');if(!g||!g.offsetHeight||!g.innerHTML)return;const gr=g.getBoundingClientRect(),r=el.getBoundingClientRect();if(r.right<gr.left-30||r.left>gr.right+30)return;const gb=g.offsetTop+g.offsetHeight+6;if(el.offsetTop<gb)el.style.top=gb+'px';}
+function stepRadio(dt){const el=$('radio');if(radioT>0){radioT-=dt;if(radioT<=0)el.hidden=true;else radioPlace(el);return;}
+  const t=radioQ.shift();if(!t)return;el.lastChild.textContent=t;el.hidden=false;radioPlace(el);el.style.animation='none';void el.offsetWidth;el.style.animation='';radioT=3.4;
   tone(1320,.05,'square',.06);tone(1760,.05,'square',.06,0,.07);}
 function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p.finished||p.pit)return;
   if(!RDS.grid)RDS.grid=p.id+1;
@@ -2632,6 +2634,9 @@ let AI_LATK=G*.81; /* T254 定数（β0.98.0）。従来に戻すには P で AF
   PBW・PBT・ATKX＝ブレーキングで差しに行った相手を、横へ並びかけた後も PBT 秒は狙い続ける（横 PBW m まで）。横に ATKX m 以上ずれていれば、その相手には車間を理由にアクセルを抜かない（PBW＝0 で無効＝既定。5.5 で有効：抜く回数は増えるが接触も増える）
   AIPW＝1 で従来（CPU の腕前でエンジンの力と最高速も下げる）。0＝全員同じ力で、腕前はコーナーの速さ・ブレーキ・ミスだけ
   AISK＝コーナーの速さに掛ける腕前の効き（腕前^AISK。従来 1） */
+/* T256（β0.99.0）。RCX＝コーナーの中・手前（14点先まで）で横に並んだ時、横の間隔を RCX m 広げる（0 で従来）。測定：接触の約8割がコーナーの中で、並んだ車どうしが横へ寄って当たっていた
+  SDP＝1 で、速さの差が SDC m/s より大きい前の車が横へ動いている時、届くまで（最大 SDT 秒）の横の動きを先読みし、進路に入ってくるなら前の車として扱う（追突しそうならブレーキ。0 で従来＝横に 2.3m 以上ずれた車は見ない）。大事故の多くが、横に 2.3〜2.5m ずれて 15〜18m/s 速く抜こうとした車の前へ、遅い車が横から入ってきての追突だった */
+let RCX=.6,SDP=1,SDT=1.5,SDC=3;
 let AFV=.5,AIPW=0,AISK=1.7,PBW=0,PBT=1,ATKX=1.4,RRL=4.2,AFVC=1;
 // T118 取り返し（SBK＝1で有効）：SBT＝取り返しモードの秒数、SBO＝直線で相手の横につく間隔(m)、SBD＝差す距離の伸び、SBL＝ブレーキをさらに遅らせる倍率、SBX＝出口でアクセルを開ける（1で絞らない）。T119 抜き所を探す（SCK＝1で有効）：SCT＝追従してから狙いを絞るまでの秒数、SCF＝狙い以外のコーナーで差す距離の割合（性格 0〜4 ごと）
 let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=[.5,.4,.55,.8,1,.6];
@@ -2728,15 +2733,17 @@ function aiControl(k,dt){
   let follow=false,hard=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
   // β0.53.1：片付けた残骸（gone）は見ない。前の車をどこまで先から見るかは速さの差で伸ばす（ピットへ減速する車に、全開の車が26m手前まで気づかず追突していた）
   for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;const osl=SPW>0&&!o.dnf&&(o.spin>0||Math.abs(o.vl)>Math.abs(o.u)*SPB&&Math.abs(o.u)>3||o.u<-3);if(fwd>(o.dnf||osl?30+u*3.5:Math.max(26,8+Math.max(0,u-Math.max(0,o.u))*CLK))||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
-    if(fwd<=5.5&&Math.abs(side)<tr.room+.6&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
+    const rcx=RCX>0&&(CORNER[k.idx]||CORNER[wrap(k.idx+14)])?RCX:0; // T256 コーナーでは横の間隔を広げる
+    if(fwd<=5.5&&Math.abs(side)<tr.room+.6+rcx&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
       // 並走の権利（T117）：半車身以上前に出ている方が権利を持ち（ラインを守る）、後ろ側が下がる（コーナーの中・手前は必ず譲る）
       const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=k.wav&&!o.wav?0:o.wav&&!k.wav?1:u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
       const ek=o.id+(trail?'t':lead?'l':'n'); // 前後の関係（後ろ側・前側・中立）が変わるたびに、もう一度譲るかを決める
       if(!(k.enc[ek]>raceTime-1.5)&&Math.random()<py){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[ek]=raceTime;
-      const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2)));
+      const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2+rcx)));
       if(!lead||RRL>0&&fwd>-RRL){if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;}
       if(fwd>-3&&!(k.wav&&!o.wav)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;}
-    if(fwd<=0||Math.abs(side)>=2.3)continue;
+    let sdm=Math.abs(side);if(SDP>0&&sdm>=2.3&&fwd>0){const cl=k.u-(o.vx*fx+o.vz*fz);if(cl>SDC){const ch=Math.cos(k.h),sh=Math.sin(k.h),t=Math.min(SDT,fwd/cl),sp=side+((o.vx-k.vx)*ch-(o.vz-k.vz)*sh)*t;sdm=sp*side<=0?0:Math.min(sdm,Math.abs(sp));}} // T256 横から入ってくる遅い車を先読み（横の位置を届くまで進めて、真ん中をまたぐなら 0）
+    if(fwd<=0||sdm>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1); // T73（β0.82.0）横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大事故の最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFT（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
     if(AFT>0&&fwd<(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap&&(AFV<0||u<LOWV||AFVC&&CORNER[k.idx]||k.u-(o.vx*fx+o.vz*fz)>-AFV)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX))follow=true; /* T254①：前の車が離れていく間（コーナーの出口など）は抜かない（以前はいつでも抜いて、直線で離されていた） */ // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
