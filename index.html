@@ -159,7 +159,7 @@ h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,4vw,28px);mar
 details.more{margin-top:8px}
 details.more>summary{cursor:pointer;font-weight:700;color:var(--paper);padding:6px 0}
 .seg.small button{flex:1 1 72px;font-size:13px;padding:8px 4px}
-.card .cls{font-family:var(--num);font-weight:600;font-size:13px;color:var(--muted)}
+.card .cls{font-family:var(--num);font-weight:600;font-size:13px;color:var(--muted)}.card{min-width:0}.card .trt{overflow-wrap:anywhere;text-align:center;line-height:1.3}
 .seg{display:flex;gap:8px;flex-wrap:wrap}#tyreSeg{display:grid;grid-template-columns:repeat(4,1fr)}
 .seg button{flex:1 1 90px;font-family:var(--display);font-weight:700;font-size:16px;padding:10px;border-radius:3px;border:1px solid var(--line);background:var(--night-2);color:var(--paper);cursor:pointer}
 #aiSeg button{flex-basis:56px;padding:10px 4px;font-size:15px}
@@ -729,7 +729,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.122.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.123.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -878,8 +878,8 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
         <span>ピット無線</span><span>レース中、チームから「前の車まで0.8秒」「残り3周」「タイヤが限界」などの短い連絡が画面上に出る（GARAGEで切れる）</span>
         <span>フォト</span><span>結果画面の「フォト」（Fキー／パッドのX）で表を消して、優勝車（1人で走るモードは自分の車）の周りをカメラがゆっくり回る。タップかキーで戻る</span>
         <span>マイカラー</span><span>GARAGEで自分の車のボディ色・差し色・ゼッケン番号を選べる（「チーム」でドライバーの元の色に戻る）</span>
-        <span>性格</span><span>CPUには6種類の性格がある（クリーン・慎重・マイペース・ぐいぐい・強引・ブロッカー）。ドライバーを選ぶ画面と結果に出る。順位表の名前の横の1文字は性格の頭文字（ク・慎・マ・ぐ・強・ブ）。ブロッカーは直線で後ろから迫られると、1度だけこちらのラインへ寄って前に出させない（当ててはこない。少し外へ振ってから抜く）</span>
-        <span>ツケ</span><span>無理な走りは後で返ってくる。強引な CPU は前半速いが、タイヤ・ブレーキ・スタミナが先に落ちる。順位表の印（タ・ブ・熱・疲・迫・ゴ・傷・エ）で弱っている車が分かる。<details class="hx"><summary>くわしく</summary>無理をした分は後で返ってくる（謎の追いつき補正はない）。ぐいぐい・強引な CPU はタイヤを滑らせ、ブレーキを遅く強く踏むので前半は速いが、タイヤ（摩耗「あり」の長いレース）とブレーキが早く傷んで後半にペースが落ちる。クリーン・慎重は前半は遅めでも最後まで落ちにくい。CPU は競り合い（すぐ前後・横に車がいる）が続くとスタミナが減ってミスが増え、一人で走ると戻る（強引・ぐいぐいは減りやすく、マイペースは減りにくい）。コーナーで前の車のすぐ後ろ（約35m以内）につくと、乱れた空気でダウンフォースが減って曲がれる速さが落ち、タイヤと水温が上がる（直線のスリップストリームとは逆。ずっと後ろにつくより、離れて仕掛け所を作る）。順位表の印：<b>タ</b>＝タイヤがきつい、<b>ブ</b>＝ブレーキが熱い、<b>熱</b>＝エンジンが熱い、<b>疲</b>＝疲れている、<b>迫</b>＝後ろから迫られ続けて焦っている（後ろにぴったりつき続けるとミスが増える。慎重は動じにくく、強引は崩れやすい）、<b>ゴ</b>＝タイヤにゴムかす（コーナーでラインから外れて走ると、外に溜まったゴムかす〔マーブル〕を拾って数コーナー滑る。マーブルはコーナーの外側の黒い粒として見え、周を重ねるほど増え、雨で流れる。抜くために外へ出るのにも損がある）、<b>傷</b>＝ウイング・アライメントのダメージ（ダメージ「性能にも」で強く当たると、ダウンフォースが減る・片方へ流れる。ピットの修理で直る）、<b>エ</b>＝エンジンのダメージ（手動変速でレブリミットに当て続ける・回転を合わせずに落とすと出力が落ちる。ピットでは直らない）（カーソルを合わせると中身。前後の車に出ると無線でも知らせる）。ピットではまれにナットが締まらず、作業が数秒遅れることがある</details></span>
+        <span>性格</span><span>CPU の性格は組み合わせ。呼び名は「並んだ時」＋「攻め方」（例：強気な攻撃型・紳士的な慎重派）で、ほかに気持ちと得意がある。ドライバーを選ぶ画面と結果に出る。順位表の名前の横の1文字は攻め方（慎・丁・バ・攻・猛、ブ＝ブロッカー。カーソルを合わせると全部）。<details class="hx"><summary>くわしく</summary><b>攻め方</b>：慎重派・丁寧派・バランス型・攻撃型・猛攻型（攻めるほどブレーキが遅く強く、前半は速いがタイヤとブレーキが早く傷む）。<b>並んだ時</b>：紳士的・きれい・ふつう・強気・荒っぽい（横の間隔・車間・譲りやすさ）。<b>ブロッカー</b>：直線で後ろから迫られると、1度だけこちらのラインへ寄って前に出させない（当ててはこない。少し外へ振ってから抜く）。<b>気持ち</b>：冷静・落ち着いている・ふつう・熱くなりやすい・かっとなる（競り合いで集中が切れやすいか、後ろから迫られて焦りやすいか）。<b>得意</b>：雨に強い（濡れた路面で速く、ミスが少ない）・スタートがうまい（ランプが消えてからの反応が早い）・タイヤを長持ちさせる・終盤に強い（最後の2周のミスが少ない）</details></span>
+        <span>ツケ</span><span>無理な走りは後で返ってくる。攻め方が攻撃型・猛攻型の CPU は前半速いが、タイヤ・ブレーキ・スタミナが先に落ちる。順位表の印（タ・ブ・熱・疲・迫・ゴ・傷・エ）で弱っている車が分かる。<details class="hx"><summary>くわしく</summary>無理をした分は後で返ってくる（謎の追いつき補正はない）。攻撃型・猛攻型の CPU はタイヤを滑らせ、ブレーキを遅く強く踏むので前半は速いが、タイヤ（摩耗「あり」の長いレース）とブレーキが早く傷んで後半にペースが落ちる。慎重派・丁寧派は前半は遅めでも最後まで落ちにくい。CPU は競り合い（すぐ前後・横に車がいる）が続くとスタミナが減ってミスが増え、一人で走ると戻る（気持ちが「熱くなりやすい」「かっとなる」は減りやすく、「冷静」は減りにくい）。コーナーで前の車のすぐ後ろ（約35m以内）につくと、乱れた空気でダウンフォースが減って曲がれる速さが落ち、タイヤと水温が上がる（直線のスリップストリームとは逆。ずっと後ろにつくより、離れて仕掛け所を作る）。順位表の印：<b>タ</b>＝タイヤがきつい、<b>ブ</b>＝ブレーキが熱い、<b>熱</b>＝エンジンが熱い、<b>疲</b>＝疲れている、<b>迫</b>＝後ろから迫られ続けて焦っている（後ろにぴったりつき続けるとミスが増える。冷静な性格は動じにくく、かっとなる性格は崩れやすい）、<b>ゴ</b>＝タイヤにゴムかす（コーナーでラインから外れて走ると、外に溜まったゴムかす〔マーブル〕を拾って数コーナー滑る。マーブルはコーナーの外側の黒い粒として見え、周を重ねるほど増え、雨で流れる。抜くために外へ出るのにも損がある）、<b>傷</b>＝ウイング・アライメントのダメージ（ダメージ「性能にも」で強く当たると、ダウンフォースが減る・片方へ流れる。ピットの修理で直る）、<b>エ</b>＝エンジンのダメージ（手動変速でレブリミットに当て続ける・回転を合わせずに落とすと出力が落ちる。ピットでは直らない）（カーソルを合わせると中身。前後の車に出ると無線でも知らせる）。ピットではまれにナットが締まらず、作業が数秒遅れることがある</details></span>
         <span>難易度</span><span>CPUの強さは入門・やさしい・ふつう・つよい・達人。弱いほど遅く、コーナーでブレーキが遅れてふくらむなどのミスが増える。達人はミスをせず、ブレーキを遅く強く踏んで、曲がる直前まで減速を残す</span>
         <span>ラバー</span><span>周回を重ねると走行ライン（理想のライン付近）にタイヤのゴムが乗って黒ずみ、グリップが最大で約3%上がる。ただし濡れるとゴムの乗った帯は逆に滑る（雨の日はコーナーでラインを車1台分ほど外すのが上手な走り方。CPU もそうする）。雨がやむとライン上から先に乾く。ゴムは雨でゆっくり流れる</span>
         <span>スリップ</span><span>前の車の真後ろにつくと空気抵抗が減って伸びる（SLIPSTREAM表示）</span>
@@ -904,7 +904,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
         <span>車ごとの違い</span><span>車種ごとに空気抵抗とダウンフォースが違う（GARAGE に表示）。空気抵抗が少ない車は直線が速く、ダウンフォースが多い車は高速コーナーが速い。CPU はレースごとにギア比・ウイング・エンジン特性がくじ引きで変わり、直線が速い車とコーナーが速い車が混ざる（結果画面に各車のセッティング）</span>
         <span>フォーミュラ</span><span>GARAGE の「カテゴリー」でフォーミュラにすると、8台すべてが1人乗りのオープンホイールの車になる。軽く（約780kg）、ダウンフォースがとても大きいので、速いコーナーほどツーリングカーより速く曲がれる。後輪駆動。運転席の視点ではハンドルの表示とハロー（頭を守る輪）が見える。混走クラスとは一緒に使えない</span>
         <span>混走クラス</span><span>GARAGE の「混走クラス」で、速い GT クラスとツーリングクラスが同じレースを走る。GT は前のグリッドから出て、遅いクラスを周回遅れにしながら抜いていく。順位表と結果にクラスの印とクラス内の順位</span>
-        <span>おすすめ</span><span>GARAGE の「おすすめ」タブ（「車」タブの上の1行からも）で、今のレースの内容（周回数・天気・タイヤ摩耗・エンジン）と選んだドライバーの性格に合う車種とセッティングを、理由つきで出す。「この設定にする」で全部そろう。中身はこのコースをオート運転で走らせて測った値（1周のタイムとタイヤの減り）。差がわずかな所は、ドライバーの性格の好み（ぐいぐい＝加速寄り、慎重＝安定、マイペース＝タイヤ長持ちなど）で選ぶ</span>
+        <span>おすすめ</span><span>GARAGE の「おすすめ」タブ（「車」タブの上の1行からも）で、今のレースの内容（周回数・天気・タイヤ摩耗・エンジン）と選んだドライバーの性格に合う車種とセッティングを、理由つきで出す。「この設定にする」で全部そろう。中身はこのコースをオート運転で走らせて測った値（1周のタイムとタイヤの減り）。差がわずかな所は、ドライバーの性格の好み（攻撃型＝加速寄り、慎重派＝安定、バランス型＝タイヤ長持ちなど）で選ぶ</span>
         <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン。長持ちするラジアル、雪・氷・砂利道用のスタッドレス・スパイク・グラベルも）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、タイヤの幅、ブレーキ冷却、変速を選べる。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）</span>
         <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、ラジアル 50〜90℃、グラベル 40〜90℃、レイン 35〜65℃、スタッドレス・スパイクはもっと低い）で一番グリップする。熱すぎても滑り、早く減る。スタート直後とピットで替えた直後は冷えているので、最初の1周は慎重に（曲がる・ブレーキで温まる）。雨では冷えやすく、スリックは温まらない。メーターの上（スマホは左）の「TYRE」に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分</span>
         <span>アップダウン</span><span>コースには上り下り（最大約6%）と、コーナーの軽いバンク（外側が少し高い）がある。上りはよく止まり、下りは止まりにくい。峠（盛り上がった所）を速く越えると車が軽くなってグリップが減るので、峠の上では強く曲がらない・ブレーキしない。くぼみでは押し付けられてグリップが増える</span>
@@ -1041,17 +1041,32 @@ addEventListener('error',ev=>{if(!ev||(!ev.error&&!ev.message))return;recordErr(
 addEventListener('unhandledrejection',ev=>recordErr(ev&&ev.reason,'非同期'));
 /* ================= 基本データ ================= */
 const DRIVERS=[
-  {name:'早瀬 隼',color:0xc8231c,accent:0xf2f2f2,cls:'ツーリング',tr:3},
-  {name:'森本 瑞希',color:0x1f7f46,accent:0xf5d33c,cls:'ツーリング',tr:1},
-  {name:'大石 剛',color:0xe0b000,accent:0x1b1b1f,cls:'ツーリング',tr:4},
-  {name:'桜井 るる',color:0xf2f2f2,accent:0xd9407f,cls:'ツーリング',tr:0},
-  {name:'神田 玄',color:0x2b2f8a,accent:0x28c8b4,cls:'ツーリング',tr:2},
-  {name:'北条 ペコ',color:0x2388c8,accent:0xff7a22,cls:'ツーリング',tr:1},
-  {name:'土井 大吾',color:0x2a2a2e,accent:0xc8231c,cls:'ツーリング',tr:5},
-  {name:'木下 希々',color:0xe8741a,accent:0x1f3aa8,cls:'ツーリング',tr:0},
+  {name:'早瀬 隼',pz:{a:3,r:3,m:3,sp:'start'},color:0xc8231c,accent:0xf2f2f2,cls:'ツーリング',tr:3},
+  {name:'森本 瑞希',pz:{a:0,r:0,m:1,sp:'rain'},color:0x1f7f46,accent:0xf5d33c,cls:'ツーリング',tr:1},
+  {name:'大石 剛',pz:{a:4,r:4,m:4},color:0xe0b000,accent:0x1b1b1f,cls:'ツーリング',tr:4},
+  {name:'桜井 るる',pz:{a:1,r:1,m:2},color:0xf2f2f2,accent:0xd9407f,cls:'ツーリング',tr:0},
+  {name:'神田 玄',pz:{a:2,r:2,m:0,sp:'late'},color:0x2b2f8a,accent:0x28c8b4,cls:'ツーリング',tr:2},
+  {name:'北条 ペコ',pz:{a:3,r:1,m:1},color:0x2388c8,accent:0xff7a22,cls:'ツーリング',tr:1},
+  {name:'土井 大吾',pz:{a:2,r:2,m:3,b:1},color:0x2a2a2e,accent:0xc8231c,cls:'ツーリング',tr:5},
+  {name:'木下 希々',pz:{a:0,r:2,m:0,sp:'tyre'},color:0xe8741a,accent:0x1f3aa8,cls:'ツーリング',tr:0},
 ];
 // 性格（T68）：room＝並んだ時に保つ横の間隔(m、車幅は1.9)、gap＝前の車との車間の倍率、yld＝並ばれた時に引いて譲る確率、bm＝ブレーキを絞める余裕（＋は遅い）
-const TRAITS=[{n:'クリーン',room:3.0,gap:1.25,yld:.8,bm:-.6,ag:-.3,sd:.9,pr:.8},{n:'慎重',room:3.3,gap:1.5,yld:.9,bm:-1,ag:-.6,sd:.8,pr:.5},{n:'マイペース',room:2.7,gap:1,yld:.5,bm:0,ag:0,sd:.6,pr:.7},{n:'ぐいぐい',room:2.3,gap:.8,yld:.25,bm:.5,ag:.6,sd:1.3,pr:1.2},{n:'強引',room:2.1,gap:.65,yld:.1,bm:.9,ag:1,sd:1.5,pr:1.6},{n:'ブロッカー',room:2.7,gap:1,yld:.35,bm:.1,blk:1,ag:.2,sd:1.2,pr:.9}];
+/* T288（β0.123.0）性格は5つの軸の組み合わせ（ドライバーの pz）。PEA＝攻め方（ag＝攻め、bm＝ブレーキの余裕、scf＝狙い以外のコーナーで差す割合、rp＝おすすめの好み）、
+   PER＝並んだ時（room・gap・yld）、PEM＝気持ち（sd＝競り合いでのスタミナの減り、pr＝迫られた時の焦り）、b＝ブロック（直線で1度だけ塞ぐ）、sp＝得意（PES）。
+   呼び名 n＝「並んだ時」＋「攻め方」（ブロックする人は「〜ブロッカー」）、s＝順位表の1文字、tg＝気持ち・得意。TRAITS はドライバーの番号順（d.tr＝番号） */
+const PEA=[{w:'慎重派',s:'慎',ag:-.6,bm:-1,scf:.4},{w:'丁寧派',s:'丁',ag:-.3,bm:-.6,scf:.5},{w:'バランス型',s:'バ',ag:0,bm:0,scf:.55},{w:'攻撃型',s:'攻',ag:.6,bm:.5,scf:.8},{w:'猛攻型',s:'猛',ag:1,bm:.9,scf:1}];
+const PER=[{w:'紳士的な',room:3.3,gap:1.5,yld:.9},{w:'きれいな',room:3.0,gap:1.25,yld:.8},{w:'',room:2.7,gap:1,yld:.5},{w:'強気な',room:2.3,gap:.8,yld:.25},{w:'荒っぽい',room:2.1,gap:.65,yld:.1}];
+const PEM=[{w:'冷静',sd:.6,pr:.5},{w:'落ち着いている',sd:.8,pr:.7},{w:'',sd:1,pr:.9},{w:'熱くなりやすい',sd:1.3,pr:1.2},{w:'かっとなる',sd:1.5,pr:1.6}];
+const PES={rain:'雨に強い',start:'スタートがうまい',tyre:'タイヤを長持ちさせる',late:'終盤に強い'};
+const PEP=[{t:'慎重。差がわずかな所は止まりやすく安定する側に',sw:2,sb:0,sb2:0},{t:'丁寧に走る。差がわずかな所は安定する側に',sw:2,sb2:1},{t:'自分のペース。差がわずかな所はタイヤが長持ちする側に',w:1},
+  {t:'前に出たい。差がわずかな所は加速と曲がりやすさの側に',sg:0,sb2:2},{t:'力ずくで抜く。差がわずかな所はブレーキで差しやすい側に',sb:2,sg:0}],PEPB={t:'直線で守る。差がわずかな所は最高速の側に',sg:2,sw:0};
+function persOf(z){const A=PEA[z.a??2],R=PER[z.r??2],M=PEM[z.m??2];
+  return {n:R.w+(z.b?'ブロッカー':A.w),s:z.b?'ブ':A.s,tg:[M.w,PES[z.sp]||''].filter(Boolean).join('・'),room:R.room,gap:R.gap,yld:R.yld,bm:A.bm,ag:A.ag,sd:M.sd,pr:M.pr,blk:z.b?1:0,sp:z.sp||'',scf:z.b?.6:A.scf,rp:z.b?PEPB:PEP[z.a??2]};}
+const TRAITS=DRIVERS.map(d=>persOf(d.pz||{}));DRIVERS.forEach((d,i)=>d.tr=i);
+const trFull=t=>t.n+(t.tg?'（'+t.tg+'）':''); // 呼び名＋気持ち・得意
+// 得意（CPU だけ）：TSK＝0 で無効。雨＝濡れた路面で曲がる速さ ＋TSR×濡れ・ミス ×TSE、スタート＝反応の早さ、タイヤ＝減り ×TST、終盤＝最後の2周のミス ×TSL
+let TSK=1,TSR=.03,TSE=.6,TST=.85,TSL=.5;
+const spOf=k=>TSK&&!k.isPlayer&&k.dr?TRAITS[k.dr.tr??2].sp:'';
 // T228（β0.85.0）無理をした分は後で返ってくる（謎の追いつき補正は入れない。T227）
 // ①攻め方 ag（性格）：AGL＝曲がる速さの加減（CPU は元から限界近くなので、＋側はほとんど速くならない。−側〔慎重・クリーン〕はタイヤをいたわって少し遅い）、AGB＝ブレーキを遅く強く、AGW＝滑らせる・強く踏む分のタイヤの摩耗・温度とブレーキの熱の増え方（CPU のみ。AGK＝0 で無効）
 // ⑤スタミナ k.stam（CPU のみ）：前後 STB m 以内に車がいる間（すぐ横は1.5倍）STD×性格の sd ずつ減り、一人なら STR ずつ戻る（下限 STMIN）。減るとミスの確率×(1＋STE×減り)＋STA×減り、ラインのぶれ＋STW m、曲がる速さ−STL×減り（STK＝0 で無効）
@@ -2947,7 +2962,7 @@ let AFV=.5,AIPW=0,AISK=1.7,PBW=0,PBT=1,ATKX=1.4,RRL=4.2,AFVC=1;
 /* T256 の続き（β0.100.0）。AFV（前の車が離れていく間はアクセルを抜かない）を使わない所：AFVS＝スタートから AFVS 秒（全車が固まったまま車間を詰めて第1コーナーへ入り、追突が増えていた）、AFVD＝先 u×AFVD m 以内にコーナーがある時（離れていく前の車について行くと、ブレーキの所で車間が足りず追突していた）。0 で β0.99.0 のまま */
 let AFVS=25,AFVD=4;
 // T118 取り返し（SBK＝1で有効）：SBT＝取り返しモードの秒数、SBO＝直線で相手の横につく間隔(m)、SBD＝差す距離の伸び、SBL＝ブレーキをさらに遅らせる倍率、SBX＝出口でアクセルを開ける（1で絞らない）。T119 抜き所を探す（SCK＝1で有効）：SCT＝追従してから狙いを絞るまでの秒数、SCF＝狙い以外のコーナーで差す距離の割合（性格 0〜4 ごと）
-let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=[.5,.4,.55,.8,1,.6];
+let LOWV=6,LGAP=5.5,SBK=1,SBT=5,SBO=1,SBD=.4,SBL=1,SBX=0,SCK=1,SCT=30,SCF=TRAITS.map(t=>t.scf);
 // T147 ブロッカー（性格 blk）：BKM＝1で有効。後ろから迫る車（BKL〜BKD m 後ろ、横の差 .8〜BKX m）に対し、直線で1度だけ（BKC 秒おき）その車のラインへ寄って前に出させない。コーナーの中・手前は動かない。接触しない車間は後ろ側が守る（follow）
 let BKM=1,BKC=6,BKD=28,BKL=7,BKX=3.4;
 const CID=new Int16Array(N).fill(-1);{let n=-1;for(let i=0;i<N;i++){if(CORNER[i]){if(!CORNER[wrap(i-1)])n++;CID[i]=n;}}}
@@ -3020,7 +3035,7 @@ function aiControl(k,dt){
   k.power=k.isPlayer||!AIPW?1:k.skill; // T254②：腕前でエンジンの力は変えない（AIPW＝1 で従来）
   // 速度計画：先のカーブで曲がれる速さ＋ブレーキ距離（T228：攻め方 ag で曲がる速さとブレーキ、疲れで曲がる速さ、乱れた空気でダウンフォースを見込む）
   const ag=agOf(k),stl=STK&&!k.isPlayer&&sess==='race'?STL*(1-(k.stam??1)):0;
-  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:k.ty>1?.7:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(k.fs>.8?FFK:1)*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*(1+AGL*ag-stl);let vAllow=1e9;
+  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:k.ty>1?.7:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(k.fs>.8?FFK:1)*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*(1+AGL*ag-stl)*(spOf(k)==='rain'?1+TSR*ENV.wet:1);let vAllow=1e9; /* T288 雨に強い */
   const RA=k.altS?RADA[k.altS>0?0:1]:RADL;
   let bmA=null;if(BMK&&BMC>0&&(!k.isPlayer||autoPlay)&&sess!=='drag'){let bg=BMC;for(const o of karts){if(o===k||o.dnf||o.pit>0||!o.bmo)continue;const g=progress(o)-progress(k);if(g>0&&g<bg&&Math.abs(o.lat-k.lat)<2.6){bg=g;bmA=o.bmo;}}} // T83（β0.112.0）すぐ前の車の目印
   const rsF=rsCur?RSF.map((r,i)=>r.mu*TYR[k.ty||0].ms[i]*Math.pow(r.mu,AIMUS)*(1-(1-wgm)*r.wk)/wgm):null; // T283 路面の種類（舗装は 1）
@@ -3044,7 +3059,7 @@ function aiControl(k,dt){
     if(PSO>0&&k.altO&&k.altS&&k.fs<.6&&u>12&&!k.finished&&sess==='race'&&CORNER[k.idx]){const kc=Math.abs(KAP[k.idx]),kn=Math.abs(KAP[wrap(k.idx+8)]);if(kc>1/220&&kn<kc*.92&&Math.abs(beta)<.22){k.pwr=true;k.pso=1;}}}
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(!k.isPlayer&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))];
-    if(cn&&!k.cnPrev&&Math.random()<aiP().err*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(STK&&sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
+    if(cn&&!k.cnPrev&&Math.random()<aiP().err*(spOf(k)==='rain'&&ENV.wet>.3?TSE:spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(STK&&sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
     k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,tr=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0; // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
@@ -3195,7 +3210,7 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(sess!=='race
   if(EGK&&wearMode>0&&k.manual&&k.rpm>REDLINE-60&&(k.thrV||0)>.5&&!k.finished)k.eng=Math.min(1,(k.eng||0)+dt*EGL);
   if(k.isPlayer&&(k.eng||0)>=(k.engW||0)+.1){k.engW=Math.floor(k.eng*10)/10;radio('エンジンを痛めている（出力 −'+Math.round(EGP*k.eng*100)+'%、ピットでは直らない）。レブリミットに当て続けない、回転を合わせて落とそう','eng',15);}
   if(wearMode>0&&k.pit!==2){const RSw=RSF[RSI[k.idx]],slip=Math.max(k.slipR,k.slipF),ld=Math.min(1.2,Math.abs(k.ay)/(G*1.4)),spd=Math.min(1,Math.abs(k.u)/30);
-    k.wear=Math.min(1,k.wear+dt*wearK()*.36*(1+AGW*agOf(k))*Math.pow(k.mm||1,WMK)*(TTK&&k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*tyWr(k.ty||0,RSI[k.idx])*(.0009*spd+.0075*ld*ld+.02*Math.max(0,slip-.1*RSw.sk)*spd*RSw.wr+(k.wheelspin?.004:0)*RSw.wr+(k.locked?.012:0)*RSw.wr));}
+    k.wear=Math.min(1,k.wear+dt*wearK()*.36*(1+AGW*agOf(k))*Math.pow(k.mm||1,WMK)*(spOf(k)==='tyre'?TST:1)*(TTK&&k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*tyWr(k.ty||0,RSI[k.idx])*(.0009*spd+.0075*ld*ld+.02*Math.max(0,slip-.1*RSw.sk)*spd*RSw.wr+(k.wheelspin?.004:0)*RSw.wr+(k.locked?.012:0)*RSw.wr));}
   k.gripK=(1-TYR[k.ty||0].wd*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
 /* 大事故（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
 const wreckCtl=k=>({steer:0,accel:false,brake:k.u>.8,brk:.8,drift:false});
@@ -4046,7 +4061,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   const rk=ranking();const r=rk.indexOf(p)+1;H('rank').innerHTML=r+'<small>位</small>';
   towerT-=.05;if(towerT<=0){towerT=.25;const lead=rk[0];const pace=p.top*.62;
     H('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&!k.dnf&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
-      const tg=tkTag(k);return `<div class="tw${k.isPlayer?' me':''}${judgeOn&&sess==='race'&&(k.ipt||k.pen||k.dt)||tg?' hasip':''}" data-k="${k.id}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><u title="${TRAITS[k.dr.tr??2].n}">${TRAITS[k.dr.tr??2].n[0]}</u><span>${mixSel&&sess==='race'?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls}</small>`:''}${k.name}</span><em>${ipTag(k)}${tg}${tn(gap)}</em></div>`;}).join('');$('tower').classList.toggle('ip',judgeOn&&sess==='race'&&rk.some(k=>k.ipt||k.pen||k.dt)||rk.some(k=>tkState(k).length));
+      const tg=tkTag(k);return `<div class="tw${k.isPlayer?' me':''}${judgeOn&&sess==='race'&&(k.ipt||k.pen||k.dt)||tg?' hasip':''}" data-k="${k.id}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><u title="${trFull(TRAITS[k.dr.tr??2])}">${TRAITS[k.dr.tr??2].s}</u><span>${mixSel&&sess==='race'?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls}</small>`:''}${k.name}</span><em>${ipTag(k)}${tg}${tn(gap)}</em></div>`;}).join('');$('tower').classList.toggle('ip',judgeOn&&sess==='race'&&rk.some(k=>k.ipt||k.pen||k.dt)||rk.some(k=>tkState(k).length));
     H('laps').innerHTML=p.lastLap?`前の周 ${tn(fmt(p.lastLap))}<br>ベスト ${p.best?tn(fmt(p.best)):'—'}`:'';
     const me=rk.indexOf(p),a=rk[me-1],b=rk[me+1];const g=(x,y)=>Math.max(0,(progress(x)-progress(y))/pace).toFixed(1);
     if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);H('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動');
@@ -4471,7 +4486,7 @@ function playerControl(dt){
 const charsEl=$('chars');
 DRIVERS.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.className='card';b.setAttribute('aria-pressed',i===playerChoice?'true':'false');
   const hex='#'+d.color.toString(16).padStart(6,'0');
-  b.innerHTML=`<span class="face" style="background:${hex}"></span><span>${d.name}</span><span class="cls">No.${i+1}</span><span class="cls trt">${TRAITS[d.tr??2].n}</span>`;
+  b.innerHTML=`<span class="face" style="background:${hex}"></span><span>${d.name}</span><span class="cls">No.${i+1}</span><span class="cls trt">${TRAITS[d.tr??2].n}</span><span class="cls trt" style="font-size:11px">${TRAITS[d.tr??2].tg}</span>`;
   b.addEventListener('click',()=>{playerChoice=i;charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===i?'true':'false'));tone(660,.06,'square',.15);if(titleMode==='garage')garageSetup();updSpec();myColorUi();});
   charsEl.appendChild(b);});
 function segWire(id,set,cur){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.v===cur));b.addEventListener('click',()=>{set(+b.dataset.v);el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));saveSettings();});});}
@@ -4814,7 +4829,7 @@ function showResults(){retT=0;$('rwAsk').hidden=true;setSpd(1);SC_reset();
   const f0=finishOrder[0],lt=f0&&!f0.ret?f0.finishTime+(f0.pen||0):null; // 先頭とのタイム差（β0.55.0 T180⑭）
   const cpos={},crk=new Map();finishOrder.forEach(k=>{cpos[k.cls]=(cpos[k.cls]||0)+1;crk.set(k,cpos[k.cls]);});
   const setTxt=k=>k.isPlayer?'':`<br><span style="opacity:.6;font-size:.72em">${drvLabel(k.ci||0,DRV_KEYS.indexOf(k.drv))}・${carName(k.ci||0)}・ギア${['加速','標準','最高速'][k.gi??1]}・ウイング${['少','標準','多'][k.wi??1]}・${SETE[k.en??1].n}${(k.sui??1)!==1?'・サス'+SETSU[k.sui].n:''}${(k.rhi??1)!==1?'・車高'+SETRH[k.rhi].n:''}${ccChoice===2?'・'+TKS[k.tki??1].n+(k.ic===0?'（IC なし）':''):''}</span>`; // T191 CPU のセッティング
-  const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${mixSel?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls} ${crk.get(k)}位</small>`:''}${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${TRAITS[k.dr.tr??2].n}</span>${setTxt(k)}${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime-raceT0+(k.pen||0))+(k.est?'*':'')}${k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${i&&!k.ret&&lt!=null?'+'+(k.finishTime+(k.pen||0)-lt).toFixed(3):''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}${k.ipt||k.pen?`<br><small style="color:var(--gold);cursor:help" title="${(k.jh||[]).map(e=>e.lap+'周目 '+e.txt).join('\n').replace(/"/g,'')}">${k.ipt?'IP '+(+k.ipt.toFixed(1)):'違反'} ⓘ</small>`:''}</td></tr>`).join('');
+  const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${mixSel?`<small class="cl ${k.cls==='GT'?'gt':''}">${k.cls} ${crk.get(k)}位</small>`:''}${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${trFull(TRAITS[k.dr.tr??2])}</span>${setTxt(k)}${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime-raceT0+(k.pen||0))+(k.est?'*':'')}${k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${i&&!k.ret&&lt!=null?'+'+(k.finishTime+(k.pen||0)-lt).toFixed(3):''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}${k.ipt||k.pen?`<br><small style="color:var(--gold);cursor:help" title="${(k.jh||[]).map(e=>e.lap+'周目 '+e.txt).join('\n').replace(/"/g,'')}">${k.ipt?'IP '+(+k.ipt.toFixed(1)):'違反'} ⓘ</small>`:''}</td></tr>`).join('');
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">タイム</td><td class="t">差</td><td class="t">ベストラップ</td><td class="t">接触</td></tr>'+rows+((finishOrder.some(k=>k.est&&!k.ret)||karts.some(k=>k.ipt))?'<tr class="ft"><td></td><td colspan="5" style="font-size:11px;color:var(--muted);padding-top:6px">'+(finishOrder.some(k=>k.est&&!k.ret)?'* ＝ゴール前の見込みのタイム　':'')+(karts.some(k=>k.ipt)?'IP＝インシデントポイント（軽い接触は0.5点。2点で警告、4点で＋5秒、6点でドライブスルー）':'')+'</td></tr>':''); /* β0.97.0 */
   const r=finishOrder.indexOf(player())+1,pcr=crk.get(player());
   $('resultTitle').textContent=mixSel&&!player().ret?(player().cls+'クラス '+(pcr===1?'優勝！':pcr+'位')+'（総合 '+r+'位）')+(rwCount?`（巻き戻し ${rwCount}回）`:''):(player().ret?'リタイア（大クラッシュ）':r===1?'優勝！（'+(isForm()?'フォーミュラ・':'')+CC[ccChoice].name+'クラス）':(r<=3?r+'位 表彰台！':r+'位'))+(rwCount?`（巻き戻し ${rwCount}回）`:'');
@@ -4913,7 +4928,7 @@ function showDrag(){state='results';resultCamStart();$('replayBtn').hidden=rpBuf
 
 /* ================= ループ ================= */
 /* ================= タイトル画面（デモ走行・ガレージ・メニュー） ================= */
-const TIPS=["ミスしたら巻き戻し（Rキー／スマホは右上のボタン）で5秒戻れる。使った回数は結果に残る","ブレーキバランスはレース中も [ ] キーで動かせる。燃料が減ると重さが前へ寄るので、長いレースの後半は前へ1つが目安","雨の日はブレーキバランスを [ ] キーで後ろへ2〜5%。減速が弱いと前に荷重が乗りにくく、曲がりながらのブレーキで前が逃げやすい","走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ","ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安","白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒","黄旗＝この先に止まった車がいる。減速して慎重に","前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる。すぐ横へ出ず、ブレーキの少し手前まで引っ張ってもらってから内側へ出ると並びやすい（スリングショット）","FF・4WD は曲がり始めにアクセルを残したまま軽くブレーキ（左足ブレーキ。キーボードは同時押し）で向きが変わる","CPU も走り出しは手前でブレーキを踏み、周を重ねるごとに目印を奥へ詰めてくる。はみ出したら手前へ戻す","ブレーキは看板などの目印を決めて毎周同じ所で踏む。そろったら目印を 5m ずつ奥へ（練習表示の下の行に「前回より ○m 奥」と出る）","コーナーの内側と出口の赤白の縁石は乗ってよい。きついコーナーの内側の奥の黄と黒の高い縁石は跳ねるので避ける（雨の日の縁石も滑る）","CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい","アシストを「なし」にすると、ABSもトラクション制御も自分で行う","GARAGE の「おすすめ」タブで、レースの内容とドライバーに合う車種とセッティングを理由つきで出せる。「この設定にする」でそろう","スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで","GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる","結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる","リプレイは結果画面から。中継カメラで見返せる","スタート位置を「予選」にすると、ポールを狙える","結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる","ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる","ブレーキは最初にしっかり踏んで、曲がり始めに向けてだんだん抜く。練習表示の棒グラフで踏み方が見える","曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる","下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる","後輪駆動は頂点を過ぎたらアクセルで後ろを少し流して向きを変えられる。開けすぎるとスピン","燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる","長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる","燃料を節約するなら、ブレーキの手前で早めにアクセルを戻して惰性で走る（リフト・アンド・コースト）。アクセルを踏んでいない間は燃料がほとんど減らない","曲がり始めは外側から。内側から曲がり始めるとコーナーがきつくなって、速く曲がれない（練習表示に「外に寄り切れていない」）","コーナーの立ち上がりは、一度アクセルを開けたら戻さずに済む速さとラインで。開けたり戻したりすると車が落ち着かない","周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる","雨が長く降ると水たまりができる。上を速く通るとタイヤが浮いて曲がれない。よけるか手前で減速を","大クラッシュした車はフェンスの際へ寄せられて、レースの終わりまでそこに残る","大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒","GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート。抜いていいのは自分がスタートラインを越えてから","混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう","GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま","GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる","ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ","手動変速でレブリミットに当て続けたり、回転を合わせずに落とすとエンジンが傷む。ピットでは直らない","ぐいぐい・強引な CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時","コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい","後ろにぴったりつき続けると、前の CPU は焦ってミスが増える（順位表の「迫」）。強引な性格ほど崩れやすい","コーナーの外側の黒い粒はゴムかす（マーブル）。周を重ねるほど増え、上を走ると数コーナー滑る。外から並ぶのは出口までに","CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意","逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）","0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる","0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負","タイムアタックのゴーストは、エンジンごとにベストラップを保存","GARAGE の「路面（試し）」で、コースを砂利道・雪・氷にして走れる。砂利道と雪は車を少し横に向けたまま、アクセルで向きを整えて走る"];
+const TIPS=["ミスしたら巻き戻し（Rキー／スマホは右上のボタン）で5秒戻れる。使った回数は結果に残る","ブレーキバランスはレース中も [ ] キーで動かせる。燃料が減ると重さが前へ寄るので、長いレースの後半は前へ1つが目安","雨の日はブレーキバランスを [ ] キーで後ろへ2〜5%。減速が弱いと前に荷重が乗りにくく、曲がりながらのブレーキで前が逃げやすい","走行ラインの色：緑の細い線＝そのまま、黄の点線＝減速の準備、赤の太い線＝今ブレーキ","ブレーキは直線のうちに。コーナー手前の看板 150・100・50m が目安","白線の外に4輪とも出るとコース外違反。3回まで警告、4回目から＋5秒","黄旗＝この先に止まった車がいる。減速して慎重に","前の車の真後ろにつくと、スリップストリームで空気抵抗が減って伸びる。すぐ横へ出ず、ブレーキの少し手前まで引っ張ってもらってから内側へ出ると並びやすい（スリングショット）","FF・4WD は曲がり始めにアクセルを残したまま軽くブレーキ（左足ブレーキ。キーボードは同時押し）で向きが変わる","CPU も走り出しは手前でブレーキを踏み、周を重ねるごとに目印を奥へ詰めてくる。はみ出したら手前へ戻す","ブレーキは看板などの目印を決めて毎周同じ所で踏む。そろったら目印を 5m ずつ奥へ（練習表示の下の行に「前回より ○m 奥」と出る）","コーナーの内側と出口の赤白の縁石は乗ってよい。きついコーナーの内側の奥の黄と黒の高い縁石は跳ねるので避ける（雨の日の縁石も滑る）","CPUの強さは入門〜達人の5段階。弱いほどコーナーでミスをしやすい","アシストを「なし」にすると、ABSもトラクション制御も自分で行う","GARAGE の「おすすめ」タブで、レースの内容とドライバーに合う車種とセッティングを理由つきで出せる。「この設定にする」でそろう","スマホの傾きハンドルは、カウントダウン中の持ち方が「まっすぐ」になる。感度はGARAGEで","GARAGEのマイカラーで、自分の車の色とゼッケン番号を変えられる","結果画面の「フォト」（Fキー）で、優勝車をじっくり眺められる","リプレイは結果画面から。中継カメラで見返せる","スタート位置を「予選」にすると、ポールを狙える","結果画面の「ラップ比較」で、最速の CPU とどのコーナーで差が付いたかをグラフで見られる","ブレーキを踏むと、看板の何m手前か・目安より早いか遅いかが出る。コーナーの出口では最速の CPU と比べられる","ブレーキは最初にしっかり踏んで、曲がり始めに向けてだんだん抜く。練習表示の棒グラフで踏み方が見える","曲がりながらのブレーキは、ハンドルを切るほど弱めると前輪が曲がる力を残せる","下り坂のブレーキは早めに。峠の上では車が軽くなるので、まっすぐ越えてから曲がる","後輪駆動は頂点を過ぎたらアクセルで後ろを少し流して向きを変えられる。開けすぎるとスピン","燃料が減ると車が軽くなる。レースの終盤ほど少し速く走れる","長いレースは燃料モード（Gキー）で燃費を稼ぐと、ピットの給油が短くなる","燃料を節約するなら、ブレーキの手前で早めにアクセルを戻して惰性で走る（リフト・アンド・コースト）。アクセルを踏んでいない間は燃料がほとんど減らない","曲がり始めは外側から。内側から曲がり始めるとコーナーがきつくなって、速く曲がれない（練習表示に「外に寄り切れていない」）","コーナーの立ち上がりは、一度アクセルを開けたら戻さずに済む速さとラインで。開けたり戻したりすると車が落ち着かない","周回を重ねると走行ラインにゴムが乗って黒ずみ、少しグリップが上がる。雨で流れる","雨が長く降ると水たまりができる。上を速く通るとタイヤが浮いて曲がれない。よけるか手前で減速を","大クラッシュした車はフェンスの際へ寄せられて、レースの終わりまでそこに残る","大クラッシュが起きると FCY（80km/h 制限）かセーフティカー。どちらも追い越し禁止、抜くと＋5秒","GARAGEのスタート方式をローリングにすると、隊列でタイヤを温めてからグリーンでスタート。抜いていいのは自分がスタートラインを越えてから","混走クラスでは GT が後ろから速く迫る。青旗が出たらラインを譲ろう","GARAGE のカテゴリーをフォーミュラにすると、ダウンフォースの大きい1人乗りの車で走れる。速いコーナーはアクセル全開に近いまま","GARAGEのエンジン特性：低回転型は立ち上がり、高回転型は直線が速い。グラフで曲線を見比べられる","ターボのエンジンは過給機を選べる。立ち上がり重視なら小径かスーパーチャージャー、直線重視なら大径ターボ","手動変速でレブリミットに当て続けたり、回転を合わせずに落とすとエンジンが傷む。ピットでは直らない","攻撃型・猛攻型の CPU は前半速いが、長いレースではタイヤとブレーキが先に音を上げる。順位表の「タ」「ブ」「疲」の印が出たら仕掛け時","コーナーで前の車の真後ろにつき続けると、乱れた空気でタイヤが熱くなる。少し離れて立ち上がりで詰める方が抜きやすい","後ろにぴったりつき続けると、前の CPU は焦ってミスが増える（順位表の「迫」）。かっとなる性格ほど崩れやすい","コーナーの外側の黒い粒はゴムかす（マーブル）。周を重ねるほど増え、上を走ると数コーナー滑る。外から並ぶのは出口までに","CPU はコーナーの手前で前が詰まっていると、外回り・内回りに切り替えて抜きにかかる。外から並ばれたら出口に注意","逆向きのコーナーが続く所（S字）では、CPU が外から並んで、次のコーナーでインを取りにくることがある（クロスオーバー）","0-400mはGARAGEで1/8マイル・プロツリー・相手を選べる","0-400mは緑ランプへの反応と、シフトランプが青く光った瞬間のシフトアップが勝負","タイムアタックのゴーストは、エンジンごとにベストラップを保存","GARAGE の「路面（試し）」で、コースを砂利道・雪・氷にして走れる。砂利道と雪は車を少し横に向けたまま、アクセルで向きを整えて走る"];
 let titleMode='attract',attT=0,attNeed=true,garT=0,tipT=0,tipI=0,tStage=0,setupOpen=false;
 const tScr=$('titleScreen');
 function attractSetup(){sess='race';LAPS=999;ROLL.on=false;raceT0=0;SC_reset();document.body.classList.remove('solo','drag');newEvent();gridOrder=null;setupRace();for(const k of karts){k.aiDriven=true;k.launchT=.2+Math.random()*.5;}raceTime=0;attT=0;attNeed=false;tvI=-1;tvFoc=null;DIR.last='';}
@@ -4963,8 +4978,7 @@ const REC_S={"s1":{"car":{"1_1":[72.25,0.173],"1_2":[72.25,0.186],"0_2":[72.57,0
 const RECG=[['setSU','suSeg',SETSU,'サスペンション','su'],['setRH','rhSeg',SETRH,'車高','rh'],['setG','gearSeg',SETG,'ギア比','sg'],['setW','wingSeg',SETW,'ウイング','sw'],['setB','bbSeg',SETB,'ブレーキバランス','sb'],['setDf','difSeg',SETD,'デフ','df'],['setE','enSeg',SETE,'エンジン特性','en'],['setS','sbSeg',SETS,'スタビライザー','sb2'],['setTW','twSeg',SETTW,'タイヤの幅','tw'],['setC','coolSeg',SETC,'冷却','sc'],['setBC','bcSeg',SETBC,'ブレーキ冷却','bc']];
 const RECV={setSU:[()=>setSU,v=>setSU=v],setRH:[()=>setRH,v=>setRH=v],setG:[()=>setG,v=>setG=v],setW:[()=>setW,v=>setW=v],setB:[()=>setB,v=>setB=v],setDf:[()=>setDf,v=>setDf=v],setE:[()=>setE,v=>setE=v],setS:[()=>setS,v=>setS=v],setTW:[()=>setTW,v=>setTW=v],setC:[()=>setC,v=>setC=v],setBC:[()=>setBC,v=>setBC=v]};
 // 選手の性格（TRAITS の番号）ごとの好み：差がわずかな時だけ、この値を選ぶ。w＝タイヤの減りの少ない方を選ぶ
-const RECP=[{t:'きれいに走る。差がわずかな所は安定する側に',sw:2,sb2:1},{t:'慎重。差がわずかな所は止まりやすく安定する側に',sw:2,sb:0,sb2:0},{t:'自分のペース。差がわずかな所はタイヤが長持ちする側に',w:1},
-  {t:'前に出たい。差がわずかな所は加速と曲がりやすさの側に',sg:0,sb2:2},{t:'強引に抜く。差がわずかな所はブレーキで差しやすい側に',sb:2,sg:0},{t:'直線で守る。差がわずかな所は最高速の側に',sg:2,sw:0}];
+const RECP=TRAITS.map(t=>t.rp); // T288 ドライバーごと（攻め方とブロックから）
 function recCost(v,L,wk){if(!v)return 1e9;const wpl=v[1]/5*wk;let t=0;for(let j=1;j<=L;j++)t+=v[0]*(1+lapLossK(Math.min(.6,wpl*(j-.5)),0));return t;}
 function recCalc(){const L=LAPSET[lapsSel],wk=!wearMode?0:L<=12?wearMode:wearMode===1?Math.pow(12/L,1.5):1.5,fm=isForm();
   const wet=wxSel===2,unk=wxSel===4||wxSel===5,srf=roadSurf&&REC_S['s'+roadSurf]?roadSurf:0,D=srf?REC_S['s'+srf]:REC[wet?'w':'d']||REC.d,tr=DRIVERS[playerChoice].tr??2,P=RECP[tr]||{},TT=RECT*L;
@@ -5162,7 +5176,7 @@ function frame(now){
     // 空ぶかし
     const p=player();if(p){const rev=(accelHeld()?6500:1500);p.rpm+=(rev-p.rpm)*Math.min(1,dt*4);const e0=p.erpm??p.rpm;p.erpm=ERQ?e0+Math.max(-ERD*dt,Math.min(ERU*dt,rev-e0)):p.rpm;}
     if(countdown<=0){state='race';if(!ROLL.on){setLamps(0,true);showBanner('GO!');sfx('go');crowdCheer(1);lampTO=setTimeout(()=>setLamps(0,false),1500);setTimeout(()=>{if(state!=='countdown')$('slights').hidden=true;},800);
-      for(const k of karts)if(!k.isPlayer||autoPlay)k.launchT=.12+Math.random()*.35;}}}
+      for(const k of karts)if(!k.isPlayer||autoPlay)k.launchT=spOf(k)==='start'?.07+Math.random()*.18:.12+Math.random()*.35; /* T288 スタートがうまい */}}}
     envStep(dt,false);syncVisuals(dt);updateCamera(dt);updateHud(dt);updateLine(player());
   }
   if((state==='race'||state==='finished')&&holdT>0){holdT-=dt;syncVisuals(dt);updateCamera(dt);updateHud(dt);updateLine(player());}
