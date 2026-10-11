@@ -160,7 +160,7 @@ details.more{margin-top:8px}
 details.more>summary{cursor:pointer;font-weight:700;color:var(--paper);padding:6px 0}
 .seg.small button{flex:1 1 72px;font-size:13px;padding:8px 4px}
 .card .cls{font-family:var(--num);font-weight:600;font-size:13px;color:var(--muted)}
-.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:flex;gap:8px;flex-wrap:wrap}#tyreSeg{display:grid;grid-template-columns:repeat(4,1fr)}
 .seg button{flex:1 1 90px;font-family:var(--display);font-weight:700;font-size:16px;padding:10px;border-radius:3px;border:1px solid var(--line);background:var(--night-2);color:var(--paper);cursor:pointer}
 #aiSeg button{flex-basis:56px;padding:10px 4px;font-size:15px}
 .seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper)}
@@ -729,7 +729,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.120.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.121.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -775,7 +775,7 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
         <div><div class="label">ギア比<span class="hint">変速のギアの掛け方。加速寄り＝出足が速い／最高速寄り＝直線で伸びる</span></div><div class="seg" id="gearSeg"><button type="button" data-v="0">加速寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">最高速寄り</button></div></div>
         <div><div class="label">ウイング<span class="hint">ダウンフォース（走ると車を地面へ押さえつける力）。多いとコーナーに強く、直線は遅い</span></div><div class="seg" id="wingSeg"><button type="button" data-v="0">少なめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">多め</button></div></div>
         <div><div class="label">ブレーキバランス<span class="hint">前輪と後輪のブレーキの強さの配分。レース中も [ ] キー（パッドは右スティックの左右・スマホはメニューの「BB」）で 1% ずつ動かせる。雨の日は後ろへ数%が目安（CPU は燃料と雨に合わせて自分で動かす）</span></div><div class="seg" id="bbSeg"><button type="button" data-v="0">前寄り</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">後ろ寄り</button></div></div>
-        <div><div class="label">タイヤ<span class="hint">スリック＝乾いた路面用／レイン＝雨用。自動なら路面が濡れていればレイン</span></div><div class="seg" id="tyreSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">スリック</button><button type="button" data-v="2">レイン</button></div></div>
+        <div><div class="label">タイヤ<span class="hint">スリック＝乾いた舗装で最速だが減りが早い／レイン＝雨／ラジアル＝少し遅いが長持ち／スタッドレス＝雪／スパイク＝氷／グラベル＝砂利道。自動は路面と天気に合わせる（長いレースは長持ちするタイヤとも比べる）</span></div><div class="seg" id="tyreSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">スリック</button><button type="button" data-v="2">レイン</button><button type="button" data-v="3">ラジアル</button><button type="button" data-v="4">スタッドレス</button><button type="button" data-v="5">スパイク</button><button type="button" data-v="6">グラベル</button></div></div>
         <div><div class="label">冷却（ラジエーター）<span class="hint">エンジンの冷え方。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="coolSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
         <div><div class="label">デフ<span class="hint">左右のタイヤの回転差を抑える仕組み。オープン＝出口で内側が空転しやすい／1.5way＝加速の時だけ効く（標準）／2way＝減速中も効いて安定するが、入口で曲がりにくい</span></div><div class="seg" id="difSeg"><button type="button" data-v="0">オープン</button><button type="button" data-v="1">1.5way</button><button type="button" data-v="2">2way</button></div></div>
         <div><div class="label">エンジン特性<span class="hint">トルクの出方。低回転型＝コーナーの立ち上がりが速いが最高速が伸びない／高回転型＝低速は弱いが上まで回って直線が速い</span></div><div class="seg" id="enSeg"><button type="button" data-v="0">低回転型</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">高回転型</button></div><canvas id="tqCv" width="440" height="120" style="width:100%;max-width:440px;height:auto;margin-top:6px;background:rgba(8,10,13,.6);border-radius:3px" aria-label="トルク曲線のグラフ"></canvas></div>
@@ -903,8 +903,8 @@ body.touch #sysVolPop{--tbar-h:44px;--tbar-ic:22px;--tbar-thumb:28px;--tbar-rang
         <span>フォーミュラ</span><span>GARAGE の「カテゴリー」でフォーミュラにすると、8台すべてが1人乗りのオープンホイールの車になる。軽く（約780kg）、ダウンフォースがとても大きいので、速いコーナーほどツーリングカーより速く曲がれる。後輪駆動。運転席の視点ではハンドルの表示とハロー（頭を守る輪）が見える。混走クラスとは一緒に使えない</span>
         <span>混走クラス</span><span>GARAGE の「混走クラス」で、速い GT クラスとツーリングクラスが同じレースを走る。GT は前のグリッドから出て、遅いクラスを周回遅れにしながら抜いていく。順位表と結果にクラスの印とクラス内の順位</span>
         <span>おすすめ</span><span>GARAGE の「おすすめ」タブ（「車」タブの上の1行からも）で、今のレースの内容（周回数・天気・タイヤ摩耗・エンジン）と選んだドライバーの性格に合う車種とセッティングを、理由つきで出す。「この設定にする」で全部そろう。中身はこのコースをオート運転で走らせて測った値（1周のタイムとタイヤの減り）。差がわずかな所は、ドライバーの性格の好み（ぐいぐい＝加速寄り、慎重＝安定、マイペース＝タイヤ長持ちなど）で選ぶ</span>
-        <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、タイヤの幅、ブレーキ冷却、変速を選べる。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）</span>
-        <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、レイン 35〜65℃）で一番グリップする。熱すぎても滑り、早く減る。スタート直後とピットで替えた直後は冷えているので、最初の1周は慎重に（曲がる・ブレーキで温まる）。雨では冷えやすく、スリックは温まらない。メーターの上（スマホは左）の「TYRE」に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分</span>
+        <span>セッティング</span><span>GARAGEで駆動方式（FF・FR・4WD）、ギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン。長持ちするラジアル、雪・氷・砂利道用のスタッドレス・スパイク・グラベルも）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、タイヤの幅、ブレーキ冷却、変速を選べる。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）</span>
+        <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、ラジアル 50〜90℃、グラベル 40〜90℃、レイン 35〜65℃、スタッドレス・スパイクはもっと低い）で一番グリップする。熱すぎても滑り、早く減る。スタート直後とピットで替えた直後は冷えているので、最初の1周は慎重に（曲がる・ブレーキで温まる）。雨では冷えやすく、スリックは温まらない。メーターの上（スマホは左）の「TYRE」に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分</span>
         <span>アップダウン</span><span>コースには上り下り（最大約6%）と、コーナーの軽いバンク（外側が少し高い）がある。上りはよく止まり、下りは止まりにくい。峠（盛り上がった所）を速く越えると車が軽くなってグリップが減るので、峠の上では強く曲がらない・ブレーキしない。くぼみでは押し付けられてグリップが増える</span>
         <span>燃料</span><span>走るほど減って車が軽くなる（終盤ほど少し速い。1周で 1600cc 約2.8kg・2000cc 約2.3kg・ターボ 約2.1kg）。タンクは 50kg（約20周分）。スタートは「作戦どおり」なら次のピットまでの分だけ積む（GARAGE「スタートの燃料」で満タンも選べる）。左下に残りの量と走れる周の数（ゴールまで足りないと赤）。空になると止まってリタイア。燃料モード（Gキー・燃料のボタン・パッドの左スティック押し込み）：燃費＝出力 −4.5%・減り −20%・自動変速は早めに上げる（ブレーキの手前で早めにアクセルを戻して惰性で走る〔リフト・アンド・コースト〕と、さらに減らない）／標準／全開＝出力 +2.5%・減り +12%。無線が作戦（ピットの回数と周）と燃料の残りを知らせる。予選は軽く、タイムアタックは一定。タンクは後輪の少し前にあるので、燃料が減ると重さが前へ寄って、ブレーキ中に後ろが少し軽くなる（満タン 50kg→空で、前の重さが約1%増える）</span>
         <span><kbd>[</kbd>／<kbd>]</kbd></span><span>ブレーキバランス（前輪と後輪のブレーキの配分。実際の車の調整ダイヤル）：] ＝前へ、[ ＝後ろへ 1% ずつ（50〜72%）。パッドは右スティックの左右。前が多いほど安定するが曲がりながらのブレーキで前が逃げる、後ろが多いほど向きが変わるがお尻が出やすい。左下に今の値（セッティングから変えると色が付く）。練習表示が「ブレーキ中に後ろが流れた／前が逃げた」を知らせる。雨の日は後ろへ：グリップが落ちて減速が弱いと前に荷重が乗りにくいので、後ろへ 2〜5% 動かすと曲がりながらのブレーキで向きが変わる（無線が知らせる。CPU も周の初めに燃料と雨に合わせて動かす）</span>
@@ -1132,7 +1132,21 @@ const SETG=[{n:'加速寄り',gf:.93},{n:'標準',gf:1},{n:'最高速寄り',gf:
 const SETW=[{n:'少なめ',dfm:.8,cdm:.87},{n:'標準',dfm:1,cdm:1},{n:'多め',dfm:1.2,cdm:1.14}]; // β0.61.0：多めが1.6秒速すぎたので、ダウンフォースの差を小さく・空気抵抗の差を大きく（少なめ＝直線、多め＝コーナー）
 const SETB=[{n:'前寄り',bb:.67,rbm:.8},{n:'標準',bb:.6,rbm:1},{n:'後ろ寄り',bb:.53,rbm:1.2}];
 const SETC=[{n:'小さめ',hf:1.3,cdm:.97},{n:'標準',hf:1,cdm:1},{n:'大きめ',hf:.7,cdm:1.04}]; // ラジエーター・ダクト（T106）：hf＝熱の上がり方の倍率（大きいほど熱くなりやすい）、cdm＝空気抵抗の倍率
-const TYRE=['自動','スリック','レイン'];
+const TYRE=['自動','スリック','レイン','ラジアル','スタッドレス','スパイク','グラベル'];
+/* T285 タイヤの種類（k.ty＝番号。設定 setT は 0＝自動、1〜＝k.ty+1）。k.rain は k.ty===1 と同じ（前からの書き方のため残す）
+   d0＝舗装（乾き）のグリップ（スリック＝1）、wl・wc＝舗装・縁石の濡れで落ちる割合、of＝コースの外（芝・砂利）の倍率、
+   g＝砂利道・雪・氷のグリップ（その路面の RSF.mu との比。路面ごとに合うタイヤ＝1。RSF.mu はそのタイヤで合わせた値なので、合うタイヤなら β0.120.0 と同じ速さ）、
+   tw＝ちょうど良い温度、wr＝減りの速さ、wt＝舗装での減りの倍率（スタッドレスは柔らかく、スパイクはピンが削れる）、wd＝減った時のグリップの落ち方（.22×摩耗^1.3 の .22。レース用は大きく、公道・ラリー用は小さい）、hp＝水の上での浮きやすさ、lp＝乾いた舗装の1周の比（スリック＝1。CPU 全車をそのタイヤにして測った値。作戦の見積もり tyPace に使う。このコースは直線が長く、舗装ではグリップの差が1周にあまり出ない）、tq＝作戦の見積もりだけに使う、舗装でふだん温まりきらない分（スリックはちょうど良い温度 80℃ まで上がらないことが多い。測定：3周でラジアル〔温度の幅 45〜85〕の方が 0.8% 速かった）
+   スリック・レインは β0.120.0 と同じ値（wetMul0 の式もそのまま） */
+const TYR=[{n:'スリック',tq:.97,d0:1,wl:0,wc:0,of:1,g:[1,.8,.66,.55],tw:[80,105],wr:1,wt:1,wd:.22,hp:1},
+ {n:'レイン',lp:1.034,d0:.9,wl:0,wc:0,of:1,g:[1,.84,.74,.6],tw:[35,65],wr:1,wt:1,wd:.22,hp:.5},
+ {n:'ラジアル',lp:1.022,d0:.86,wl:.17,wc:.22,of:1,g:[1,.93,.8,.68],tw:[50,90],wr:.55,wt:1,wd:.12,hp:.7},
+ {n:'スタッドレス',lp:1.054,d0:.84,wl:.2,wc:.25,of:1,g:[1,.87,1,.93],tw:[15,55],wr:.75,wt:1.4,wd:.15,hp:.7},
+ {n:'スパイク',lp:1.068,d0:.8,wl:.28,wc:.32,of:.95,g:[1,.9,.97,1],tw:[20,65],wr:.6,wt:1.8,wd:.13,hp:.8},
+ {n:'グラベル',lp:1.039,d0:.85,wl:.22,wc:.28,of:1.15,g:[1,1,.86,.66],tw:[40,90],wr:.55,wt:1,wd:.11,hp:.75}];
+for(const T of TYR)T.ms=T.g.map((g,i)=>i?g/(1-(1-T.d0)*RSF[i].wk):1);
+let TYK=1,TYC=.9,TYP=.37,TYL=1.03,TYM=1,TYX=2;const TAS=[0,0,22,25]; // TAS＝路面の種類ごとに気温を下げる量（℃） // TYX＝作戦の見積もりで、タイヤの1周の差に掛ける倍率（減りの損 lapLossK は PWG＝.72 で大きめに見積もる作りなので、同じ物差しにする。1 だと 15周で全車がラジアル・ピットなしを選び、実際はスリックで1〜2回ピットより約30秒遅かった）。TYK＝0 でスリック・レインだけ（β0.120.0 と同じ）。TYC＝合うタイヤのグリップのこの割合以上なら、作戦で選べるタイヤ（tyCand）
+const setTy=(k,t)=>{k.ty=t;k.rain=t===1;return k;};
 // T88 エンジン特性：トルク曲線を差し替える（低回転型＝ピークが低く中低速が太い・高回転で頭打ち／高回転型＝低速は細いが上まで伸びる）。最高速の釣り合いは標準の曲線で決めるので、高回転型は直線で伸び、低回転型は立ち上がりが速い
 const SETE=[{n:'低回転型',lo:.2,pk:-1000,hi:-.02,end:-200,m:1.06},{n:'標準',lo:0,pk:0,hi:0,end:0,m:1},{n:'高回転型',lo:-.13,pk:700,hi:.05,end:300,m:.98}]; // m＝トルク全体の倍率
 const _tqM=new Map();function tqOf(cc,e,tk){const b=cc===2?TKS[tk==null?1:tk]:TQC[cc],m=SETE[e==null?1:e];if(!m||e===1||e==null)return b;const key=cc+'_'+e+'_'+(cc===2?tk:'');let c=_tqM.get(key);if(!c){c={...b,m:(b.m||1)*m.m,n:b.n+'・'+m.n,lo:Math.max(.2,b.lo+m.lo),pk:b.pk+m.pk,hi:Math.max(.25,b.hi+m.hi),end:b.end+m.end};_tqM.set(key,c);}return c;}
@@ -1146,7 +1160,7 @@ let manualMode=0,SHKG=2.5,SHKM=7;
 let autoStart=0;let lapsSel=0,wearMode=1,dmgMode=2,crashMode=1;const LAPSET=[3,5,8,15,30];
 // 0-400m（β0.15.0）
 let dragMan=0,dragRec=null,drag=null,dragDist=0,dragPro=0,dragRivalSel=-1;const DRAG_DS=[400,201.17];let DRAG_D=400;const DRAG_NM=['0-400m','1/8マイル（201m）'];const dragGoAt=()=>dragPro?.4:1.5;const DRAG_LAT=3.6,OPT_SHIFT=null,DRT=[[.34,.6],[.28,.5],[.18,.36],[.12,.26],[.08,.18]];
-const ttWin=k=>k.rain?[35,65]:[80,105]; // T183 ちょうど良い温度
+const ttWin=k=>TYR[k.ty||0].tw; // T183 ちょうど良い温度（T285 タイヤごと）
 const ttGrip=k=>{if(!TTK||k.tt==null)return 1;const [lo,hi]=ttWin(k);return 1-TKC*Math.max(0,Math.min(1,(lo-k.tt)/40))-TKH*Math.max(0,Math.min(1,(k.tt-hi)/30));};
 // T186 C2 燃料の重さ：FPL＝1周で使う量の目安(kg)。レースは周回数分＋予備、予選は軽く、タイムアタックは FREF のまま減らない。FUELK＝0 で無効（重さは一定）
 let FUELK=1,FPL=2.3,/* T207 1周が長くなったので 1.8→2.3（測定 2000cc で 1周 約2.37kg） */FBR=.05,FREF=10;const fuelStart=k=>!FUELK?FREF:sess==='race'?(k&&k.plan?k.plan.f0:fuelNeed(LAPS)):sess==='quali'?2*FPL+1.5:FREF;
@@ -1157,7 +1171,7 @@ let FCAP=50,FRATE=3.2,FCON=1.2,PTY=3.2,FWS=.02,fuelFull=0;const FMP=[.955,1,1.02
 const fplOf=()=>(FPLC[typeof ccChoice!=='undefined'?ccChoice:1]||FPL)*crFu(typeof ccChoice!=='undefined'?ccChoice:1)*(typeof rsFu==='function'?rsFu(typeof ccChoice!=='undefined'?ccChoice:1):1); /* T282 コースの形で燃料を見積もり直す */
 const fuelNeed=(n,f)=>n*(f||fplOf())*1.06+2; // n周を走るのに要る燃料(kg)、予備込み
 function applySetup(k,drv,g,w,b,t,c,df,bc,en,sb,tw){const S2=SETS[sb==null?1:sb],T2=SETTW[tw==null?1:tw];k.en=en==null?1:en;k.sbF=S2.f;k.sbR=S2.r;k.twG=T2.g;k.tww=T2.w;k.twi=tw==null?1:tw;k.sbi=sb==null?1:sb;k.gi=g;k.wi=w;const d=DRV[DRV_KEYS[drv]];k.drv=DRV_KEYS[drv];k.fs=d.fs;k.ka=d.ka;k.kb=d.kb;k.pw=d.pw;k.ftx=d.ftx||1;k.rgm=d.rgm||1;k.gf=SETG[g].gf;k.dfm=SETW[w].dfm;k.cdm=SETW[w].cdm*SETC[c==null?1:c].cdm;k.hf=SETC[c==null?1:c].hf;k.bb=SETB[b].bb;k.rbm=SETB[b].rbm;k.dif=SETD[df==null?1:df];k.bck=SETBC[bc==null?1:bc].k;k.cdm*=SETBC[bc==null?1:bc].cdm*T2.cd;k.tb=150;k.bfK=1;k.tt=typeof sess!=='undefined'&&sess!=='race'?TTQ:TTS;k.ttK=1;
-  k.rain=t===2||(t===0&&typeof ENV!=='undefined'&&(ENV.wet>.45||ENV.tr>.5));k.wear=0;k.dmg=0;k.pit=0;k.pitT=0;k.pitReq=false;k.pitDone=0;k.gripK=1;k.powK=1;return k;}
+  k.tyA=!t;k.tyF=t?t-1:null;{let b=0;try{b=tyreBest();}catch(_){}setTy(k,t?t-1:b);}k.wear=0;k.dmg=0;k.pit=0;k.pitT=0;k.pitReq=false;k.pitDone=0;k.gripK=1;k.powK=1;return k;}
 const HX=.95,HZ=2.32;let IZC=1.9;const TOPG=5;
 
 /* ================= 高低差（T81） ================= */
@@ -1308,7 +1322,7 @@ const _c1=new THREE.Color(),_c2=new THREE.Color(),_c3=new THREE.Color();
 function plrSafe(){try{return karts.find(k=>k.isPlayer)||null;}catch(_){return null;}}
 function wetMul(s,k){const r=wetMul0(s,k);return k&&k.tww&&k.tww!==1?1-(1-r)*k.tww:r;}
 let WRR=.07; // T254⑥ レインタイヤの路面の濡れでの落ち方（従来 .07）
-function wetMul0(s,k){const w=k&&k._w!=null?k._w:ENV.wet;if(k&&k.rain)return .9*(s==='road'?1-WRR*w:s==='curb'?1-.16*w:1-.1*w);return s==='road'?1-WETR*w:s==='curb'?1-.45*w:1-.18*w;} // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
+function wetMul0(s,k){const w=k&&k._w!=null?k._w:ENV.wet;if(k&&k.ty>1){const T=TYR[k.ty];return s==='road'?T.d0*(1-T.wl*w):s==='curb'?T.d0*(1-T.wc*w):T.of*(1-.12*w);}if(k&&k.rain)return .9*(s==='road'?1-WRR*w:s==='curb'?1-.16*w:1-.1*w);return s==='road'?1-WETR*w:s==='curb'?1-.45*w:1-.18*w;} // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
 // 環境反射（空と地面の簡易モデル）。時間帯と雲で作り直す
 let envTex=null,envRT=null;
 function buildEnv(P,cloud){const env=new THREE.Scene();const sg=new THREE.SphereGeometry(50,32,16);const col=[];const pos=sg.attributes.position;const c=new THREE.Color();
@@ -1378,7 +1392,7 @@ function envApply(force){const P=TOD[ENV.tod];
  updEnvHud();}
 function envStep(dt,race){const e=ENV;e.t+=dt;
  if(e.plan&&race){const on=e.t>e.plan.on&&e.t<e.plan.off;e.tr=on?.8:0;e.tc=on?.95:.5;
-  if(on&&e.said===0){e.said=1;telop('WEATHER','雨が降り出しました　路面が濡れていきます');{const pk=player();radio(pk&&!pk.rain?'雨だ！ スリックだと厳しい、ピットでレインに'+PITK():'雨が来た。ブレーキは早めに');}}
+  if(on&&e.said===0){e.said=1;telop('WEATHER','雨が降り出しました　路面が濡れていきます');{const pk=player();radio(pk&&!pk.ty&&!rsCur?'雨だ！ スリックだと厳しい、ピットでレインに'+PITK():'雨が来た。ブレーキは早めに');}}
   if(!on&&e.said===1&&e.t>e.plan.off){e.said=2;telop('WEATHER','雨が上がりました　路面は少しずつ乾きます');}}
  const ap=(a,b,r)=>a+Math.max(-r*dt,Math.min(r*dt,b-a));
  const pc=e.cloud,pr=e.rain;e.cloud=ap(e.cloud,e.tc,.06);e.rain=ap(e.rain,e.tr,.05);e.fog=ap(e.fog,e.tf,.05);
@@ -1401,7 +1415,7 @@ function envStep(dt,race){const e=ENV;e.t+=dt;
  if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
  else headSpot.intensity=0;}
 function updEnvHud(){const P=TOD[ENV.tod],w=WXN[ENV.wx];const ic=ENV.rain>.3?'☂':ENV.fog>.5?'🌫':ENV.cloud>.6?'☁':P.ic;
- const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}　${rsN}<b class="${cond}">${cj}</b>${p?`　<span>${p.rain?'レイン':'スリック'}</span>`:''}`;
+ const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}　${rsN}<b class="${cond}">${cj}</b>${p?`　<span>${TYR[p.ty||0].n}</span>`:''}`;
  const ts=document.getElementById('tsEnv');if(ts)ts.textContent=`${P.en} / ${w.en}${roadSurf?' / '+RSF[roadSurf].en:''}`;}
 
 // β0.104.0 T262：地面の格子の位置（1軸ぶん）。lo〜hi は st m の等間隔、その外は1つごとに g 倍ずつ広げて（上限 cap m）mn〜mx まで
@@ -2559,8 +2573,8 @@ function stepKart(k,dt,ctl){
   {const nl=Math.max(0,1-Math.abs(k.lat-IL[k.idx])/3);k._w=ENV.wet*(1-(ENV.rain<.15&&ENV.wet>.02?LDRY*nl:0));}
   // T248 ハイドロプレーニング：水の深さ d（pudAt）×速さ（HPV0〜HPV1 m/s で 0→1）で浮き hp。グリップ −HPG×hp、前輪はさらに −HPF×hp（ハンドルが効かない）、水の抵抗 HPD×d×速さ。レインタイヤは HPRT 倍、太いタイヤは浮きやすい
   const RS=RSF[RSI[k.idx]],onR=surf==='road'||surf==='curb'||surf==='saus'; // T283 路面の種類
-  {const d=PDK&&ENV.pl>0&&sess!=='drag'&&(surf==='road'||surf==='curb')&&!RSI[k.idx]?pudAt(k):0;k.pdD=d;k.hp=d>0?d*Math.max(0,Math.min(1,(Math.abs(k.u)-HPV0)/(HPV1-HPV0)))*(k.rain?HPRT:1)*(k.tww||1):0;}
-  const rb=surf==='road'&&!RSI[k.idx]?rubAt(k):0,mu=(1-HPG*(k.hp||0))*MU[surf]*(RSI[k.idx]?(onR?RS.mu:RS.off)*(1-(1-wetMul(surf,k))*RS.wk):wetMul(surf,k))*(1+RUBG*rb*(1-k._w)-RWG*rb*k._w)*k.st.grip*(k.gripK||1)*(sess==='drag'?1:(k.ttK||1))*(k.spin>0?.5:1)*(surf==='saus'?SAUG:1)*Math.pow(k.fm||1,-MGP)*(1-DAM*Math.abs(k.dmA||0));
+  {const d=PDK&&ENV.pl>0&&sess!=='drag'&&(surf==='road'||surf==='curb')&&!RSI[k.idx]?pudAt(k):0;k.pdD=d;k.hp=d>0?d*Math.max(0,Math.min(1,(Math.abs(k.u)-HPV0)/(HPV1-HPV0)))*(k.rain?HPRT:TYR[k.ty||0].hp)*(k.tww||1):0;}
+  const rb=surf==='road'&&!RSI[k.idx]?rubAt(k):0,mu=(1-HPG*(k.hp||0))*MU[surf]*(RSI[k.idx]?(onR?RS.mu*TYR[k.ty||0].ms[RSI[k.idx]]:RS.off)*(1-(1-wetMul(surf,k))*RS.wk):wetMul(surf,k))*(1+RUBG*rb*(1-k._w)-RWG*rb*k._w)*k.st.grip*(k.gripK||1)*(sess==='drag'?1:(k.ttK||1))*(k.spin>0?.5:1)*(surf==='saus'?SAUG:1)*Math.pow(k.fm||1,-MGP)*(1-DAM*Math.abs(k.dmA||0));
   const muF=mu*(1-HPF*(k.hp||0))*(k.twG||1)*(k.sbF||1)*(1-DWF*(k.dmW||0)),muR=mu*(k.twG||1)*(k.sbR||1)*(k.drifting?.45:k.pso&&ctl.accel?PSOG:1); // T171：アウトから差す時は後輪を少し流す（アクセルを強く当てて尻を出す。晴れの出力だけでは後輪が流れないため）
   const mmI=1/((k.mm||1)*(k.fm||1)),cd=k.cd*mmI,roll=(.35+(DRAGX[surf]+(onR?RS.dr:0))*Math.abs(k.u))*mmI;const tF=onR&&RS.fb?a=>Math.sin(RS.fc*Math.atan(RS.fb*a)):MF,tR=onR&&RS.rb?a=>Math.sin(RS.rc*Math.atan(RS.rb*a)):MFR;
   const dif=k.dif||SETD[1],latL=Math.min(1,Math.abs(k.ay||0)/(G*1.5)),dTr=Fd>0&&dif.lo?1-DFO*latL:1; // T182 オープンデフ：横Gが大きいほど内側のタイヤが空転して駆動力が逃げる
@@ -2602,7 +2616,7 @@ function stepKart(k,dt,ctl){
    k.to+=((82+.8*(k.tw-78)+22*ld*(.5+.5*rn))*(1-pc)+75*pc-k.to)*Math.min(1,dt*(.04+PTC*pc*.5));
    // T184 ブレーキの温度 tb（℃）：ブレーキの仕事率（減速×速さ×重さ）で上がり、走行風（速さ）と冷却ダクト（bck）で冷える。雨で冷えやすい。BFT を超えるとききが落ちる（bfK）
    // T183 タイヤの温度：横G（の2乗）・滑り・ブレーキで温まり、速さ（走行風）と雨で冷える。ピットの停車中は少し冷える
-   if(k.tt==null)k.tt=TTS;{const sp=Math.abs(k.u),Ta=25-8*(ENV.wet||0),ayg=Math.min(1.6,Math.abs(k.ay||0)/G),sl=Math.max(0,Math.max(sF,sR)-.04*RS.sk);
+   if(k.tt==null)k.tt=TTS;{const sp=Math.abs(k.u),Ta=25-8*(ENV.wet||0)-TAS[RSI[k.idx]],ayg=Math.min(1.6,Math.abs(k.ay||0)/G),sl=Math.max(0,Math.max(sF,sR)-.04*RS.sk);
     {const ay=k.ay||0;if(Math.abs(ay)>WVG*G&&Math.sign(ay)!==k.wvS){k.wvS=Math.sign(ay);k.wvT=raceTime;}} // T83 セーフティカー・FCY 中に左右へ切り返している間（横G WVG 以上で向きが変わってから WVP 秒以内）は、タイヤが WVH ℃/秒 温まる（ちょうど良い温度の下の端まで）
     if(WVH&&cau()&&raceTime-(k.wvT??-99)<WVP&&k.tt<ttWin(k)[0])k.tt+=WVH*dt;
     k.tt+=(RS.mu*(TTH*ayg*ayg*Math.min(1,sp/25)*(1+DAT*(k.dirty||0)+AGW*agOf(k))+TTSL*sl*sp+TTB*(Fb/G)*Math.min(1,sp/20)+(ws?4:0))-(k.tt-Ta)*(TC0+TC1*sp)*(1+(ENV.wet||0))*(pc?2:1))*dt;k.tt=Math.max(Ta,Math.min(150,k.tt));k.ttK=RSI[k.idx]?1-(1-ttGrip(k))*RS.tg:ttGrip(k);}
@@ -2641,7 +2655,7 @@ function computeDraft(){for(const k of karts){let d=0,da=0;const fx=Math.sin(k.h
     if(DAK>0&&f<=DAD&&!o.dnf){const w=1.6+f*.04;if(sd<=w)da=Math.max(da,(1-(f-3)/(DAD-3))*(1-sd/w*.5));}}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;k.dirty=(k.dirty||0)+(da-(k.dirty||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
-const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav','pxm','pdo'];
+const RW_KEYS=['x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','pen','wear','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','ty','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','sauT','fmode','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav','pxm','pdo'];
 let rwBuf=[],rwT=0,holdT=0,rwCount=0,rwSel=0,retT=0;const RETW=8;
 /* T263⑤ 自車の大クラッシュ・ガス欠：巻き戻しの回数が残っていれば、結果画面へ移るまでの RETW 秒の間に巻き戻せる（0-400m・オート観戦・巻き戻し「なし」・回数切れは従来どおり） */
 function rwRetOk(){return !autoPlay&&sess==='race'&&rwSel!==2&&rwCount<RWL[rwSel]&&rwBuf.length>=3&&!(ROLL.on&&(!ROLL.green||raceTime-5<raceT0));}
@@ -2892,7 +2906,7 @@ function radioLap(k){if(!k.isPlayer||sess!=='race'||k.lap<2||k.lap>LAPS)return;c
     if(pl&&pl.i<pl.laps.length&&k.lap===pl.laps[pl.i]&&!k.pitReq&&!k.pit)radio('予定どおり、この周の終わりにピットだ'+PITK(),'plan',5);
     else if(sh>0&&!k.pitReq&&!k.pit){if(fl<1.2)radio('燃料がもう持たない！ この周でピットへ'+PITK(),'fuelx',4);else if(fl<2.6)radio(`燃料はあと約${fl.toFixed(1)}周分。足りない。ピットで給油を${PITK()}`,'fuel',8);
       else if(sh<.6&&(k.fmode??1)!==0)radio('燃料がぎりぎり足りない。燃費モードで走ろう'+(isTouch?'（燃料のボタン）':'（Gキー）'),'fuelm',15);}}
-  if(BBC&&!autoPlay&&k.bb0!=null){const t=bbTarget(k),wq=Math.round(BBW*(1-Math.min(1,wetMul('road',k)/(k.rain?.9:1)))*100);if(!k.bbRn&&wq>=BBQ*100&&k.bb>t+.015){k.bbRn=1;radio(`路面が濡れて、ブレーキで前に荷重が乗りにくい。バランスを後ろへ${Math.max(1,Math.round((k.bb-t)*100))}つ（曲がりながらのブレーキで向きが変わる）`+BBK(),'bbr',99);}else if(k.bbRn===1&&wq<1&&k.bb<t-.015){k.bbRn=2;radio('路面が乾いてきた。ブレーキバランスを前へ戻そう'+BBK(),'bbd',99);}} // T83（β0.116.0）雨のブレーキバランス
+  if(BBC&&!autoPlay&&k.bb0!=null){const t=bbTarget(k),wq=Math.round(BBW*(1-Math.min(1,wetMul('road',k)/TYR[k.ty||0].d0))*100);if(!k.bbRn&&wq>=BBQ*100&&k.bb>t+.015){k.bbRn=1;radio(`路面が濡れて、ブレーキで前に荷重が乗りにくい。バランスを後ろへ${Math.max(1,Math.round((k.bb-t)*100))}つ（曲がりながらのブレーキで向きが変わる）`+BBK(),'bbr',99);}else if(k.bbRn===1&&wq<1&&k.bb<t-.015){k.bbRn=2;radio('路面が乾いてきた。ブレーキバランスを前へ戻そう'+BBK(),'bbd',99);}} // T83（β0.116.0）雨のブレーキバランス
   if(FTK&&!autoPlay&&k.cgd0!=null&&k.cgd0-k.cgd>BBR&&!k.bbW&&k.bb<=k.bb0+.004){k.bbW=1;radio(`燃料が${Math.round((k.cgd0-k.cgd)/FTZ*1300)}kgほど減って重さが前へ寄った。ブレーキ中に後ろが軽いなら、バランスを前へ1つ`+BBK(),'bbf',99);} // T83（β0.115.0）
   if(left===1)radio(r===1?'ファイナルラップ！ このまま押さえ切ろう':`ファイナルラップ。${r}位、最後まで攻めて`);
   else if(left===3&&LAPS>3)radio(`残り3周。今 ${r}位`);
@@ -2995,10 +3009,10 @@ function aiControl(k,dt){
   k.power=k.isPlayer||!AIPW?1:k.skill; // T254②：腕前でエンジンの力は変えない（AIPW＝1 で従来）
   // 速度計画：先のカーブで曲がれる速さ＋ブレーキ距離（T228：攻め方 ag で曲がる速さとブレーキ、疲れで曲がる速さ、乱れた空気でダウンフォースを見込む）
   const ag=agOf(k),stl=STK&&!k.isPlayer&&sess==='race'?STL*(1-(k.stam??1)):0;
-  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(k.fs>.8?FFK:1)*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*(1+AGL*ag-stl);let vAllow=1e9;
+  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:k.ty>1?.7:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?1:Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(k.fs>.8?FFK:1)*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*(1+AGL*ag-stl);let vAllow=1e9;
   const RA=k.altS?RADA[k.altS>0?0:1]:RADL;
   let bmA=null;if(BMK&&BMC>0&&(!k.isPlayer||autoPlay)&&sess!=='drag'){let bg=BMC;for(const o of karts){if(o===k||o.dnf||o.pit>0||!o.bmo)continue;const g=progress(o)-progress(k);if(g>0&&g<bg&&Math.abs(o.lat-k.lat)<2.6){bg=g;bmA=o.bmo;}}} // T83（β0.112.0）すぐ前の車の目印
-  const rsF=rsCur?RSF.map(r=>r.mu*Math.pow(r.mu,AIMUS)*(1-(1-wgm)*r.wk)/wgm):null; // T283 路面の種類（舗装は 1）
+  const rsF=rsCur?RSF.map((r,i)=>r.mu*TYR[k.ty||0].ms[i]*Math.pow(r.mu,AIMUS)*(1-(1-wgm)*r.wk)/wgm):null; // T283 路面の種類（舗装は 1）
   for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);const fR=rsF?rsF[RSI[i]]:1,lA=latA*fR;const R=Math.min(RADL[i],RA[i])+(k.altS&&k.altO?Math.max(0,RA[i]-RADL[i])*ALRB:0);const den=1-lA/G*(aeK+TVK[i])*R;const vc=den>.15?Math.sqrt((lA+G*TBK[i])*R/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*G*1.2*wgm*fR*(k.bfK||1)*(k.bkS||1)*(1+AGB*ag)*Math.max(0,j*SP-AIBL*(k.blS??1)-(BMK&&(!k.isPlayer||autoPlay)&&sess!=='drag'&&CORNER[i]?Math.max(k.bmo?.[CID[i]]??BME,bmA?bmA[CID[i]]??BME:-1e9):0))+2*G*(TE[i]-TE[k.idx])));if(v<vAllow)vAllow=v;} // T81 峠・バンク・上り下りの分も見込む
   if(cau()&&k.scV!=null&&sess==='race')vAllow=Math.min(vAllow,k.scV); // T157 セーフティカー中
   if(k.pdCap<vAllow)vAllow=k.pdCap; // T248 よけられない水たまりの手前
@@ -3169,8 +3183,8 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(sess!=='race
   if(EGK&&wearMode>0&&k.manual&&k.rpm>REDLINE-60&&(k.thrV||0)>.5&&!k.finished)k.eng=Math.min(1,(k.eng||0)+dt*EGL);
   if(k.isPlayer&&(k.eng||0)>=(k.engW||0)+.1){k.engW=Math.floor(k.eng*10)/10;radio('エンジンを痛めている（出力 −'+Math.round(EGP*k.eng*100)+'%、ピットでは直らない）。レブリミットに当て続けない、回転を合わせて落とそう','eng',15);}
   if(wearMode>0&&k.pit!==2){const RSw=RSF[RSI[k.idx]],slip=Math.max(k.slipR,k.slipF),ld=Math.min(1.2,Math.abs(k.ay)/(G*1.4)),spd=Math.min(1,Math.abs(k.u)/30);
-    k.wear=Math.min(1,k.wear+dt*wearK()*.36*(1+AGW*agOf(k))*Math.pow(k.mm||1,WMK)*(TTK&&k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*(.0009*spd+.0075*ld*ld+.02*Math.max(0,slip-.1*RSw.sk)*spd*RSw.wr+(k.wheelspin?.004:0)*RSw.wr+(k.locked?.012:0)*RSw.wr));}
-  k.gripK=(1-.22*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
+    k.wear=Math.min(1,k.wear+dt*wearK()*.36*(1+AGW*agOf(k))*Math.pow(k.mm||1,WMK)*(TTK&&k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*tyWr(k.ty||0,RSI[k.idx])*(.0009*spd+.0075*ld*ld+.02*Math.max(0,slip-.1*RSw.sk)*spd*RSw.wr+(k.wheelspin?.004:0)*RSw.wr+(k.locked?.012:0)*RSw.wr));}
+  k.gripK=(1-TYR[k.ty||0].wd*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
 /* 大事故（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
 const wreckCtl=k=>({steer:0,accel:false,brake:k.u>.8,brk:.8,drift:false});
 /* T73（β0.82.0）破片：大クラッシュで車体の破片とタイヤが飛び散り、コースに残る（見た目だけ。当たり判定なし）。強い接触（DEBV m/s 以上）でも小さな破片が少し出る。
@@ -3241,25 +3255,35 @@ function dmgHit(k,v){if(!dmgMode||sess!=='race'||state!=='race')return;if(v>3)k.
 // T145：ピットの損得。ピットで失う時間（PITL 秒＋修理）と、残りの周で取り戻せる時間（今のタイヤ・傷みのまま走る場合との差）を比べる。
 // PWK＝1で有効（0 で従来＝しきい値だけ）、PITL＝ピット1回の損(秒)、PITM＝入るのに要る余裕の倍率、PWG・PWP＝グリップ・出力の低下が周回タイムに効く割合（測定から）
 let PWK=1,PITL=12+(Math.abs(CREF.pit-CREF0.pit)>.1?CREF.pit-CREF0.pit:0),PITM=1.15,PWG=.72,PWP=.12,DLW=.007,DLA=.0145; // T246② DLW・DLA＝ウイング・アライメントの傷み（全損）で1周が遅くなる割合（測定 +0.43秒・+0.9秒／62.5秒）
-function lapLossK(w,d){const g=(1-.22*Math.pow(w,1.3))*(dmgMode===2?1-DMGG*d:1),p=dmgMode===2?1-DMGP*d:1;return PWG*(1/g-1)+PWP*(1/p-1);}
+function lapLossK(w,d,t){const g=(1-TYR[t||0].wd*Math.pow(w,1.3))*(dmgMode===2?1-DMGG*d:1),p=dmgMode===2?1-DMGP*d:1;return PWG*(1/g-1)+PWP*(1/p-1);}
 // left＝ピット作業のあとに走る周の数（1＝ファイナルラップの頭で作業、0＝もう入れない）。gain＝取り戻せる秒、loss＝失う秒
 const tyreWet=()=>ENV.wet>.45||ENV.tr>.5; // 今の路面に合うタイヤ（true＝レイン）。ピットでは設定に関係なくこちらへ替わる
-function tyreMis(k){const o=wetMul('road',{rain:tyreWet()});return Math.min(1,wetMul('road',k)/o);} // 今のタイヤのグリップ÷合うタイヤのグリップ（1＝合っている）
+/* T285 tyGrip＝タイヤ t・路面の種類 rs・濡れ w のグリップ（比べる用）。tyreBest＝今の路面と天気にいちばん合うタイヤ（舗装は濡れていればレイン＝前と同じ）。tyCand＝作戦で選べるタイヤ（合うタイヤの TYC 以上） */
+function tyGrip(t,rs,w){const g=wetMul0('road',{ty:t,rain:t===1,_w:w});if(!rs)return g*(TYR[t].tq||1);const R=RSF[rs];return R.mu*TYR[t].ms[rs]*(1-(1-g)*R.wk);}
+const tyW=()=>tyreWet()?Math.max(.8,ENV.wet):Math.min(.3,ENV.wet);
+function tyreBest(){if(!rsCur)return tyreWet()?1:0;const w=tyW();let b=0;for(let t=0;t<TYR.length;t++)if(tyGrip(t,rsCur,w)>tyGrip(b,rsCur,w)+1e-9)b=t;return b;}
+function tyCand(){const b=tyreBest(),w=tyW(),gb=tyGrip(b,rsCur,w),dry=!rsCur&&!tyreWet(),c=[b];for(let t=0;t<TYR.length;t++)if(t!==b&&(TYK||t<2)&&(dry?TYR[t].lp&&TYR[t].lp<=TYL:tyGrip(t,rsCur,w)>=TYC*gb-1e-9))c.push(t);return c;} // 乾いた舗装は1周の比 lp が TYL 以下のタイヤ
+const tyWr=(t,rs)=>TYR[t].wr*(rs?1:TYR[t].wt); // 減りの速さ（舗装はスタッドレス・スパイクが速い）
+function tyPace(t){const w=tyW();if(!rsCur&&!tyreWet()&&TYR[t].lp)return TYR[t].lp-1;return Math.max(0,Math.pow(Math.min(1,tyGrip(t,rsCur,w)/tyGrip(tyreBest(),rsCur,w)),-TYP)-1);} // 合うタイヤより1周が遅い割合（グリップの比の −TYP 乗。測定：雪のスリック 1.31倍・舗装のスタッドレス 1.054倍・砂利道のスリック 1.096倍）
+// 交換するタイヤ：作戦のタイヤ（CPU・自動）か、決めたタイヤがまだ合っていればそれ。合わなければ合うタイヤ
+function pitTyre(k){const c=tyCand(),cpu=!k.isPlayer||autoPlay||k.tyA;if(cpu&&k.plan&&k.plan.t!=null&&c.includes(k.plan.t))return k.plan.t;if(!k.tyA&&k.tyF!=null&&c.includes(k.tyF))return k.tyF;return tyreBest();}
+function tyreMis(k){const b=tyreBest();if(rsCur)return Math.min(1,tyGrip(k.ty||0,rsCur,ENV.wet)/tyGrip(b,rsCur,ENV.wet));const o=wetMul('road',{ty:b,rain:b===1});return Math.min(1,wetMul('road',k)/o);} // 今のタイヤのグリップ÷合うタイヤのグリップ（1＝合っている）
 function pitPlan(k,m){const r0=relLine(k),rel=r0<0&&k.idx<=10?0:r0,nx=rel>PIT_A-310&&rel<0?1:0,left=LAPS-k.lap-nx; // 周が変わった直後は rel がまだ少し負なので 0 として扱う
   const run=Math.max(.5,k.lap-1+(rel<0?rel+L:rel)/L-(k.pLap0||0)),gw=!wearMode?0:run<1.5?WPL*wearK():Math.min(.5,k.wear/run); /* T47 前のピットからの摩耗の速さ（走り始めは目安） */
   const w0=Math.min(1,k.wear+gw*((rel<0?-rel:L-rel)/L+nx));let gain=0;const dwa=dmgMode===2?DLW*(k.dmW||0)+DLA*Math.abs(k.dmA||0):0; // T246② ウイング・アライメントの傷みで遅くなる分（1周の割合）
-  for(let j=1;j<=Math.min(left,12);j++)gain+=lapLossK(Math.min(1,w0+gw*(j-.5)),k.dmg)-lapLossK(Math.min(1,gw*(j-.5)),0)+PWG*(1/tyreMis(k)-1)+dwa;
+  for(let j=1;j<=Math.min(left,12);j++)gain+=lapLossK(Math.min(1,w0+gw*(j-.5)),k.dmg,k.ty)-lapLossK(Math.min(1,gw*(j-.5)),0,pitTyre(k))+PWG*(1/tyreMis(k)-1)+dwa;
   gain*=k.best||60;const ad=Math.max(0,Math.min(FCAP,fuelNeed(left,k.fplB))-k.fuel),loss=PITL-PIT_STOP+Math.max(PTY,ad>.5?FCON+ad/FRATE:0)+(dmgMode?k.dmg*7+((k.dmW||0)+Math.abs(k.dmA||0))*RPW:0); /* T47 給油の時間も。T246② 傷みの修理も */return{left,gain,loss,ok:left>=1&&gain>loss*PITM*(m||1)};}
 // T47 作戦：ピットの回数 n ごとに、ピットの損・タイヤの落ち・燃料の重さの合計を見積もり、いちばん小さい n を選ぶ（CPU はレース前だけ、差 2.5秒以内からくじ引き。ピットでの立て直しはいちばん良いもの）。
 // 入る周（その周の終わりに入る）は等分＋CPU は ±1周。10周より短いレースは作戦を立てず（n=0）従来どおり、摩耗やダメージを見てから決める
-function stratCost(laps,n,lt,f){const s=laps/(n+1),fu=fuelNeed(s,f);if(fu>FCAP+.01)return 1e9;const wl=WPL*wearK();let c=0;
-  if(wearMode)for(let j=1;j<=Math.ceil(s);j++)c+=lapLossK(Math.min(1,wl*(j-.5)),0)*lt*Math.min(1,s-j+1);
-  return c*(n+1)+laps*FWS*(fu/2+2)+n*(PITL-PIT_STOP+Math.max(wearMode?PTY:0,FCON+(f||fplOf())*1.06*s/FRATE));}
+function stratCost(laps,n,lt,f,t){t=t||0;const s=laps/(n+1),fu=fuelNeed(s,f);if(fu>FCAP+.01)return 1e9;const wl=WPL*wearK()*tyWr(t,rsCur);let c=0;
+  if(wearMode)for(let j=1;j<=Math.ceil(s);j++)c+=lapLossK(Math.min(1,wl*(j-.5)),0,t)*lt*Math.min(1,s-j+1);
+  return c*(n+1)+laps*lt*tyPace(t)*TYX+laps*FWS*(fu/2+2)+n*(PITL-PIT_STOP+Math.max(wearMode?PTY:0,FCON+(f||fplOf())*1.06*s/FRATE));}
 function stratPlan(k,laps,done){laps=laps??LAPS;done=done||0;const lt=isForm()?50:66,f=k.fplB?k.fplB:fplOf(),cpu=!k.isPlayer;
-  const cs=[];for(let n=0;n<=15&&n<laps&&(n===0||LAPS>=10||fuelNeed(LAPS,f)>FCAP);n++)cs.push([n,stratCost(laps,n,lt,f)]);if(!cs.length)cs.push([0,0]);let b=cs.reduce((a,x)=>x[1]<a[1]?x:a,cs[0]);
-  if(cpu&&!done){const ok=cs.filter(x=>x[1]<b[1]+2.5);b=ok[Math.random()*ok.length|0];}
+  const tys=cpu||k.tyA?tyCand():[k.ty||0],cs=[];for(const t of tys)for(let n=0;n<=15&&n<laps&&(n===0||LAPS>=10||fuelNeed(LAPS,f)>FCAP);n++)cs.push([n,stratCost(laps,n,lt,f,t),t]);if(!cs.length)cs.push([0,0,k.ty||0]); /* T285 タイヤも選ぶ（CPU と「自動」） */let b=cs.reduce((a,x)=>x[1]<a[1]?x:a,cs[0]);
+  if(cpu&&!done){const bt=b[2],bc=b[1],ok=cs.filter(x=>x[1]<bc+2.5&&(x[2]===bt||x[1]<bc+TYM));b=ok[Math.random()*ok.length|0];} /* T285 ほかのタイヤは見積もりの差が TYM 秒以内の時だけ */
   const n=b[0],L2=[];for(let i=0;i<n;i++){let p=done+Math.round(laps*(i+1)/(n+1))+(cpu&&laps>=6?Math.round(Math.random()*2-1):0);p=Math.max((L2.length?L2[L2.length-1]:done)+1,Math.min(done+laps-1,p));L2.push(p);}
-  return{n,laps:L2,i:0,f0:Math.min(FCAP,fuelNeed((n?L2[0]:done+laps)-done,f))};}
+  if(!done&&(cpu||k.tyA))setTy(k,b[2]);
+  return{n,laps:L2,i:0,f0:Math.min(FCAP,fuelNeed((n?L2[0]:done+laps)-done,f)),t:b[2]};}
 const fplK=k=>(k.fplB||fplOf())*FMF[k.fmode??1]; // 今の燃料モードでの1周の燃料
 const fuelLaps=k=>k.fuel/Math.max(.5,fplK(k)); // 残りの燃料で走れる周
 function lapsDoneF(k){const rel=relLine(k);return Math.max(0,k.lap-1+(rel<0?rel+L:rel)/L);} // 走り終えた周（小数）
@@ -3273,7 +3297,7 @@ function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'|
   if(cpu&&!k.pitReq&&k.plan&&k.plan.i<k.plan.laps.length&&k.lap>=k.plan.laps[k.plan.i]){k.pitReq=true;k.pitAuto=2;} // T47 作戦どおり
   if(cpu&&FUELK&&fuelLaps(k)<1.25+(1-(lapsDoneF(k)%1))&&fuelShort(k)>0){k.fuelEm=1;if(!k.pitReq){k.pitReq=true;k.pitAuto=2;}} // T47 燃料が次の周まで持たない
   if(cpu&&!k.pitReq&&((wearMode&&k.wear>(k.plan&&k.plan.n?.8:.62))||(dmgMode&&k.dmg>.5))&&(!PWK||pitPlan(k).ok)){k.pitReq=true;k.pitAuto=1;}
-  if((!k.isPlayer||autoPlay)&&!k.pitReq&&k.rain!==tyreWet()&&tyreMis(k)<.97&&pitPlan(k).ok){k.pitReq=true;k.pitAuto=1;} // 路面とタイヤが合わない（T149）
+  if((!k.isPlayer||autoPlay)&&!k.pitReq&&!tyCand().includes(k.ty||0)&&tyreMis(k)<.97&&pitPlan(k).ok){k.pitReq=true;k.pitAuto=1;} // 路面とタイヤが合わない（T149）
   {const scp=SCPK&&SC.on&&SC.ph===1&&!SC.rf&&!SC.fin&&!k.wav&&LAPS-k.lap>=1,pn=k.plan&&k.plan.i<k.plan.laps.length?k.plan.laps[k.plan.i]-k.lap:99,wn=wearMode&&k.wear>.25||dmgMode&&k.dmg>.15; // T237 セーフティカー中はピットの損が小さい
    if(scp&&cpu&&!k.pitReq&&(pn<=SCPN||wn&&pitPlan(k,SCPK).ok)){k.pitReq=true;k.pitAuto=3;}
    if(scp&&!cpu&&!k.pitReq&&k.scpR!==SC.n&&(pn<=SCPN||wn)){k.scpR=SC.n;radio('セーフティカー中はピットの損が小さい。タイヤを替えるなら今だ','scpit',5);}}
@@ -3284,25 +3308,25 @@ function pitCheck(k){if(k.dnf||k.pit||k.finished||sess!=='race'||state!=='race'|
 // T47 ピット作業：給油・タイヤ4本・修理を別々に。給油とタイヤは同時に始め、修理はそのあと。CPU は残りの周で作戦を立て直して、次のピットまでの燃料を入れる（自分は次の予定のピット＋1周分、予定がなければゴールまで。タンクに入るだけ）
 function pitStart(k){const rel=relLine(k),left=Math.max(0,LAPS-k.lap+(rel>=0?1:0)),cpu=!k.isPlayer||autoPlay;let st=left;k.fuelEm=0;
   if(cpu){k.plan=stratPlan(k,left,LAPS-left);if(k.plan.n)st=k.plan.laps[0]-(LAPS-left);}else if(k.plan){while(k.plan.i<k.plan.laps.length&&k.plan.laps[k.plan.i]<=k.lap)k.plan.i++;if(!fuelFull&&k.plan.i<k.plan.laps.length)st=Math.min(left,k.plan.laps[k.plan.i]-(LAPS-left)+1);} // 自分は次の予定のピット＋1周分（満タンの設定ならゴールまで）
-  const add=!FUELK?0:Math.max(0,Math.min(FCAP,fuelNeed(st,k.fplB))-k.fuel),ty=k.wear>.12||k.rain!==tyreWet()||!wearMode&&k.rain!==tyreWet()||!cpu /* T251 自分で予約したピットはタイヤを必ず替える（以前は減りが 12% 未満だと「作業なし」で出てきて、ボタンが効いていないように見えた） */,rp=dmgMode&&k.dmg>.02;
+  const add=!FUELK?0:Math.max(0,Math.min(FCAP,fuelNeed(st,k.fplB))-k.fuel),ty=k.wear>.12||!tyCand().includes(k.ty||0)||!cpu /* T251 自分で予約したピットはタイヤを必ず替える（以前は減りが 12% 未満だと「作業なし」で出てきて、ボタンが効いていないように見えた） */,rp=dmgMode&&k.dmg>.02;
   const mis=PMK&&ty&&sess==='race'&&Math.random()<PMP?PMX0+Math.random()*PMX1:0,mw=mis?['左前','右前','左後ろ','右後ろ'][Math.floor(Math.random()*4)]:''; // T234⑪ まれにナットが締まらず、タイヤ交換が遅れる
   const fT=add>.5?FCON+add/FRATE:0,tT=ty?PTY+mis:0,main=Math.max(fT,tT),rT=rp?k.dmg*7+((k.dmW||0)+Math.abs(k.dmA||0))*RPW:0;
-  k.pw={add:add>.5?add:0,f0:k.fuel,fT,tT,rT,main,t:0,ty,rp,td:0,mis,mw};k.pitT=Math.max(1.2,main+rT);k.pitInLap=1;
+  k.pw={add:add>.5?add:0,f0:k.fuel,fT,tT,rT,main,t:0,ty,rp,td:0,mis,mw,nt:ty?pitTyre(k):k.ty};k.pitT=Math.max(1.2,main+rT);k.pitInLap=1;
   if(mis){k.pmN=(k.pmN||0)+1;if(k.isPlayer)radio(mw+'のナットが締まらない！ 作業が '+mis.toFixed(1)+'秒遅れる','pmis',0);else telop('PIT',k.name+'　ピット作業でミス（'+mw+'のナット　+'+mis.toFixed(0)+'秒）');}}
 function pitWorkStep(k,dt){const w=k.pw;if(!w)return;w.t+=dt;
   if(w.add)k.fuel=w.f0+w.add*Math.max(0,Math.min(1,(w.t-FCON*.5)/(w.fT-FCON)));
-  if(w.ty&&!w.td&&w.t>=w.tT){w.td=1;k.wear=0;k.rain=tyreWet();k.tt=TTP;}
+  if(w.ty&&!w.td&&w.t>=w.tT){w.td=1;k.wear=0;setTy(k,w.nt??pitTyre(k));k.tt=TTP;}
   if(w.rp&&w.t>=w.main+w.rT){k.dmg=0;k.dmW=k.dmA=0;}}
-function pitFinish(k){const w=k.pw||{ty:1,rp:1,add:0};if(w.add)k.fuel=w.f0+w.add;if(w.ty){k.wear=0;k.rain=tyreWet();k.tt=TTP;}if(w.rp){k.dmg=0;k.dmW=k.dmA=0;}
+function pitFinish(k){const w=k.pw||{ty:1,rp:1,add:0};if(w.add)k.fuel=w.f0+w.add;if(w.ty){if(!w.td)setTy(k,w.nt??pitTyre(k));k.wear=0;k.tt=TTP;}if(w.rp){k.dmg=0;k.dmW=k.dmA=0;}
   k.pit=3;k.pitN=(k.pitN||0)+1;k.pitDone=k.pitN;k.pLap0=lapsDoneF(k);k.pw=null;
-  if(k.isPlayer){const a=[];if(w.add)a.push('給油 '+w.add.toFixed(1)+'kg');if(w.ty)a.push('タイヤ '+(k.rain?'レイン':'スリック'));if(w.rp)a.push('修理');toast('ピット完了（'+(a.join('・')||'作業なし')+'）');pitUi(null);}
-  k.gripK=(1-.22*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
+  if(k.isPlayer){const a=[];if(w.add)a.push('給油 '+w.add.toFixed(1)+'kg');if(w.ty)a.push('タイヤ '+TYR[k.ty||0].n);if(w.rp)a.push('修理');toast('ピット完了（'+(a.join('・')||'作業なし')+'）');pitUi(null);}
+  k.gripK=(1-TYR[k.ty||0].wd*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
 // 作業の表示（自分の車だけ）。棒は給油・タイヤ・修理の進み
 let pwUiT=0;function pitUi(k){const el=$('pitwork');if(!k){el.hidden=true;return;}const w=k.pw;if(!w)return;el.hidden=false;
   const bar=(a,b)=>{const v=b>0?Math.max(0,Math.min(1,a/b)):1;return`<i class="pb"><s style="width:${(v*100).toFixed(0)}%"></s></i>`;};
   const row=(n,on,a,b,txt)=>on?`<div><span>${n}</span>${bar(a,b)}<em>${txt}</em></div>`:'';
   H2(el).innerHTML=`<b>PIT STOP　${Math.max(0,k.pitT).toFixed(1)}</b>`+row('給油',w.add>0,w.t,w.fT,(k.fuel-w.f0).toFixed(1)+' / '+w.add.toFixed(1)+'kg')
-   +row('タイヤ 4本',w.ty,w.t,w.tT,w.td?'交換済み（'+(k.rain?'レイン':'スリック')+'）':w.mis&&w.t>PTY*.6?w.mw+'のナットが締まらない（+'+w.mis.toFixed(1)+'秒）':'交換中')+row('修理',w.rp,w.t-w.main,w.rT,w.t<w.main?'待ち':w.t>=w.main+w.rT?'済み':'作業中')
+   +row('タイヤ 4本',w.ty,w.t,w.tT,w.td?'交換済み（'+TYR[k.ty||0].n+'）':w.mis&&w.t>PTY*.6?w.mw+'のナットが締まらない（+'+w.mis.toFixed(1)+'秒）':'交換中')+row('修理',w.rp,w.t-w.main,w.rT,w.t<w.main?'待ち':w.t>=w.main+w.rT?'済み':'作業中')
    +(!w.add&&!w.ty&&!w.rp?'<div><em>作業なし</em></div>':'');}
 // T103：ピット内の混雑。PQ＝1で有効、PQG＝止まる車間(m)、PQW＝同じ列とみなす横の差(m)、PQN＝同時にピットへ向かえる台数、PQX＝出る時に後ろを待つ距離(m)
 let PSK=1,CLK=2.2,PBX=1,PQS=2.2,PQ=1,PQG=8,PQW=2.6,PQN=2,PQX=30;
@@ -3341,7 +3365,7 @@ const BBK=()=>isTouch?'（メニューの「BB」）':gp.on?'（右スティッ�
 function bbAdj(d){const p=player();if(!p||p.bb==null||sess==='drag'||autoPlay||p.finished||p.dnf||(state!=='race'&&state!=='countdown'))return;const v=Math.round(Math.max(BBN,Math.min(BBX,p.bb+d*BAQ))*100)/100;bbBtnSync(p);if(v===p.bb){toast(`ブレーキバランス 前 ${Math.round(v*100)}%（${d>0?'前':'後ろ'}の上限）`);return;}p.bb=v;bbBtnSync(p);
   const o=Math.round((v-p.bb0)*100);toast(`ブレーキバランス 前 ${Math.round(v*100)}%`+(o?`（設定${o>0?'+':'−'}${Math.abs(o)}）`:'（設定どおり）')+(d>0?' 安定寄り':' 曲がり寄り'));}
 // T83（β0.116.0）ブレーキバランスの目安：セッティングの値＋燃料で前へ寄った分（重心の動き÷軸の間）−雨で後ろへ（BBW×グリップの落ちた割合。レインタイヤは乾いた路面の 0.9 を基準に）
-function bbTarget(k){const d=k.cgd0!=null&&k.cgd!=null?(k.cgd0-k.cgd)/((k.ka0||KA)+(k.kb0||KB)):0;const q=Math.min(1,wetMul('road',k)/(k.rain?.9:1));return Math.round(Math.max(BBN,Math.min(BBX,k.bb0+d-BBW*(1-q)))*100)/100;}
+function bbTarget(k){const d=k.cgd0!=null&&k.cgd!=null?(k.cgd0-k.cgd)/((k.ka0||KA)+(k.kb0||KB)):0;const q=Math.min(1,wetMul('road',k)/TYR[k.ty||0].d0);return Math.round(Math.max(BBN,Math.min(BBX,k.bb0+d-BBW*(1-q)))*100)/100;}
 function bbAuto(k){if(!BBC||k.bb0==null||sess==='drag'||(k.isPlayer&&!autoPlay))return;k.bb=bbTarget(k);if(k.isPlayer)bbBtnSync(k);}
 function bbBtnSync(p){const b=$('bbFBtn');if(b&&p&&p.bb!=null)b.textContent='BB 前へ（今 '+Math.round(p.bb*100)+'%）';}
 function setFuelMode(m){const p=player();if(!p||!FUELK||sess!=='race'||autoPlay||p.finished||p.dnf||(state!=='race'&&state!=='countdown'))return;p.fmode=m;fuelBtnSync(p);
@@ -3353,7 +3377,7 @@ function togglePit(){const p=player();if(!p||p.pit||p.finished||p.dnf||autoPlay|
   const pl=pitPlan(p);
   if(state==='race'&&pl.left<1){toast(p.lap>=LAPS?'ファイナルラップはピットに入れません（ピットレーンでゴールになるため）':'ピット入口を過ぎました。次はゴールです');return;}
   p.pitReq=true;p.pitAuto=0;$('pitBtn').setAttribute('aria-pressed','true');
-  const fin=pl.left===1,fs=state==='race'&&fuelShort(p)>0,swap=p.rain!==tyreWet()||fs; // fs＝燃料が足りない（T47）。swap＝路面に合うタイヤへ替わる（損得の見積りの外）
+  const fin=pl.left===1,fs=state==='race'&&fuelShort(p)>0,swap=!tyCand().includes(p.ty||0)||fs; // fs＝燃料が足りない（T47）。swap＝路面に合うタイヤへ替わる（損得の見積りの外）
   if(!PWK||state!=='race'||swap||pl.ok){toast(fin?'ファイナルラップの頭でピットイン':'次の周回でピットイン');
     if(state==='race')radio(fs?`了解、給油する（ゴールまで約${Math.round(Math.max(0,Math.min(FCAP,fuelNeed(pl.left+(relLine(p)<0?0:0),p.fplB))-p.fuel))}kg）`:swap?'了解。路面に合うタイヤに替えよう':`了解、ピットの準備をする。約${Math.round(pl.loss)}秒失うが、残り${pl.left}周で約${Math.round(pl.gain)}秒取り戻せる`,'pitadv',5);}
   else{toast((fin?'ファイナルラップの頭でピットイン':'次の周回でピットイン')+'（損になりそう）');
@@ -4508,7 +4532,7 @@ function showRec(){$('dragRec').textContent=dragRecText();ghLoad();$('taRec').te
 charsEl.querySelectorAll('.card').forEach((c,j)=>c.setAttribute('aria-pressed',j===playerChoice?'true':'false'));$('ccSeg').querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.cc===ccChoice?'true':'false'));
 {const fx=(v,n,d,lo=0)=>Number.isInteger(v)&&v>=lo&&v<n?v:d; // 保存した設定の範囲を確かめる（β0.54.2）
  assistLv=fx(assistLv,ASSIST.length,1);aiLv=fx(aiLv,AILV.length,2);camMode=fx(camMode,CAMN.length,0);ccChoice=fx(ccChoice,CC.length,1);playerChoice=fx(playerChoice,DRIVERS.length,0);
- setDrv=fx(setDrv,DRV_KEYS.length,1);setG=fx(setG,SETG.length,1);setW=fx(setW,SETW.length,1);setB=fx(setB,SETB.length,1);setT=fx(setT,3,0);setDf=fx(setDf,SETD.length,1);setBC=fx(setBC,SETBC.length,1);setE=fx(setE,SETE.length,1);setS=fx(setS,SETS.length,1);setTW=fx(setTW,SETTW.length,1);mixSel=fx(mixSel,3,0);startMode=fx(startMode,2,0);lapsSel=fx(lapsSel,LAPSET.length,0);wearMode=fx(wearMode,3,1);dmgMode=fx(dmgMode,3,2);
+ setDrv=fx(setDrv,DRV_KEYS.length,1);setG=fx(setG,SETG.length,1);setW=fx(setW,SETW.length,1);setB=fx(setB,SETB.length,1);setT=fx(setT,TYRE.length,0);setDf=fx(setDf,SETD.length,1);setBC=fx(setBC,SETBC.length,1);setE=fx(setE,SETE.length,1);setS=fx(setS,SETS.length,1);setTW=fx(setTW,SETTW.length,1);mixSel=fx(mixSel,3,0);startMode=fx(startMode,2,0);lapsSel=fx(lapsSel,LAPSET.length,0);wearMode=fx(wearMode,3,1);dmgMode=fx(dmgMode,3,2);
  modeSel=fx(modeSel,3,0);dragDist=fx(dragDist,2,0);dragRivalSel=fx(dragRivalSel,DRIVERS.length,-1,-1);gridMode=fx(gridMode,3,0);tiltSens=fx(tiltSens,TILT_S.length,1);todSel=fx(todSel,TOD.length+1,1);wxSel=fx(wxSel,WXN.length+1,0); /* β0.101.0 おまかせ（最後の番号）も残す */
  myBody=fx(myBody,MYPAL.length,-1,-1);myAcc=fx(myAcc,MYPAL.length,-1,-1);if(!Number.isInteger(myNum)||myNum<0||myNum>99)myNum=0;}
 myColorUi();
@@ -4964,7 +4988,7 @@ function recUi(){const line=$('recLine'),box=$('recBox');if(!line||!box)return;c
   if(!r.fm&&r.cars){h+='<div class="label">車種と駆動方式（速い順）</div><table class="recT">'+r.cars.map((c,i)=>`<tr class="${i?'':'on'}"><td>${i+1}</td><td>${carName(c.ci)}（${drvLabel(c.ci,c.dv)}）</td><td class="t">1周 ${fmt(c.v[0])}</td><td class="t">${wearMode?'タイヤ '+(c.v[1]/5*r.wk*100).toFixed(1)+'%/周':''}</td></tr>`).join('')+'</table>';}
   h+='<div class="label">セッティング</div><table class="recT"><tr class="hd"><td>項目</td><td>今</td><td>おすすめ</td><td>理由</td></tr>'+r.items.map(o=>`<tr class="${o.v!==o.cur?'df':''}"><td>${o.lab}</td><td>${o.tb[o.cur].n}</td><td><b>${o.tb[o.v].n}</b></td><td>${recWhy(r,o)}</td></tr>`).join('')
     +(r.tk!=null?`<tr class="${r.tk!==setK?'df':''}"><td>過給機</td><td>${TKS[setK].n}</td><td><b>${TKS[r.tk].n}</b></td><td>このコースでいちばん速い</td></tr>`:'')
-    +`<tr><td>タイヤ</td><td>${TYRE[setT]}</td><td><b>自動</b></td><td>路面が濡れていればレイン</td></tr></table>`;
+    +`<tr><td>タイヤ</td><td>${TYRE[setT]}</td><td><b>自動</b></td><td>路面と天気に合わせる（長いレースは長持ちするタイヤも比べる）</td></tr></table>`;
   h+=`<p class="note">オート運転で、このコースを5周ずつ走らせて測った値（${r.fm?'フォーミュラ':'セッティングはセダン FR で1つずつ変えて'}）。自分で運転すると変わることがある。差が1周 ${RECT}秒未満は同じとみなす。</p>`;
   h+=`<div class="row"><button type="button" class="btn" data-rec="apply">この設定にする</button></div>`+(recMsg?`<p class="note"><b>${recMsg}</b></p>`:'');
   box.innerHTML=h;}
@@ -5082,7 +5106,7 @@ function updSpec(){const d=myDr(playerChoice),c=CC[ccChoice];const v=Math.round(
 <div class="bar"><label>扱いやすさ</label><u><s style="width:${[92,76,58][ccChoice]}%"></s></u><em>${['やさしい','ふつう','じゃじゃ馬'][ccChoice]}</em></div>
 <p>車種 ${carName(carOf(playerChoice))}（車重 約${Math.round(1250*carMass(carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])/10)*10}kg・${aeroTxt(carOf(playerChoice))}・音 ${ENGV[carOf(playerChoice)]?ENGV[carOf(playerChoice)].n:''}）　駆動 ${isForm()?'後輪（エンジンは運転席の後ろ）':drvLabel(myCar,setDrv)}　6速${manualMode?'手動':'自動'}変速　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}（幅 ${SETTW[setTW].n}）　デフ ${SETD[setDf].n}　エンジン ${SETE[setE].n}　スタビ ${SETS[setS].n}</p>`;
   drawTq();{const n=$('tkNote');if(n)n.innerHTML=ccChoice===2?`<b>${TKS[setK].n}</b>：${TKS[setK].d}（重さ ＋${tkExtraKg(setK,setIC)}kg${setIC?'・インタークーラー込み':''}${TKS[setK].hc?(scTop(carOf(playerChoice))?'。この車（'+ENGV[carOf(playerChoice)].n+'）は上に載る：重心 少し高い':'。この車（'+ENGV[carOf(playerChoice)].n+'）は横に付く：重心 変わらない'):''}）`:'自然吸気のエンジンでは使わない（エンジンで「ターボ」を選ぶと使える）';}
-  $('tuneNote').innerHTML=`${isForm()?'<b>後輪駆動</b>：フォーミュラはエンジンが運転席の後ろの後輪駆動（駆動方式は選べない）。':myCar===9&&setDrv===1?'<b>MR</b>：エンジンを真ん中に積んだ後輪駆動。曲がりやすいが、限界を超えると急に回る。':`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。`}${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面が濡れていればレイン。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（ダメージを受けた時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}${['オープンデフ＝踏みながら曲がりやすいが、きつい出口で内側のタイヤが空転する。','','2wayデフ＝ブレーキ中も安定するが、入口で曲がりにくい。'][setDf]}${['ブレーキ冷却小さめ＝空気抵抗が少ないが、ブレーキが熱でききにくくなりやすい。','','ブレーキ冷却大きめ＝ブレーキが熱くなりにくいが空気抵抗が増える。'][setBC]}${['低回転型エンジン＝立ち上がりが速いが最高速が伸びない。','','高回転型エンジン＝上まで回って直線が速いが、低速の立ち上がりは弱い。'][setE]}${['スタビ前硬め＝安定するが曲がりにくい。','','スタビ後ろ硬め＝よく曲がるがお尻が出やすい。'][setS]}${['細いタイヤ＝グリップは下がるが空気抵抗が減り、雨に強い。','','太いタイヤ＝グリップが高いが空気抵抗が増え、雨に弱い。'][setTW]}${CHD[myCar].iz<.9?CARS[myCar].name+'は回りやすいが、限界を超えると急にスピンする。':CHD[myCar].iz>1.06?CARS[myCar].name+'は回りにくく、滑り出しがゆっくり。':''}`;}
+  $('tuneNote').innerHTML=`${isForm()?'<b>後輪駆動</b>：フォーミュラはエンジンが運転席の後ろの後輪駆動（駆動方式は選べない）。':myCar===9&&setDrv===1?'<b>MR</b>：エンジンを真ん中に積んだ後輪駆動。曲がりやすいが、限界を超えると急に回る。':`<b>${DRV_KEYS[setDrv]}</b>：${DRV[DRV_KEYS[setDrv]].d}。`}${['ギアは加速寄り＝立ち上がりが速いが最高速が伸びない。','',"ギアは最高速寄り＝直線で伸びるが加速が鈍い。"][setG]}${['ウイング少なめ＝直線が速いがコーナーが遅い。','','ウイング多め＝高速コーナーに強いが直線が遅い。'][setW]}${['ブレーキ前寄り＝安定するが止まりにくい。','','ブレーキ後ろ寄り＝よく止まるが、お尻が出やすい。'][setB]}タイヤ自動＝路面と天気に合わせる（雨ならレイン、雪ならスタッドレス、氷ならスパイク、砂利道ならグラベル）。${['ラジエーター小さめ＝空気抵抗が少ないが熱くなりやすい（ダメージを受けた時・低速で踏み続けると出力が落ちる）。','','ラジエーター大きめ＝冷えるが空気抵抗が増える。'][setC]}${['オープンデフ＝踏みながら曲がりやすいが、きつい出口で内側のタイヤが空転する。','','2wayデフ＝ブレーキ中も安定するが、入口で曲がりにくい。'][setDf]}${['ブレーキ冷却小さめ＝空気抵抗が少ないが、ブレーキが熱でききにくくなりやすい。','','ブレーキ冷却大きめ＝ブレーキが熱くなりにくいが空気抵抗が増える。'][setBC]}${['低回転型エンジン＝立ち上がりが速いが最高速が伸びない。','','高回転型エンジン＝上まで回って直線が速いが、低速の立ち上がりは弱い。'][setE]}${['スタビ前硬め＝安定するが曲がりにくい。','','スタビ後ろ硬め＝よく曲がるがお尻が出やすい。'][setS]}${['細いタイヤ＝グリップは下がるが空気抵抗が減り、雨に強い。','','太いタイヤ＝グリップが高いが空気抵抗が増え、雨に弱い。'][setTW]}${CHD[myCar].iz<.9?CARS[myCar].name+'は回りやすいが、限界を超えると急にスピンする。':CHD[myCar].iz>1.06?CARS[myCar].name+'は回りにくく、滑り出しがゆっくり。':''}`;}
 function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(tStage===0){if(any)enterMenu();return;}
   if(!$('aboutScreen').hidden){const ab=$('aboutScreen');if(edge(1))closeAbout();else if(edge(12)||edge(14))navMove(ab,-1);else if(edge(13)||edge(15))navMove(ab,1);else if(edge(0)){const a=document.activeElement;if(ab.contains(a)&&a.tagName==='BUTTON')a.click();}return;} /* β0.103.0 */
