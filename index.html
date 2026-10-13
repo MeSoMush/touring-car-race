@@ -352,7 +352,7 @@ body.touch.mir #gaps{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 7
 #corner .mini{font-size:12px;padding:5px 9px;white-space:nowrap}
 #corner .mini.warn{background:#e8342a;color:#fff;border-color:#e8342a}
 body.drag #spdBtn{display:none}
-body.ez #bbRBtn,body.ez #bbFBtn,body.ez #gauge,body.ezs #pitBtn,body.ezs #fuelBtn{display:none!important} /* β0.140.0 T264③ */
+body.ez #bbRBtn,body.ez #bbFBtn,body.ezs #pitBtn,body.ezs #fuelBtn{display:none!important} /* β0.140.0 T264③（β0.142.1 T315：速度計は残し、右の小さな計器だけ drawGauge で描かない） */
 body.hudmin #tower,body.hudmin #laps,body.hudmin #gaps,body.hudmin #tele,body.hudmin #radio,body.hudmin #carst,body.hudmin #wx,body.hudmin #topbtns,body.hudmin #minimap,body.hudmin #flag,body.hudmin #camTag,body.hudmin #leds,body.hudmin #slip{display:none!important}
 body.touch #corner .mini{padding:4px 7px;font-size:11px}/* メーター：回転計＋速度＋ギア、水温・油温・ブースト圧（canvas に描く） */
 #gauge{display:block;width:clamp(250px,25vw,340px);height:auto;aspect-ratio:360/200;pointer-events:none}
@@ -777,7 +777,7 @@ body.touch #hintBtn{min-height:36px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.142.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.142.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4395,7 +4395,7 @@ function drawGauge(p){if(!p)return;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}ga
   // 表示が変わらない時は描き直さない
   // β0.67.0 T204 レブリミットの光（実車のシフトライト・レース用メーターと、GT・Forza などの回転計を参考）：シフトの回転の 700 手前から回転計のふちが黄→赤に光り始め、シフトの回転を超える・レッドゾーン（7800〜）に入ると赤く点滅
   const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP,rl=Math.max(0,Math.min(1,(rpm-(sp-700))/700)),lim=rpm>=sp-60||rpm>=7800,rlF=lim&&!RM?(Math.floor(clockT*14)%2):lim?1:0; // 動きを減らす設定では点滅しない
-  const key=spd+'|'+gt+'|'+Math.round(rpm/40)+'|'+shiftF+'|'+!!p.manual+'|'+Math.round(rl*10)+rlF+(isTouch?'|'+((p.bfK||1)<.97):'|'+Math.round(p.tw)+'|'+Math.round(p.to)+'|'+Math.round(p.bst*50)+'|'+Math.round((p.tb||0)/5));if(key===gKey)return;gKey=key;
+  const key=spd+'|'+gt+'|'+Math.round(rpm/40)+'|'+shiftF+'|'+!!p.manual+'|'+Math.round(rl*10)+rlF+(isTouch?'|'+((p.bfK||1)<.97):document.body.classList.contains('ez')?'|ez':'|'+Math.round(p.tw)+'|'+Math.round(p.to)+'|'+Math.round(p.bst*50)+'|'+Math.round((p.tb||0)/5));if(key===gKey)return;gKey=key;
   const g=gx;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,gc.width,gc.height);g.drawImage(gBg,0,0);g.setTransform(gDpr,0,0,gDpr,0,0);
   g.textAlign='center';g.textBaseline='middle';
   if(rl>0&&!RM||lim){const a=lim?(rlF?1:.45):rl*.85,col=lim?'255,40,30':`255,${Math.round(190-150*rl)},${Math.round(40*(1-rl))}`;g.save();g.lineCap='round';g.shadowColor=`rgba(${col},${a})`;g.shadowBlur=lim?20:14*rl;
@@ -4409,6 +4409,7 @@ function drawGauge(p){if(!p)return;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}ga
   g.fillStyle='#111';g.font='italic 800 24px '+GF;g.fillText(gt,cx,cy+68);
   if(p.manual){g.fillStyle=GAM;g.font='italic 800 14px '+GF;g.fillText('MT',cx+32,cy+68);}
   if(isTouch){if((p.bfK||1)<.97){g.fillStyle=GRD;g.font='800 13px '+GF;g.fillText('ブレーキ過熱',cx,cy-34);}return;} // T189 スマホはききが落ちた時だけ
+  if(document.body.classList.contains('ez'))return; // β0.142.1 T315 かんたんは水温・油温などを出さない（速度計は出す）
   gMini(g,242,27,21,p.tw,50,130,105,115,'WATER',Math.round(p.tw)+'°C');
   gMini(g,242,76,21,p.to,60,150,125,138,'OIL',Math.round(p.to)+'°C');
   if(p.tq&&p.tq.tb)gMini(g,242,125,21,p.bst,-1,1.6,1.15,1.4,'BOOST',(Math.round(p.bst*100)<0?'−':'+')+Math.abs(p.bst).toFixed(2)+'bar');
