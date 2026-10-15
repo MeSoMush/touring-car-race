@@ -890,7 +890,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.163.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.163.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5236,7 +5236,7 @@ function updateEngine(){if(!eng)return;const p=state==='replay'?camTarget():play
    const cb=ok&&p&&(p.surf==='curb'||p.surf==='saus')&&sp>6;stv(envS.rumb.g.gain,cb?(p.surf==='saus'?.17:.09)*cv:0,t,.03);stv(envS.rumb.o.frequency,Math.max(24,sp/.8),t,.05);
    const gv=ok&&p&&(p.surf==='gravel'||p.surf==='grass')&&sp>3?(p.surf==='gravel'?.16:.07)*Math.min(1,sp/20):ok&&p&&RSF[RSI[p.idx]].dust&&RSI[p.idx]<3&&sp>3?.08*Math.min(1,sp/20):0; /* T283 砂利道・雪は走るだけで砂利の音 */stv(envS.grav.g.gain,gv*cv,t,.05);
    if(envS.clap&&!(state==='race'||state==='finished'||state==='replay'||state==='countdown')){stv(envS.clap.g.gain,0,t,.2);stv(envS.roar.g.gain,0,t,.2);}
-   stv(envS.rain.g.gain,!muted&&!quiet&&state!=='title'?.045*ENV.rain*(ck?1.5:1):0,t,.3);}
+   stv(envS.rain.g.gain,on&&!quiet?.045*ENV.rain*(ck?1.5:1):0,t,.3);} /* β0.163.1 T331 雨の音もエンジンと同じ時だけ（結果画面・ポーズでシャーだけ残っていた） */
   npcAudio(on&&!quiet,p);}
 // T174 ほかの車のエンジン音：カメラ（聞く位置）に近い2台を、距離の音量・左右の位置・ドップラー（近づくと高く、離れると低く）で鳴らす
 let npcT=0;function npcAudio(on,p){if(!npcV.length)return;const t=ac.currentTime;if(t-npcT<.033&&t>=npcT)return;npcT=t; // 1秒に約30回（軽量化 β0.54.2）
