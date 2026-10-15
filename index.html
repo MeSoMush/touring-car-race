@@ -924,7 +924,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.165.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.166.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1232,8 +1232,8 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
     <h2>ポーズ中</h2>
     <div class="row">
       <button class="btn" id="resumeBtn" data-key="Esc" type="button">つづける</button>
-      <button class="btn alt" id="restartBtn" type="button">最初から</button>
       <button class="btn alt" id="pHelpBtn" type="button">操作方法<small class="ptag">HOW TO</small></button>
+      <button class="btn alt" id="restartBtn" type="button">最初から</button>
       <button class="btn alt" id="retireBtn" type="button">タイトルへ</button>
     </div>
     <p class="plbl">設定（すぐ反映・保存）</p>
@@ -1723,6 +1723,11 @@ let WRR=.07; // T254⑥ レインタイヤの路面の濡れでの落ち方（�
 function wetMul0(s,k){const w=k&&k._w!=null?k._w:ENV.wet;if(k&&k.ty>1){const T=TYR[k.ty];return s==='road'?T.d0*(1-T.wl*w):s==='curb'?T.d0*(1-T.wc*w):T.of*(1-.12*w);}if(k&&k.rain)return .9*(s==='road'?1-WRR*w:s==='curb'?1-.16*w:1-.1*w);return s==='road'?1-WETR*w:s==='curb'?1-.45*w:1-.18*w;} // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
 // 環境反射（空と地面の簡易モデル）。時間帯と雲で作り直す
 let envTex=null,envRT=null;
+/* β0.166.0 T339 影の切り替え：castShadow は true のまま（切り替えると影を受ける材質を全部作り直して画面が止まる）。
+   出さない時は影の更新を止めて影の絵を白（影なし）で塗る。絵がまだ無い時は一度作らせてから塗る（shPend、描画の後）。 */
+let sunShOn=true,shPend=0;
+function sunShadow(on){if(!SHADOWS)return;sun.castShadow=true;if(on===sunShOn)return;sunShOn=on;const sh=sun.shadow;if(on){sh.autoUpdate=true;shPend=0;}else{sh.autoUpdate=false;if(!sh.map)sh.needsUpdate=true;shPend=1;}}
+function shClear(){const m=sun.shadow.map;if(!m)return;const cc=renderer.getClearColor(new THREE.Color()),ca=renderer.getClearAlpha(),rt=renderer.getRenderTarget();renderer.setRenderTarget(m);renderer.setClearColor(0xffffff,1);renderer.clear(true,true,false);renderer.setRenderTarget(rt);renderer.setClearColor(cc,ca);}
 function buildEnv(P,cloud){const env=new THREE.Scene();const sg=new THREE.SphereGeometry(50,32,16);const col=[];const pos=sg.attributes.position;const c=new THREE.Color();
  const gy=P.night?.03:.42*(P.ex);const grey=[gy,gy*1.03,gy*1.08];const mix=(a)=>a.map((v,i)=>v+(grey[i]-v)*cloud*.85);
  const et=mix(P.et),eh=mix(P.eh),eg=P.eg;
@@ -1782,7 +1787,7 @@ function envApply(force){const P=TOD[ENV.tod];
  sunSprite.visible=cl<.8&&fg<.6;sunSprite.material.opacity=Math.max(0,1-cl*1.25)*(P.night?.35:1);sunSprite.scale.setScalar(P.night?90:P.el<12?340:260);sunSprite.material.color.set(P.night?0xc8d4ff:P.el<12?0xffc9a0:0xffffff);
  stars.visible=!!P.night;stars.material.opacity=Math.max(0,1-cl*1.3);
  for(const c of CLOUDS){c.material.color.set(P.cl).multiplyScalar(1-.45*rn).convertSRGBToLinear();c.material.opacity=Math.min(1,.85+cl*.3);}
- if(SHADOWS)sun.castShadow=cl<.85&&!P.night;
+ sunShadow(cl<.85&&!P.night); /* β0.166.0 T339 */
  const key=ENV.tod+'_'+Math.round(cl*5);if(force||key!==ENV.key){ENV.key=key;buildEnv(P,cl);}
  if(roadMat){const RS=RSF[rsCur],w=ENV.wet*RS.wk,c=RS.col;roadMat.roughness=.92-.5*w;roadMat.color.setRGB((1-.58*w)*c[0],(1-.58*w)*c[1],(1-.55*w)*c[2]);roadMat.envMapIntensity=1+.35*w;}
  if(P.night)nightSetup();nightFx.forEach(o=>o.visible=!!P.night);
@@ -3451,7 +3456,7 @@ function rlShow(p,r){const st=rly.st;if(rly.t.length===st){rly.t.push(p.dnf?null
   h+='<tr><td class="nw">ペナルティ</td><td class="t">'+(rly.pen?'+'+rly.pen+'秒':'なし')+'</td><td></td></tr>';
   h+='<tr class="me"><td>合計</td><td class="t">'+(p.dnf?'—':fmt(tot))+'</td><td class="t">'+(old?'ベスト '+fmt(old.t):'')+'</td></tr>';
   $('resultTable').innerHTML=h;
-  $('resultTitle').textContent=p.dnf?'ラリー リタイア（SS'+(st+1)+' で大クラッシュ）':!done?'SS'+(st+1)+'　'+fmt(r.t)+'　合計 '+fmt(tot):(rec?(old?'ラリー 自己ベスト更新！　':'ラリー記録　'):'ラリー完走　合計 ')+fmt(tot)+(autoPlay?'（オート運転は記録しない）':!rly.ok?'（巻き戻したので記録なし）':'');
+  $('resultTitle').textContent=p.dnf?'ラリー リタイア（SS'+(st+1)+' で大クラッシュ）':!done?'SS'+(st+1)+'　'+fmt(r.t)+'　合計 '+fmt(tot):(rec?(old?'ラリー 自己ベスト更新！　':'ラリー記録　'):'ラリー完走　合計 ')+fmt(tot)+(autoPlay||autoUsed?'（オート運転は記録しない）':!rly.ok?'（巻き戻し・やり直しをしたので記録なし）':'');
   if(!done)$('resNote').textContent+='　｜　タイヤの減り '+rlPc(rly.car.wear)+'・足回りのダメージ '+rlPc(rly.car.dmS)+'・エンジン '+rlPc(rly.car.dmE)+'（サービスパークで直せる）';
   $('svBtn').hidden=done;$('svBtn').textContent='サービスパークへ';$('againBtn').hidden=!done;$('lapBtn').hidden=true;
   if(!done)setTimeout(()=>{try{$('svBtn').focus({preventScroll:true});}catch(_){}},0);}
@@ -3506,7 +3511,7 @@ function chMarks(C){if(chGrp){scene.remove(chGrp);chGrp.traverse(o=>{if(o.geomet
 function chBegin(){const C=CH[chOn];chRes=null;chRw=0;chCo=[];ghost=null;chMarks(C);$('chListBtn').hidden=false;
   telop('CHALLENGE',(chOn+1)+'「'+C.n+'」'+C.d+'　金 '+fmt(C.g[0])+'・銀 '+fmt(C.g[1])+'・銅 '+fmt(C.g[2]));}
 function chEnd(r){if(chRes)return;chRes=r;state='finished';afterFinish=2;const p=player();
-  if(r.ok){r.m=chMed(CH[chOn],r.t);r.valid=!chRw&&!autoPlay;const b=chBest(),o=b[chOn];r.old=o||null;
+  if(r.ok){r.m=chMed(CH[chOn],r.t);r.valid=!chRw&&!autoPlay&&!autoUsed;const b=chBest(),o=b[chOn];r.old=o||null;
     if(r.valid&&(!o||r.t<o.t||r.m>(o.m||0))){b[chOn]={t:o&&o.t<r.t?o.t:r.t,m:Math.max(r.m,o?o.m||0:0)};r.rec=!o||r.t<o.t;try{localStorage.setItem('popkart_ch',JSON.stringify(b));}catch(_){}}
     showBanner(r.m?CHM[r.m]+'メダル':'GOAL');telop(r.m?CHM[r.m]+'メダル':'GOAL',fmt(r.t),r.m===3?'purple':r.m?'green':'yellow');sfx('finish');}
   else{showBanner('失格');telop('失格',r.why,'yellow');sfx('warn');}
@@ -3528,7 +3533,7 @@ function showCh(){$('resNote').textContent='';state='results';resultCamStart();c
   h+='<tr class="me"><td>今回</td><td class="t">'+(r.ok?fmt(r.t):'失格')+'</td><td></td></tr>';
   if(b)h+='<tr><td>自己ベスト</td><td class="t">'+fmt(b.t)+'</td><td>'+(b.m?'<span class="md'+b.m+'">'+CHM[b.m]+'</span>':'')+'</td></tr>';
   $('resultTable').innerHTML=h;
-  $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay?'（オート運転は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+r.why;
+  $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay||autoUsed?'（オート運転は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+r.why;
   const co=[...new Set(chCo)].slice(-4);
   $('resNote').innerHTML='課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・セダン FR・標準'+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
   $('raceBtn').hidden=true;$('againBtn').hidden=false;$('chListBtn').hidden=false;$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=true;
@@ -3536,7 +3541,7 @@ function showCh(){$('resNote').textContent='';state='results';resultCamStart();c
 function ssSplit(p){const a=p.ssSp||(p.ssSp=[]);if(p.lap!==1||p.finished)return;const d=lapDist(p);while(a.length&&d<L*a.length/3-10)a.pop(); /* 巻き戻した時 */
   const n=a.length;if(n<2&&d>=L*(n+1)/3&&d<L*.97){a.push(raceTime);const r=ghost&&ghost.sp&&ghost.sp[n],dl=r!=null?raceTime-r:null;
     telop('SPLIT '+(n+1),fmt(raceTime)+(dl!=null?'　自己ベスト比 '+(dl<=0?'−':'+')+Math.abs(dl).toFixed(2):''),dl==null?'':dl<=0?'green':'yellow');}}
-function ssDone(k){const t=raceTime,old=ghost?{t:ghost.t,sp:ghost.sp}:null,sp=(k.ssSp||[]).slice(0,2),valid=!k.lapBad&&!autoPlay;
+function ssDone(k){const t=raceTime,old=ghost?{t:ghost.t,sp:ghost.sp}:null,sp=(k.ssSp||[]).slice(0,2),valid=!k.lapBad&&!autoPlay&&!autoUsed;
   telLap(k,t-(k.lapStart||0),!k.lapBad);k.lastLap=t;k.best=t;
   const rec=valid&&ghRec.length>=40&&(!old||t<old.t);
   if(rec){ghost={t,s:Float32Array.from(ghRec),p:playerChoice,sp:sp.length===2?sp:null};ghSave();telop(old?'NEW RECORD':'RECORD','ステージ記録　'+fmt(t),'purple');}
@@ -3549,7 +3554,7 @@ function showSS(){$('resNote').textContent='';state='results';resultCamStart();c
   for(let i=0;i<3;i++)h+=row('区間 '+(i+1),me?me[i]:null,ob?ob[i]:null);
   h+=row('合計',p.dnf?null:r.t,r.old?r.old.t:null,1);
   $('resultTable').innerHTML=h;
-  $('resultTitle').textContent=p.dnf?'リタイア（大クラッシュ）':r.rec?(r.old?'自己ベスト更新！　':'ステージ記録　')+fmt(r.t):'ステージ タイム　'+fmt(r.t)+(autoPlay?'（オート運転は記録しない）':!r.valid?'（巻き戻したので記録なし）':'');
+  $('resultTitle').textContent=p.dnf?'リタイア（大クラッシュ）':r.rec?(r.old?'自己ベスト更新！　':'ステージ記録　')+fmt(r.t):'ステージ タイム　'+fmt(r.t)+(autoPlay||autoUsed?'（オート運転は記録しない）':!r.valid?'（巻き戻したので記録なし）':'');
   $('resNote').textContent=`RALLY SS　${RSF[rsCur].n}${ENV.wet>.2?'（濡れ）':''}・タイヤ ${TYR[p.ty||0].n}・${clsName()}　区間は 1/3 周ごと`;
   $('raceBtn').hidden=true;$('againBtn').hidden=false;$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=!lapList().length;
   if(rly)rlShow(p,r);
@@ -4818,6 +4823,7 @@ function pnReset(){pnDone.clear();pnShow.length=0;pnT=0;const el=$('pnote');if(e
 const pnDir=q=>q.d>0?'右':'左';
 function pnLink(q){return isSS()&&q.fin>=0?'ゴール '+Math.max(50,Math.round(q.fin/50)*50):q.link;}
 function pnWords(q){return [pnDir(q)+(q.k?' フラット':q.lv),...q.md];}
+function pnHush(){try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(_){}} /* β0.166.0 T342 読み上げの取り残しを止める */
 function pnSay(t){if(pnMode<2||muted||autoPlay&&(sess==='race'||spdMul>1))return;try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance)return;
   if(S.pending)S.cancel(); // 遅れて溜まったら新しい方だけ
   S.speak(pnUtter(t));}catch(_){}}
@@ -5450,7 +5456,7 @@ function pollPad(){const gs=typeof navigator!=='undefined'&&navigator.getGamepad
   else if(state==='results'&&!$('svScreen').hidden){const sv=$('svScreen');if(edge(12)||edge(14))navMove(sv,-1);else if(edge(13)||edge(15))navMove(sv,1);else if(edge(0)){const a=document.activeElement;if(sv.contains(a)&&a.tagName==='BUTTON')a.click();}}
   else if(state==='results'&&!$('lapScreen').hidden){if(edge(1)||edge(9))lapClose();if(bp(14))lapKey(-1);if(bp(15))lapKey(1);}
   else if(state==='results'&&photoOn){if(edge(0)||edge(1)||edge(2)||edge(9))photoClose();}
-  else if(state==='results'){const rs=$('resultScreen');if(edge(12)||edge(14))navMove(rs,-1);else if(edge(13)||edge(15))navMove(rs,1);else if(edge(2))photoOpen();else if(edge(0)&&rs.contains(document.activeElement)&&document.activeElement.tagName==='BUTTON')document.activeElement.click();else if(edge(0)||edge(9))$(qualiRes&&!$('raceBtn').hidden?'raceBtn':'againBtn').click();if(edge(1))resTitleAsk();if(edge(3))startReplay();}
+  else if(state==='results'){const rs=$('resultScreen');if(edge(12)||edge(14))navMove(rs,-1);else if(edge(13)||edge(15))navMove(rs,1);else if(edge(2))photoOpen();else if(edge(0)&&rs.contains(document.activeElement)&&document.activeElement.tagName==='BUTTON')document.activeElement.click();else if(edge(0)||edge(9))$(resMain()).click();if(edge(1))resTitleAsk();if(edge(3))startReplay();}
   else if(state==='replay'){if(edge(1)||edge(9))endReplay();if(edge(0)||edge(15))rpFocusStep(1);if(edge(14))rpFocusStep(-1);if(edge(3))rpCamStep();if(edge(2))rpSpdStep();}
   for(let i=0;i<g.buttons.length;i++)gp.prev[i]=bp(i);}
 addEventListener('gamepadconnected',()=>pollPad());
@@ -5478,7 +5484,7 @@ const ms={x:0,seen:false,lockMe:false,hud:false,req:false,fail:false,noT:0};
 function ctlSave(){try{const o={ms:msOn,mss:msSens,ml:msLk,pd:pedM,pv:pnVoiceSel,pp:pnPitch,ip:inpOn};if(!msOn&&msSens===1&&!msLk&&!pedM&&!pnVoiceSel&&!pnPitch&&inpOn===(isTouch?0:1))localStorage.removeItem('popkart_ctl');else localStorage.setItem('popkart_ctl',JSON.stringify(o));}catch(_){}}
 try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o){msOn=o.ms?1:0;if(o.mss!=null)msSens=Math.max(0,Math.min(2,o.mss|0));msLk=o.ml?1:0;pedM=Math.max(0,Math.min(2,(o.pd|0)));if(typeof o.pv==='string')pnVoiceSel=o.pv;pnPitch=Math.max(0,Math.min(2,o.pp|0));}}catch(_){}
 const msAct=()=>!!msOn&&!isTouch&&!autoPlay&&(state==='race'||state==='countdown'||state==='finished')&&$('bugScreen').hidden;
-addEventListener('mousemove',e=>{if(!msOn||isTouch)return;const hw=innerWidth/2;if(document.pointerLockElement===canvas)ms.x=Math.max(-hw,Math.min(hw,ms.x+(e.movementX||0)));else ms.x=e.clientX-hw;ms.seen=true;});
+addEventListener('mousemove',e=>{if(!msOn||isTouch)return;const hw=innerWidth/2;if(document.pointerLockElement===canvas)ms.x=Math.max(-hw,Math.min(hw,ms.x+(e.movementX||0)));else if(msLk&&!ms.fail)return;else ms.x=e.clientX-hw;ms.seen=true;});
 function msVal(){const hw=Math.max(150,innerWidth/2),a=Math.max(-1,Math.min(1,ms.x/(hw*(MS_FULL[msSens]||.6))));return Math.sign(a)*Math.max(0,Math.abs(a)-MS_DZ)/(1-MS_DZ);}
 const msLockOk=()=>!!msLk&&!ms.fail&&msAct()&&(state==='race'||state==='countdown')&&document.visibilityState!=='hidden'&&document.hasFocus();
 function msLock(){if(!msLockOk()||ms.req||document.pointerLockElement===canvas||!canvas.requestPointerLock||performance.now()<ms.noT)return;
@@ -5487,7 +5493,7 @@ function msLock(){if(!msLockOk()||ms.req||document.pointerLockElement===canvas||
 function msUnlock(){ms.req=false;ms.lockMe=false;ms.noT=performance.now()+1500;try{if(document.pointerLockElement&&document.exitPointerLock)document.exitPointerLock();}catch(_){}}
 document.addEventListener('pointerlockerror',()=>{ms.req=false;ms.lockMe=false;ms.fail=true;}); /* 取れなかったら、このあとはカーソルの位置でハンドル（GARAGE で選び直すとまた試す） */
 addEventListener('blur',msUnlock);addEventListener('pagehide',msUnlock);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')msUnlock();});
-document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(state==='race'||state==='countdown')pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
+document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.x=0; /* β0.166.0 T342 */ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(state==='race'||state==='countdown')pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
 /* β0.165.0 T336 入力の表示（#inpCv）：inpC＝自分の車に実際に入った操作。ハンドル（入れた量で輪が回る）・前輪（k.delta／その速さで切れる最大）・
    アクセル（thr）・ブレーキ（brk）の棒・サイドブレーキ。TC（アシストが駆動を絞った＝k.wheelspin）・空転（アシスト「なし」）・ABS（k.absN が増えた）・ロック（k.locked）。保存は popkart_ctl の ip（既定は PC 出す・スマホ 出さない） */
 let inpOn=isTouch?0:1,inpC=null;const inpS={key:'',abs:0,absT:0};
@@ -5637,7 +5643,7 @@ for(const [id,v] of [['catSeg',catSel],['coSeg',coachMode],['enSeg',setE],['tkSe
 fixCls();syncNA();syncDrv();aiNote();for(const [id,v] of [['aaSeg',aiAuto],['rwSeg',rwSel],['soSeg',spotOn],['gearSeg',setG],['wingSeg',setW],['bbSeg',setB],['tyreSeg',setT],['difSeg',setDf],['bcSeg',setBC],['lapsSeg',lapsSel],['wearSeg',wearMode],['dmgSeg',dmgMode],['gridSeg',gridMode],['todSeg',todSel],['wxSeg',wxSel],['rsSeg',roadSurf],['tsSeg',tiltSens],['asSeg',assistLv],['aiSeg',aiLv],['ddSeg',dragDist],['drSeg',dragRivalSel]])markSeg(id,v);setCam(camMode);showRec();rwVis(); /* β0.96.2：範囲を確かめた後の値で表示を合わせ直す */
 
 let cdShown=-1;
-function startRace(){$('coach').hidden=true;coT=0;pnReset();$('laps').innerHTML='';
+function startRace(){autoUsed=!!autoPlay;$('coach').hidden=true;coT=0;pnReset();$('laps').innerHTML='';
   clearTimeout(lampTO);saveSettings();setTMenu(false);titleMode='attract';setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();camera.updateProjectionMatrix();
   initAudio();if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});
   setSpd(1);ROLL.on=startMode===1&&sess==='race';ROLL.green=false;raceT0=0;SC_reset();SC.n=0;FCY.n=0;SC.rfn=0;crashRec.length=0;setupRace();boxFix();
@@ -5698,11 +5704,12 @@ let spdMul=1;const SPD_STEPS=[1,2,3,5];
 function setSpd(n){spdMul=n;$('spdBtn').textContent='倍速 ×'+n;$('autoBadge').textContent=n>1?'オート運転中　×'+n:'オート運転中';if(n>1)toast('×'+n+' 倍速（効果音とエンジン音は止まります。BGM はそのまま）');}
 function spdStep(){if(!autoPlay||sess==='drag'||(state!=='race'&&state!=='finished'))return;setSpd(SPD_STEPS[(SPD_STEPS.indexOf(spdMul)+1)%SPD_STEPS.length]);}
 $('spdBtn').addEventListener('click',spdStep);
-function setAuto(v){autoPlay=v;document.body.classList.toggle('autoplay',!!v);setSpd(1);$('spdBtn').hidden=!v||sess==='drag';$('autoBtn').textContent='オート運転 '+(v?'ON':'OFF');$('autoBtn').setAttribute('aria-pressed',String(v));$('autoBadge').hidden=!v;for(const k in input)input[k]=false;}
+let autoUsed=false; /* β0.166.0 T340 このレース（1本）でオートを使った */
+function setAuto(v){autoPlay=v;if(v&&(state==='race'||state==='countdown'||state==='paused')){autoUsed=true;const p=typeof player==='function'?player():null;if(p&&p.lap>=1)p.lapBad=true;if(isCh())chRw=1;}document.body.classList.toggle('autoplay',!!v);setSpd(1);$('spdBtn').hidden=!v||sess==='drag';$('autoBtn').textContent='オート運転 '+(v?'ON':'OFF');$('autoBtn').setAttribute('aria-pressed',String(v));$('autoBadge').hidden=!v;for(const k in input)input[k]=false;}
 $('againBtn').addEventListener('click',()=>{if(watchCam==null)setAuto(!!autoStart);beginEvent();});
 $('dtNext').addEventListener('click',()=>{if(!dtour)return;dtour.rd++;$('dtNext').hidden=true;$('againBtn').hidden=false;$('againBtn').textContent='もう一度';if(watchCam==null)setAuto(!!autoStart);beginEvent();}); /* β0.159.0 大会の次の回戦 */ /* β0.102.0 前のレースの途中で切り替えたオート運転を持ち越さない */
 $('menuBtn').addEventListener('click',()=>{toTitle();openSetup();}); // β0.54.1 T175⑥：名前どおりマシン選択（GARAGE）を開く
-$('retireBtn').addEventListener('click',toTitle);
+$('retireBtn').addEventListener('click',()=>pzAsk('retireBtn','もう一度押すとタイトルへ',toTitle)); /* β0.166.0 T346 */
 /* T255 ④ポーズ画面から設定を変える（GARAGE と同じ値・同じ保存） */
 const BGVN=['小','中','大'];
 function pSetSync(){$('pCam').textContent='視点 '+CAMN[camMode];$('pBgm').textContent='BGM '+(bgmOn?'ON':'OFF');$('pBgv').textContent='BGM の音量 '+BGVN[bgmVol];$('pSnd').textContent='音 '+(muted?'OFF':'ON');
@@ -5717,6 +5724,7 @@ $('pHelpBtn').addEventListener('click',()=>{if(state!=='paused')return;$('pauseS
 /* T255 ⑤結果画面でパッドの B：もう一度 B でタイトルへ（確認を1回） */
 let resAskT=0;
 function resAskReset(){resAskT=0;$('resAsk').hidden=true;}
+function resMain(){for(const id of['svBtn','dtNext','raceBtn','againBtn'])if(!$(id).hidden)return id;return'againBtn';} /* β0.166.0 T338 隠れたボタン（ラリーの SS1 の後の「もう一度」など）を押さない */
 function resTitleAsk(){if(resAskT&&performance.now()-resAskT<3000){resAskReset();toTitle();return;}resAskT=performance.now();$('resAsk').hidden=false;tone(660,.05,'square',.08);setTimeout(()=>{if(resAskT&&performance.now()-resAskT>=2900)resAskReset();},3100);}
 /* T255 レースから戻ったら、タイトルのメニューで最後に選んだもの（無ければ RACE）を選んだ状態に */
 try{garFull=+(JSON.parse(localStorage.getItem('popkart')||'{}').gf||0);}catch(_){}
@@ -5726,20 +5734,25 @@ let lastMi='startBtn';$('firstBtn').hidden=!fdShow;if(fdShow)lastMi='firstBtn';d
 /* T255 ⑦巻き戻し「なし」の時はボタンを出さない */
 function rwVis(){document.body.classList.toggle('norw',rwSel===2);}
 $('resumeBtn').addEventListener('click',resume);
-$('restartBtn').addEventListener('click',()=>{if(watchCam==null)setAuto(!!autoStart);if(sess==='race'&&gridOrder&&!autoPlay)startSession('race');else beginEvent();});
+function doRestart(){if(rlStRe()){rlCont=true;rly.ok=false;}if(watchCam==null)setAuto(!!autoStart);if(sess==='race'&&gridOrder&&!autoPlay)startSession('race');else beginEvent();}
+$('restartBtn').addEventListener('click',()=>pzAsk('restartBtn',rlStRe()?'もう一度押すとこの SS をやり直す':'もう一度押すとやり直す',doRestart)); /* β0.166.0 T346 */
 // ポーズ・結果が開いたら、キーボードの Enter で進めるよう最初のボタンへフォーカス
-for(const [sid,bid] of [['pauseScreen',()=>'resumeBtn'],['resultScreen',()=>$('raceBtn').hidden?'againBtn':'raceBtn']])
+for(const [sid,bid] of [['pauseScreen',()=>'resumeBtn'],['resultScreen',resMain]])
   if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{const s=$(sid);if(!s.hidden){try{$(bid()).focus({preventScroll:true});}catch(_){}}else if(sid==='pauseScreen')padTitleReset();}).observe($(sid),{attributes:true,attributeFilter:['hidden']});
 // ゲームパッドの B でタイトルへ戻る時は、2回押しで確定（ポーズ画面の「タイトルへ」ボタンの文言で知らせる）
-let padTitleT=0;
-function padTitleReset(){padTitleT=0;$('retireBtn').textContent='タイトルへ';}
+let padTitleT=0,pzAskId=null,pzAskT=0;
+/* β0.166.0 T346 ラリーの2本目からの「最初から」は、そのステージだけ（記録は残さない） */
+function rlStRe(){return modeSel===3&&!!rly&&rly.st>0;}
+function pzLbl(){$('restartBtn').textContent=rlStRe()?'この SS をやり直す':'最初から';}
+function pzAsk(id,msg,fn){if(pzAskId===id&&performance.now()-pzAskT<3000){padTitleReset();fn();return;}padTitleReset();pzAskId=id;pzAskT=performance.now();$(id).textContent=msg;tone(660,.05,'square',.08);setTimeout(()=>{if(pzAskId===id&&performance.now()-pzAskT>=2900)padTitleReset();},3100);}
+function padTitleReset(){padTitleT=0;pzAskId=null;pzAskT=0;$('retireBtn').textContent='タイトルへ';pzLbl();}
 function padTitleAsk(){if(padTitleT&&performance.now()-padTitleT<3000){padTitleReset();toTitle();return;}padTitleT=performance.now();$('retireBtn').textContent='もう一度 B でタイトルへ';setTimeout(()=>{if(padTitleT&&performance.now()-padTitleT>=2900)padTitleReset();},3100);}
 $('pauseBtn').addEventListener('click',()=>{if(state==='race'||state==='countdown')pause();});
 function bgmToggle(){bgmOn=!bgmOn;$('bgmBtn').textContent=bgmOn?'BGM ON':'BGM OFF';$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));try{localStorage.setItem('popkart_bgm',bgmOn?1:0);}catch(_){}initAudio();}
 try{if(localStorage.getItem('popkart_bgm')==='0'){bgmOn=false;$('bgmBtn').textContent='BGM OFF';}}catch(_){}$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));$('muteBtn').setAttribute('aria-pressed','true'); // T175⑦
 $('bgmBtn').addEventListener('click',bgmToggle);
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state==='race'||state==='countdown')pause();rsvSave();if(ac&&ac.state==='running')ac.suspend();}else if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});});['pointerdown','keydown','touchend'].forEach(t=>addEventListener(t,()=>{if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});},true)); /* β0.101.0 音が止まったままにならない */
-$('muteBtn').addEventListener('click',()=>{muted=!muted;$('muteBtn').textContent=muted?'音 OFF':'音 ON';$('muteBtn').setAttribute('aria-pressed',String(!muted));initAudio();});
+$('muteBtn').addEventListener('click',()=>{muted=!muted;if(muted)pnHush();$('muteBtn').textContent=muted?'音 OFF':'音 ON';$('muteBtn').setAttribute('aria-pressed',String(!muted));initAudio();});
 // β0.67.0 T199 タイトルの上の帯の「音」「全画面」：レース中のボタンと同じ働き（表示もそろえる。全画面が使えない所では隠す）
 const tsSync=()=>{const m=$('tsMute');m.textContent=muted?'音 OFF':'音 ON';m.setAttribute('aria-pressed',String(!muted));const f=$('fsBtn'),t=$('tsFs');t.hidden=f.style.display==='none';t.textContent=f.textContent;};
 $('muteBtn').addEventListener('click',tsSync);
@@ -5830,9 +5843,9 @@ const specHtml=p=>specRows(p).map(([a,b,c])=>'<div><i>'+a+'</i><em'+(c?' class="
 let slOn=false;function setListUpd(){const el=$('setList'),tm=document.body.classList.contains('tmenu'),run=state==='race'||state==='countdown'||state==='finished',on=slOn&&!tm&&run;const rbf=()=>sess==='race'?'<b>今の決まり<small><span class="rdot">●</span> ほんかくより易しい</small></b><div class="pspec">'+rulesHtml()+'</div>'+(ruleNote()?'<p class="rnote">'+ruleNote()+'</p>':''):'';if(tm&&run)H2($('tmSpec')).innerHTML=rbf()+'<b>今の車とセッティング</b><div class="pspec">'+specHtml(player())+'</div>';if(el.hidden===!on&&!on)return;el.hidden=!on;if(on)H2(el).innerHTML=rbf()+'<b>今の車とセッティング<small>Tab を離すと消える</small></b><div class="pspec">'+specHtml(player())+'</div>';}
 addEventListener('keydown',e=>{if(e.code==='Tab'&&(state==='race'||state==='countdown'||state==='finished')){e.preventDefault();if(!slOn){slOn=true;setListUpd();}}});
 addEventListener('keyup',e=>{if(e.code==='Tab'&&slOn){slOn=false;setListUpd();}});addEventListener('blur',()=>{if(slOn){slOn=false;setListUpd();}});
-function pause(){msUnlock();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
+function pause(){msUnlock();pnHush();pzLbl();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
 function resume(){if(state!=='paused'||!$('bugScreen').hidden||!$('helpScreen').hidden)return;state=pausedFrom;$('pauseScreen').hidden=true;}
-function toTitle(){chQuit();rlQuit();dtour=null;if($('dtNext'))$('dtNext').hidden=true;$('againBtn').textContent='もう一度';retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;showRec();state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;resAskReset();setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){menuFocus(lastMi);catInfo();}},0);}
+function toTitle(){pnHush();chQuit();rlQuit();dtour=null;if($('dtNext'))$('dtNext').hidden=true;$('againBtn').textContent='もう一度';retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;showRec();state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;resAskReset();setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){menuFocus(lastMi);catInfo();}},0);}
 
 // 結果画面の撮影カメラ（T54）：主役の車の周りを低い位置からゆっくり回る
 let resCar=null,resA=0,photoOn=false;
@@ -5953,7 +5966,7 @@ function rsvResume(){const d=rsvLoad();if(!d){rsvUi();return;}
   telop('RESUME',`続きから　${d.info.lap}周目・${d.info.pos}位`);pause();}
 $('contBtn').addEventListener('click',rsvResume);
 $('nosBtn').addEventListener('pointerdown',e=>{e.preventDefault();nitroGo();});document.body.classList.toggle('nosOn',!!dragNos);
-function showResults(){msUnlock();retT=0;$('svBtn').hidden=true;if(sess==='race')rsvClear();$('rwAsk').hidden=true;setSpd(1);SC_reset();
+function showResults(){msUnlock();pnHush();retT=0;$('svBtn').hidden=true;if(sess==='race')rsvClear();$('rwAsk').hidden=true;setSpd(1);SC_reset();
   if(sess==='quali'){showQuali();return;}
   if(sess==='drag'){showDrag();return;}
   if(isSS()){showSS();return;}
@@ -6099,7 +6112,7 @@ function dragStep(k,dt){if(k.isPlayer&&drag&&drag.dp)dragTree();if(k.dFin||!k.dm
 /* β0.159.0 大会：勝てば次の回戦、負けか優勝で終わって賞金 */
 function dtAfter(p,c,win){$('dtNext').hidden=true;if(!dtour||autoPlay){$('againBtn').textContent='もう一度';return;}const t=dtour,rd=t.rd;t.log.push({rd,opp:c?c.name:'',win,et:p.dm.t400!=null?p.dm.t400-(p.dm.launch??0):null});
   const tb=$('resultTable');let pr=0,end=false;
-  if(win&&rd<2){$('dtNext').hidden=false;$('dtNext').textContent='次の対戦へ（'+TRN[rd+1]+'）';$('againBtn').hidden=true;}
+  if(win&&rd<2){$('dtNext').hidden=false;$('dtNext').textContent='次の対戦へ（'+TRN[rd+1]+'）';$('againBtn').hidden=true;setTimeout(()=>{try{$('dtNext').focus({preventScroll:true});}catch(_){}},0);}
   else{end=true;pr=win?PRIZE[3]:PRIZE[rd];if(pr)cashAdd(pr);$('againBtn').hidden=false;$('againBtn').textContent='新しい大会';}
   tb.innerHTML+=t.log.map(l=>`<tr><td></td><td>${TRN[l.rd]}</td><td class="t" colspan="2">${l.win?'<b style="color:var(--gold)">勝ち</b>':'負け'}　vs ${l.opp}${l.et!=null?'　'+l.et.toFixed(3)+'秒':''}</td></tr>`).join('')
     +(end?`<tr class="me"><td></td><td>大会の結果</td><td class="t" colspan="2">${win&&rd===2?'優勝！':TRN[rd]+'で敗退'}　賞金 ¥${pr.toLocaleString()}（合計 ¥${cashGet().toLocaleString()}）</td></tr>`:'');
@@ -6116,7 +6129,7 @@ function showDrag(){$('resNote').textContent='';state='results';resultCamStart()
   if(drag.dp&&!p.dm.foul&&!(c&&c.dm.foul)){boP=bo(p,drag.dp);boC=bo(c,drag.dc);if(boP||boC)win=boP&&boC?boP<boC:!boP;} /* β0.159.0 ブラケット：先にゴールした方の勝ち。申告より速いと負け（両方なら申告に近い方） */
   if(c&&!c.dm.foul&&etOf(c)!=null)dcSet(dcKey(c),+etOf(c).toFixed(3)); /* CPU の ET を覚えて次の申告に使う */
   const mg=Math.abs(tot(p)-tot(c));let newRec=false;
-  if(!autoPlay&&!p.dm.foul&&p.dm.t400!=null){const et=p.dm.t400-(p.dm.launch??0);dragLoad();if(!dragRec||et<dragRec.et){dragRec={et,rt:p.dm.rt,trap:p.dm.trap,d:Date.now()};dragSave();newRec=true;}}
+  if(!autoPlay&&!autoUsed&&!p.dm.foul&&p.dm.t400!=null){const et=p.dm.t400-(p.dm.launch??0);dragLoad();if(!dragRec||et<dragRec.et){dragRec={et,rt:p.dm.rt,trap:p.dm.trap,d:Date.now()};dragSave();newRec=true;}}
   const sc={PERFECT:0,GOOD:0,EARLY:0,LATE:0};drag.shifts.forEach(j=>sc[j]++);
   $('resultTable').innerHTML=`<tr class="hd"><td></td><td>項目</td><td class="t">あなた</td><td class="t">${c?c.name:''}</td></tr>`+R.map(([l,k])=>`<tr class="${k==='tot'||k==='t400'?'me':''}"><td></td><td>${l}</td><td class="t">${cell(p,k)}</td><td class="t b">${cell(c,k)}</td></tr>`).join('')
     +`<tr><td></td><td>発進の回転・空転</td><td class="t" colspan="2" style="font-size:.85em">${p.dm.lr?Math.round(p.dm.lr/100)*100+'回転':'おまかせ'}・空転 ${(p.dm.ws||0).toFixed(2)}秒・タイヤ ${Math.round(30+60*(p.dm.tT??p.dT??0))}℃</td></tr>`
@@ -6507,7 +6520,7 @@ addEventListener('keydown',e=>{if(!keyCap)return;e.preventDefault();e.stopImmedi
  if(e.code==='Delete'||e.code==='Backspace'){keyCapEnd('');return;}
  if(e.code==='Tab'){keyMsg('Tab は順位表の一覧で使っているので割り当てられません',true);return;}
  const c=kCode(e);if(!c||c==='Unidentified')return;if(e.key&&e.key.length===1&&e.key!==' ')keyL[c]=e.key.toUpperCase();keyCapEnd(c);},true);
-addEventListener('mousedown',e=>{if(!keyCap||performance.now()-keyCap.t<150)return;e.preventDefault();e.stopImmediatePropagation();keyCapEnd('Mouse'+e.button);},true);
+addEventListener('mousedown',e=>{if(!keyCap||performance.now()-keyCap.t<150)return;if(e.button===0&&e.target&&e.target.closest&&e.target.closest('#keyScreen button:not(.kb)')){keyCapEnd(null);keySwT=0;keyMsg('やめました');return;} /* β0.166.0 T342 */e.preventDefault();e.stopImmediatePropagation();keyCapEnd('Mouse'+e.button);},true);
 addEventListener('wheel',e=>{if(!keyCap)return;e.preventDefault();e.stopImmediatePropagation();if(!e.deltaY||performance.now()-keyCap.t<150)return;keyCapEnd(e.deltaY>0?'WheelDown':'WheelUp');},{capture:true,passive:false});
 addEventListener('click',e=>{if(performance.now()-keySwT<350&&!$('keyScreen').hidden){e.preventDefault();e.stopImmediatePropagation();}},true); /* 割り当てたマウスのボタンで、下のボタンが押されないように */
 addEventListener('contextmenu',e=>{if(!$('keyScreen').hidden)e.preventDefault();},true);
@@ -6547,12 +6560,12 @@ let last=performance.now();
 let titleT=0;
 function titleCam(dt){titleT+=dt*.05;const i=wrap(Math.floor(titleT*N*.6));const h=heading(i);camera.position.set(TX[i]-Math.sin(h)*14+NX[i]*6,6,TZ[i]-Math.cos(h)*14+NZ[i]*6);camera.lookAt(TX[wrap(i+8)],1,TZ[wrap(i+8)]);followSun(TX[i],TZ[i]);}
 // スマホの解像度の自動調整（T124）：レース中に3秒平均が約30fps未満なら、描画の細かさを 1.5→1.25→1.0 へ段階的に下げる（上げ戻しはしない）
-{const r0=renderer.render.bind(renderer);let pc=0;renderer.render=function(sc,cam){if(!pc&&sc===scene){pc=1;const tr=scene.traverse;scene.traverse=scene.traverseVisible;try{renderer.compile(scene,cam);}catch(_){}scene.traverse=tr;}return r0(sc,cam);};} /* β0.104.0 T262 最初の描画の前にまとめて準備 */
+{const r0=renderer.render.bind(renderer);let pc=0;renderer.render=function(sc,cam){if(!pc&&sc===scene){pc=1;const tr=scene.traverse;scene.traverse=scene.traverseVisible;try{renderer.compile(scene,cam);}catch(_){}scene.traverse=tr;}const r=r0(sc,cam);if(shPend&&sc===scene&&SHADOWS&&sun.shadow.map){shPend=0;shClear();}return r;};} /* β0.104.0 T262 最初の描画の前にまとめて準備 */
 const AR_FPS=1/33,AR_PC=1/45;let _arBad=0; /* β0.104.0 T262 PC は約45fps */let _arT=0,_arN=0;const AR_LOG={drops:0,fps:0,minFps:0,n:0};
 function autoRes(raw){if((state!=='race'&&state!=='countdown')||raw>.25){_arT=0;_arN=0;return;}
   _arT+=raw;_arN++;if(_arT<3)return;const avg=_arT/_arN;_arT=0;_arN=0;AR_LOG.fps=1/avg;AR_LOG.n++;AR_LOG.minFps=AR_LOG.n===1?1/avg:Math.min(AR_LOG.minFps,1/avg);
   const pr=renderer.getPixelRatio();if(!isTouch){if(avg<=AR_PC){_arBad=0;return;}if(++_arBad<2)return;_arBad=0; /* β0.104.0 T262 PC */
-    if(SHADOWS&&sun.shadow.mapSize.x>1024){sun.shadow.mapSize.set(1024,1024);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}AR_LOG.drops++;}
+    if(SHADOWS&&sun.shadow.mapSize.x>1024){sun.shadow.mapSize.set(1024,1024);if(sun.shadow.map){sun.shadow.map.dispose();sun.shadow.map=null;}if(!sunShOn){sun.shadow.needsUpdate=true;shPend=1;}AR_LOG.drops++;}
     else if(pr>1.01){renderer.setPixelRatio(Math.max(1,pr-.25));AR_LOG.drops++;resize();}return;}
   if(avg>AR_FPS&&pr>1.01){renderer.setPixelRatio(Math.max(1,pr-.25));AR_LOG.drops++;resize();}}
 function frame(now){
