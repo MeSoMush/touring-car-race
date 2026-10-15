@@ -704,6 +704,17 @@ body.touch #hintBtn{min-height:36px}
 @media (max-height:520px) and (min-aspect-ratio:4/3){#tmenu{width:min(600px,calc(100vw - 290px))}.tsLogo h1{font-size:clamp(30px,8.5vh,52px)}}
 @media (max-height:520px){#tmenu .mi{padding:3px 10px}#tmenu .mi b{font-size:16px}#tmenu .mi span{display:none}#tmenu .mi em{grid-column:2;grid-row:1;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.tmh{font-size:10px;padding-bottom:0}.tmc{gap:2px}.tmc .tmh:not(:first-child){margin-top:4px}}
 @container gar (max-width:620px){#setup .setrow .seg button{font-size:12px;padding-left:2px;padding-right:2px;flex-basis:34px}#setup .chars{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px}#setup .label .qj{font-size:10px;padding:1px 4px}}
+/* β0.156.0 T325 「走る」を入口（ON ROAD・OFF ROAD・STREET・SANDBOX）に分け、選ぶと列がその中身に切り替わる。data-in＝出る所 */
+#tmRun .mi[data-in]{display:none}
+#tmRun[data-cat="top"] .mi[data-in~="top"],#tmRun[data-cat="on"] .mi[data-in~="on"],#tmRun[data-cat="off"] .mi[data-in~="off"],#tmRun[data-cat="sb"] .mi[data-in~="sb"]{display:grid}
+#tmRun .mi[hidden]{display:none!important}
+#tmRunH .crumb{color:var(--paper);letter-spacing:.12em}
+#tmenu .mi.soon{opacity:.42;cursor:default}
+#tmenu .mi.soon.shake{animation:soon .3s}
+@keyframes soon{25%{translate:-5px 0}75%{translate:5px 0}}
+#tmenu .mi.back b,#tmenu .mi.cyc b{font-size:clamp(13px,min(1.8vw,2.6vh),18px)}
+#tmenu .mi.cyc em{color:var(--paper);font-size:14px}
+@media (min-height:521px) and (min-width:621px){#tmenu .mi.cat span{display:inline}#tmenu .mi.cat em{grid-column:2;grid-row:2}} /* 入口は説明を消さずに、今の路面などを下の行に */
 /* β0.155.0 T323 GARAGE：横に広い画面では幅を広げて設定を2列に。おすすめ・チューンはセッティングの中の小さなタブ */
 #garTabs .gsub{display:none!important}
 #garSub{display:flex;gap:4px;margin:-2px 0 2px}#garSub[hidden]{display:none}
@@ -859,19 +870,27 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.155.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.156.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
-    <nav id="tmenu" aria-label="メインメニュー"><div class="tmc" id="tmRun"><div class="tmh">走る</div>
-      <button class="mi" id="contBtn" type="button" hidden><b>CONTINUE</b><span>続きから</span><em id="contInfo"></em></button>
-      <button class="mi" id="firstBtn" type="button" hidden><b>FIRST DRIVE</b><span>はじめての方へ　まず1周走ってみる</span></button>
-      <button class="mi" id="startBtn" type="button"><b>RACE</b><span id="startSub">レース　8台・3周</span></button>
-      <button class="mi" id="taBtn" type="button"><b>TIME ATTACK</b><span>タイムアタック</span><em id="taRec"></em></button>
-      <button class="mi" id="ssBtn" type="button"><b>RALLY SS</b><span id="ssSub">ラリーのステージ　1台で1本</span><em id="ssRec"></em></button>
-      <button class="mi" id="chBtn" type="button"><b>CHALLENGE</b><span>運転の課題　金・銀・銅</span><em id="chRec"></em></button>
-      <button class="mi" id="dragBtn" type="button"><b>0-400m</b><span>ゼロヨン加速勝負</span><em id="dragRec"></em></button>
-      <button class="mi" id="watchBtn" type="button"><b>WATCH</b><span>オート運転で観戦</span></button>
+    <nav id="tmenu" aria-label="メインメニュー"><div class="tmc" id="tmRun" data-cat="top"><div class="tmh" id="tmRunH">走る</div>
+      <button class="mi" id="contBtn" type="button" hidden data-in="top"><b>CONTINUE</b><span>続きから</span><em id="contInfo"></em></button>
+      <button class="mi" id="firstBtn" type="button" hidden data-in="top"><b>FIRST DRIVE</b><span>はじめての方へ　まず1周走ってみる</span></button>
+      <button class="mi cat" id="catOn" type="button" data-in="top" data-cat="on"><b>ON ROAD</b><span>サーキット　レース・タイムアタック・課題・0-400m</span></button>
+      <button class="mi cat" id="catOff" type="button" data-in="top" data-cat="off"><b>OFF ROAD</b><span>砂利道・雪・氷　ラリー・レース</span><em id="catOffInfo"></em></button>
+      <button class="mi cat soon" id="catSt" type="button" data-in="top" aria-disabled="true"><b>STREET</b><span>公道・峠</span><em>準備中（峠のコースができたら）</em></button>
+      <button class="mi cat" id="catSb" type="button" data-in="top" data-cat="sb"><b>SANDBOX</b><span>路面も決まりも自由に組み合わせ</span><em id="catSbInfo"></em></button>
+      <button class="mi back" id="catBack" type="button" data-in="on off sb"><b>‹ BACK</b><span>入口へ戻る</span></button>
+      <button class="mi cyc" id="srfBtn" type="button" data-in="off sb"><b>SURFACE</b><span>路面（押す・←→ で切り替え）</span><em id="srfEm"></em></button>
+      <button class="mi cyc" id="bopBtn" type="button" data-in="sb"><b>CLASS</b><span>速さの決まり（押す・←→ で切り替え）</span><em id="bopEm"></em></button>
+      <button class="mi" id="startBtn" type="button" data-in="on off sb"><b>RACE</b><span id="startSub">レース　8台・3周</span></button>
+      <button class="mi" id="taBtn" type="button" data-in="on off sb"><b>TIME ATTACK</b><span>タイムアタック</span><em id="taRec"></em></button>
+      <button class="mi" id="ssBtn" type="button" data-in="off sb"><b>RALLY SS</b><span id="ssSub">ラリーのステージ　1台で1本</span><em id="ssRec"></em></button>
+      <button class="mi" id="chBtn" type="button" data-in="on"><b>CHALLENGE</b><span>運転の課題　金・銀・銅</span><em id="chRec"></em></button>
+      <button class="mi" id="dragBtn" type="button" data-in="on sb"><b>0-400m</b><span>ゼロヨン加速勝負</span><em id="dragRec"></em></button>
+      <button class="mi gtj" id="sbRuleBtn" type="button" data-gt="2" data-in="sb"><b>RULES</b><span>周回・天気・審判などを変える（GARAGE）</span></button>
+      <button class="mi" id="watchBtn" type="button" data-in="top"><b>WATCH</b><span>オート運転で観戦</span></button>
       </div><div class="tmc" id="tmSet"><div class="tmh">車・設定</div>
       <button class="mi" id="setupBtn" type="button"><b>GARAGE</b><span>車・ドライバー・クラス・色</span></button>
       <button class="mi gtj" id="gSetBtn" type="button" data-gt="1"><b>SETTING</b><span>セッティング・おすすめ・チューン</span></button>
@@ -881,7 +900,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
       <button class="mi" id="helpBtn" type="button"><b>HOW TO</b><span>操作方法・用語</span></button>
       <button class="mi" id="aboutBtn" type="button"><b>ABOUT</b><span>このゲームについて</span></button>
     </div></nav>
-    <p class="kbh tsk">↑↓ ←→ で選んで Enter</p>
+    <p class="kbh tsk">↑↓ ←→ で選んで Enter　Esc 戻る</p>
   </div>
   <section id="setup" class="panel" hidden>
     <h2>GARAGE<small>車・設定</small><small class="kbh">↑↓ 項目　←→ 選ぶ　Q E タブ　H 説明　Esc 決定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
@@ -1070,7 +1089,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
         <span><kbd>[</kbd>／<kbd>]</kbd></span><span>ブレーキバランス（前輪と後輪のブレーキの配分。実際の車の調整ダイヤル）：] ＝前へ、[ ＝後ろへ 1% ずつ（50〜72%）。パッドは右スティックの左右。前が多いほど安定するが曲がりながらのブレーキで前が逃げる、後ろが多いほど向きが変わるがお尻が出やすい。左下に今の値（セッティングから変えると色が付く）。練習表示が「ブレーキ中に後ろが流れた／前が逃げた」を知らせる。雨の日は後ろへ：グリップが落ちて減速が弱いと前に荷重が乗りにくいので、後ろへ 2〜5% 動かすと曲がりながらのブレーキで向きが変わる（無線が知らせる。CPU も周の初めに燃料と雨に合わせて動かす）</span>
 <span>長いレース</span><span>15周・30周はピットの作戦が大事。CPU（とタイヤ「自動」）はレースの前に、ピットの損（ピットレーンで約9秒＋作業の時間）・タイヤの種類（速いが減るスリック／遅いが持つラジアルなど）・タイヤの落ち・燃料の重さを比べてピットの回数と周を決め、ピットのたびに残りの周で立て直す。摩耗「あり」は長いレースほどゆっくり減り（30周で交換2回くらい）、「速い」は耐久レース風（30周で7〜8回）</span>
         <span>サービスパーク</span><span>GARAGE の「RALLY SS の本数」を3本にすると、ステージの間に SERVICE PARK。<details class="hx"><summary>くわしく</summary>持ち時間 30分の中で、足回りの修理（コーナーのグリップが戻る）・エンジンと駆動の修理（出力が戻る）・タイヤ交換（10分。路面と天気に合うタイヤに ★）・サスペンションと車高の変更（各5分）を選ぶ。修理の時間は傷みが大きいほど長い。30分を過ぎると1分ごとに10秒のペナルティ（実際のラリーと同じ）。ラリーの間はタイヤが減り（1本で 2〜3割）、当たった分の傷みは次のステージへ持ち越す。3本の合計（＋ペナルティ）が記録。サービスで変えたタイヤ・足回りは、ラリーが終わると元の設定に戻る</details></span>
-        <span>運転の課題</span><span>タイトルの CHALLENGE。決まった車でコースの一部（ブレーキ・コーナー・S字・高速・雨・砂利道の6つ）を走り、タイムで金・銀・銅。<details class="hx"><summary>くわしく</summary>止まった所から信号でスタートし、白黒の帯（止まる課題は黄色の枠）まで。コース外（4輪とも白線の外）・スピン・壁に当たると失格。巻き戻すと記録しない。メダルの目安はオート運転の速さから（金＝オートと同じ）。結果に練習表示の講評が出る（GARAGE で練習表示を切っていても出る）。課題の間は車とセッティングが決まった1台になり、終わると元の設定に戻る</details></span>
+        <span>運転の課題</span><span>タイトルの ON ROAD › CHALLENGE。決まった車でコースの一部（ブレーキ・コーナー・S字・高速・雨・砂利道の6つ）を走り、タイムで金・銀・銅。<details class="hx"><summary>くわしく</summary>止まった所から信号でスタートし、白黒の帯（止まる課題は黄色の枠）まで。コース外（4輪とも白線の外）・スピン・壁に当たると失格。巻き戻すと記録しない。メダルの目安はオート運転の速さから（金＝オートと同じ）。結果に練習表示の講評が出る（GARAGE で練習表示を切っていても出る）。課題の間は車とセッティングが決まった1台になり、終わると元の設定に戻る</details></span>
         <span>ペースノート</span><span>ラリーの同乗者のように、先のコーナーを画面と声で知らせる（RALLY SS と運転の課題。GARAGE の「ペースノート」で声も・表示だけ・なし）。<details class="hx"><summary>くわしく</summary>「右3 長い › 100」＝右コーナー、きつさ 3、長い、出口から次のコーナーまで 100m。きつさは 1 がいちばんきつく 6 がゆるい（このコースは 3〜5）。F（フラット）は全開で行ける曲がり。「きつくなる」は奥で曲がりがきつくなる、「ひらく」は奥でゆるくなる。「すぐ」は次のコーナーがすぐ続く（続けて読む）。右の数字はそのコーナーの入口まで。速いほど早めに読む。声が出ない時は端末に日本語の読み上げの声が入っていない（表示はいつも出る）</details></span>
         <span>練習表示</span><span>ブレーキの踏み始めの位置（看板の何m手前・目安との差）と踏み方を教えてくれる。GARAGE の「運転の練習表示」で切り替え。<details class="hx"><summary>くわしく</summary>ブレーキを踏むと「100m看板の 12m 手前　目安より 5m 早い」のように出る（目安＝走行ラインが赤になり始める所）。下の行は自分の目印：同じコーナーで前回踏み始めた所より何m奥・手前か。3回続けて同じ所（4m の幅）なら「3回続けて同じ所」、その上で目安より早ければ「次は 5m 奥へ」（目印は少しずつ奥へずらすのが実際の詰め方）。「比較も」にすると、コーナーの出口で最速の CPU とブレーキ開始・最低速度・踏み始め（アクセル）を比べる。ターンイン（曲がり始め）でブレーキを少し残すと前に荷重が乗って向きが変わる（トレイルブレーキ）：出口に「ブレーキを残して 0.4秒（頂点の 15m 手前まで）」か「曲がる前にブレーキを離した」。かっこの中はブレーキを最後まで残した所（トレイルブレーキの深さ）。「比較も」では最速の CPU の深さも並べて出す（うまい CPU ほど頂点の近くまで残す）。頂点を過ぎても踏んでいると「頂点を過ぎてもブレーキ」（頂点までに抜き終えてアクセルへ）。ハンドルを切りながら強いブレーキを踏み続けると、タイヤの力がブレーキに取られて曲がらず、外へふくらむ：出口に「ブレーキが強すぎてふくらんだ」（曲がり始めたら少しずつ弱める）。ブレーキの踏み方は、踏み始めから頂点までの量を6本の棒で出す：最初にしっかり踏んで、曲がり始めに向けてだんだん抜くのが基本（「最初に強く→だんだん抜いた」）。キーボードはアクセルと同時押しで弱いブレーキになる。前の車の真後ろ（スリップストリーム）から横へ出た時は、ブレーキの何秒前だったかが出る（ブレーキの約1〜2.5秒前がちょうど良い。早すぎると空気の壁で伸びが止まり、遅いと並ぶ前にブレーキになる）。前輪駆動（FF）と四輪駆動（4WD）は、曲がり始めにアクセルを残したまま軽くブレーキを踏む（左足ブレーキ）と前に荷重が乗って向きが変わる（「左足ブレーキ」）。後輪駆動（FR・MR）は、頂点を過ぎてアクセルを開けると後輪が少し流れて向きが変わる：うまくいくと「アクセルで向きを変えた」、開け方が急で流れすぎると知らせる。入口：曲がり始めは走行ラインの外側の位置から（ラインより 2.5m 以上内側で曲がり始めると「外に寄り切れていない（あと ○m）」）。半径を大きくするほど速く曲がれる（アウト・イン・アウト）。下り坂のブレーキは止まりにくいので、踏んだ時に「下り坂 ○%」と出る。縁石：コーナーの内側と出口の平らな縁石（赤と白）は乗ってよい（「頂点の縁石を使った」）。きついコーナーの内側の奥の黄と黒のソーセージ縁石は跳ねて傷む。雨の日の縁石は滑る。雨の日はゴムの帯の上を走ったか。アシスト「なし」の手動変速では、ブレーキ中にアクセルを煽ってシフトダウンする（ヒール・アンド・トウ）と「ヒール・アンド・トウ」、煽らずにショックが出ると知らせる。GARAGE の「運転の練習表示」で切り替え</details></span>
         <span>天気</span><span>雨は路面が濡れてグリップが落ちる（左下に ドライ／少し濡れ／ウェット）。雨が強く長く降ると、コースの低い所・コーナーの内側・直線の端に水たまり（暗い水面に雨の波紋）ができて広がり、やむと縮む。上を速く通るとタイヤが浮いて（ハイドロプレーニング）グリップがほとんどなくなり、ハンドルも効きにくい。よけるか、手前で速度を落とす（レインタイヤは浮きにくい。CPU もよける）。夜はヘッドライトが点く</span>
@@ -5117,7 +5136,7 @@ const PITK=()=>isTouch?'（ピットのボタン）':'（Iキー）'; // 無線�
 const KEYMAP={ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',ArrowUp:'accel',KeyW:'accel',ArrowDown:'brake',KeyS:'brake',Space:'drift',ShiftLeft:'drift',ShiftRight:'drift'};
 addEventListener('keydown',e=>{if(!$('chScreen').hidden){if(e.code==='Escape'||e.code==='Backspace'){chClose();e.preventDefault();}else if(/^Arrow/.test(e.code)){navMove($('chScreen'),/Up|Left/.test(e.code)?-1:1);e.preventDefault();}return;}if(!$('aboutScreen').hidden){if(e.code==='Escape'||e.code==='Backspace'){closeAbout();e.preventDefault();}else if(/^Arrow/.test(e.code)){navMove($('aboutScreen'),/Up|Left/.test(e.code)?-1:1);e.preventDefault();}return;} /* β0.103.0 */if(!$('bugScreen').hidden){if(e.code==='Escape'){if(!(e.isComposing||e.keyCode===229||/TEXTAREA|INPUT/.test((document.activeElement||{}).tagName||''))){closeBug();e.preventDefault();}} /* β0.150.1 文字を打っている間（入力欄・変換中）は Esc で閉じない（変換の取り消しで閉じていた）。閉じるのは「閉じる」ボタンか、入力欄の外で Esc */else if(/^Arrow/.test(e.code)&&!/TEXTAREA|INPUT/.test((document.activeElement||{}).tagName||'')){navMove($('bugScreen'),/Up|Left/.test(e.code)?-1:1);e.preventDefault();}return;}if(photoOn){photoClose();e.preventDefault();return;}if(!$('svScreen').hidden){if(/^Arrow/.test(e.code)){navMove($('svScreen'),/Up|Left/.test(e.code)?-1:1);e.preventDefault();}return;}if(!$('lapScreen').hidden){if(e.code==='Escape'||e.code==='Backspace'){lapClose();e.preventDefault();}else if(e.code==='ArrowLeft'||e.code==='ArrowRight'){if(!/SELECT/.test((document.activeElement||{}).tagName||'')){lapKey(e.code==='ArrowLeft'?-1:1);e.preventDefault();}}return;}if(state==='results'&&e.code==='KeyF'){photoOpen();return;}if(state==='results'&&e.code==='Space'&&e.repeat){e.preventDefault();return;}if(e.code==='KeyB'&&!(state==='title'&&tStage===0)){bgmToggle();return;}if(state==='replay'){if(e.code==='ArrowLeft'||e.code==='KeyA')rpFocusStep(-1);else if(e.code==='ArrowRight'||e.code==='KeyD')rpFocusStep(1);else if(e.code==='KeyC')rpCamStep();else if(e.code==='Space'||e.code==='KeyF')rpSpdStep();else if(e.code==='Escape'||e.code==='KeyP')endReplay();e.preventDefault();return;}
   if(state==='title'){if(tStage===0){enterMenu();e.preventDefault();return;}
-    if(e.code==='Escape'){if(!$('helpScreen').hidden)closeHelp();else closeSetup();return;}
+    if(e.code==='Escape'||e.code==='Backspace'&&!setupOpen&&$('helpScreen').hidden&&catCur!=='top'){if(!$('helpScreen').hidden)closeHelp();else if(!setupOpen&&catCur!=='top')catGo('top');else closeSetup();return;} /* β0.156.0 入口の中なら入口の一覧へ戻る */
     if(!setupOpen&&$('helpScreen').hidden&&(e.code==='ArrowUp'||e.code==='ArrowDown')){menuMove(e.code==='ArrowUp'?-1:1);e.preventDefault();}
     else if(!setupOpen&&$('helpScreen').hidden&&(e.code==='ArrowLeft'||e.code==='ArrowRight')){menuSide(e.code==='ArrowLeft'?-1:1);e.preventDefault();}
     else if(setupOpen&&!$('helpScreen').hidden){if(/^Arrow(Up|Down)$/.test(e.code)){$('helpScreen').querySelector('.panel').scrollBy(0,e.code==='ArrowUp'?-80:80);e.preventDefault();}}
@@ -5497,7 +5516,7 @@ addEventListener('keydown',e=>{if(e.code==='Tab'&&(state==='race'||state==='coun
 addEventListener('keyup',e=>{if(e.code==='Tab'&&slOn){slOn=false;setListUpd();}});addEventListener('blur',()=>{if(slOn){slOn=false;setListUpd();}});
 function pause(){setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
 function resume(){if(state!=='paused'||!$('bugScreen').hidden||!$('helpScreen').hidden)return;state=pausedFrom;$('pauseScreen').hidden=true;}
-function toTitle(){chQuit();rlQuit();retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;showRec();state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;resAskReset();setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){try{$(lastMi).focus({preventScroll:true});}catch(_){}}},0);}
+function toTitle(){chQuit();rlQuit();retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;showRec();state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;resAskReset();setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){menuFocus(lastMi);catInfo();}},0);}
 
 // 結果画面の撮影カメラ（T54）：主役の車の周りを低い位置からゆっくり回る
 let resCar=null,resA=0,photoOn=false;
@@ -5759,19 +5778,37 @@ function titleStep(dt){
   else{attT+=dt;raceTime+=dt;computeDraft();for(const k of karts){k.aiDriven=true;stepKart(k,dt,aiControl(k,dt));}collisions();syncVisuals(dt);
     const sv=camMode;camMode=3;updateCamera(dt);camMode=sv;if(attT>75)attNeed=true;}
   tipT+=dt;if(tipT>6){tipT=0;tipI=(tipI+1)%TIPS.length;$('tsTip').textContent=tipTx(TIPS[tipI]);}}
-function setStage(n){tStage=n;tScr.classList.toggle('st0',n===0);tScr.classList.toggle('st1',n===1);if(n===1){try{$(fdShow?'firstBtn':'startBtn').focus({preventScroll:true});}catch(_){}}}
+/* β0.156.0 T325 「走る」の入口。top＝入口の一覧、on＝サーキット（いつも舗装）、off＝砂利道・雪・氷（offSurf、保存キー popkart_os）、sb＝GARAGE の設定のまま（路面・速さの決まりもここで変えられる） */
+let catCur='top',offSurf=1;try{const o=+localStorage.getItem('popkart_os');if(o>=1&&o<=3)offSurf=o;}catch(_){}
+const CATN={on:'ON ROAD',off:'OFF ROAD',sb:'SANDBOX'},CATF={on:'startBtn',off:'ssBtn',sb:'startBtn'},CATB={on:'catOn',off:'catOff',sb:'catSb'};
+function setSurf(v){if(roadSurf===v)return;const x=$('rsSeg').querySelector('[data-v="'+v+'"]');if(x)x.click();}
+function catInfo(){$('srfEm').textContent=RSF[catCur==='off'?offSurf:roadSurf].n;$('bopEm').textContent=bopMode?'そろえた（BoP）':'何でもあり';$('catOffInfo').textContent=RSF[offSurf].n;$('catSbInfo').textContent=RSF[roadSurf].n+'・'+(bopMode?'そろえた':'何でもあり');}
+function menuFocus(id){let el=$(id);if(!el||el.hidden||!el.getClientRects().length)el=menuItems()[0];try{if(el)el.focus({preventScroll:true});}catch(_){}}
+function catGo(c){const prev=catCur;catCur=c;$('tmRun').dataset.cat=c;$('tmRunH').innerHTML=c==='top'?'走る':'走る <span class="crumb">› '+CATN[c]+'</span>';
+  if(c==='on')setSurf(0);else if(c==='off')setSurf(offSurf);catInfo();
+  menuFocus(c==='top'?(CATB[prev]||'catOn'):CATF[c]);tone(c==='top'?520:760,.05,'square',.08);}
+function catCyc(id,d){if(id==='srfBtn'){if(catCur==='off'){offSurf=1+(offSurf-1+d+3)%3;try{localStorage.setItem('popkart_os',String(offSurf));}catch(_){}setSurf(offSurf);}else setSurf((roadSurf+d+4)%4);}
+  else{const x=$('bopSeg').querySelector('[data-v="'+(bopMode?0:1)+'"]');if(x)x.click();}catInfo();tone(990,.03,'square',.06);}
+document.querySelectorAll('#tmRun .cat[data-cat]').forEach(b=>b.addEventListener('click',()=>catGo(b.dataset.cat)));
+$('catBack').addEventListener('click',()=>catGo('top'));
+$('srfBtn').addEventListener('click',()=>catCyc('srfBtn',1));$('bopBtn').addEventListener('click',()=>catCyc('bopBtn',1));
+$('catSt').addEventListener('click',()=>{const b=$('catSt');b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');tone(220,.08,'square',.08);});
+/* 走り出す時に入口の路面にそろえる（GARAGE で路面を変えていても、ON ROAD は舗装・OFF ROAD は選んだ路面で走る。SANDBOX は GARAGE のまま） */
+$('tmRun').addEventListener('click',e=>{const b=e.target.closest('.mi');if(!b||!/^(startBtn|taBtn|ssBtn|chBtn|dragBtn)$/.test(b.id))return;if(catCur==='on')setSurf(0);else if(catCur==='off')setSurf(offSurf);},true);
+catInfo();
+function setStage(n){tStage=n;tScr.classList.toggle('st0',n===0);tScr.classList.toggle('st1',n===1);if(n===1){menuFocus(fdShow?'firstBtn':catCur==='top'?'catOn':CATF[catCur]);catInfo();}}
 function enterMenu(){if(tStage!==0)return;setStage(1);{const tm=$('tmenu');tm.style.pointerEvents='none';setTimeout(()=>{tm.style.pointerEvents='';},450);} /* 画面を押して開いた指を離した時に、下のメニュー項目まで押されないように */initAudio();tone(660,.06,'square',.12);}
 tScr.addEventListener('pointerdown',()=>enterMenu());
-const menuItems=()=>[...document.querySelectorAll('#tmenu .mi')].filter(e=>!e.hidden);
+const menuItems=()=>[...document.querySelectorAll('#tmenu .mi')].filter(e=>!e.hidden&&e.getClientRects().length); /* β0.156.0 入口の外の項目（display:none）は飛ばす */
 // 画面の中のボタン（と折りたたみの見出し）を順に選ぶ。キーボード・パッドで操作した時だけ枠を出す（kbnav）
 function navMove(root,d){const it=[...root.querySelectorAll('button,summary')].filter(el=>{if(!el.getClientRects().length||el.disabled)return false;const d=el.closest('details');return !d||d.open||el.parentElement===d;}); /* 閉じた見出しの中は飛ばす */if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?(d>0?0:it.length-1):(i+d+it.length)%it.length;document.body.classList.add('kbnav');it[i].focus();try{it[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true);
 function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?0:(i+d+it.length)%it.length;it[i].focus();tone(880,.03,'square',.06);}
 /* β0.155.0 T323 メニューは2列。←→ で隣の列の同じ高さの項目へ */
-function menuSide(d){const cols=[...document.querySelectorAll('#tmenu .tmc')].map(c=>[...c.querySelectorAll('.mi')].filter(e=>!e.hidden));const a=document.activeElement;let ci=cols.findIndex(c=>c.includes(a));if(ci<0){menuMove(1);return;}const nc=cols[ci+d];if(!nc||!nc.length)return;
+function menuSide(d){const a=document.activeElement;if(a&&a.classList.contains('cyc')){catCyc(a.id,d);return;} /* β0.156.0 路面・速さの決まりの行は ←→ で切り替え */const cols=[...document.querySelectorAll('#tmenu .tmc')].map(c=>[...c.querySelectorAll('.mi')].filter(e=>!e.hidden&&e.getClientRects().length));let ci=cols.findIndex(c=>c.includes(a));if(ci<0){menuMove(1);return;}const nc=cols[ci+d];if(!nc||!nc.length)return;
   const y=a.getBoundingClientRect().top;let b=nc[0],bd=1e9;for(const e of nc){const dd=Math.abs(e.getBoundingClientRect().top-y);if(dd<bd){bd=dd;b=e;}}b.focus();tone(880,.03,'square',.06);}
 document.querySelectorAll('#tmenu .gtj').forEach(b=>b.addEventListener('click',()=>{openSetup();setGarTab(+b.dataset.gt);}));
-menuItems().forEach(el=>el.addEventListener('mouseenter',()=>{if(!setupOpen)el.focus();}));
+document.querySelectorAll('#tmenu .mi').forEach(el=>el.addEventListener('mouseenter',()=>{if(!setupOpen)el.focus();}));
 /* T210 GARAGE のタブ（車／セッティング／レース／表示・操作／0-400m）。開き直しても同じタブ */
 /* ===== T241（β0.88.0）お勧めの車種とセッティング：GARAGE の「車」タブの上に1行、「おすすめ」タブにくわしく（理由つき）。「この設定にする」で全部そろえる。
    中身は思い込みではなく測った値（開発用/テスト/mrec.js：自分の車もオートで5周・接触なし・摩耗あり、2回ずつの平均）。REC.d＝晴れ、REC.w＝雨。
@@ -5909,7 +5946,7 @@ function garSide(d){const a=document.activeElement,g=a&&a.closest&&$('setup').co
 function garTabStep(d){const bs=$('garTabs').querySelectorAll('button');let n=gMain(garTab);for(let j=0;j<GTN;j++){n=(n+d+GTN)%GTN;if(!bs[n].hidden&&!bs[n].classList.contains('gsub'))break;}setGarTab(n,true);tone(880,.03,'square',.06);}
 $('garTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGarTab(+b.dataset.t);});
 function openSetup(){giT=0;giKey='';syncStartUi();advSync();setupOpen=true;$('setup').hidden=false;tScr.classList.add('gar');titleMode='garage';garageSetup();updSpec();try{$('setupClose').focus({preventScroll:true});}catch(_){}}
-function closeSetup(){if(!setupOpen)return;setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');titleMode='attract';attNeed=true;camera.clearViewOffset();camera.updateProjectionMatrix();saveSettings();try{$('setupBtn').focus({preventScroll:true});}catch(_){}}
+function closeSetup(){if(!setupOpen)return;setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');titleMode='attract';attNeed=true;camera.clearViewOffset();camera.updateProjectionMatrix();saveSettings();catInfo();menuFocus(lastMi==='sbRuleBtn'?lastMi:'setupBtn');}
 /* ================= 不具合報告（T66） ================= */
 const brPad=n=>(n<10?'0':'')+n;
 const brTime=d=>d.getFullYear()+'-'+brPad(d.getMonth()+1)+'-'+brPad(d.getDate())+' '+brPad(d.getHours())+':'+brPad(d.getMinutes())+':'+brPad(d.getSeconds());
@@ -6018,7 +6055,7 @@ function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(!$('aboutScreen').hidden){const ab=$('aboutScreen');if(edge(1))closeAbout();else if(edge(12)||edge(14))navMove(ab,-1);else if(edge(13)||edge(15))navMove(ab,1);else if(edge(0)){const a=document.activeElement;if(ab.contains(a)&&a.tagName==='BUTTON')a.click();}return;} /* β0.103.0 */
   if(!$('helpScreen').hidden){if(edge(1)||edge(0))closeHelp();return;}
   if(setupOpen){const se=$('setup');if(edge(3)){garRowQJ();return;}if(edge(1))closeSetup();else if(edge(4))garTabStep(-1);else if(edge(5))garTabStep(1);else if(edge(14))garSide(-1);else if(edge(15))garSide(1);else if(edge(12))garNav(-1);else if(edge(13))garNav(1);else if(edge(0)){const a=document.activeElement;if(se.contains(a))a.click();}else if(edge(9))$('setupClose').click();return;}
-  if(edge(12))menuMove(-1);else if(edge(13))menuMove(1);else if(edge(14))menuSide(-1);else if(edge(15))menuSide(1);else if(edge(0)){const a=document.activeElement;if(a&&a.classList&&a.classList.contains('mi'))a.click();else $('startBtn').click();}else if(edge(9))$('startBtn').click();}
+  if(edge(1)&&catCur!=='top')catGo('top');else if(edge(12))menuMove(-1);else if(edge(13))menuMove(1);else if(edge(14))menuSide(-1);else if(edge(15))menuSide(1);else if(edge(0)){const a=document.activeElement;if(a&&a.classList&&a.classList.contains('mi'))a.click();else $('startBtn').click();}else if(edge(9))$('startBtn').click();}
 $('tsTip').textContent=tipTx(TIPS[0]);rsvUi();try{if(sessionStorage.getItem('popkart_rsv')){sessionStorage.removeItem('popkart_rsv');setTimeout(rsvResume,200);}}catch(_){}$('tsCourse').textContent='HIGASHI RACEWAY　全長 '+(L/1000).toFixed(2)+'km';
 let last=performance.now();
 let titleT=0;
