@@ -617,6 +617,21 @@ body.touch #hud:has(#slights:not([hidden])) #cstack{top:calc(env(safe-area-inset
 #keyMsg{min-height:1.5em;margin:0}
 #keyMsg.warn{color:#ffb3ad}
 body.touch #keyRow{display:none}
+/* β0.165.0 T334 マウスのハンドル・踏み込み／T335 ペースノートの声 */
+body.touch #msRow,body.touch #pedRow{display:none}
+#msBar{position:fixed;left:50%;bottom:calc(66px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(44vw,520px);height:8px;border-radius:4px;background:rgba(12,14,18,.55);box-shadow:0 0 0 1px rgba(255,255,255,.18);z-index:6;pointer-events:none;display:none}
+body.msd #msBar{display:block}
+#msBar i{position:absolute;top:-4px;width:4px;height:16px;margin-left:-2px;border-radius:2px;background:var(--gold)}
+#msBar b{position:absolute;top:0;bottom:0;background:rgba(255,255,255,.22)}
+#msBar u{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:rgba(255,255,255,.55)}
+body.photo #msBar,body.hudmin #msBar{display:none}
+#pnvSel{font:700 14px var(--ui,sans-serif);background:var(--night-2);color:var(--paper);border:1px solid var(--line);border-radius:3px;padding:6px 8px;max-width:100%}
+#pnvRow .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#keyMouse{margin-top:4px}
+/* β0.165.0 T336 入力の表示 */
+#inpCv{position:absolute;right:74px;bottom:calc(100% + 8px);width:200px;height:60px;pointer-events:none}#inpCv[hidden]{display:none}
+body.touch #inpCv{right:0;bottom:auto;top:calc(100% + 6px);width:160px;height:48px}
+body.hudmin #inpCv,body.photo #inpCv{display:none}
 /* β0.164.0 T332 サウンドチェック */
 #sndScreen{z-index:19}
 #sndScreen .panel{width:min(760px,100%);gap:8px}
@@ -796,7 +811,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
   <div id="gaps" class="outline"></div>
   <canvas id="minimap" width="340" height="340"></canvas>
   <div id="rank" class="outline">8<small>位</small></div>
-  <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM</div><canvas id="tyreCv" width="124" height="196" hidden></canvas><canvas id="gauge"></canvas></div>
+  <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM</div><canvas id="tyreCv" width="124" height="196" hidden></canvas><canvas id="inpCv" width="400" height="120" hidden></canvas><canvas id="gauge"></canvas></div>
   <div id="tree" hidden></div><div id="setList" hidden></div><div id="judge"></div><div id="coach" class="outline" hidden></div>
   <div id="banner" class="outline"></div>
   <div id="toast" class="outline"></div><div id="rwAsk" class="outline" hidden></div>
@@ -909,7 +924,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.164.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.165.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1028,12 +1043,16 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
         <div><div class="label">運転の練習表示<span class="hint">ブレーキを踏んだ瞬間に、目印の看板（150・100・50m）の何m手前か・目安より早い／遅いを表示。<details class="hx"><summary>くわしく</summary>「比較も」はコーナーの出口で、最速の CPU（一人で走るモードは前の周）とブレーキ開始・最低速度・踏み始めを比べる。どちらでも、コーナーの出口にブレーキの踏み方（最初に強く→だんだん抜けたか。量を棒で）・ターンインでブレーキを残せたか（強すぎてふくらんだか）・立ち上がりのアクセルで向きを変えられたか（後輪駆動）・縁石の使い方・雨の日にゴムの帯を外せたか、手動変速（アシストなし）ではヒール・アンド・トウができたかを出す</details></span></div><div class="seg" id="coSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">ブレーキ</button><button type="button" data-v="2">比較も</button></div></div>
         <div><div class="label">バックミラー</div><div class="seg" id="mrSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div id="sndRow"><div class="label">サウンドチェック<span class="hint">曲・効果音・エンジン音・タイヤや雨などの音を1つずつ鳴らして確かめる</span></div><button class="btn alt" id="sndOpen" type="button" style="font-size:15px;padding:8px 14px">サウンドチェックを開く</button></div>
+        <div id="msRow"><div class="label">マウスのハンドル<span class="hint">画面の真ん中からのカーソルの左右でハンドルを切る（真ん中に少し遊び）。キーのハンドルを押している間はキーが優先</span></div><div class="seg" id="msSeg"><button type="button" data-v="1">使う</button><button type="button" data-v="0">使わない</button></div><div class="label" style="margin-top:8px">カーソルを固定<span class="hint">使う＝レース中に画面を押すとカーソルが消えて画面の外へ出なくなる（Esc で戻ってポーズ）。Windows の拡大率が高い時などに、カーソルが画面の一角に閉じ込められることがある（戻し方：Ctrl＋Alt＋Delete → Esc）。使わない＝カーソルの位置のまま（全画面にすると外へ出にくい）</span></div><div class="seg" id="mlSeg"><button type="button" data-v="0">使わない</button><button type="button" data-v="1">使う</button></div><div class="label" style="margin-top:8px">マウスの感度<span class="hint">強いほど少し動かすだけで大きく切れる（いっぱいに切れる所：弱い＝画面の端の近く・標準＝6割・強い＝4割）</span></div><div class="seg" id="mssSeg"><button type="button" data-v="0">弱い</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
+        <div id="pedRow"><div class="label">アクセル・ブレーキの踏み込み<span class="hint">キー・マウスのボタンで踏む量。すぐ＝押すとすぐいっぱい（今まで）。ふつう＝押している長さで踏み込む（アクセル 0.3秒・ブレーキ 0.15秒でいっぱい、離すと戻る）。ゆっくり＝その倍。0-400m は除く</span></div><div class="seg" id="pedSeg"><button type="button" data-v="0">すぐ</button><button type="button" data-v="1">ふつう</button><button type="button" data-v="2">ゆっくり</button></div></div>
+        <div id="inpRow"><div class="label">入力の表示<span class="hint">右下のメーターの左に、ハンドル（白い輪）・実際の前輪の向き・アクセル・ブレーキの踏んだ量・サイドブレーキを絵で出す。TC＝トラクション制御が力を絞った・空転・ABS・ロックも光る</span></div><div class="seg" id="ipSeg"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
         <div id="keyRow"><div class="label">キーの割り当て<span class="hint">キーボードのキーとマウスのボタン（ホイールも）を、操作ごとに2つまで変えられる</span></div><button class="btn alt" id="keyOpen" type="button" style="font-size:15px;padding:8px 14px">キーの割り当てを変える</button></div>
         <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div class="adv"><div class="label">スポッター<span class="hint">すぐ横に車がいる時、その側の画面の端がオレンジに光る（ごく近いと赤寄り）。ミラーに映らない真横の車に</span></div><div class="seg" id="soSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">ピット無線</div><div class="seg" id="radSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">振動<span class="hint">ゲームパッドとスマホ。ロック・縁石・コース外・接触などで震える</span></div><div class="seg" id="vbSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">ペースノート<span class="hint">ラリーの同乗者のように、先のコーナーの向き・きつさ（1 きつい〜6 ゆるい）・次までの距離を前もって知らせる。声はブラウザの読み上げ</span></div><div class="seg" id="pnSeg"><button type="button" data-v="2">声も</button><button type="button" data-v="1">表示だけ</button><button type="button" data-v="0">なし</button></div></div>
+        <div id="pnvRow"><div class="label">ペースノートの声<span class="hint">端末にある日本語の読み上げの声から選ぶ。おまかせ＝男性の声を優先（ない時はほかの声を低めに）。声の数は端末とブラウザで変わる（Windows の Edge は Keita〔男性〕など）</span></div><div class="r"><select id="pnvSel" aria-label="ペースノートの声"></select><button class="btn alt" id="pnvTry" type="button" style="font-size:14px;padding:6px 12px">試し聞き</button></div><div class="label" style="margin-top:8px">声の高さ</div><div class="seg" id="pnpSeg"><button type="button" data-v="0">おまかせ</button><button type="button" data-v="1">ふつう</button><button type="button" data-v="2">低め</button></div></div>
         <div class="adv"><div class="label">ペースノートを出す所<span class="hint">ふだんは RALLY SS と運転の課題だけ。「いつも」はタイムアタック・レースでも（コースを覚える練習に）</span></div><div class="seg" id="pnwSeg"><button type="button" data-v="0">SS・課題</button><button type="button" data-v="1">いつも</button></div></div>
         <div class="adv"><div class="label">BGMの雰囲気<span class="hint">おまかせ＝レースは都市、0-400mはロック。曲は全部オリジナル（Bキーでオン・オフ）</span></div><div class="seg" id="bgSeg"><button type="button" data-v="0">おまかせ</button><button type="button" data-v="1">都市</button><button type="button" data-v="2">峠</button><button type="button" data-v="3">景色</button><button type="button" data-v="4">ラリー</button></div></div>
         <div class="adv"><div class="label">BGMの音量<span class="hint">レース中のエンジン音とのつり合い。中＝エンジンやタイヤの音が聞こえやすい大きさ</span></div><div class="seg" id="bvSeg"><button type="button" data-v="0">小</button><button type="button" data-v="1">中</button><button type="button" data-v="2">大</button></div></div>
@@ -1079,6 +1098,8 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
         <span data-kg="brake"></span><span>ブレーキ・バック</span>
         <span data-kg="left,right"></span><span>ハンドル</span>
         <span>サウンドチェック</span><span>GARAGE の「表示・操作・音」の「サウンドチェック」で、曲・効果音・エンジン音（車ごとの17種類。回転のつまみと空ぶかし）・タイヤの鳴きや雨などの音を1つずつ鳴らして確かめられる。音がおかしい時の確認に</span>
+        <span>入力の表示</span><span>右下のメーターの左に、今の操作を絵で出す（GARAGE の「入力の表示」で出す・出さない）。白い輪＝ハンドルを入れた量、その右＝実際の前輪の向き（速いほど切れる角度は小さい。入れた量と大きくずれると黄色＝カウンターの補助や限界）、緑の棒＝アクセル、赤の棒＝ブレーキの踏んだ量、レバー＝サイドブレーキ。TC（黄）＝トラクション制御が力を絞った、空転（橙）＝アシスト「なし」で後輪などが空転、ABS（青）＝ABS が効いた、ロック（橙）＝タイヤがロック。オートの時は CPU の操作が見える</span>
+        <span>マウスで運転</span><span>GARAGE の「表示・操作・音」の「マウスのハンドル」を「使う」にすると、画面の真ん中からのカーソルの左右でハンドルを切れる（下のバーの赤い印が今の位置）。「カーソルを固定」を「使う」にすると、レース中に画面を押した時にカーソルが消えて画面から出なくなる（Esc で戻ってポーズ。閉じ込められた時は Ctrl＋Alt＋Delete → Esc）。「アクセル・ブレーキの踏み込み」を「ふつう」にすると、押している長さで踏み込む（ちょんと押すと少しだけ）。キーの割り当ての「マウスで運転のひな型」で、左クリック＝アクセル・右クリック＝ブレーキ・W／S＝シフト・A＝サイドブレーキに</span>
         <span>キーの割り当て</span><span>GARAGE の「表示・操作・音」の「キーの割り当て」で、操作ごとにキーボードのキーかマウスのボタン（左・右・中・戻る・進む、ホイールの手前・奥）を2つまで割り当てられる。この説明のキーの名前も割り当てに合わせて変わる</span>
         <span>アクセルを離す</span><span>エンジンブレーキ（低いギア・高回転ほど強い）。ブレーキを踏まずに減速でき、タイヤのグリップを曲がることに残せる。FR は尻が出やすくなる（実車と同じ）</span>
         <span><span data-kg="accel:0"></span>+<span data-kg="brake:0"></span></span><span>アクセルを開けたまま軽くブレーキ（FF車の技。コーナー進入で前に荷重を乗せて向きを作る。踏みすぎるとアンダーステア）。パッドは RT と LT を同時に</span>
@@ -1162,12 +1183,14 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
     <div class="row" id="aboutRow"><button class="btn" id="aboutClose" data-key="Esc" type="button">閉じる</button><button class="btn alt" id="resetBtn" type="button">記録と設定を消す</button></div>
   </div>
 </section>
+<div id="msBar" aria-hidden="true"><b></b><u style="left:0"></u><u style="left:100%"></u><i></i></div>
 <section class="screen" id="keyScreen" hidden>
   <div class="panel">
     <h2>キーの割り当て<small>枠を押してから、使いたいキーかマウスのボタン（ホイールも）を押す。Esc＝やめる、Delete＝消す</small></h2>
     <div id="keyList"></div>
     <p class="note" id="keyMsg"></p>
-    <div class="row"><button class="btn" id="keyClose" data-key="Esc" type="button">閉じる</button><button class="btn alt" id="keyReset" type="button">元に戻す</button></div>
+    <div class="row"><button class="btn" id="keyClose" data-key="Esc" type="button">閉じる</button><button class="btn alt" id="keyReset" type="button">元に戻す</button><button class="btn alt" id="keyMouse" type="button">マウスで運転のひな型</button></div>
+    <p class="note" style="margin:0">ひな型：左クリック＝アクセル・右クリック＝ブレーキ・W／S＝シフトアップ／ダウン・A＝サイドブレーキ、ハンドルはマウスの左右（矢印キーも残す）</p>
   </div>
 </section>
 <section class="screen" id="sndScreen" hidden>
@@ -3225,7 +3248,7 @@ function stepKart(k,dt,ctl){
     const tc=k.drifting?1:(k.aiDriven?(k.pwr?(k.pso?PSOT:PWTC):.85):ASSIST[assistLv].tc);
     if(Math.abs(FxR)>capR*tc*dTr){ws=1;const ex=Math.abs(FxR)/(capR*tc*dTr)-1;FxR=Math.sign(FxR)*capR*tc*dTr*(1-lsp*Math.min(1,ex*LSPX));}
     const yr=Math.sqrt(Math.max(0,capR*capR-FxR*FxR));if(Math.abs(Fyr)>yr)Fyr=Math.sign(Fyr)*yr;
-    const capF=mF*Nf;let FxF=Fd*fs-Fb*(ctl.fo?1:bb)*sg;let lock=false;if(Fb<=0){const cx=capF*tc*(LSQ?LSFX:k.ftx||1)*(Fd>0?dTr:1)*(k.aiDriven&&RSI[k.idx]&&fs>.3&&fs<.9?RS4F:1);if(Math.abs(FxF)>cx){ws=1;FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>capF*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>capF){lock=true;FxF=Math.sign(FxF)*capF*.85;}else FxF=Math.sign(FxF)*capF*.95;}
+    const capF=mF*Nf;let FxF=Fd*fs-Fb*(ctl.fo?1:bb)*sg;let lock=false;if(Fb<=0){const cx=capF*tc*(LSQ?LSFX:k.ftx||1)*(Fd>0?dTr:1)*(k.aiDriven&&RSI[k.idx]&&fs>.3&&fs<.9?RS4F:1);if(Math.abs(FxF)>cx){ws=1;FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>capF*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>capF){lock=true;FxF=Math.sign(FxF)*capF*.85;}else{FxF=Math.sign(FxF)*capF*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
     const yf=Math.max(capF*YFMIN,LSQ&&Fb<=0&&FxF*sg>0?capF*Math.sqrt(Math.max(0,1-(FxF/(capF*LSFX))**2)):Math.sqrt(Math.max(0,capF*capF-FxF*FxF)));if(Math.abs(Fyf)>yf)Fyf=Math.sign(Fyf)*yf;if(lock){Fyf*=.15;k.locked=true;if(FSA)k.fsp=Math.min(1,(k.fsp||0)+FSA*Math.abs(k.u)*h);}
     const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
     const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;
@@ -4797,8 +4820,26 @@ function pnLink(q){return isSS()&&q.fin>=0?'ゴール '+Math.max(50,Math.round(q
 function pnWords(q){return [pnDir(q)+(q.k?' フラット':q.lv),...q.md];}
 function pnSay(t){if(pnMode<2||muted||autoPlay&&(sess==='race'||spdMul>1))return;try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance)return;
   if(S.pending)S.cancel(); // 遅れて溜まったら新しい方だけ
-  if(!pnV){const vs=S.getVoices()||[];pnV=vs.find(v=>/^ja/i.test(v.lang))||null;}
-  const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=1.3;if(pnV)u.voice=pnV;S.speak(u);}catch(_){}}
+  S.speak(pnUtter(t));}catch(_){}}
+/* β0.165.0 T335 ペースノートの声：pnVoiceSel＝''（おまかせ＝男性の声を優先）か声の名前。pnPitch＝0 おまかせ（男性の声がない時は低め）・1 ふつう・2 低め。
+   声の一覧は後から届くことがある（voiceschanged）。保存は popkart_ctl の pv・pp */
+let pnVoiceSel='',pnPitch=0;
+const PNM=/Keita|Ichiro|Otoya|Hattori|Daichi|Naoki|Masaru|Kenji|Takumi|Hiroshi|男性|\bmale\b/i,PNF=/female|女性|Nanami|Haruka|Ayumi|Sayaka|Kyoko|Mizuki|Aoi|Shiori|Mayu|Ichika|O-Ren|Google/i;
+const pnIsM=v=>PNM.test(v.name)&&!/female/i.test(v.name);
+function pnVoices(){try{const S=window.speechSynthesis;return S?(S.getVoices()||[]).filter(v=>/^ja/i.test(v.lang||'')||/日本語|Japanese/i.test(v.name)):[];}catch(_){return [];}}
+function pnPick(){if(pnV)return pnV;const vs=pnVoices();if(!vs.length)return null;let v=pnVoiceSel?vs.find(x=>x.name===pnVoiceSel):null;
+  if(!v){const m=vs.filter(pnIsM);v=m.find(x=>/Natural|Online|Neural/i.test(x.name))||m[0]||vs.find(x=>/Natural|Online|Neural/i.test(x.name))||vs[0];}
+  return pnV=v;}
+function pnPitchOf(v){return pnPitch===2?.72:pnPitch===1?1:(v&&pnIsM(v)?1:.72);}
+function pnUtter(t){const u=new SpeechSynthesisUtterance(t);u.lang='ja-JP';u.rate=1.3;const v=pnPick();if(v)u.voice=v;u.pitch=pnPitchOf(v);return u;}
+function pnvName(v){let n=String(v.name).replace(/^Microsoft\s+/i,'').replace(/\s*[-–]\s*Japanese.*$/i,'').replace(/\s*\(Japanese.*?\)/i,'').trim();return n+(pnIsM(v)?'（男性）':PNF.test(v.name)?'（女性）':'');}
+function pnvFill(){const el=$('pnvSel');if(!el)return;const vs=pnVoices();let h='<option value="">おまかせ（男性の声を優先）</option>';
+  for(const v of vs)h+='<option value="'+kEsc(v.name)+'">'+kEsc(pnvName(v))+'</option>';
+  if(pnVoiceSel&&!vs.some(v=>v.name===pnVoiceSel))h+='<option value="'+kEsc(pnVoiceSel)+'">'+kEsc(pnVoiceSel)+'（この端末にない声。おまかせになる）</option>';
+  if(!vs.length)h+='<option value="" disabled>（日本語の声が見つからない。読み上げが使えない端末かも）</option>';
+  el.innerHTML=h;el.value=pnVoiceSel;}
+try{if(window.speechSynthesis&&speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',()=>{pnV=null;try{pnvFill();}catch(_){}});}catch(_){}
+function pnTry(){try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance)return '';S.cancel();pnV=null;const u=pnUtter('右3、すぐ、左4、ロング、100');S.speak(u);return u.voice?pnvName(u.voice)+(u.pitch<1?'・低め':''):'';}catch(_){return '';}}
 function pnCall(i,stamp){const q=PN[i],w=pnWords(q);pnDone.set(i,stamp);pnShow.push({i,stamp});let lk=pnLink(q);
   if(lk==='すぐ'){const j=(i+1)%PN.length,nq=PN[j];w.push('すぐ',...pnWords(nq));pnDone.set(j,stamp+(nq.s<q.s?1:0));pnShow.push({i:j,stamp:stamp+(nq.s<q.s?1:0)});lk=pnLink(nq);if(lk==='すぐ')lk='';}
   if(lk)w.push(lk);logAdd('ペースノート',w.join(' '));pnSay(w.join('、'));pnT=0;}
@@ -5377,7 +5418,7 @@ const keyRun=()=>(state==='race'||state==='countdown'||state==='finished')&&$('b
 const keyUI=t=>!!(t&&t.closest&&t.closest('button,a,input,select,textarea,label,summary,details,.panel,#sysBar,#corner,#topbtns,#pad'));
 let wheelAt=0;addEventListener('wheel',e=>{if(!keyRun()||!e.deltaY)return;const ks=keyIx[e.deltaY>0?'WheelDown':'WheelUp']||[];if(!ks.length)return;e.preventDefault();const t=performance.now();if(t-wheelAt<90)return;wheelAt=t;
   for(const a of ks){if(KACTM[a].h){keyHold(a,true);clearTimeout(keyWT[a]);keyWT[a]=setTimeout(()=>{input[a]=false;},160);}else if(a==='bgm')bgmToggle();else keyPress(a);}},{passive:false});
-addEventListener('mousedown',e=>{if(!keyRun()||keyUI(e.target))return;const ks=keyIx['Mouse'+e.button]||[];if(!ks.length)return;e.preventDefault();for(const a of ks){if(KACTM[a].h)keyHold(a,true);else if(a==='bgm')bgmToggle();else keyPress(a);}});
+addEventListener('mousedown',e=>{if(!keyRun()||keyUI(e.target))return;msLock();const ks=keyIx['Mouse'+e.button]||[];if(!ks.length)return;e.preventDefault();for(const a of ks){if(KACTM[a].h)keyHold(a,true);else if(a==='bgm')bgmToggle();else keyPress(a);}});
 addEventListener('mouseup',e=>{const ks=keyIx['Mouse'+e.button]||[];for(const a of ks)if(KACTM[a].h)input[a]=false;if(ks.length&&e.button>=3&&(keyRun()||state==='paused'))e.preventDefault();}); /* 戻る・進むのボタンでページが戻らないように */
 addEventListener('auxclick',e=>{if((keyIx['Mouse'+e.button]||[]).length&&(keyRun()||state==='paused'))e.preventDefault();});
 addEventListener('contextmenu',e=>{if(keyRun()&&!keyUI(e.target))e.preventDefault();}); /* レース中は右ボタンでメニューを出さない */
@@ -5429,11 +5470,65 @@ function tiltStart(){const note=$('tiltNote');document.body.classList.toggle('ti
     setTimeout(()=>{note.innerHTML=tilt.ok?'<b>傾きで操作します</b>（左右に傾けるとハンドル。スタート前のカウントダウン中の持ち方が「まっすぐ」になる）':'この場所では傾きセンサーが使えません（Claudeの公開ページ内など）。GitHub Pages などに置いたゲームで使えます。';document.body.classList.toggle('tilt',tiltOn&&tilt.ok);},1200);};
   if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){DeviceMotionEvent.requestPermission().then(r=>{if(r==='granted')go();else note.textContent='傾きセンサーの許可がありません';}).catch(()=>{note.textContent='傾きセンサーの許可がありません';});}
   else if(typeof DeviceMotionEvent==='undefined'){note.textContent='この端末では傾きセンサーが使えません';}else go();}
+/* β0.165.0 T334 マウスのハンドル：画面の真ん中からのカーソルの左右（msOn）。感度 msSens＝いっぱいに切れる所（画面の半分の幅に対する割合 MS_FULL）、真ん中の遊び MS_DZ。
+   レース中に画面を押すとポインターロック（カーソルを隠して動いた量を足す。画面の外へ出ない）。ロックが外れたら（Esc）ポーズ。
+   踏み込み pedM：0 すぐ（今まで）・1 ふつう・2 ゆっくり。押している長さで pedA・pedB が増え（PED_T 秒でいっぱい）、離すと 2.5倍の速さで戻る。保存は popkart_ctl（ms・mss・pd） */
+let msOn=0,msSens=1,msLk=0,pedM=0,pedA=0,pedB=0; /* β0.165.0 T337 msLk＝カーソルを固定（既定は使わない） */const MS_FULL=[.85,.6,.4],MS_DZ=.035,PED_T=[[0,0],[.3,.15],[.6,.3]];
+const ms={x:0,seen:false,lockMe:false,hud:false,req:false,fail:false,noT:0};
+function ctlSave(){try{const o={ms:msOn,mss:msSens,ml:msLk,pd:pedM,pv:pnVoiceSel,pp:pnPitch,ip:inpOn};if(!msOn&&msSens===1&&!msLk&&!pedM&&!pnVoiceSel&&!pnPitch&&inpOn===(isTouch?0:1))localStorage.removeItem('popkart_ctl');else localStorage.setItem('popkart_ctl',JSON.stringify(o));}catch(_){}}
+try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o){msOn=o.ms?1:0;if(o.mss!=null)msSens=Math.max(0,Math.min(2,o.mss|0));msLk=o.ml?1:0;pedM=Math.max(0,Math.min(2,(o.pd|0)));if(typeof o.pv==='string')pnVoiceSel=o.pv;pnPitch=Math.max(0,Math.min(2,o.pp|0));}}catch(_){}
+const msAct=()=>!!msOn&&!isTouch&&!autoPlay&&(state==='race'||state==='countdown'||state==='finished')&&$('bugScreen').hidden;
+addEventListener('mousemove',e=>{if(!msOn||isTouch)return;const hw=innerWidth/2;if(document.pointerLockElement===canvas)ms.x=Math.max(-hw,Math.min(hw,ms.x+(e.movementX||0)));else ms.x=e.clientX-hw;ms.seen=true;});
+function msVal(){const hw=Math.max(150,innerWidth/2),a=Math.max(-1,Math.min(1,ms.x/(hw*(MS_FULL[msSens]||.6))));return Math.sign(a)*Math.max(0,Math.abs(a)-MS_DZ)/(1-MS_DZ);}
+const msLockOk=()=>!!msLk&&!ms.fail&&msAct()&&(state==='race'||state==='countdown')&&document.visibilityState!=='hidden'&&document.hasFocus();
+function msLock(){if(!msLockOk()||ms.req||document.pointerLockElement===canvas||!canvas.requestPointerLock||performance.now()<ms.noT)return;
+  const no=()=>{ms.req=false;ms.lockMe=false;ms.fail=true;};try{ms.req=true;ms.lockMe=true;const r=canvas.requestPointerLock();if(r&&r.catch)r.catch(no);}catch(_){no();}}
+/* T337 ロックを必ず外す（blur・隠れた・ポーズ・結果・メニュー・不具合報告）。外した直後 1.5秒は取り直さない */
+function msUnlock(){ms.req=false;ms.lockMe=false;ms.noT=performance.now()+1500;try{if(document.pointerLockElement&&document.exitPointerLock)document.exitPointerLock();}catch(_){}}
+document.addEventListener('pointerlockerror',()=>{ms.req=false;ms.lockMe=false;ms.fail=true;}); /* 取れなかったら、このあとはカーソルの位置でハンドル（GARAGE で選び直すとまた試す） */
+addEventListener('blur',msUnlock);addEventListener('pagehide',msUnlock);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')msUnlock();});
+document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(state==='race'||state==='countdown')pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
+/* β0.165.0 T336 入力の表示（#inpCv）：inpC＝自分の車に実際に入った操作。ハンドル（入れた量で輪が回る）・前輪（k.delta／その速さで切れる最大）・
+   アクセル（thr）・ブレーキ（brk）の棒・サイドブレーキ。TC（アシストが駆動を絞った＝k.wheelspin）・空転（アシスト「なし」）・ABS（k.absN が増えた）・ロック（k.locked）。保存は popkart_ctl の ip（既定は PC 出す・スマホ 出さない） */
+let inpOn=isTouch?0:1,inpC=null;const inpS={key:'',abs:0,absT:0};
+try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o&&o.ip!=null)inpOn=o.ip?1:0;}catch(_){}
+function inpHud(dt){const cv=$('inpCv');if(!cv)return;const k=typeof player==='function'?player():null;
+  const on=!!inpOn&&!!k&&!!inpC&&(state==='race'||state==='countdown'||state==='finished'||state==='paused')&&!k.dnf;if(cv.hidden===on)cv.hidden=!on;if(!on)return;
+  const c=inpC,st=Math.max(-1,Math.min(1,c.steer||0)),dMax=.5/(1+Math.abs(k.u)/26),fw=Math.max(-1.2,Math.min(1.2,(k.delta||0)/dMax));
+  const th=c.accel?Math.max(0,Math.min(1,c.thr??1)):0,br=c.brake?Math.max(0,Math.min(1,c.brk??1)):0,hb=!!c.drift;
+  if((k.absN||0)!==inpS.abs){inpS.abs=k.absN||0;inpS.absT=.15;}else inpS.absT=Math.max(0,inpS.absT-dt);
+  const tcA=ASSIST[assistLv].tc<1||k.aiDriven,ws=k.wheelspin&&th>0?(tcA?1:2):0,ab=inpS.absT>0&&br>0,lk=!!k.locked;
+  const key=[st.toFixed(2),fw.toFixed(2),th.toFixed(2),br.toFixed(2),hb,ws,ab,lk].join();if(key===inpS.key)return;inpS.key=key;
+  const g=cv.getContext('2d'),W=cv.width,H=cv.height,u=W/200;g.setTransform(u,0,0,u,0,0);g.clearRect(0,0,200,60);
+  g.fillStyle='rgba(12,14,18,.55)';g.beginPath();g.roundRect?g.roundRect(0,0,200,60,4):g.rect(0,0,200,60);g.fill();
+  g.font='700 8px sans-serif';g.textAlign='center';g.textBaseline='middle';
+  // ハンドル
+  g.save();g.translate(28,28);g.rotate(st*2.1);g.strokeStyle='#fff';g.lineWidth=4;g.beginPath();g.arc(0,0,18,0,Math.PI*2);g.stroke();
+  g.lineWidth=3;g.beginPath();g.moveTo(-17,0);g.lineTo(17,0);g.moveTo(0,0);g.lineTo(0,17);g.stroke();g.fillStyle='#e8342a';g.fillRect(-2.5,-21,5,7);g.restore();
+  g.fillStyle='rgba(255,255,255,.7)';g.fillText('ハンドル',28,55);
+  // 前輪（上から見た向き。入れた量と大きくずれたら＝カウンター補助・限界で、黄色）
+  g.save();g.translate(70,26);g.strokeStyle='rgba(255,255,255,.25)';g.lineWidth=1;g.beginPath();g.moveTo(0,-17);g.lineTo(0,17);g.stroke();
+  g.rotate(fw*.6);g.fillStyle=Math.abs(fw-st)>.25&&Math.abs(k.u)>3?'#ffcf33':'#ddd';g.fillRect(-5,-14,10,28);g.fillStyle='#333';for(let y=-11;y<14;y+=5)g.fillRect(-5,y,10,1.5);g.restore();
+  g.fillStyle='rgba(255,255,255,.7)';g.fillText('前輪',70,55);
+  // 棒（アクセル・ブレーキ）
+  const bar=(x,v,col,lab,lamp,lc)=>{g.fillStyle='rgba(255,255,255,.12)';g.fillRect(x,6,16,40);g.fillStyle=col;g.fillRect(x,6+40*(1-v),16,40*v);g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1;g.strokeRect(x+.5,6.5,15,39);
+    g.fillStyle='rgba(255,255,255,.7)';g.fillText(lab,x+8,55);if(lamp){g.fillStyle=lc;g.fillRect(x-4,18,24,12);g.fillStyle='#000';g.fillText(lamp,x+8,24.5);}};
+  bar(100,th,'#3cd070','アクセル',ws===1?'TC':ws===2?'空転':'',ws===1?'#ffcf33':'#ff6a3d');
+  bar(142,br,'#e8342a','ブレーキ',lk?'ロック':ab?'ABS':'',lk?'#ff6a3d':'#5fb4ff');
+  // サイドブレーキ
+  g.save();g.translate(184,30);g.rotate(hb?-.55:0);g.fillStyle=hb?'#ff9a1f':'rgba(255,255,255,.55)';g.fillRect(-2.5,-20,5,22);g.beginPath();g.arc(0,-20,4.5,0,Math.PI*2);g.fill();g.restore();
+  g.fillStyle=hb?'#ff9a1f':'rgba(255,255,255,.7)';g.fillText('サイド',184,55);}
+function msHud(){const on=msAct()&&ms.seen;if(on!==ms.hud){ms.hud=on;document.body.classList.toggle('msd',on);}
+  if((!on||!msLockOk())&&document.pointerLockElement)msUnlock();if(!on)return;
+  const f=MS_FULL[msSens]||.6,bar=$('msBar');if(!bar)return;const p=x=>(50+50*Math.max(-1,Math.min(1,x))).toFixed(1)+'%';
+  if(ms.f!==f){ms.f=f;const us=bar.querySelectorAll('u');us[0].style.left=p(-f);us[1].style.left=p(f);const b=bar.querySelector('b');b.style.left=p(-f*MS_DZ);b.style.right=(100-parseFloat(p(f*MS_DZ))).toFixed(1)+'%';}
+  bar.querySelector('i').style.left=p(ms.x/Math.max(150,innerWidth/2));}
 // キーボードのハンドルは徐々に切る
 let steerSm=0,xpT=1;let XPA=[.5,.3,.15]; // T254④ なし＝.15（従来 0）
 function playerControl(dt){
   const raw=(input.right?1:0)-(input.left?1:0);
   if(raw===0&&tiltOn&&tilt.ok){steerSm+=(tilt.v-steerSm)*Math.min(1,dt*8);}
+  else if(raw===0&&msAct()&&ms.seen&&!(gp.on&&gp.steer!==0)){steerSm+=(msVal()-steerSm)*Math.min(1,dt*18);} // β0.165.0 T334 マウスのハンドル
   else if(raw===0&&gp.on&&(gp.steer!==0||Math.abs(steerSm)>.001)){steerSm+=(gp.steer-steerSm)*Math.min(1,dt*14);}
   else{const rate=raw===0?7:(Math.sign(raw)!==Math.sign(steerSm)&&steerSm!==0?9:4.5);
   steerSm+=Math.max(-rate*dt,Math.min(rate*dt,raw-steerSm));}
@@ -5441,7 +5536,9 @@ function playerControl(dt){
   // 立ち上がりの補助（T99）：キーボード・スマホのアクセルは徐々に開く（.5→1 を 0.2秒）＋ハンドルを切っている間は絞る（アシスト 強 .5／標準 .3／なし 0）
   if(kb&&sess!=='drag'&&XPA[assistLv]>0){const cap=Math.max(.3,1-XPA[assistLv]*Math.max(0,Math.abs(steerSm)-.4)/.6);xpT=Math.min(cap,Math.max(xpT,.5)+dt*2.5);}else xpT=kb?1:.5;
   const accel=kb||gp.thr>.05,brake=input.brake||gp.brk>.05;
-  const c={steer:steerSm,accel,brake,drift:input.drift||gp.hb,thr:kb?xpT:gp.thr,brk:input.brake?(kb&&input.accel?TRLB:1):gp.brk};
+  const pu=pedM>0&&!isTouch&&sess!=='drag',pt=PED_T[pedM]||PED_T[0]; // β0.165.0 T334 押している長さで踏み込む
+  if(pu){pedA=input.accel?Math.min(1,pedA+dt/pt[0]):Math.max(0,pedA-dt*2.5/pt[0]);pedB=input.brake?Math.min(1,pedB+dt/pt[1]):Math.max(0,pedB-dt*2.5/pt[1]);}else pedA=pedB=1;
+  const c={steer:steerSm,accel,brake,drift:input.drift||gp.hb,thr:kb?(input.accel?Math.min(xpT,Math.max(.05,pedA)):xpT):gp.thr,brk:input.brake?Math.min(kb&&input.accel?TRLB:1,Math.max(.05,pedB)):gp.brk};
   prevIn.drift=input.drift;
   return c;
 }
@@ -5503,6 +5600,8 @@ function syncPreset(){const e=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn&
 function setPreset(h){wearMode=h?1:0;dmgMode=h?2:1;assistLv=h?1:0;judgeOn=h;aiLv=h?2:1;aiAdj=aiLv;aiAuto=h?0:1;if(h){if(gridMode===3)gridMode=0;}else gridMode=3;markSeg('jgSeg',h?1:0);markSeg('wearSeg',wearMode);markSeg('dmgSeg',dmgMode);markSeg('asSeg',assistLv);markSeg('aiSeg',aiLv);markSeg('aaSeg',aiAuto);markSeg('gridSeg',gridMode);aiNote();if(!h)recSet();saveSettings();syncPreset();} /* β0.139.0 T264 */
 $('presetSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>setPreset(b.dataset.v==='1')));
 for(const id of['asSeg','wearSeg','dmgSeg','aiSeg','aaSeg','gridSeg'])$(id).addEventListener('click',()=>setTimeout(syncPreset,0));segWire('gridSeg',v=>gridMode=v,gridMode);segWire('jgSeg',v=>{judgeOn=!!v;syncPreset();},judgeOn?1:0);segWire('tlSeg',v=>tlOn=!!v,tlOn?1:0);segWire('aiSeg',v=>{aiLv=v;aiAdj=v;aiNote();},aiLv);segWire('aaSeg',v=>{aiAuto=v;if(v)aiAdj=aiLv;aiNote();},aiAuto);segWire('rwSeg',v=>{rwSel=v;rwVis();},rwSel);segWire('soSeg',v=>spotOn=v,spotOn);segWire('radSeg',v=>radioOn=!!v,radioOn?1:0);segWire('vbSeg',v=>vibOn=v,vibOn);segWire('rlSeg',v=>{rlN=v;rlSub();},rlN);rlSub();segWire('pnSeg',v=>{pnMode=v;pnReset();},pnMode);segWire('pnwSeg',v=>{pnAll=v;pnReset();},pnAll);
+segWire('msSeg',v=>{msOn=v?1:0;ms.seen=false;ctlSave();},msOn);segWire('mssSeg',v=>{msSens=v;ctlSave();},msSens);segWire('mlSeg',v=>{msLk=v?1:0;ms.fail=false;if(!v)msUnlock();ctlSave();},msLk);segWire('pedSeg',v=>{pedM=v;ctlSave();},pedM);segWire('ipSeg',v=>{inpOn=v?1:0;inpS.key='';ctlSave();},inpOn); /* β0.165.0 T334 */
+segWire('pnpSeg',v=>{pnPitch=v;pnV=null;ctlSave();},pnPitch);pnvFill();$('pnvSel').addEventListener('change',e=>{pnVoiceSel=e.target.value||'';pnV=null;ctlSave();pnTry();});$('pnvTry').addEventListener('click',()=>{initAudio();pnTry();}); /* β0.165.0 T335 */
 const CAMN=['後方','車載','遠め','中継','正面望遠','運転席'],CAMC=[0,1,5,2,3,4],camNext=m=>CAMC[(CAMC.indexOf(m)+1)%CAMC.length]; /* T32 運転席（5）は車載の次 */function setCam(v){camMode=v;$('camBtn').textContent='視点 '+CAMN[v];if(watchCam!=null&&state!=='title')watchCam=null;saveSettings();}
 function setMir(v){mirOn=v;$('mirBtn').textContent='ミラー '+(v?'ON':'OFF');$('mirBtn').setAttribute('aria-pressed',String(v));saveSettings();}
 $('mirBtn').addEventListener('click',()=>setMir(!mirOn));
@@ -5548,7 +5647,7 @@ function startRace(){$('coach').hidden=true;coT=0;pnReset();$('laps').innerHTML=
   fastLap=null;teleQ.length=0;teleT=0;if(teleEl){teleEl.remove();teleEl=null;}$('tele').innerHTML='';posShown=0;posPend=0;leadShown=null;leadPend=null;flagHud='x';flagWarnT=-9;$('flag').hidden=true;for(const p of POSTS){p.c=-1;}
   {const P=TOD[ENV.tod],w=WXN[ENV.wx];telop('CONDITION',`${P.n}・${w.n}　路面 ${rsCur?RSF[rsCur].n+(ENV.wet>.2?'（濡れ）':''):ENV.wet>.6?'ウェット':ENV.wet>.2?'少し濡れている':'ドライ'}`);}
   if(sess==='race')telop('RULES',ruleText(),judgeOn?'':'yellow');
-  try{const n=+(localStorage.getItem('popkart_hint')||0);if(n<3&&!autoPlay){$('toast').innerHTML='<span class="hint1" style="background:rgba(12,14,18,.7);padding:4px 12px;border-radius:4px;position:relative">'+(sess==='drag'?(isTouch?'緑になったら「アクセル」':'緑になったら '+kN1('accel')+'（パッドは RT）'):(isTouch?(autoAccel?'アクセルは自動　◀ ▶ ハンドル　右下 ブレーキ':'右下 アクセル　その左 ブレーキ　◀ ▶ ハンドル'):kN1('accel')+' アクセル　'+kN1('brake')+' ブレーキ　'+kN1('left')+' '+kN1('right')+' ハンドル（パッドは RT・LT・左スティック）'))+'</span>';toastTimer=5;localStorage.setItem('popkart_hint',n+1);}}catch(_){} /* β0.102.0 初めての人に操作の案内（最初の3回） */
+  try{const n=+(localStorage.getItem('popkart_hint')||0);if(n<3&&!autoPlay){$('toast').innerHTML='<span class="hint1" style="background:rgba(12,14,18,.7);padding:4px 12px;border-radius:4px;position:relative">'+(sess==='drag'?(isTouch?'緑になったら「アクセル」':'緑になったら '+kN1('accel')+'（パッドは RT）'):(isTouch?(autoAccel?'アクセルは自動　◀ ▶ ハンドル　右下 ブレーキ':'右下 アクセル　その左 ブレーキ　◀ ▶ ハンドル'):kN1('accel')+' アクセル　'+kN1('brake')+' ブレーキ　'+(msOn?'マウスの左右':kN1('left')+' '+kN1('right'))+' ハンドル（パッドは RT・LT・左スティック）'))+'</span>';toastTimer=5;localStorage.setItem('popkart_hint',n+1);}}catch(_){} /* β0.102.0 初めての人に操作の案内（最初の3回） */
   if(sess==='race'&&gridMode===2&&gridInfo){const i=gridInfo.findIndex(x=>x.d===playerChoice);if(i>=0){const t=gridInfo[i].t;telop('QUALIFYING',(i===0?'予選 1位　ポールポジション':'予選 '+(i+1)+'位')+(t<1e8?'（'+fmt(t)+(i?'　トップと +'+(t-gridInfo[0].t).toFixed(3):'')+'）':'')+'　'+(i+1)+'番グリッドからスタート',i===0?'purple':'');}}
   if(sess==='race'&&LAPS>=RSV_L&&LAPS<900&&!rsvNow)telop('AUTO SAVE','周ごとに保存。途中でやめても、タイトルの「続きから」で戻れる');
   if(sess==='quali')telop('QUALIFYING','予選用タイヤ　グリップ高め（決勝は通常タイヤ）');
@@ -5731,7 +5830,7 @@ const specHtml=p=>specRows(p).map(([a,b,c])=>'<div><i>'+a+'</i><em'+(c?' class="
 let slOn=false;function setListUpd(){const el=$('setList'),tm=document.body.classList.contains('tmenu'),run=state==='race'||state==='countdown'||state==='finished',on=slOn&&!tm&&run;const rbf=()=>sess==='race'?'<b>今の決まり<small><span class="rdot">●</span> ほんかくより易しい</small></b><div class="pspec">'+rulesHtml()+'</div>'+(ruleNote()?'<p class="rnote">'+ruleNote()+'</p>':''):'';if(tm&&run)H2($('tmSpec')).innerHTML=rbf()+'<b>今の車とセッティング</b><div class="pspec">'+specHtml(player())+'</div>';if(el.hidden===!on&&!on)return;el.hidden=!on;if(on)H2(el).innerHTML=rbf()+'<b>今の車とセッティング<small>Tab を離すと消える</small></b><div class="pspec">'+specHtml(player())+'</div>';}
 addEventListener('keydown',e=>{if(e.code==='Tab'&&(state==='race'||state==='countdown'||state==='finished')){e.preventDefault();if(!slOn){slOn=true;setListUpd();}}});
 addEventListener('keyup',e=>{if(e.code==='Tab'&&slOn){slOn=false;setListUpd();}});addEventListener('blur',()=>{if(slOn){slOn=false;setListUpd();}});
-function pause(){setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
+function pause(){msUnlock();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
 function resume(){if(state!=='paused'||!$('bugScreen').hidden||!$('helpScreen').hidden)return;state=pausedFrom;$('pauseScreen').hidden=true;}
 function toTitle(){chQuit();rlQuit();dtour=null;if($('dtNext'))$('dtNext').hidden=true;$('againBtn').textContent='もう一度';retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;showRec();state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;resAskReset();setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){menuFocus(lastMi);catInfo();}},0);}
 
@@ -5854,7 +5953,7 @@ function rsvResume(){const d=rsvLoad();if(!d){rsvUi();return;}
   telop('RESUME',`続きから　${d.info.lap}周目・${d.info.pos}位`);pause();}
 $('contBtn').addEventListener('click',rsvResume);
 $('nosBtn').addEventListener('pointerdown',e=>{e.preventDefault();nitroGo();});document.body.classList.toggle('nosOn',!!dragNos);
-function showResults(){retT=0;$('svBtn').hidden=true;if(sess==='race')rsvClear();$('rwAsk').hidden=true;setSpd(1);SC_reset();
+function showResults(){msUnlock();retT=0;$('svBtn').hidden=true;if(sess==='race')rsvClear();$('rwAsk').hidden=true;setSpd(1);SC_reset();
   if(sess==='quali'){showQuali();return;}
   if(sess==='drag'){showDrag();return;}
   if(isSS()){showSS();return;}
@@ -6240,7 +6339,7 @@ function garSide(d){const a=document.activeElement,g=a&&a.closest&&$('setup').co
   document.body.classList.add('kbnav');b.focus();if(b.hasAttribute('aria-pressed'))b.click();tone(880,.03,'square',.06);}
 function garTabStep(d){const bs=$('garTabs').querySelectorAll('button');let n=gMain(garTab);for(let j=0;j<GTN;j++){n=(n+d+GTN)%GTN;if(!bs[n].hidden&&!bs[n].classList.contains('gsub'))break;}setGarTab(n,true);tone(880,.03,'square',.06);}
 $('garTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGarTab(+b.dataset.t);});
-function openSetup(){giT=0;giKey='';syncStartUi();advSync();setupOpen=true;$('setup').hidden=false;tScr.classList.add('gar');titleMode='garage';garageSetup();updSpec();try{$('setupClose').focus({preventScroll:true});}catch(_){}}
+function openSetup(){msUnlock();giT=0;giKey='';syncStartUi();advSync();setupOpen=true;$('setup').hidden=false;tScr.classList.add('gar');titleMode='garage';garageSetup();updSpec();try{$('setupClose').focus({preventScroll:true});}catch(_){}}
 function closeSetup(){if(!setupOpen)return;setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');titleMode='attract';attNeed=true;camera.clearViewOffset();camera.updateProjectionMatrix();saveSettings();catInfo();menuFocus(lastMi==='sbRuleBtn'?lastMi:'setupBtn');}
 /* ================= 不具合報告（T66） ================= */
 const brPad=n=>(n<10?'0':'')+n;
@@ -6301,7 +6400,7 @@ function bugInfo(){
 function bugText(){const note=($('bugNote').value||'').trim();return '【（仮）ツーリングカーレース 不具合報告】\n\n■ 起きたこと\n'+(note||'（未記入）')+'\n\n'+$('bugInfo').value+'\n';}
 function bugMsg(t,ng){const el=$('bugMsg');el.textContent=t;el.classList.toggle('ng',!!ng);clearTimeout(el._t);if(t)el._t=setTimeout(()=>{el.textContent='';},8000);}
 function bugRefresh(){$('bugInfo').value=bugInfo();}
-function openBug(){bugRefresh();bugMsg('');$('bugSave').style.display=window.claude?'none':'';$('bugScreen').hidden=false;setTimeout(()=>{try{$('bugNote').focus();}catch(_){}},30);}
+function openBug(){msUnlock();bugRefresh();bugMsg('');$('bugSave').style.display=window.claude?'none':'';$('bugScreen').hidden=false;setTimeout(()=>{try{$('bugNote').focus();}catch(_){}},30);}
 function closeBug(){$('bugScreen').hidden=true;}
 function bugCopyFallback(text){const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}document.body.removeChild(ta);return ok;}
 $('bugOpenG').addEventListener('click',openBug);$('bugOpenP').addEventListener('click',openBug);$('bugClose').addEventListener('click',closeBug);
@@ -6346,7 +6445,7 @@ function sndSe(k){initAudio();if(ac&&ac.state==='suspended')ac.resume().catch(()
   setTimeout(()=>{if(!sndChk||!ac||muted)return;
     if(k==='radio'){tone(1320,.05,'square',.06);tone(1760,.05,'square',.06,0,.07);}
     else if(k==='ui')tone(880,.03,'square',.06);
-    else if(k==='pn'){try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance){sndNote('この端末では読み上げが使えません');return;}S.cancel();const u=new SpeechSynthesisUtterance('右3、すぐ、左4、ロング、100');u.lang='ja-JP';u.rate=1.3;const vs=S.getVoices()||[];const jv=vs.find(v=>/^ja/i.test(v.lang));if(jv)u.voice=jv;S.speak(u);}catch(_){}}
+    else if(k==='pn'){try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance){sndNote('この端末では読み上げが使えません');return;}const nm=pnTry();if(nm)sndNote('ペースノートの声：'+nm+'（GARAGE の「ペースノートの声」で変えられる）');}catch(_){}}
     else sfx(k);},60);}
 function sndNote(t){const n=$('sndNow');if(n)n.textContent=t;}
 function sndBtn(k,n,sub,on,grp){return '<button type="button" class="sck" data-g="'+grp+'" data-k="'+k+'" aria-pressed="'+(on?'true':'false')+'">'+n+(sub?'<small>'+sub+'</small>':'')+'</button>';}
@@ -6398,6 +6497,9 @@ function keyCapEnd(c){const k=keyCap;keyCap=null;keySwT=performance.now();if(!k)
 $('keyOpen').addEventListener('click',keyOpenS);
 $('keyClose').addEventListener('click',keyClose);
 $('keyReset').addEventListener('click',()=>{keyCap=null;keyLoad();KACT.forEach(o=>keyB[o.a]=o.d.slice());keyL={};keyIdx();keySave();keySync();keyRender();keyMsg('はじめの割り当てに戻しました');try{$('keyReset').focus({preventScroll:true});}catch(_){}});
+$('keyMouse').addEventListener('click',()=>{keyCap=null;const P={accel:['Mouse0','ArrowUp'],brake:['Mouse2','ArrowDown'],left:['ArrowLeft'],right:['ArrowRight'],drift:['KeyA','Space'],up:['KeyW','WheelDown'],down:['KeyS','WheelUp']};
+  for(const a in P)keyB[a]=P[a].slice();for(const o of KACT)if(!P[o.a])keyB[o.a]=keyB[o.a].filter(c=>!['Mouse0','Mouse2','KeyW','KeyS','KeyA','WheelUp','WheelDown'].includes(c));
+  keyIdx();keySave();keySync();msOn=1;ms.seen=false;ctlSave();if(typeof markSeg==='function')markSeg('msSeg',1);keyRender();keyMsg('マウスで運転のひな型にしました（「マウスのハンドル」も「使う」に）。踏み込みの量は GARAGE の「アクセル・ブレーキの踏み込み」で');try{$('keyMouse').focus({preventScroll:true});}catch(_){}}); /* β0.165.0 T334 */
 $('keyList').addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.kb');if(!b||performance.now()-keySwT<350)return;keyCap={a:b.dataset.a,i:+b.dataset.i,t:performance.now()};keyRender();keyFocus(keyCap.a,keyCap.i);keyMsg('キーかマウスのボタン（ホイールも）を押してください。Esc＝やめる、Delete＝消す');});
 /* 押して決める間は、ほかの処理より先にキー・マウスを受け取る */
 addEventListener('keydown',e=>{if(!keyCap)return;e.preventDefault();e.stopImmediatePropagation();if(e.repeat||e.isComposing)return;
@@ -6456,7 +6558,7 @@ function autoRes(raw){if((state!=='race'&&state!=='countdown')||raw>.25){_arT=0;
 function frame(now){
   requestAnimationFrame(frame);
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw); // 時刻が戻った時（負の時間）は進めない（β0.60.0：β0.59.0 ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
-  pollPad();bgmTick(dt);
+  pollPad();bgmTick(dt);msHud();inpHud(dt);
   if(state==='title'){titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);}
   if(tmHold()){rMain();mirLayout();renderMirror();updateEngine();return;} /* T255 メニューを開いている間は止める */
@@ -6484,7 +6586,7 @@ function frame(now){
     raceTime+=dt;envStep(dt,true);
     const pc=playerControl(dt);lastPc=pc;computeDraft();rollStep(dt);scStep(dt);npzStep(dt);
     for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0||(ROLL.on&&!ROLL.green&&sess==='race');if(sess!=='drag')k.manual=!!(k.isPlayer&&manualMode&&!autoPlay&&!k.pit&&!k.dnf&&!k.finished);if(k.pxm&&!k.aiDriven&&!k.pit){const r=relLine(k);if(!PXK||k.dnf||sess!=='race'||r>PXL||r<PIT_C||pxClear(k,Math.max(0,k.u)))k.pxm=0;} // β0.96.2：手動の自分の車は aiControl を通らないので、ここで合流待ちの印を消す
-    const ctl0=k.dnf?wreckCtl(k):ROLL.on&&!ROLL.green&&sess==='race'?(k.isPlayer&&!autoPlay&&WRK?rollPl(k,dt,pc):wbTap(k,rollCtl(k,dt),dt)):k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?(cau()&&!k.isPlayer?wbTap(k,aiControl(k,dt),dt):aiControl(k,dt)):scCap(k,pc)),ctl=isCh()?chCtl(k,dt,ctl0):ctl0;stepKart(k,dt,ctl);rescueStep(k,dt);coachStep(k,ctl,dt);telStep(k,ctl,dt);if(k.dnf)stepCrash(k,dt);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);blockWatch(k,dt);rubStep(k);}}
+    const ctl0=k.dnf?wreckCtl(k):ROLL.on&&!ROLL.green&&sess==='race'?(k.isPlayer&&!autoPlay&&WRK?rollPl(k,dt,pc):wbTap(k,rollCtl(k,dt),dt)):k.pit>0?pitControl(k,dt):sess==='drag'?dragCtl(k,dt,pc):(k.aiDriven?(cau()&&!k.isPlayer?wbTap(k,aiControl(k,dt),dt):aiControl(k,dt)):scCap(k,pc)),ctl=isCh()?chCtl(k,dt,ctl0):ctl0;stepKart(k,dt,ctl);if(k.isPlayer)inpC=ctl;rescueStep(k,dt);coachStep(k,ctl,dt);telStep(k,ctl,dt);if(k.dnf)stepCrash(k,dt);if(sess==='drag')dragStep(k,dt);else{trackLimits(k,dt);blockWatch(k,dt);rubStep(k);}}
     rubTick(dt);
     updateFlags();if(sess!=='drag'){watchPositions(dt);watchRadio(dt);}
     ovStep(dt);collisions();if(state==='race')recordRewind(dt);recordReplay(dt);if(solo()&&sess!=='drag')ghostStep(dt);if(sess!=='drag')secStep();if(chOn!=null)chStep(dt);
