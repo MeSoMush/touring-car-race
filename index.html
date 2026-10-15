@@ -691,6 +691,44 @@ body.replay #setList,body.photo #setList{display:none!important}
 /* T295⑧ おすすめの表の値は折り返さない・スマホの「説明を隠す」を押しやすく */
 .recT td{white-space:nowrap}.recT td:last-child{white-space:normal}
 body.touch #hintBtn{min-height:36px}
+/* β0.155.0 T323 タイトルのメニューを見出しつき2列（走る｜車・設定・説明）に。全部が1画面に見える */
+#tmenu{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(12px,1.8vw,24px);width:min(800px,92vw);align-items:start}
+.tmc{display:grid;gap:clamp(3px,.7vh,6px);align-content:start;min-width:0}
+.tmh{font-weight:900;font-size:12px;letter-spacing:.24em;color:#ffb3ad;padding:0 0 2px 6px;border-bottom:1px solid rgba(255,255,255,.22);margin-bottom:1px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.tmc .tmh:not(:first-child){margin-top:clamp(6px,1.4vh,14px)}
+#tmenu .mi{padding-left:14px;padding-right:12px;gap:0 10px}
+#tmenu .mi b{font-size:clamp(16px,min(2.5vw,3.4vh),26px)}
+#tmenu .mi span{font-size:13px;line-height:1.3}
+#tmenu .mi:hover,#tmenu .mi:focus-visible{transform:skewX(-8deg) translateX(8px)}
+@media (max-width:620px) and (min-height:521px){#tmenu .mi span{display:none}#tmenu .mi em{grid-column:1/-1}}
+@media (max-height:520px) and (min-aspect-ratio:4/3){#tmenu{width:min(600px,calc(100vw - 290px))}.tsLogo h1{font-size:clamp(30px,8.5vh,52px)}}
+@media (max-height:520px){#tmenu .mi{padding:3px 10px}#tmenu .mi b{font-size:16px}#tmenu .mi span{display:none}#tmenu .mi em{grid-column:2;grid-row:1;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}.tmh{font-size:10px;padding-bottom:0}.tmc{gap:2px}.tmc .tmh:not(:first-child){margin-top:4px}}
+@container gar (max-width:620px){#setup .setrow .seg button{font-size:12px;padding-left:2px;padding-right:2px;flex-basis:34px}#setup .chars{grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:6px}#setup .label .qj{font-size:10px;padding:1px 4px}}
+/* β0.155.0 T323 GARAGE：横に広い画面では幅を広げて設定を2列に。おすすめ・チューンはセッティングの中の小さなタブ */
+#garTabs .gsub{display:none!important}
+#garSub{display:flex;gap:4px;margin:-2px 0 2px}#garSub[hidden]{display:none}
+#garSub button{flex:1 1 0;font:inherit;font-size:13px;font-weight:700;padding:6px 4px;border:1px solid var(--line);border-radius:3px;background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer}
+#garSub button[aria-pressed="true"]{background:rgba(232,52,42,.3);border-color:var(--gold);color:var(--paper)}
+#garSub button:focus-visible{outline:3px solid var(--gold);outline-offset:-3px}
+body.touch #garSub button{min-height:40px}
+#setup{container-type:inline-size;container-name:gar}
+@media (min-width:1100px) and (min-height:521px) and (min-aspect-ratio:1001/1000){#setup{width:min(760px,56vw)}#garInfo{right:calc(min(760px,56vw) + clamp(12px,3vw,44px) + 2*clamp(16px,3vw,28px) + 22px)}}
+@media (min-width:1600px) and (min-height:900px){#garInfo{right:calc(1.18*(min(760px,56vw) + 56px) + 66px)}}
+@container gar (min-width:600px){
+ #gtab0{grid-template-columns:1fr 1fr;gap:10px 18px;align-items:start}
+ #gtab0>#recLine,#gtab0>#chars,#gtab0>.label:has(+#chars),#gtab0>#carSeg,#gtab0>.label:has(+#carSeg),#gtab0>#carNote{grid-column:1/-1}
+}
+@container gar (min-width:470px){
+ #setup .setrow{grid-template-columns:1fr 1fr;gap:10px 18px;align-items:start}
+ #setup #carSeg button{flex:0 1 calc((100% - 24px)/4)}
+ #setup #drSeg button{flex:0 1 calc((100% - 32px)/5)}
+ #setup .chars{grid-template-columns:repeat(auto-fill,minmax(112px,1fr))}
+}
+/* β0.155.0 T323 行から HOW TO へ */
+#setup .label .qj{float:right;font:inherit;font-size:11px;font-weight:700;letter-spacing:.04em;color:#ffb3ad;background:transparent;border:1px solid rgba(232,52,42,.45);border-radius:3px;padding:1px 6px;margin:-1px 0 0 6px;cursor:pointer;line-height:1.4}
+#setup .label .qj:hover,#setup .label .qj:focus-visible{background:rgba(232,52,42,.35);color:#fff;outline:none}
+body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
+#helpScreen .help>span.hjump{background:rgba(232,52,42,.28);box-shadow:0 0 0 2px rgba(232,52,42,.5);border-radius:2px;transition:background .6s}
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -821,11 +859,11 @@ body.touch #hintBtn{min-height:36px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.154.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.155.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
-    <nav id="tmenu" aria-label="メインメニュー">
+    <nav id="tmenu" aria-label="メインメニュー"><div class="tmc" id="tmRun"><div class="tmh">走る</div>
       <button class="mi" id="contBtn" type="button" hidden><b>CONTINUE</b><span>続きから</span><em id="contInfo"></em></button>
       <button class="mi" id="firstBtn" type="button" hidden><b>FIRST DRIVE</b><span>はじめての方へ　まず1周走ってみる</span></button>
       <button class="mi" id="startBtn" type="button"><b>RACE</b><span id="startSub">レース　8台・3周</span></button>
@@ -834,17 +872,23 @@ body.touch #hintBtn{min-height:36px}
       <button class="mi" id="chBtn" type="button"><b>CHALLENGE</b><span>運転の課題　金・銀・銅</span><em id="chRec"></em></button>
       <button class="mi" id="dragBtn" type="button"><b>0-400m</b><span>ゼロヨン加速勝負</span><em id="dragRec"></em></button>
       <button class="mi" id="watchBtn" type="button"><b>WATCH</b><span>オート運転で観戦</span></button>
-      <button class="mi" id="setupBtn" type="button"><b>GARAGE</b><span>車・設定</span></button>
-      <button class="mi" id="helpBtn" type="button"><b>HOW TO</b><span>操作方法</span></button>
+      </div><div class="tmc" id="tmSet"><div class="tmh">車・設定</div>
+      <button class="mi" id="setupBtn" type="button"><b>GARAGE</b><span>車・ドライバー・クラス・色</span></button>
+      <button class="mi gtj" id="gSetBtn" type="button" data-gt="1"><b>SETTING</b><span>セッティング・おすすめ・チューン</span></button>
+      <button class="mi gtj" id="gRuleBtn" type="button" data-gt="2"><b>RULES</b><span>レースの決まり・天気</span></button>
+      <button class="mi gtj" id="gOptBtn" type="button" data-gt="3"><b>OPTIONS</b><span>表示・操作・音</span></button>
+      <div class="tmh">説明</div>
+      <button class="mi" id="helpBtn" type="button"><b>HOW TO</b><span>操作方法・用語</span></button>
       <button class="mi" id="aboutBtn" type="button"><b>ABOUT</b><span>このゲームについて</span></button>
-    </nav>
-    <p class="kbh tsk">↑↓ で選んで Enter</p>
+    </div></nav>
+    <p class="kbh tsk">↑↓ ←→ で選んで Enter</p>
   </div>
   <section id="setup" class="panel" hidden>
-    <h2>GARAGE<small>車・設定</small><small class="kbh">↑↓ 項目　←→ 選ぶ　Q E タブ　Esc 決定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
+    <h2>GARAGE<small>車・設定</small><small class="kbh">↑↓ 項目　←→ 選ぶ　Q E タブ　H 説明　Esc 決定</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
     <div id="specBox"></div>
     <div id="garTop"><div class="label">遊びやすさ<span class="hint">かんたん＝<b>審判なし（接触しても IP は付かない）</b>・摩耗なし・ダメージは見た目だけ・アシスト強・CPU やさしい・中団スタート・おすすめのセッティング／ほんかく＝審判あり・摩耗とダメージあり・アシスト標準・CPU ふつう・最後尾</span></div><div class="seg" id="presetSeg"><button type="button" data-v="0">かんたん</button><button type="button" data-v="1">ほんかく</button></div><button type="button" class="mini" id="advBtn" aria-expanded="false">くわしい設定</button></div>
-    <div id="garTabs" role="tablist" aria-label="GARAGE のタブ"><button type="button" data-t="0" aria-pressed="true">車</button><button type="button" data-t="1">セッティング</button><button type="button" data-t="2">レース</button><button type="button" data-t="3">表示・操作</button><button type="button" data-t="4">0-400m</button><button type="button" data-t="5">おすすめ</button><button type="button" data-t="6">チューン</button></div>
+    <div id="garTabs" role="tablist" aria-label="GARAGE のタブ"><button type="button" data-t="0" aria-pressed="true">車</button><button type="button" data-t="1">セッティング</button><button type="button" data-t="2">レースの決まり</button><button type="button" data-t="3">表示・操作・音</button><button type="button" data-t="4">0-400m</button><button type="button" data-t="5" class="gsub">おすすめ</button><button type="button" data-t="6" class="gsub">チューン</button></div>
+    <div id="garSub" role="tablist" aria-label="セッティングの中の切り替え"><button type="button" data-t="1">セッティング</button><button type="button" data-t="5">おすすめ</button><button type="button" data-t="6">チューン</button></div>
     <div class="gtab" id="gtab0">
     <div id="recLine" class="recLine"></div>
     <div class="label">ドライバー</div>
@@ -5075,6 +5119,9 @@ addEventListener('keydown',e=>{if(!$('chScreen').hidden){if(e.code==='Escape'||e
   if(state==='title'){if(tStage===0){enterMenu();e.preventDefault();return;}
     if(e.code==='Escape'){if(!$('helpScreen').hidden)closeHelp();else closeSetup();return;}
     if(!setupOpen&&$('helpScreen').hidden&&(e.code==='ArrowUp'||e.code==='ArrowDown')){menuMove(e.code==='ArrowUp'?-1:1);e.preventDefault();}
+    else if(!setupOpen&&$('helpScreen').hidden&&(e.code==='ArrowLeft'||e.code==='ArrowRight')){menuSide(e.code==='ArrowLeft'?-1:1);e.preventDefault();}
+    else if(setupOpen&&!$('helpScreen').hidden){if(/^Arrow(Up|Down)$/.test(e.code)){$('helpScreen').querySelector('.panel').scrollBy(0,e.code==='ArrowUp'?-80:80);e.preventDefault();}}
+    else if(setupOpen&&e.code==='KeyH'){garRowQJ();e.preventDefault();}
     else if(setupOpen&&/^Arrow/.test(e.code)&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||'')){if(/Left|Right/.test(e.code))garSide(e.code==='ArrowLeft'?-1:1);else garNav(/Up/.test(e.code)?-1:1);e.preventDefault();} /* β0.141.0 ↑↓＝行、←→＝行の中の選択肢（行の外ではタブ） */
     else if(setupOpen&&/^(KeyQ|KeyE|PageUp|PageDown)$/.test(e.code)){garTabStep(e.code==='KeyQ'||e.code==='PageUp'?-1:1);e.preventDefault();}
     return;}
@@ -5173,7 +5220,7 @@ DRIVERS.forEach((d,i)=>{const b=document.createElement('button');b.type='button'
   charsEl.appendChild(b);});
 function segWire(id,set,cur){const el=$(id);el.querySelectorAll('button').forEach(b=>{b.setAttribute('aria-pressed',String(+b.dataset.v===cur));b.addEventListener('click',()=>{set(+b.dataset.v);el.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));saveSettings();});});}
 var watchCam=null; // 観戦の前の視点（観戦の中継視点は保存しない）
-function saveSettings(){if(chSnap||rly&&rly.snap&&(setT!==rly.snap.setT||setSU!==rly.snap.setSU||setRH!==rly.snap.setRH))return; /* β0.154.0 サービスで変えたタイヤ・足回りは保存しない */try{ /* β0.153.0 課題の間は決まった車の設定なので保存しない */localStorage.setItem('popkart',JSON.stringify({bp:bopMode,tn:tuneSv,srf:roadSurf,p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:watchCam??camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,vb:vibOn,rly:rlN,pn:pnMode,pw:pnAll,rcf:recFix?[...recFix]:(()=>{try{return JSON.parse(localStorage.getItem('popkart')||'{}').rcf;}catch(_){}})(),mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,fl:fuelFull,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode,sc:setC,df:setDf,bc:setBC,mt:manualMode,sp:SPK,bg:bgStyle,bv:bgmVol,aa:aiAuto,ad:+aiAdj.toFixed(2),rw:rwSel,so:spotOn,jg:judgeOn?1:0,en:setE,sb2:setS,su:setSU,rh:setRH,tp:setTP,gf:garFull,hh:hideHint,tk:setK,ic:setIC,tw:setTW,mx2:mixSel,rs:startMode,scm:scMode,rf:rfMode,pm:pitMan,co:coachMode,ca:catSel}));}catch(_){}}
+function saveSettings(){if(chSnap||rly&&rly.snap&&(setT!==rly.snap.setT||setSU!==rly.snap.setSU||setRH!==rly.snap.setRH))return; /* β0.154.0 サービスで変えたタイヤ・足回りは保存しない */try{ /* β0.153.0 課題の間は決まった車の設定なので保存しない */localStorage.setItem('popkart',JSON.stringify({bp:bopMode,tn:tuneSv,srf:roadSurf,p:playerChoice,cc:ccChoice,as:assistLv,ai5:aiLv,cam:watchCam??camMode,ln:showLine,mc:myBody,ma:myAcc,mn:myNum,tl:tlOn?1:0,rd:radioOn?1:0,vb:vibOn,rly:rlN,pn:pnMode,pw:pnAll,rcf:recFix?[...recFix]:(()=>{try{return JSON.parse(localStorage.getItem('popkart')||'{}').rcf;}catch(_){}})(),mr:mirOn?1:0,md:modeSel,gd:gridMode,td:todSel,wx:wxSel,dv:setDrv,sg:setG,sw:setW,sb:setB,st:setT,tt:tiltOn?1:0,ts:tiltSens,lp:lapsSel,fl:fuelFull,wr:wearMode,dm:dmgMode,dg:dragMan,dd:dragDist,dp:dragPro,dr2:dragRivalSel,cr:myCar,au:autoStart,cx:crashMode,sc:setC,df:setDf,bc:setBC,mt:manualMode,sp:SPK,bg:bgStyle,bv:bgmVol,aa:aiAuto,ad:+aiAdj.toFixed(2),rw:rwSel,so:spotOn,jg:judgeOn?1:0,en:setE,sb2:setS,su:setSU,rh:setRH,tp:setTP,gf:garFull,hh2:hideHint,tk:setK,ic:setIC,tw:setTW,mx2:mixSel,rs:startMode,scm:scMode,rf:rfMode,pm:pitMan,co:coachMode,ca:catSel}));}catch(_){}}
 let fdShow=false;try{if(localStorage.getItem('popkart')===null){wearMode=0;dmgMode=1;assistLv=0;judgeOn=false;aiLv=1;aiAdj=1;aiAuto=1;gridMode=3;fdShow=localStorage.getItem('popkart_fd')===null;}}catch(_){} /* β0.139.0 T264 CPU やさしい・自動調整・中団も */ /* β0.97.0：アシストも強にして「かんたん」がそろう */ // 初めて起動した時は、かんたん設定（摩耗なし・ダメージは見た目だけ。保存済みの設定は変えない）
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.as!=null)assistLv=sv.as;if(sv.ai5!=null)aiLv=sv.ai5;else if(sv.ai!=null)aiLv=sv.ai+1;if(sv.cam!=null)camMode=sv.cam;if(sv.tl!=null)tlOn=!!sv.tl;if(sv.mc!=null)myBody=sv.mc;if(sv.ma!=null)myAcc=sv.ma;if(sv.mn!=null)myNum=sv.mn;if(sv.rd!=null)radioOn=!!sv.rd;if(sv.vb!=null)vibOn=sv.vb?1:0;if(sv.rly!=null)rlN=sv.rly===1?1:3;if(sv.pn!=null)pnMode=Math.max(0,Math.min(2,sv.pn|0));if(sv.pw!=null)pnAll=sv.pw?1:0;if(sv.mr!=null)mirOn=!!sv.mr;if(sv.md!=null)modeSel=sv.md;if(sv.gd!=null)gridMode=sv.gd;}catch(_){}
 try{const sv=JSON.parse(localStorage.getItem('popkart')||'{}');if(sv.tn&&typeof sv.tn==='object')tuneSv=sv.tn;if(sv.td!=null)todSel=sv.td;if(sv.wx!=null)wxSel=sv.wx;if(sv.srf!=null&&RSF[sv.srf])roadSurf=sv.srf;if(sv.bp!=null)bopMode=sv.bp?1:0;if(sv.dv!=null)setDrv=sv.dv;if(sv.sg!=null)setG=sv.sg;if(sv.sw!=null)setW=sv.sw;if(sv.sb!=null)setB=sv.sb;if(sv.st!=null)setT=sv.st;if(sv.tt!=null)tiltOn=!!sv.tt;if(sv.ts!=null)tiltSens=sv.ts;if(sv.fl!=null)fuelFull=sv.fl?1:0;if(sv.lp!=null)lapsSel=sv.lp;if(sv.wr!=null)wearMode=sv.wr;if(sv.dm!=null)dmgMode=sv.dm;if(sv.dg!=null)dragMan=sv.dg;if(sv.dd!=null)dragDist=sv.dd;if(sv.dp!=null)dragPro=sv.dp;if(sv.dr2!=null)dragRivalSel=sv.dr2;if(Number.isInteger(sv.cr)&&CARS[sv.cr])myCar=sv.cr;if(sv.au!=null)autoStart=sv.au?1:0;if(sv.cx!=null)crashMode=sv.cx?1:0;if(Number.isInteger(sv.sc)&&SETC[sv.sc])setC=sv.sc;if(Number.isInteger(sv.df)&&SETD[sv.df])setDf=sv.df;if(Number.isInteger(sv.bc)&&SETBC[sv.bc])setBC=sv.bc;if(sv.mt!=null)manualMode=sv.mt?1:0;if(sv.sp!=null)SPK=sv.sp?1:0;if(sv.bg!=null&&sv.bg>=0&&sv.bg<=4)bgStyle=sv.bg|0;if(sv.bv!=null&&sv.bv>=0&&sv.bv<=2)bgmVol=sv.bv|0;if(sv.aa!=null)aiAuto=sv.aa?1:0;if(typeof sv.ad==="number"&&sv.ad>=0&&sv.ad<=4)aiAdj=sv.ad;else aiAdj=aiLv;if(sv.rw!=null&&sv.rw>=0&&sv.rw<=2)rwSel=sv.rw|0;if(sv.so!=null)spotOn=sv.so?1:0;if(sv.jg!=null)judgeOn=!!sv.jg;if(sv.en!=null)setE=sv.en;if(sv.sb2!=null)setS=sv.sb2;if(sv.su!=null)setSU=sv.su;if(sv.rh!=null)setRH=sv.rh;if(sv.tp!=null)setTP=sv.tp;if(sv.tw!=null)setTW=sv.tw;if(sv.p!=null)playerChoice=sv.p;if(sv.cc!=null)ccChoice=sv.cc;if(Number.isInteger(sv.tk)&&TKS[sv.tk])setK=sv.tk;if(sv.ic!=null)setIC=sv.ic?1:0;if(sv.mx2!=null)mixSel=sv.mx2;else if(sv.mx)mixSel=MXD[ccChoice]+1;if(sv.rs!=null)startMode=sv.rs;if(sv.scm!=null)scMode=Math.min(2,Math.max(0,(+sv.scm||0)|0));if(sv.rf!=null)rfMode=sv.rf?1:0;if(sv.pm!=null)pitMan=sv.pm?1:0;if(sv.co!=null&&sv.co>=0&&sv.co<=2)coachMode=sv.co|0;if(sv.ca===1)catSel=1;}catch(_){}
@@ -5708,7 +5755,7 @@ function titleStep(dt){
   updateLine(null);
   if(titleMode==='garage'){garT+=dt;updGarInfo(dt);const k=karts[0];if(k){syncVisuals(dt);const a=garT*.32+2.4+k.h,R=9.2;
     camera.position.set(k.x+Math.sin(a)*R,1.7+.3*Math.sin(garT*.5),k.z+Math.cos(a)*R);camera.lookAt(k.x,.7,k.z);camera.fov=34;
-    const Wd=innerWidth,Hd=innerHeight;if(Wd>Hd&&Wd>640){const pw=Math.min(470,Wd-24)+Wd*.03;camera.setViewOffset(Wd,Hd,Wd/2-(Wd-pw)/2,0,Wd,Hd);}else camera.setViewOffset(Wd,Hd,0,Hd*.2,Wd,Hd);camera.updateProjectionMatrix();followSun(k.x,k.z);}}
+    const Wd=innerWidth,Hd=innerHeight;if(Wd>Hd&&Wd>640){const sw=$('setup').offsetWidth,pw=(sw>200?sw-40:Math.min(470,Wd-24))+Wd*.03; /* β0.155.0 T323 GARAGE の幅に合わせて車を左へ */camera.setViewOffset(Wd,Hd,Wd/2-(Wd-pw)/2,0,Wd,Hd);}else camera.setViewOffset(Wd,Hd,0,Hd*.2,Wd,Hd);camera.updateProjectionMatrix();followSun(k.x,k.z);}}
   else{attT+=dt;raceTime+=dt;computeDraft();for(const k of karts){k.aiDriven=true;stepKart(k,dt,aiControl(k,dt));}collisions();syncVisuals(dt);
     const sv=camMode;camMode=3;updateCamera(dt);camMode=sv;if(attT>75)attNeed=true;}
   tipT+=dt;if(tipT>6){tipT=0;tipI=(tipI+1)%TIPS.length;$('tsTip').textContent=tipTx(TIPS[tipI]);}}
@@ -5720,6 +5767,10 @@ const menuItems=()=>[...document.querySelectorAll('#tmenu .mi')].filter(e=>!e.hi
 function navMove(root,d){const it=[...root.querySelectorAll('button,summary')].filter(el=>{if(!el.getClientRects().length||el.disabled)return false;const d=el.closest('details');return !d||d.open||el.parentElement===d;}); /* 閉じた見出しの中は飛ばす */if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?(d>0?0:it.length-1):(i+d+it.length)%it.length;document.body.classList.add('kbnav');it[i].focus();try{it[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true);
 function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?0:(i+d+it.length)%it.length;it[i].focus();tone(880,.03,'square',.06);}
+/* β0.155.0 T323 メニューは2列。←→ で隣の列の同じ高さの項目へ */
+function menuSide(d){const cols=[...document.querySelectorAll('#tmenu .tmc')].map(c=>[...c.querySelectorAll('.mi')].filter(e=>!e.hidden));const a=document.activeElement;let ci=cols.findIndex(c=>c.includes(a));if(ci<0){menuMove(1);return;}const nc=cols[ci+d];if(!nc||!nc.length)return;
+  const y=a.getBoundingClientRect().top;let b=nc[0],bd=1e9;for(const e of nc){const dd=Math.abs(e.getBoundingClientRect().top-y);if(dd<bd){bd=dd;b=e;}}b.focus();tone(880,.03,'square',.06);}
+document.querySelectorAll('#tmenu .gtj').forEach(b=>b.addEventListener('click',()=>{openSetup();setGarTab(+b.dataset.gt);}));
 menuItems().forEach(el=>el.addEventListener('mouseenter',()=>{if(!setupOpen)el.focus();}));
 /* T210 GARAGE のタブ（車／セッティング／レース／表示・操作／0-400m）。開き直しても同じタブ */
 /* ===== T241（β0.88.0）お勧めの車種とセッティング：GARAGE の「車」タブの上に1行、「おすすめ」タブにくわしく（理由つき）。「この設定にする」で全部そろえる。
@@ -5819,21 +5870,43 @@ $('tnBox').addEventListener('click',e=>{const b=e.target.closest&&e.target.close
   if(t==='zero'){for(let c=0;c<6;c++)recFix.delete('tn'+c);tnSet(TN0);tone(660,.05,'square',.1);return;}
   const g=b.closest('.tnSeg');if(g){const c=+g.id.slice(5),a=tnOf(myCar).slice();a[c]=+b.dataset.v;tnSet(a);}});
 // T213 説明を隠す（保存キー hh）。隠している間は項目名を押すとその説明が開く／閉じる
-let hideHint=0;try{hideHint=JSON.parse(localStorage.getItem('popkart')||'{}').hh?1:0;}catch(_){}
+let hideHint=1;try{const o=JSON.parse(localStorage.getItem('popkart')||'{}');if(o.hh2!=null)hideHint=o.hh2?1:0;}catch(_){} /* β0.155.0 T323 説明は最初たたむ（行の名前を押す・ⓘで開く。上の「説明を出す」で全部） */
 function setHint(v){hideHint=v?1:0;document.body.classList.toggle('hidehint',!!hideHint);const b=$('hintBtn');b.textContent=hideHint?'説明を出す':'説明を隠す';b.setAttribute('aria-pressed',String(!!hideHint));$('setup').querySelectorAll('.label.open').forEach(l=>l.classList.remove('open'));}
 $('hintBtn').addEventListener('click',()=>{setHint(!hideHint);saveSettings();});setHint(hideHint);
+/* β0.155.0 T323 GARAGE の行の「HOW TO ›」で、操作方法のその項目へ（閉じると GARAGE のその行に戻る）。キーは H、パッドは Y */
+const QJ={'カテゴリー':'フォーミュラ','車種':'車ごとの違い','クラス':'車重','マイカラー':'マイカラー','駆動方式':'セッティング','ギア比':'セッティング','ウイング':'セッティング','ブレーキバランス':'[／]','タイヤ':'タイヤの減り','タイヤの幅':'セッティング','タイヤの空気圧':'タイヤの空気圧','サスペンション':'セッティング','車高':'セッティング','スタビライザー':'セッティング','デフ':'セッティング','エンジン特性':'エンジン','過給機（ターボのエンジンだけ）':'エンジン','冷却（ラジエーター）':'セッティング','ブレーキ冷却':'セッティング','変速':'E／Q',
+ '周回数':'長いレース','CPUの強さ':'難易度','強さの自動調整':'難易度','巻き戻し':'R','スタート位置':'予選','スタート方式':'スタート','混走クラス':'混走クラス','天気':'天気','RALLY SS の本数':'サービスパーク','路面（試し）':'路面','タイヤ摩耗':'タイヤの減り','スタートの燃料':'燃料','ダメージ':'ダメージ','大事故':'大事故','セーフティカー・FCY':'セーフティカー・FCY','赤旗':'赤旗','ピットレーンの速度':'ピット','審判':'審判','コース外ペナルティ':'コース外',
+ 'スタート時の視点':'C','アシスト':'アシスト','スタート時のオート運転':'O','走行ライン':'L','運転の練習表示':'練習表示','バックミラー':'M','ピット無線':'ピット無線','振動':'ゲームパッド','ペースノート':'ペースノート','ペースノートを出す所':'ペースノート','BGMの雰囲気':'B','BGMの音量':'B','スマホのハンドル':'スマホ','距離':'0-400m','ツリー':'0-400m','相手':'0-400m'};
+const qjN=t=>String(t||'').replace(/s/g,'');
+function helpItem(term){const n=qjN(term);return [...$('helpScreen').querySelectorAll('.help>span')].find(e=>qjN(e.textContent)===n)||null;}
+let helpFrom=null;
+function helpJump(term,from){const it=helpItem(term);if(!it)return false;const h=$('helpScreen'),more=h.querySelector('details.more');if(more)more.open=true;helpFrom=from||null;h.hidden=false;
+  h.querySelectorAll('.hjump').forEach(e=>e.classList.remove('hjump'));const ds=it.nextElementSibling;
+  requestAnimationFrame(()=>{try{it.scrollIntoView({block:'center'});}catch(_){}it.classList.add('hjump');if(ds)ds.classList.add('hjump');});
+  try{$('helpClose').focus({preventScroll:true});}catch(_){}tone(660,.05,'square',.08);return true;}
+$('setup').querySelectorAll('.label').forEach(l=>{const tn=[...l.childNodes].find(c=>c.nodeType===3&&c.textContent.trim());if(!tn)return;const name=tn.textContent.trim();
+  const term=l.closest('#gtab4')&&name==='変速'?'0-400m':QJ[name];if(!term||!helpItem(term))return;
+  const b=document.createElement('button');b.type='button';b.className='qj';b.textContent='HOW TO ›';b.title='操作方法の「'+term+'」を見る';b.setAttribute('aria-label',name+'の説明（操作方法）');
+  b.addEventListener('click',e=>{e.stopPropagation();helpJump(term,b);});l.insertBefore(b,tn.nextSibling);});
+function garRowQJ(){const a=document.activeElement;if(!a||!a.closest||!$('setup').contains(a))return;const g=a.closest(GROW)||a;
+  let lb=null;const row=g.closest('.setrow>div');if(row)lb=row.querySelector('.label');else{let p=g.previousElementSibling;while(p&&!p.classList.contains('label'))p=p.previousElementSibling;lb=p;}
+  const q=lb&&lb.querySelector('.qj');if(q){q.click();if(helpFrom)helpFrom=a;}}
 $('setup').addEventListener('click',e=>{if(!hideHint)return;const l=e.target.closest('.label');if(l&&l.querySelector('.hint'))l.classList.toggle('open');});
-function setGarTab(n,focus){garTab=(n+GTN)%GTN;{const bs0=$('garTabs').querySelectorAll('button');for(let j=0;j<GTN&&bs0[garTab].hidden;j++)garTab=(garTab+1)%GTN;}tScr.classList.toggle('gt0',garTab===0);const bs=$('garTabs').querySelectorAll('button');bs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===garTab)));for(let i=0;i<GTN;i++)$('gtab'+i).hidden=i!==garTab;if(focus){document.body.classList.add('kbnav');bs[garTab].focus({preventScroll:true});}}
+const GSUB=[1,5,6],gMain=t=>GSUB.includes(t)?1:t; /* β0.155.0 T323 おすすめ・チューンはセッティングのタブの中の小さなタブ */
+function setGarTab(n,focus){garTab=(n+GTN)%GTN;{const bs0=$('garTabs').querySelectorAll('button');for(let j=0;j<GTN&&bs0[garTab].hidden;j++)garTab=(garTab+1)%GTN;}tScr.classList.toggle('gt0',garTab===0);const bs=$('garTabs').querySelectorAll('button');bs.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===gMain(garTab))));for(let i=0;i<GTN;i++)$('gtab'+i).hidden=i!==garTab;
+  const sb=$('garSub');sb.hidden=gMain(garTab)!==1;let sf=null;sb.querySelectorAll('button').forEach(b=>{const on=+b.dataset.t===garTab;b.setAttribute('aria-pressed',String(on));if(on)sf=b;});
+  if(focus){document.body.classList.add('kbnav');(GSUB.includes(garTab)&&garTab!==1&&sf?sf:bs[garTab]).focus({preventScroll:true});}}
+$('garSub').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGarTab(+b.dataset.t);});
 /* β0.141.0 GARAGE のキー操作。行＝.seg・ドライバー・色・ゼッケン。行に入る時は選ばれている所へ */
-const GROW='.seg,.chars,.sw,.numc';
-function garStops(){const it=[...$('setup').querySelectorAll('button,summary')].filter(el=>{if(el.closest('#garTabs')||!el.getClientRects().length||el.disabled)return false;const d=el.closest('details');return !d||d.open||el.parentElement===d;});
+const GROW='.seg,.chars,.sw,.numc,#garSub';
+function garStops(){const it=[...$('setup').querySelectorAll('button,summary')].filter(el=>{if(el.closest('#garTabs')||el.classList.contains('qj')||!el.getClientRects().length||el.disabled)return false;const d=el.closest('details');return !d||d.open||el.parentElement===d;});
   const out=[];let last=null;for(const el of it){const g=el.closest(GROW);if(g&&g===last)continue;last=g;if(g){const p=[...g.querySelectorAll('button[aria-pressed="true"]')].find(b=>b.getClientRects().length&&!b.disabled);out.push(p||el);}else out.push(el);}return out;}
 function garNav(d){const st=garStops();if(!st.length)return;const a=document.activeElement,ga=a&&a.closest&&a.closest(GROW);let i=st.findIndex(x=>x===a||ga&&x.closest(GROW)===ga);
   i=i<0?(d>0?0:st.length-1):(i+d+st.length)%st.length;document.body.classList.add('kbnav');st[i].focus();try{st[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 function garSide(d){const a=document.activeElement,g=a&&a.closest&&$('setup').contains(a)?a.closest(GROW):null;if(!g){garTabStep(d);return;}
   const bs=[...g.querySelectorAll('button')].filter(b=>b.getClientRects().length&&!b.disabled),i=bs.indexOf(a),b=bs[i+d];if(!b)return;
   document.body.classList.add('kbnav');b.focus();if(b.hasAttribute('aria-pressed'))b.click();tone(880,.03,'square',.06);}
-function garTabStep(d){const bs=$('garTabs').querySelectorAll('button');let n=garTab;for(let j=0;j<GTN;j++){n=(n+d+GTN)%GTN;if(!bs[n].hidden)break;}setGarTab(n,true);tone(880,.03,'square',.06);}
+function garTabStep(d){const bs=$('garTabs').querySelectorAll('button');let n=gMain(garTab);for(let j=0;j<GTN;j++){n=(n+d+GTN)%GTN;if(!bs[n].hidden&&!bs[n].classList.contains('gsub'))break;}setGarTab(n,true);tone(880,.03,'square',.06);}
 $('garTabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)setGarTab(+b.dataset.t);});
 function openSetup(){giT=0;giKey='';syncStartUi();advSync();setupOpen=true;$('setup').hidden=false;tScr.classList.add('gar');titleMode='garage';garageSetup();updSpec();try{$('setupClose').focus({preventScroll:true});}catch(_){}}
 function closeSetup(){if(!setupOpen)return;setupOpen=false;$('setup').hidden=true;tScr.classList.remove('gar');titleMode='attract';attNeed=true;camera.clearViewOffset();camera.updateProjectionMatrix();saveSettings();try{$('setupBtn').focus({preventScroll:true});}catch(_){}}
@@ -5923,7 +5996,7 @@ $('aboutBtn').addEventListener('click',openAbout);$('aboutClose').addEventListen
 $('resetBtn').addEventListener('click',()=>{$('resetAsk').hidden=false;$('aboutRow').hidden=true;try{$('resetNo').focus({preventScroll:true});}catch(_){}});
 $('resetNo').addEventListener('click',()=>{$('resetAsk').hidden=true;$('aboutRow').hidden=false;try{$('resetBtn').focus({preventScroll:true});}catch(_){}});
 $('resetYes').addEventListener('click',()=>{try{const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(k.indexOf('popkart')===0)ks.push(k);}for(const k of ks)localStorage.removeItem(k);}catch(_){}location.reload();}); /* ⑥ popkart で始まる保存をすべて消して読み込み直す */
-function closeHelp(){if($('helpScreen').hidden)return;$('helpScreen').hidden=true;if(state==='paused'){$('pauseScreen').hidden=false;setTimeout(()=>{try{$('pHelpBtn').focus({preventScroll:true});}catch(_){}},0);return;}try{$('helpBtn').focus({preventScroll:true});}catch(_){}}
+function closeHelp(){if($('helpScreen').hidden)return;$('helpScreen').hidden=true;if(helpFrom){const f=helpFrom;helpFrom=null;if(setupOpen){setTimeout(()=>{try{f.focus({preventScroll:true});}catch(_){}},0);return;}}if(state==='paused'){$('pauseScreen').hidden=false;setTimeout(()=>{try{$('pHelpBtn').focus({preventScroll:true});}catch(_){}},0);return;}try{$('helpBtn').focus({preventScroll:true});}catch(_){}}
 // T88 トルク曲線のグラフ（GARAGE）：灰色＝標準、赤＝選んだ特性。青い点線＝シフトアップの回転
 function drawTq(){const cv=$('tqCv');if(!cv)return;const g=cv.getContext('2d'),W2=cv.width,H2=cv.height;g.clearRect(0,0,W2,H2);
   const X=r=>14+(W2-28)*(r-1000)/8000,Y=v=>H2-16-(H2-40)*v/1.08;g.strokeStyle='rgba(255,255,255,.12)';g.lineWidth=1;for(let r=2000;r<=9000;r+=1000){g.beginPath();g.moveTo(X(r),8);g.lineTo(X(r),H2-16);g.stroke();}
@@ -5944,8 +6017,8 @@ function titlePad(edge){const any=[0,1,2,3,8,9,12,13].some(i=>edge(i));
   if(!$('chScreen').hidden){const ab=$('chScreen');if(edge(1))chClose();else if(edge(12)||edge(14))navMove(ab,-1);else if(edge(13)||edge(15))navMove(ab,1);else if(edge(0)){const a=document.activeElement;if(ab.contains(a)&&a.tagName==='BUTTON')a.click();}return;}
   if(!$('aboutScreen').hidden){const ab=$('aboutScreen');if(edge(1))closeAbout();else if(edge(12)||edge(14))navMove(ab,-1);else if(edge(13)||edge(15))navMove(ab,1);else if(edge(0)){const a=document.activeElement;if(ab.contains(a)&&a.tagName==='BUTTON')a.click();}return;} /* β0.103.0 */
   if(!$('helpScreen').hidden){if(edge(1)||edge(0))closeHelp();return;}
-  if(setupOpen){const se=$('setup');if(edge(1))closeSetup();else if(edge(4))garTabStep(-1);else if(edge(5))garTabStep(1);else if(edge(14))garSide(-1);else if(edge(15))garSide(1);else if(edge(12))garNav(-1);else if(edge(13))garNav(1);else if(edge(0)){const a=document.activeElement;if(se.contains(a))a.click();}else if(edge(9))$('setupClose').click();return;}
-  if(edge(12))menuMove(-1);else if(edge(13))menuMove(1);else if(edge(0)){const a=document.activeElement;if(a&&a.classList&&a.classList.contains('mi'))a.click();else $('startBtn').click();}else if(edge(9))$('startBtn').click();}
+  if(setupOpen){const se=$('setup');if(edge(3)){garRowQJ();return;}if(edge(1))closeSetup();else if(edge(4))garTabStep(-1);else if(edge(5))garTabStep(1);else if(edge(14))garSide(-1);else if(edge(15))garSide(1);else if(edge(12))garNav(-1);else if(edge(13))garNav(1);else if(edge(0)){const a=document.activeElement;if(se.contains(a))a.click();}else if(edge(9))$('setupClose').click();return;}
+  if(edge(12))menuMove(-1);else if(edge(13))menuMove(1);else if(edge(14))menuSide(-1);else if(edge(15))menuSide(1);else if(edge(0)){const a=document.activeElement;if(a&&a.classList&&a.classList.contains('mi'))a.click();else $('startBtn').click();}else if(edge(9))$('startBtn').click();}
 $('tsTip').textContent=tipTx(TIPS[0]);rsvUi();try{if(sessionStorage.getItem('popkart_rsv')){sessionStorage.removeItem('popkart_rsv');setTimeout(rsvResume,200);}}catch(_){}$('tsCourse').textContent='HIGASHI RACEWAY　全長 '+(L/1000).toFixed(2)+'km';
 let last=performance.now();
 let titleT=0;
