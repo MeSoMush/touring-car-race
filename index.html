@@ -798,15 +798,30 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 #drv #inpCv,#drv #tyreCv{position:static!important;right:auto!important;top:auto!important;bottom:auto!important}
 #drv #inpCv{width:219px!important;height:98px!important}#drv #tyreCv{width:76px!important;height:120px!important}
 body.replay #drv,body.photo #drv{display:none}
-/* PC の下のボタン：マウスを動かした時だけ出す（3秒で消える）。出ている間は帯を隠す（ボタンが2段になる幅でも重ならない） */
-body:not(.touch) #topbtns{transition:opacity .35s}
-body.btnIdle:not(.touch):not(.tmenu) #topbtns{opacity:0!important;pointer-events:none!important}
-body:not(.touch):not(.btnIdle) #drv{opacity:0}
 body.touch #drv{bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:calc(50% - 50px)}
 body.touch #drv #inpCv{width:170px!important;height:76px!important}body.touch #drv #tyreCv{width:48px!important;height:76px!important}
 /* T344 スマホ：回転計を上の真ん中から下の真ん中（帯の右）へ。前の景色を空ける */
 body.touch #tach{top:auto!important;right:auto!important;left:calc(50% + 64px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 4px)!important}
 body.touch #gauge{width:clamp(104px,15vw,124px)!important}
+/* β0.169.0 T369 PC の配置：走りのボタンは帯の左（F1 のハンドルのボタンのように手元に）、表示のボタンと BGM は右上の列、順位は左上のラップの横、前周・ベストは全体図の下、状態の行は回転計の上 */
+body:not(.touch) #drv{left:calc((100% - clamp(250px,25vw,340px) - 16px)/2)}
+#whlBtns{display:grid;grid-template-columns:repeat(4,48px);grid-auto-rows:46px;gap:4px;pointer-events:auto;align-self:flex-end}#whlBtns[hidden]{display:none}
+#whlBtns .mini{position:relative;width:48px;height:46px;padding:3px 0 0!important;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:10px!important;line-height:1.1;white-space:nowrap;background:rgba(12,14,18,.62);border:1px solid rgba(255,255,255,.22);border-radius:6px;color:#e8eaee}
+#whlBtns .mini[aria-pressed="true"]{border-color:var(--gold);color:#fff;background:rgba(232,52,42,.35)}
+#whlBtns .mini[hidden]{display:none!important}
+#whlBtns svg.ic{width:20px;height:20px;flex:none}
+#whlBtns .cap{font-weight:700;letter-spacing:.02em;max-width:46px;overflow:hidden;text-overflow:clip}
+body:not(.touch) #whlBtns [data-key]::after{position:absolute;right:2px;top:1px;margin:0;padding:0 2px;font-size:8px;line-height:1.3;opacity:.55}
+.tbar-btn svg.ic{width:18px;height:18px}
+.tbar-btn.vb{position:relative}.tbar-btn.vb[aria-pressed="true"]{color:var(--gold)}
+body:not(.touch) #sysBar .vb[data-key]::after{position:absolute;right:1px;bottom:0;margin:0;padding:0 1px;font-size:7px;line-height:1.2;border:0;opacity:.6}
+#sysBar .tbsep{width:1px;align-self:stretch;margin:4px 2px;background:rgba(255,255,255,.25)}
+body:not(.touch) #rank{top:calc(env(safe-area-inset-top,0px) + 4px);bottom:auto;font-size:clamp(46px,5.6vw,66px)}
+body:not(.touch) #topleft{left:clamp(92px,10.5vw,124px)}
+body:not(.touch) #laps{left:auto;right:12px;transform:none;top:calc(env(safe-area-inset-top,0px) + 50px + clamp(110px,18vw,170px))}
+body:not(.touch) #carst,body:not(.touch) #wx{left:auto;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 46px + clamp(250px,25vw,340px)*.556)}
+body:not(.touch) #carst{bottom:calc(env(safe-area-inset-bottom,0px) + 78px + clamp(250px,25vw,340px)*.556);white-space:normal;max-width:min(420px,44vw);text-align:right;line-height:1.7}
+body:not(.touch) #mnBtn{display:none!important}
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -826,7 +841,7 @@ body.touch #gauge{width:clamp(104px,15vw,124px)!important}
   <canvas id="minimap" width="340" height="340"></canvas>
   <div id="rank" class="outline">8<small>位</small></div>
   <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM</div><canvas id="gauge"></canvas></div>
-  <div id="drv"><canvas id="inpCv" width="376" height="168" hidden></canvas><canvas id="tyreCv" width="124" height="196" hidden></canvas></div>
+  <div id="drv"><div id="whlBtns" role="group" aria-label="走りの操作" hidden></div><canvas id="inpCv" width="376" height="168" hidden></canvas><canvas id="tyreCv" width="124" height="196" hidden></canvas></div>
   <div id="tree" hidden></div><div id="setList" hidden></div><div id="judge"></div><div id="coach" class="outline" hidden></div>
   <div id="banner" class="outline"></div>
   <div id="toast" class="outline"></div><div id="rwAsk" class="outline" hidden></div>
@@ -939,7 +954,7 @@ body.touch #gauge{width:clamp(104px,15vw,124px)!important}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.168.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.169.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4070,7 +4085,7 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(isSS()){if(r
 /* 大クラッシュ（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
 /* β0.167.0 T365 CPU のペダルをジワッと：PDP 1＝使う（0 で前の版）。PDH＝目標の速さより少し上まで途中まで踏んで保つ幅 m/s、PDW＝その間で踏み込みを絞る幅、PDM＝保つ時の最小の踏み込み。
    PDBW＝ブレーキを速さの超え方に応じて踏む幅 m/s、PDBM＝最小、PDBL＝踏み始めたら目標＋PDBL m/s まで離さない。PDRA・PDFA＝アクセルを踏む・離す秒（0→1）、PDRB・PDFB＝ブレーキを踏む・離す秒 */
-let PDP=1,PDH=.5,PDW=3,PDM=.2,PDBW=3,PDBM=.3,PDBL=.3,PDRA=.25,PDFA=.1,PDRB=.1,PDFB=.15;
+let PDHK=.6,PDP=1,PDH=.5,PDW=3,PDM=.2,PDBW=3,PDBM=.3,PDBL=.3,PDRA=.25,PDFA=.1,PDRB=.1,PDFB=.15;
 const wreckCtl=k=>({steer:0,accel:false,brake:k.u>.8,brk:.8,drift:false});
 /* T73（β0.82.0）破片：大クラッシュで車体の破片とタイヤが飛び散り、コースに残る（見た目だけ。当たり判定なし）。強い接触（DEBV m/s 以上）でも小さな破片が少し出る。
    残骸が片付く（gone）と、その車の破片も消える。小さな接触の破片は DEBL 秒で消える。DEB_N・DEW_N は使い回しの数 */
@@ -4263,7 +4278,12 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   if(pitMan&&k.isPlayer&&!autoPlay&&k.pit===1&&!k.dt&&rel<PIT_B&&lastPc){ctl.accel=lastPc.accel;ctl.brake=lastPc.brake;ctl.brk=lastPc.brk;ctl.thr=lastPc.thr;k.aiBrake=ctl.brake;if(rel>PIT_B-300&&u>PIT_V+.5)toast('ピットの線まで 80km/h 以下に（今 '+Math.round(u*3.6)+'km/h）');return ctl;} // T165 線までのブレーキは自分で
   if(rsCur||gp<1){if(!PITZ[k.idx])vt=Math.min(vt,VP[k.idx]*.95);const b=Math.abs(Math.atan2(k.vl,Math.max(3,u)));ctl.thr=Math.max(.15,Math.min(1,gp+.25)-Math.max(0,b-.05)*5);} // T283 本線を走っている間は先のコーナーも見る
   const brake=u>vt+1.5;if(PAT&&brake&&!ctl.brake&&k.pit===1&&rel<PIT_A-5&&Math.abs(ctl.steer)>.15)ctl.brk=Math.max(ATBM,1-ATBK*(Math.abs(ctl.steer)-.15)); /* β0.148.1 T321 */
-  ctl.brake=brake||ctl.brake&&u>vt;ctl.accel=!brake&&u<vt-.5&&ctl.accel;k.aiBrake=ctl.brake;return ctl;}
+  let pB=brake||ctl.brake&&u>vt,pA=!brake&&u<vt-.5&&ctl.accel,thr=ctl.thr??1,brk=ctl.brk;
+  // β0.168.1 ピットへ入る・出る・線までの減速も、80km/h の近くは途中まで踏んで保ち、踏む・離す速さに上限（T365 と同じ定数。PDP＝0 で前の版）
+  if(PDP>0&&u>=LOWV){if(!pA&&!pB&&ctl.accel&&u<vt-.5+((k.aiA||0)>.02?PDHK:0))pA=true;if(pA)thr*=Math.max(PDM,Math.min(1,(vt-.5+PDHK-u)/PDW));if(pB)brk=(brk??1)*Math.max(PDBM,Math.min(1,(u-vt)/PDBW));
+    const ta=pA?thr:0,tb=pB?(brk??1):0,a0=k.aiA??ta,b0=k.aiB??tb;k.aiA=ta>a0?Math.min(ta,a0+dt/PDRA):Math.max(ta,a0-dt/PDFA);k.aiB=tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);
+    pA=k.aiA>.02;pB=k.aiB>.02;thr=k.aiA;brk=k.aiB;}else{k.aiA=pA?thr:0;k.aiB=pB?(brk??1):0;}
+  ctl.brake=pB;ctl.accel=pA;ctl.thr=thr;ctl.brk=brk;k.aiBrake=pB;return ctl;}
 // T83（β0.115.0）レース中にブレーキバランスを動かす（実際の車のバランス調整のダイヤル）。前が多いほど安定・後ろが多いほどブレーキ中に向きが変わる（お尻が出やすい）
 const BBK=()=>isTouch?'（メニューの「BB」）':gp.on?'（右スティックの左右）':'（'+kN1('bbR')+' '+kN1('bbF')+'）';
 function bbAdj(d){const p=player();if(!p||p.bb==null||sess==='drag'||autoPlay||p.finished||p.dnf||(state!=='race'&&state!=='countdown'))return;const v=Math.round(Math.max(BBN,Math.min(BBX,p.bb+d*BAQ))*100)/100;bbBtnSync(p);if(v===p.bb){toast(`ブレーキバランス 前 ${Math.round(v*100)}%（${d>0?'前':'後ろ'}の上限）`);return;}p.bb=v;bbBtnSync(p);
@@ -5542,9 +5562,7 @@ document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.poin
    アクセル（thr）・ブレーキ（brk）の棒・サイドブレーキ。TC（アシストが駆動を絞った＝k.wheelspin）・空転（アシスト「なし」）・ABS（k.absN が増えた）・ロック（k.locked）。保存は popkart_ctl の ip（既定は PC 出す・スマホ 出さない） */
 let inpOn=isTouch?0:1,inpC=null;const inpS={key:'',abs:0,absT:0};
 try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o&&o.ip!=null)inpOn=o.ip?1:0;}catch(_){}
-let btnT=0;addEventListener('mousemove',()=>{btnT=performance.now();});addEventListener('pointerdown',()=>{btnT=performance.now();});
-function btnIdle(){const idle=!isTouch&&(state==='race'||state==='countdown'||state==='finished')&&(performance.now()-btnT>3000||msAct());if(idle!==btnIdle.v){btnIdle.v=idle;document.body.classList.toggle('btnIdle',idle);}}
-function inpHud(dt){btnIdle();const cv=$('inpCv');if(!cv)return;const k=typeof player==='function'?player():null;
+function inpHud(dt){const cv=$('inpCv');if(!cv)return;const k=typeof player==='function'?player():null;
   const on=!!inpOn&&!!k&&!!inpC&&(state==='race'||state==='countdown'||state==='finished'||state==='paused')&&!k.dnf;if(cv.hidden===on)cv.hidden=!on;if(!on)return;
   const c=inpC,st=Math.max(-1,Math.min(1,c.steer||0)),dMax=.5/(1+Math.abs(k.u)/26),fw=Math.max(-1.2,Math.min(1.2,-(k.delta||0)/dMax)); /* β0.166.2 k.delta はハンドルと逆の符号 */
   const th=c.accel?Math.max(0,Math.min(1,c.thr??1)):0,br=c.brake?Math.max(0,Math.min(1,c.brk??1)):0,hb=!!c.drift;
@@ -6653,6 +6671,26 @@ function frame(now){
   updateEngine();
   rMain();mirLayout();renderMirror();
 }
+/* β0.169.0 T369 ボタンのアイコン（PC）。ボタンの文字はあちこちで textContent に書かれるので、書き換わったら MutationObserver で「アイコン＋短い名前」に描き直す（title に元の文字）。
+   走りの操作（巻き戻し・ピット・燃料・BB・オート・ライン・倍速）は帯の左 #whlBtns、表示（視点・ミラー・表示を減らす）と BGM は右上の #sysBar へ。スマホはメニューの中の文字のボタンのまま */
+const ICO={rwBtn:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/>',pitBtn:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>',
+  fuelBtn:'<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12M6 8h6"/><path d="M14 10h2a2 2 0 0 1 2 2v4a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
+  bbRBtn:'<circle cx="9" cy="12" r="6"/><circle cx="9" cy="12" r="2"/><path d="M19 5v13M16 15l3 3 3-3"/>',bbFBtn:'<circle cx="9" cy="12" r="6"/><circle cx="9" cy="12" r="2"/><path d="M19 19V6M16 9l3-3 3 3"/>',
+  autoBtn:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M3.5 11h6.5M14 11h6.5M12 14v7"/>',lineBtn:'<path d="M6 21c0-7 12-6 12-13V3"/><circle cx="6" cy="21" r="1"/><circle cx="18" cy="3" r="1"/>',
+  spdBtn:'<path d="M3 6l8 6-8 6zM12 6l8 6-8 6z"/>',camBtn:'<path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/>',mirBtn:'<rect x="2" y="6" width="20" height="9" rx="3"/><path d="M12 15v5M9 20h6"/>',
+  hudBtn:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',bgmBtn:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'};
+const ICAP={rwBtn:()=>'巻き戻し',pitBtn:()=>'ピット',fuelBtn:t=>t.replace(/^燃料\s*/,'燃料 '),bbRBtn:()=>'BB 後',bbFBtn:t=>{const m=t.match(/(\d+)%/);return m?'BB '+m[1]+'%':'BB 前';},autoBtn:()=>'オート',lineBtn:()=>'ライン',spdBtn:t=>t.replace(/^倍速\s*/,'')};
+function icoRender(b){if(b.querySelector('svg.ic'))return;const t=b.textContent.trim();const cap=ICAP[b.id]?ICAP[b.id](t):'';
+  b.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[b.id]+'</svg>'+(cap?'<span class="cap">'+cap+'</span>':'');
+  b.title=t;if(!b.dataset.al)b.setAttribute('aria-label',b.id==='bbRBtn'?'ブレーキバランスを後ろへ':t);}
+function hudGroups(){if(isTouch)return;const w=$('whlBtns'),sb=$('sysBar');if(!w||!sb)return;
+  for(const id of ['rwBtn','pitBtn','fuelBtn','autoBtn','bbRBtn','bbFBtn','lineBtn','spdBtn'])w.appendChild($(id));w.hidden=false;
+  const v=$('sysVol'),sep=document.createElement('i');sep.className='tbsep';
+  for(const id of ['camBtn','mirBtn','hudBtn']){const b=$(id);b.className='tbar-btn vb';sb.insertBefore(b,$('sysPause'));}
+  sb.insertBefore(sep,$('sysPause'));const bg=$('bgmBtn');bg.className='tbar-btn vb';v.after(bg);
+  const mo=typeof MutationObserver==='function'&&new MutationObserver(ms=>{for(const m of ms){const b=m.target.nodeType===1?m.target:m.target.parentNode;if(b&&ICO[b.id])icoRender(b);}});
+  for(const id in ICO){const b=$(id);if(!b)continue;icoRender(b);if(mo)mo.observe(b,{childList:true,characterData:true,subtree:true});}}
+hudGroups();
 requestAnimationFrame(frame);
 })();
 </script>
