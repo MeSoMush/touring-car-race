@@ -822,6 +822,16 @@ body:not(.touch) #laps{left:auto;right:12px;transform:none;top:calc(env(safe-are
 body:not(.touch) #carst,body:not(.touch) #wx{left:auto;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 46px + clamp(250px,25vw,340px)*.556)}
 body:not(.touch) #carst{bottom:calc(env(safe-area-inset-bottom,0px) + 78px + clamp(250px,25vw,340px)*.556);white-space:normal;max-width:min(420px,44vw);text-align:right;line-height:1.7}
 body:not(.touch) #mnBtn{display:none!important}
+/* β0.173.0 T368 燃料計（帯の中、ハンドルと小窓の間）・かんたんでは入力の表示を出さない・天気の行は全体図の左・結果の講評（T347） */
+#drv #fuelCv{width:37px;height:98px;flex:none}#fuelCv[hidden]{display:none!important}body.hudmin #fuelCv{display:none!important}
+body.touch #drv #fuelCv{width:29px;height:76px}
+body.ez #drv #inpCv{display:none!important}
+body:not(.touch) #wx{bottom:auto;right:calc(12px + clamp(110px,18vw,170px) + 8px);top:calc(env(safe-area-inset-top,0px) + 50px + clamp(110px,18vw,170px) - 32px);max-width:150px;white-space:normal;text-align:right;line-height:1.5}
+#carst:empty{display:none}
+#resNote{font-size:13.5px;color:#dfe3ea;background:rgba(255,255,255,.05);border-radius:6px;padding:7px 11px;margin:6px 0 0;line-height:1.6}#resNote:empty{display:none}
+#resNote.ftn{font-size:11px;color:var(--muted);background:none;padding:2px 0}
+#resultTable tr.hd td{background:#121419!important;box-shadow:0 1px 0 rgba(255,255,255,.14)}
+#resultTable .rsp{display:block;max-width:min(46vw,460px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.6;font-size:.72em}
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -841,7 +851,7 @@ body:not(.touch) #mnBtn{display:none!important}
   <canvas id="minimap" width="340" height="340"></canvas>
   <div id="rank" class="outline">8<small>位</small></div>
   <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM</div><canvas id="gauge"></canvas></div>
-  <div id="drv"><div id="whlBtns" role="group" aria-label="走りの操作" hidden></div><canvas id="inpCv" width="376" height="168" hidden></canvas><canvas id="tyreCv" width="124" height="196" hidden></canvas></div>
+  <div id="drv"><div id="whlBtns" role="group" aria-label="走りの操作" hidden></div><canvas id="inpCv" width="376" height="168" hidden></canvas><canvas id="fuelCv" width="64" height="168" hidden></canvas><canvas id="tyreCv" width="124" height="196" hidden></canvas></div>
   <div id="tree" hidden></div><div id="setList" hidden></div><div id="judge"></div><div id="coach" class="outline" hidden></div>
   <div id="banner" class="outline"></div>
   <div id="toast" class="outline"></div><div id="rwAsk" class="outline" hidden></div>
@@ -954,7 +964,7 @@ body:not(.touch) #mnBtn{display:none!important}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.172.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.173.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1075,7 +1085,8 @@ body:not(.touch) #mnBtn{display:none!important}
         <div id="sndRow"><div class="label">サウンドチェック<span class="hint">曲・効果音・エンジン音・タイヤや雨などの音を1つずつ鳴らして確かめる</span></div><button class="btn alt" id="sndOpen" type="button" style="font-size:15px;padding:8px 14px">サウンドチェックを開く</button></div>
         <div id="msRow"><div class="label">マウスのハンドル<span class="hint">画面の真ん中からのカーソルの左右でハンドルを切る（真ん中に少し遊び）。キーのハンドルを押している間はキーが優先</span></div><div class="seg" id="msSeg"><button type="button" data-v="1">使う</button><button type="button" data-v="0">使わない</button></div><div class="label" style="margin-top:8px">カーソルを固定<span class="hint">使う＝レース中に画面を押すとカーソルが消えて画面の外へ出なくなる（Esc で戻ってポーズ）。Windows の拡大率が高い時などに、カーソルが画面の一角に閉じ込められることがある（戻し方：Ctrl＋Alt＋Delete → Esc）。使わない＝カーソルの位置のまま（全画面にすると外へ出にくい）</span></div><div class="seg" id="mlSeg"><button type="button" data-v="0">使わない</button><button type="button" data-v="1">使う</button></div><div class="label" style="margin-top:8px">マウスの感度<span class="hint">強いほど少し動かすだけで大きく切れる（いっぱいに切れる所：弱い＝画面の端の近く・標準＝6割・強い＝4割）</span></div><div class="seg" id="mssSeg"><button type="button" data-v="0">弱い</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
         <div id="pedRow"><div class="label">アクセル・ブレーキの踏み込み<span class="hint">キー・マウスのボタンで踏む量。すぐ＝押すとすぐいっぱい（はじめの設定）。ふつう＝押している長さで踏み込む（アクセル 0.3秒・ブレーキ 0.15秒でいっぱい、離すと戻る）。ゆっくり＝その倍。0-400m は除く</span></div><div class="seg" id="pedSeg"><button type="button" data-v="0">すぐ</button><button type="button" data-v="1">ふつう</button><button type="button" data-v="2">ゆっくり</button></div></div>
-        <div id="inpRow"><div class="label">入力の表示<span class="hint">メーターの上・タイヤの小窓の左（スマホはメーターの下）に、ハンドル（白い輪）・実際の前輪の向き・ブレーキ・アクセルの踏んだ量・サイドブレーキを絵で出す。TC＝トラクション制御が力を絞った・空転・ABS・ロックも光る</span></div><div class="seg" id="ipSeg"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
+        <div id="inpRow"><div class="label">入力の表示<span class="hint">画面の中央下の帯に、サイドブレーキ・ブレーキ・アクセルの踏んだ量・ハンドル（白い輪）を絵で出す。TC＝トラクション制御が力を絞った・空転・ABS・ロックも光る（「かんたん」では出さない）</span></div><div class="seg" id="ipSeg"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
+        <div id="isdRow"><div class="label">サイドブレーキの位置<span class="hint">入力の表示の中のサイドブレーキの場所。右ハンドルの車は運転席の左（いちばん左）、左ハンドルの車は右（いちばん右）。ペダルの並びはどちらも同じ</span></div><div class="seg" id="isdSeg"><button type="button" data-v="0">左（右ハンドル）</button><button type="button" data-v="1">右（左ハンドル）</button></div></div>
         <div id="keyRow"><div class="label">キーの割り当て<span class="hint">キーボードのキーとマウスのボタン（ホイールも）を、操作ごとに2つまで変えられる</span></div><button class="btn alt" id="keyOpen" type="button" style="font-size:15px;padding:8px 14px">キーの割り当てを変える</button></div>
         <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div class="adv"><div class="label">スポッター<span class="hint">すぐ横に車がいる時、その側の画面の端がオレンジに光る（ごく近いと赤寄り）。ミラーに映らない真横の車に</span></div><div class="seg" id="soSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
@@ -1128,8 +1139,9 @@ body:not(.touch) #mnBtn{display:none!important}
         <span data-kg="brake"></span><span>ブレーキ・バック</span>
         <span data-kg="left,right"></span><span>ハンドル</span>
         <span>サウンドチェック</span><span>GARAGE の「表示・操作・音」の「サウンドチェック」で、曲・効果音・エンジン音（車ごとの17種類。回転のつまみと空ぶかし）・タイヤの鳴きや雨などの音を1つずつ鳴らして確かめられる。音がおかしい時の確認に</span>
-        <span>入力の表示</span><span>メーターの上・タイヤの小窓の左（スマホはメーターの下）に、今の操作を絵で出す（GARAGE の「入力の表示」で出す・出さない）。白い輪＝ハンドルを入れた量、その右＝実際の前輪の向き（速いほど切れる角度は小さい。入れた量と大きくずれると黄色＝カウンターの補助や限界）、赤の棒＝ブレーキ、緑の棒＝アクセルの踏んだ量（実際のペダルと同じ並び）、レバー＝サイドブレーキ。TC（黄）＝トラクション制御が力を絞った、空転（橙）＝アシスト「なし」で後輪などが空転、ABS（青）＝ABS が効いた、ロック（橙）＝タイヤがロック。オートの時は CPU の操作が見える</span>
-        <span>マウスで運転</span><span>GARAGE の「表示・操作・音」の「マウスのハンドル」を「使う」にすると、画面の真ん中からのカーソルの左右でハンドルを切れる（下のバーの赤い印が今の位置）。「カーソルを固定」を「使う」にすると、レース中に画面を押した時にカーソルが消えて画面から出なくなる（Esc で戻ってポーズ。閉じ込められた時は Ctrl＋Alt＋Delete → Esc）。「アクセル・ブレーキの踏み込み」を「ふつう」にすると、押している長さで踏み込む（ちょんと押すと少しだけ）。キーの割り当ての「マウスで運転のひな型」で、左クリック＝アクセル・右クリック＝ブレーキ・W／S＝シフト・A＝サイドブレーキに</span>
+        <span>入力の表示</span><span>画面の中央下の帯に、今の操作を絵で出す（GARAGE の「入力の表示」で出す・出さない。「かんたん」では出さない）。白い輪＝ハンドルを入れた量（実際の前輪の向きは右の車の小窓に出る）、赤の棒＝ブレーキ、緑の棒＝アクセルの踏んだ量（実際のペダルと同じ並び）、レバー＝サイドブレーキ。TC（黄）＝トラクション制御が力を絞った、空転（橙）＝アシスト「なし」で後輪などが空転、ABS（青）＝ABS が効いた、ロック（橙）＝タイヤがロック。オートの時は CPU の操作が見える</span>
+        <span>マウスで運転</span>
+        <span>サイドブレーキの位置</span><span>入力の表示の中で、サイドブレーキのレバーをいちばん左に出すか、いちばん右に出すか。実際の車では、右ハンドルの車は運転席の左、左ハンドルの車は右にある（ペダルの並びはどちらも同じ。言葉ではなく運転席の位置で変わる）。今の車はすべて右ハンドル</span><span>GARAGE の「表示・操作・音」の「マウスのハンドル」を「使う」にすると、画面の真ん中からのカーソルの左右でハンドルを切れる（下のバーの赤い印が今の位置）。「カーソルを固定」を「使う」にすると、レース中に画面を押した時にカーソルが消えて画面から出なくなる（Esc で戻ってポーズ。閉じ込められた時は Ctrl＋Alt＋Delete → Esc）。「アクセル・ブレーキの踏み込み」を「ふつう」にすると、押している長さで踏み込む（ちょんと押すと少しだけ）。キーの割り当ての「マウスで運転のひな型」で、左クリック＝アクセル・右クリック＝ブレーキ・W／S＝シフト・A＝サイドブレーキに</span>
         <span>キーの割り当て</span><span>GARAGE の「表示・操作・音」の「キーの割り当て」で、操作ごとにキーボードのキーかマウスのボタン（左・右・中・戻る・進む、ホイールの手前・奥）を2つまで割り当てられる。この説明のキーの名前も割り当てに合わせて変わる</span>
         <span>アクセルを離す</span><span>エンジンブレーキ（低いギア・高回転ほど強い）。ブレーキを踏まずに減速でき、タイヤのグリップを曲がることに残せる。FR は尻が出やすくなる（実車と同じ）</span>
         <span><span data-kg="accel:0"></span>+<span data-kg="brake:0"></span></span><span>アクセルを開けたまま軽くブレーキ（FF車の技。コーナー進入で前に荷重を乗せて向きを作る。踏みすぎるとアンダーステア）。パッドは RT と LT を同時に</span>
@@ -1864,7 +1876,7 @@ function envStep(dt,race){const e=ENV;e.t+=dt;
  if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
  else headSpot.intensity=0;}
 function updEnvHud(){const P=TOD[ENV.tod],w=WXN[ENV.wx];const ic=ENV.rain>.3?'☂':ENV.fog>.5?'🌫':ENV.cloud>.6?'☁':P.ic;
- const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const fc=fcText();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}　${rsN}<b class="${cond}">${cj}</b>${p?`　<span>${TYR[p.ty||0].n}</span>`:''}${fc?`<i class="fc">${fc}</i>`:''}`;
+ const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const fc=fcText();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}　${rsN}<b class="${cond}">${cj}</b>${p&&(tyCv.hidden||document.body.classList.contains('hudmin'))?`　<span>${TYR[p.ty||0].n}</span>`:''}${fc?`<i class="fc">${fc}</i>`:''}`;
  const ts=document.getElementById('tsEnv');if(ts)ts.textContent=`${P.en} / ${w.en}${roadSurf?' / '+RSF[roadSurf].en:''}`;}
 
 // β0.104.0 T262：地面の格子の位置（1軸ぶん）。lo〜hi は st m の等間隔、その外は1つごとに g 倍ずつ広げて（上限 cap m）mn〜mx まで
@@ -3452,7 +3464,7 @@ function beginEvent(){if(chOn!=null){chGo(chOn);return;}if(modeSel===3&&!rlCont)
   if(gridMode===2){const t=[];for(let d=0;d<8;d++)t.push({d,t:qEst(d,d!==playerChoice)});t.sort((a,b)=>a.t-b.t);gridOrder=t.map(x=>x.d);gridInfo=t;}
   else gridOrder=makeGrid();
   startSession('race');}
-function showQuali(){$('resNote').textContent='';state='results';resultCamStart();const p=player();const rows=[];
+function showQuali(){$('resNote').textContent='';$('resNote').classList.remove('ftn');state='results';resultCamStart();const p=player();const rows=[];
   for(let d=0;d<8;d++)rows.push({d,t:d===playerChoice?(p.best||1e9):cpuQuali(d)});rows.sort((a,b)=>a.t-b.t);gridOrder=rows.map(x=>x.d);qualiRes=rows;gridInfo=rows;
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">予選タイム</td><td class="t">差</td></tr>'+rows.map((x,i)=>`<tr class="${x.d===playerChoice?'me':''}"><td>${i+1}</td><td>${DRIVERS[x.d].name}${x.d===playerChoice?'（あなた）':''}</td><td class="t">${x.t<1e8?fmt(x.t):'記録なし'}</td><td class="t b">${i&&x.t<1e8?'+'+(x.t-rows[0].t).toFixed(3):''}</td></tr>`).join('');
   const r=rows.findIndex(x=>x.d===playerChoice)+1;
@@ -3570,7 +3582,7 @@ function chCtl(k,dt,c){if(!k.isPlayer)return c;const C=CH[chOn];
   if(chRes){const a=k.aiDriven?c:aiControl(k,dt);return {steer:a.steer,accel:false,brake:k.u>.3,brk:1,drift:false};}
   if(C.box&&k.aiDriven){const d=lapDist(k),tg=(C.box[0]+C.box[1])/2,need=k.u*k.u/(2*G*CHB*wetMul('road',k)),b=d+need>=tg-1.5;return {steer:c.steer,accel:!b,thr:1,brake:b,brk:1,drift:false};}
   return c;}
-function showCh(){$('resNote').textContent='';state='results';resultCamStart();const C=CH[chOn],r=chRes||{ok:false,why:'途中で終わった'},b=chBest()[chOn];
+function showCh(){$('resNote').textContent='';$('resNote').classList.remove('ftn');state='results';resultCamStart();const C=CH[chOn],r=chRes||{ok:false,why:'途中で終わった'},b=chBest()[chOn];
   let h='<tr class="hd"><td></td><td class="t">タイム</td><td></td></tr>';
   for(let m=3;m>=1;m--)h+='<tr'+(r.ok&&r.m===m?' class="me"':'')+'><td style="white-space:nowrap"><span class="md'+m+'">'+CHM[m]+'メダル</span></td><td class="t">'+fmt(C.g[3-m])+'</td><td>'+(r.ok&&r.t<=C.g[3-m]+1e-9?'✓':'')+'</td></tr>';
   h+='<tr class="me"><td>今回</td><td class="t">'+(r.ok?fmt(r.t):'失格')+'</td><td></td></tr>';
@@ -3589,7 +3601,7 @@ function ssDone(k){const t=raceTime,old=ghost?{t:ghost.t,sp:ghost.sp}:null,sp=(k
   const rec=valid&&ghRec.length>=40&&(!old||t<old.t);
   if(rec){ghost={t,s:Float32Array.from(ghRec),p:playerChoice,sp:sp.length===2?sp:null};ghSave();telop(old?'NEW RECORD':'RECORD','ステージ記録　'+fmt(t),'purple');}
   ssRes={t,valid,rec,old,sp};}
-function showSS(){$('resNote').textContent='';state='results';resultCamStart();const p=player(),r=ssRes||{t:raceTime,valid:false,rec:false,old:null,sp:[]};
+function showSS(){$('resNote').textContent='';$('resNote').classList.remove('ftn');state='results';resultCamStart();const p=player(),r=ssRes||{t:raceTime,valid:false,rec:false,old:null,sp:[]};
   const sec=(sp,t)=>sp&&sp.length>=2&&t?[sp[0],sp[1]-sp[0],t-sp[1]]:null,me=p.dnf?null:sec(r.sp,r.t),ob=r.old?sec(r.old.sp,r.old.t):null;
   const dc=(a,b)=>a!=null&&b!=null?`<span style="color:${a<=b?'#5fe08f':'#ff8a80'}">${a<=b?'−':'+'}${Math.abs(a-b).toFixed(2)}</span>`:'';
   const row=(n,a,b,m)=>`<tr${m?' class="me"':''}><td>${n}</td><td class="t">${a!=null?fmt(a):'—'}</td><td class="t">${b!=null?fmt(b):'—'}</td><td class="t b">${dc(a,b)}</td></tr>`;
@@ -4571,11 +4583,12 @@ function coachCorner(k,cid,ex){if(!(coachMode||isCh())||autoPlay)return;const me
   const dv=Math.round((me.vmin-ref.vmin)*3.6);
   const sp=`最低速度 <b class="${dv>=-1?'ok':'la'}">${dv>0?'+':dv<0?'−':'±'}${Math.abs(dv)}km/h</b>`,nb=me.bs==null&&ref.bs==null; // どちらもブレーキを踏まないコーナーは速さだけ
   coachShow(`<i>第${cid+1}コーナー</i>${who}と比べて　${nb?sp:`ブレーキ ${f(me.bs,ref.bs,'早い','遅い')}　${sp}　踏み始め ${f(me.ta,ref.ta,'早い','遅い')}${me.tb!=null&&ref.tb!=null?`　トレイル 頂点の ${coM(Math.max(0,me.tb))} 手前まで（相手 ${coM(Math.max(0,ref.tb))}）${Math.abs(me.tb-ref.tb)<3?'':me.tb>ref.tb?'<b class="ea"> 浅い</b>':'<b class="la"> 深い</b>'}`:''}`}${ex?'<br>'+ex:''}`,ex?5:4);}
-function carHud(p){const el=$('carst');if(isSS()&&p&&rly){el.hidden=false;H2(el).innerHTML='タイヤ <b class="'+(p.wear>.6?'bad':'')+'">'+Math.round((p.wear||0)*100)+'%</b>　足回り <b class="'+(p.dmS>.3?'bad':'')+'">'+Math.round((p.dmS||0)*100)+'%</b>　エンジン <b class="'+(p.dmE>.3?'bad':'')+'">'+Math.round((p.dmE||0)*100)+'%</b>';return;}if(isSS()&&p&&dmgMode){el.hidden=false;H2(el).innerHTML='ダメージ <b class="'+(p.dmg>.5?'bad':'')+'">'+Math.round(p.dmg*100)+'%</b>';return;} /* β0.130.0 T283 */if(sess==='quali'&&p){el.hidden=false;H2(el).innerHTML='タイヤ <b class="pit">予選用</b>';return;}if(sess!=='race'||!p||(!wearMode&&!dmgMode&&!FUELK)){el.hidden=true;return;}el.hidden=false;
+function carHud(p){const el=$('carst');const tyOn=!tyCv.hidden&&!document.body.classList.contains('hudmin'),fuOn=!fuCv.hidden&&!document.body.classList.contains('hudmin'); /* β0.173.0 T368 */
+  if(tyOn&&(isSS()&&p&&(rly||dmgMode)||sess==='quali'&&p)){el.hidden=true;return;}if(isSS()&&p&&rly){el.hidden=false;H2(el).innerHTML='タイヤ <b class="'+(p.wear>.6?'bad':'')+'">'+Math.round((p.wear||0)*100)+'%</b>　足回り <b class="'+(p.dmS>.3?'bad':'')+'">'+Math.round((p.dmS||0)*100)+'%</b>　エンジン <b class="'+(p.dmE>.3?'bad':'')+'">'+Math.round((p.dmE||0)*100)+'%</b>';return;}if(isSS()&&p&&dmgMode){el.hidden=false;H2(el).innerHTML='ダメージ <b class="'+(p.dmg>.5?'bad':'')+'">'+Math.round(p.dmg*100)+'%</b>';return;} /* β0.130.0 T283 */if(sess==='quali'&&p){el.hidden=false;H2(el).innerHTML='タイヤ <b class="pit">予選用</b>';return;}if(sess!=='race'||!p||(!wearMode&&!dmgMode&&!FUELK)){el.hidden=true;return;}el.hidden=false;
   const w=1-p.wear,col=w>.5?'#3ddc6c':w>.28?'#f5b400':'#ff4a3d';
   const st=p.pit===1?'ピットイン':p.pit===2?'作業中':p.pit===3?'ピットアウト':p.pitReq?'ピット予約':'';
   const wb2=(x,n)=>{const v=1-x,c=v>.5?'#3ddc6c':v>.28?'#f5b400':'#ff4a3d';return `${n}<i class="cb cb2"><s style="width:${(v*100).toFixed(0)}%;background:${c}"></s></i>${(v*100).toFixed(0)}%`;};
-  H2(el).innerHTML=(wearMode?(WFK&&p.wF!=null?'タイヤ '+wb2(p.wF,'前')+' '+wb2(p.wR,'後'):`タイヤ <i class="cb"><s style="width:${(w*100).toFixed(0)}%;background:${col}"></s></i>${(w*100).toFixed(0)}%`):'')+(dmgMode?`　ダメージ <b class="${p.dmg>.5?'bad':''}">${Math.round(p.dmg*100)}%</b>`:'')+(st?`　<b class="pit">${st}</b>`:'')+(FUELK&&p.fuel!=null?`　燃料 <b class="${fuelWarn(p)>0&&!p.pitReq&&!p.pit?'bad':''}">${p.fuel.toFixed(1)}</b>kg<small>（${Math.min(99,fuelLaps(p)).toFixed(1)}周分）</small>${(p.fmode??1)!==1?`<b class="pit">${FMN[p.fmode]}</b>`:''}`:'')+(p.bb!=null&&!isTouch?`　BB 前<b class="${p.bb0!=null&&Math.abs(p.bb-p.bb0)>.004?'pit':''}">${Math.round(p.bb*100)}</b>%`:'');}
+  H2(el).innerHTML=(wearMode&&!tyOn?(WFK&&p.wF!=null?'タイヤ '+wb2(p.wF,'前')+' '+wb2(p.wR,'後'):`タイヤ <i class="cb"><s style="width:${(w*100).toFixed(0)}%;background:${col}"></s></i>${(w*100).toFixed(0)}%`):'')+(dmgMode&&!tyOn?`　ダメージ <b class="${p.dmg>.5?'bad':''}">${Math.round(p.dmg*100)}%</b>`:'')+(st?`　<b class="pit">${st}</b>`:'')+(FUELK&&p.fuel!=null&&!fuOn?`　燃料 <b class="${fuelWarn(p)>0&&!p.pitReq&&!p.pit?'bad':''}">${p.fuel.toFixed(1)}</b>kg<small>（${Math.min(99,fuelLaps(p)).toFixed(1)}周分）</small>${(p.fmode??1)!==1?`<b class="pit">${FMN[p.fmode]}</b>`:''}`:'')+(false&&p.bb!=null?`　BB 前<b class="${p.bb0!=null&&Math.abs(p.bb-p.bb0)>.004?'pit':''}">${Math.round(p.bb*100)}</b>%`:'');}
 /* ================= 衝突 ================= */
 function kCorners(k){const fx=Math.sin(k.h),fz=Math.cos(k.h),lx=Math.cos(k.h),lz=-Math.sin(k.h),hz=k.hz||HZ,hx=k.hx||HX;return [[1,1],[1,-1],[-1,1],[-1,-1]].map(([a,b])=>[k.x+fx*hz*a+lx*hx*b,k.z+fz*hz*a+lz*hx*b]);} // β0.147.0 車ごとの大きさ（k.hz・k.hx）
 function kAxes(k){return [[Math.sin(k.h),Math.cos(k.h)],[Math.cos(k.h),-Math.sin(k.h)]];}
@@ -5081,7 +5094,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   // シフトランプ
   {const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP;const f=(p.rpm-5600)/(sp-5600);const n=Math.max(0,Math.min(10,Math.round(f*10)));const flash=p.rpm>sp-150&&p.gear<TOPG&&Math.floor(clockT*12)%2===0;
    const lk=flash?-1:n;if(lk!==ledK){ledK=lk;[...$('leds').children].forEach((el,i)=>{el.className=flash?'b':(i<n?(i<4?'g':i<7?'y':'r'):'');});}}
-  $('slip').classList.toggle('on',(p.draft||0)>.25);spotStep(p);setListUpd();{const v=Math.round((p.pq||0)*10)/10*.75;if(v!==prsV){prsV=v;$('prsEdge').style.opacity=v;}}carHud(p);drawGauge(p);drawTyre(p,.05);
+  $('slip').classList.toggle('on',(p.draft||0)>.25);spotStep(p);setListUpd();{const v=Math.round((p.pq||0)*10)/10*.75;if(v!==prsV){prsV=v;$('prsEdge').style.opacity=v;}}carHud(p);drawGauge(p);drawTyre(p,.05);fuelHud(p);
   drawMinimap();
 }
 /* ===== メーター（右下）：回転計の針＋速度（大）＋ギア、右に水温・油温・ブースト圧（グランツーリスモ・Forza・Assetto Corsa などの計器表現を参考にした自作） ===== */
@@ -5154,10 +5167,23 @@ function carSt(p){const lv=(v,a,b)=>v>=b?'#ff4a3d':v>=a?'#f5b400':'';const dm=dm
   const tb=p.tb||0,brk=tb>=BFT?'#ff4a3d':tb>=BFT-150?'#f5b400':'';
   const fw=Math.max(-.6,Math.min(.6,-(p.delta||0)*1.6));
   return{ty,wing,sus,susBad:!!susC,body,eng:eh,brk,fw,key:[ty[0],wing,sus,body,eh,brk,fw.toFixed(2)].join()};}
-function drawTyre(p,dt){const show=TTK&&p&&p.tt!=null&&sess!=='drag';tyCv.hidden=!show;if(!show)return;tyStep(p,dt);
+function tyWear(p){const on=sess==='race'&&wearMode||isSS()&&rly;if(!on)return null;const w=p.wear||0;return WFK&&p.wF!=null?[1-p.wF,1-(p.wR??w)]:[1-w,1-w];}
+const fuCv=$('fuelCv'),fuG=fuCv.getContext('2d');let fuKey='';
+/* β0.173.0 T368 燃料計：残り（タンク FCAP に対する割合）の縦の棒と、走れる周。足りない見込み（fuelWarn）は赤、燃費・全開のモードは上の文字 */
+function fuelHud(p){const show=FUELK&&sess==='race'&&!!p&&p.fuel!=null&&!p.dnf;if(fuCv.hidden===show)fuCv.hidden=!show;if(!show)return;
+  const fr=Math.max(0,Math.min(1,p.fuel/FCAP)),lp=Math.min(99,fuelLaps(p)),wn=fuelWarn(p)>0&&!p.pitReq&&!p.pit,md=p.fmode??1;
+  const key=fr.toFixed(3)+'|'+lp.toFixed(1)+'|'+wn+'|'+md;if(key===fuKey)return;fuKey=key;
+  const g=fuG,W=64,H=168;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,W,H);
+  g.fillStyle='rgba(10,12,16,.62)';g.beginPath();g.roundRect?g.roundRect(0,0,W,H,8):g.rect(0,0,W,H);g.fill();
+  g.textAlign='center';g.textBaseline='middle';g.font='800 17px '+GF;g.fillStyle=md!==1?'#f5c400':'rgba(255,255,255,.8)';g.fillText(md!==1?FMN[md]:'燃料',W/2,14);
+  const x=20,y=28,h=96,c=wn?'#ff4a3d':fr<.15?'#f5b400':'#e8eaee';g.fillStyle='rgba(255,255,255,.14)';g.fillRect(x,y,24,h);g.fillStyle=c;g.fillRect(x,y+h*(1-fr),24,h*fr);
+  g.strokeStyle='rgba(255,255,255,.4)';g.lineWidth=1.5;g.strokeRect(x+.5,y+.5,23,h-1);for(const t of[.25,.5,.75]){g.beginPath();g.moveTo(x,y+h*(1-t));g.lineTo(x+7,y+h*(1-t));g.stroke();}
+  g.fillStyle=c;g.font='italic 800 24px '+GF;g.fillText(lp.toFixed(1),W/2,140);g.fillStyle='rgba(200,206,214,.8)';g.font='700 15px '+GF;g.fillText('周分',W/2,159);}
+function drawTyre(p,dt){const show=TTK&&p&&p.tt!=null&&sess!=='drag';if(tyCv.hidden===show){tyCv.hidden=!show;updEnvHud();}if(!show)return;tyStep(p,dt);
   const [lo,hi]=ttWin(p),tt=p.tt,gk=p.ttK||1,ts=p.t4.map(o=>tt+o);
   const ly=typeof layOf==='function'?layOf(p.ci??0):'F',dvk=(p.fs??0)>.8?'F':(p.fs??0)<.2?'R':'A';
-  const pb=tpBar(p),po=TP0+TPR*(tpMid(p)-25),cs=carSt(p),key=ts.map(t=>Math.round(t)).join(',')+'|'+Math.round(gk*100)+'|'+lo+'|'+ly+dvk+'|'+pb.toFixed(2)+'|'+((p.fsp||0)>.15?1:0)+'|'+cs.key;if(key===tyKey)return;tyKey=key;
+  const wv=tyWear(p),dmP=(dmgMode||isSS()&&rly)&&(p.dmg||0)>=.005?Math.round(p.dmg*100):0; /* β0.173.0 T368 */
+  const pb=tpBar(p),po=TP0+TPR*(tpMid(p)-25),cs=carSt(p),key=(wv?wv.map(v=>Math.round(v*50)).join(','):'-')+'|'+dmP+'|'+ts.map(t=>Math.round(t)).join(',')+'|'+Math.round(gk*100)+'|'+lo+'|'+ly+dvk+'|'+pb.toFixed(2)+'|'+((p.fsp||0)>.15?1:0)+'|'+cs.key;if(key===tyKey)return;tyKey=key;
   const g=tyG,W=124,H=196;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,W,H);
   g.fillStyle='rgba(10,12,16,.62)';g.beginPath();g.roundRect?g.roundRect(0,0,W,H,10):g.rect(0,0,W,H);g.fill();
   g.fillStyle=pb<po-.08?'#7fb2ff':pb>po+.08?'#ff8a7a':'rgba(200,206,214,.85)';g.font='700 18px '+GF;g.textAlign='center';g.textBaseline='middle';g.fillText(pb.toFixed(2)+' bar',73,17);
@@ -5174,9 +5200,11 @@ function drawTyre(p,dt){const show=TTK&&p&&p.tt!=null&&sess!=='drag';tyCv.hidden
    g.fillStyle='#16181d';g.font='800 12px '+GF;g.fillText('E',62,ey+1);}
   const dr=[dvk!=='R',dvk!=='R',dvk!=='F',dvk!=='F'];
   const pos=[[14,42],[88,42],[14,96],[88,96]];
-  for(let i=0;i<4;i++){const [x,y]=pos[i];if(cs.brk){g.fillStyle=cs.brk;g.fillRect(i%2?x-6:x+24,y+8,4,16);} /* β0.168.0 ブレーキの熱（熱い時だけ、タイヤの内側に） */
+  for(let i=0;i<4;i++){const [x,y]=pos[i];g.fillStyle=cs.brk||'rgba(240,242,245,.3)';g.fillRect(i%2?x-6:x+24,y+8,4,16); /* β0.173.0 T368 ブレーキの温度（タイヤの内側にいつも。ふつう＝薄い白・熱い＝黄→赤） */
+    if(wv){const v=Math.max(0,Math.min(1,wv[i<2?0:1])),bx=i%2?x+25:x-8,c=v>.5?'#3ddc6c':v>.28?'#f5b400':'#ff4a3d';g.fillStyle='rgba(255,255,255,.16)';g.fillRect(bx,y,5,32);g.fillStyle=c;g.fillRect(bx,y+32*(1-v),5,32*v);} /* β0.173.0 T368 タイヤの残り（外側の棒） */
     g.save();g.translate(x+11,y+16);if(i<2)g.rotate(cs.fw); /* β0.168.0 前輪は実際の向き（k.delta はハンドルと逆の符号） */
     g.fillStyle=ttCol(ts[i],lo,hi);g.beginPath();g.roundRect?g.roundRect(-11,-16,22,32,5):g.rect(-11,-16,22,32);g.fill();if(dr[i]){g.strokeStyle='#f2f3f5';g.lineWidth=3;g.stroke();}if(i<2&&(p.fsp||0)>.15){g.fillStyle='#16181d';g.fillRect(-9,6,18,5);}g.restore();} /* β0.138.0 フラットスポット：前輪の下に黒い帯 */
+  if(dmP){const ey={F:50,FM:72,RM:96,R:121}[ly]||50,yy=ey===72?94:ey===96?76:85;g.font='800 12px '+GF;g.fillStyle='rgba(10,12,16,.85)';g.fillRect(44,yy-8,36,16);g.fillStyle=dmP>=50?'#ff4a3d':dmP>=20?'#f5b400':'#e8eaee';g.fillText(dmP+'%',62,yy+1);} /* β0.173.0 T368 車体のダメージ */
   const col=ttCol(tt,lo,hi);g.fillStyle=col;g.font='italic 800 30px '+GF;g.fillText(Math.round(tt)+'°C',W/2,154);
   g.font='700 17px '+GF;if(gk<.995){g.fillStyle=tt<lo?'#7fb2ff':'#ff8a7a';g.fillText((tt<lo?'冷たい ':'熱い ')+'−'+Math.round((1-gk)*100)+'%',W/2,182);}
   else{g.fillStyle='rgba(200,206,214,.7)';g.fillText(lo+'〜'+hi+'°C',W/2,182);}}
@@ -5565,7 +5593,7 @@ function tiltStart(){const note=$('tiltNote');document.body.classList.toggle('ti
    踏み込み pedM：0 すぐ（今まで）・1 ふつう・2 ゆっくり。押している長さで pedA・pedB が増え（PED_T 秒でいっぱい）、離すと 2.5倍の速さで戻る。保存は popkart_ctl（ms・mss・pd） */
 let msOn=0,msSens=1,msLk=0,pedM=0,pedA=0,pedB=0; /* β0.165.0 T337 msLk＝カーソルを固定（既定は使わない） */const MS_FULL=[.85,.6,.4],MS_DZ=.035,PED_T=[[0,0],[.3,.15],[.6,.3]];
 const ms={x:0,seen:false,lockMe:false,hud:false,req:false,fail:false,noT:0};
-function ctlSave(){try{const o={ms:msOn,mss:msSens,ml:msLk,pd:pedM,pv:pnVoiceSel,pp:pnPitch,ip:inpOn};if(!msOn&&msSens===1&&!msLk&&!pedM&&!pnVoiceSel&&!pnPitch&&inpOn===(isTouch?0:1))localStorage.removeItem('popkart_ctl');else localStorage.setItem('popkart_ctl',JSON.stringify(o));}catch(_){}}
+function ctlSave(){try{const o={ms:msOn,mss:msSens,ml:msLk,pd:pedM,pv:pnVoiceSel,pp:pnPitch,ip:inpOn,isd:inpSd};if(!msOn&&msSens===1&&!msLk&&!pedM&&!pnVoiceSel&&!pnPitch&&inpOn===(isTouch?0:1))localStorage.removeItem('popkart_ctl');else localStorage.setItem('popkart_ctl',JSON.stringify(o));}catch(_){}}
 try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o){msOn=o.ms?1:0;if(o.mss!=null)msSens=Math.max(0,Math.min(2,o.mss|0));msLk=o.ml?1:0;pedM=Math.max(0,Math.min(2,(o.pd|0)));if(typeof o.pv==='string')pnVoiceSel=o.pv;pnPitch=Math.max(0,Math.min(2,o.pp|0));}}catch(_){}
 const msAct=()=>!!msOn&&!isTouch&&!autoPlay&&(state==='race'||state==='countdown'||state==='finished')&&$('bugScreen').hidden;
 addEventListener('mousemove',e=>{if(!msOn||isTouch)return;const hw=innerWidth/2;if(document.pointerLockElement===canvas)ms.x=Math.max(-hw,Math.min(hw,ms.x+(e.movementX||0)));else if(msLk&&!ms.fail)return;else ms.x=e.clientX-hw;ms.seen=true;});
@@ -5580,28 +5608,29 @@ addEventListener('blur',msUnlock);addEventListener('pagehide',msUnlock);document
 document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.x=0; /* β0.166.0 T342 */ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(state==='race'||state==='countdown')pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
 /* β0.165.0 T336 入力の表示（#inpCv）：inpC＝自分の車に実際に入った操作。ハンドル（入れた量で輪が回る）・前輪（k.delta／その速さで切れる最大）・
    アクセル（thr）・ブレーキ（brk）の棒・サイドブレーキ。TC（アシストが駆動を絞った＝k.wheelspin）・空転（アシスト「なし」）・ABS（k.absN が増えた）・ロック（k.locked）。保存は popkart_ctl の ip（既定は PC 出す・スマホ 出さない） */
-let inpOn=isTouch?0:1,inpC=null;const inpS={key:'',abs:0,absT:0};
-try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o&&o.ip!=null)inpOn=o.ip?1:0;}catch(_){}
+let inpOn=isTouch?0:1,inpC=null,inpSd=0; /* β0.173.0 T367 inpSd：サイドブレーキの位置 0＝左（右ハンドル）・1＝右（左ハンドル） */const inpS={key:'',abs:0,absT:0};
+try{const o=JSON.parse(localStorage.getItem('popkart_ctl')||'null');if(o&&o.ip!=null)inpOn=o.ip?1:0;if(o&&o.isd!=null)inpSd=o.isd?1:0;}catch(_){}
 function inpHud(dt){const cv=$('inpCv');if(!cv)return;const k=typeof player==='function'?player():null;
   const on=!!inpOn&&!!k&&!!inpC&&(state==='race'||state==='countdown'||state==='finished'||state==='paused')&&!k.dnf;if(cv.hidden===on)cv.hidden=!on;if(!on)return;
   const c=inpC,st=Math.max(-1,Math.min(1,c.steer||0)),dMax=.5/(1+Math.abs(k.u)/26),fw=Math.max(-1.2,Math.min(1.2,-(k.delta||0)/dMax)); /* β0.166.2 k.delta はハンドルと逆の符号 */
   const th=c.accel?Math.max(0,Math.min(1,c.thr??1)):0,br=c.brake?Math.max(0,Math.min(1,c.brk??1)):0,hb=!!c.drift;
   if((k.absN||0)!==inpS.abs){inpS.abs=k.absN||0;inpS.absT=.15;}else inpS.absT=Math.max(0,inpS.absT-dt);
   const tcA=ASSIST[assistLv].tc<1||k.aiDriven,ws=k.wheelspin&&th>0?(tcA?1:2):0,ab=inpS.absT>0&&br>0,lk=!!k.locked;
-  const key=[st.toFixed(2),th.toFixed(2),br.toFixed(2),hb,ws,ab,lk].join();if(key===inpS.key)return;inpS.key=key;
+  const key=[st.toFixed(2),th.toFixed(2),br.toFixed(2),hb,ws,ab,lk,inpSd].join();if(key===inpS.key)return;inpS.key=key;
   const g=cv.getContext('2d'),W=cv.width,u=W/188;g.setTransform(u,0,0,u,0,0);g.clearRect(0,0,188,84);
   g.fillStyle='rgba(12,14,18,.6)';g.beginPath();g.roundRect?g.roundRect(0,0,188,84,6):g.rect(0,0,188,84);g.fill();
   g.font='700 11px sans-serif';g.textAlign='center';g.textBaseline='middle';const lab=(t,x,on)=>{g.fillStyle=on||'rgba(255,255,255,.75)';g.fillText(t,x,76);};
   // サイドブレーキ（β0.168.0 T366 いちばん左。右ハンドルの車では運転席の左にある）
-  g.save();g.translate(15,44);g.rotate(hb?-.55:0);g.fillStyle=hb?'#ff9a1f':'rgba(255,255,255,.55)';g.fillRect(-3,-26,6,30);g.beginPath();g.arc(0,-26,5.5,0,Math.PI*2);g.fill();g.restore();lab('サイド',15,hb?'#ff9a1f':0);
+  const R=inpSd,xS=R?171:15,xB=R?14:53,xA=R?61:100,xW=R?122:160; /* β0.173.0 T367 左ハンドルはサイドがいちばん右 */
+  g.save();g.translate(xS,44);g.rotate(hb?(R?.55:-.55):0);g.fillStyle=hb?'#ff9a1f':'rgba(255,255,255,.55)';g.fillRect(-3,-26,6,30);g.beginPath();g.arc(0,-26,5.5,0,Math.PI*2);g.fill();g.restore();lab('サイド',xS,hb?'#ff9a1f':0);
   // 棒（ブレーキ・アクセル。実際のペダルと同じ並び）
   const bar=(x,v,col,lb,lamp,lc)=>{g.fillStyle='rgba(255,255,255,.12)';g.fillRect(x,8,20,56);g.fillStyle=col;g.fillRect(x,8+56*(1-v),20,56*v);g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=1;g.strokeRect(x+.5,8.5,19,55);
     lab(lb,x+10);if(lamp){g.fillStyle=lc;g.fillRect(x-6,26,32,15);g.fillStyle='#000';g.font='800 11px sans-serif';g.fillText(lamp,x+10,34);g.font='700 11px sans-serif';}};
-  bar(53,br,'#e8342a','ブレーキ',lk?'ロック':ab?'ABS':'',lk?'#ff6a3d':'#5fb4ff');
-  bar(100,th,'#3cd070','アクセル',ws===1?'TC':ws===2?'空転':'',ws===1?'#ffcf33':'#ff6a3d');
+  bar(xB,br,'#e8342a','ブレーキ',lk?'ロック':ab?'ABS':'',lk?'#ff6a3d':'#5fb4ff');
+  bar(xA,th,'#3cd070','アクセル',ws===1?'TC':ws===2?'空転':'',ws===1?'#ffcf33':'#ff6a3d');
   // ハンドル（入れた量で回る）
-  g.save();g.translate(160,37);g.rotate(st*2.1);g.strokeStyle='#fff';g.lineWidth=5;g.beginPath();g.arc(0,0,24,0,Math.PI*2);g.stroke();
-  g.lineWidth=4;g.beginPath();g.moveTo(-23,0);g.lineTo(23,0);g.moveTo(0,0);g.lineTo(0,23);g.stroke();g.fillStyle='#e8342a';g.fillRect(-3,-28,6,9);g.restore();lab('ハンドル',160);}
+  g.save();g.translate(xW,37);g.rotate(st*2.1);g.strokeStyle='#fff';g.lineWidth=5;g.beginPath();g.arc(0,0,24,0,Math.PI*2);g.stroke();
+  g.lineWidth=4;g.beginPath();g.moveTo(-23,0);g.lineTo(23,0);g.moveTo(0,0);g.lineTo(0,23);g.stroke();g.fillStyle='#e8342a';g.fillRect(-3,-28,6,9);g.restore();lab('ハンドル',xW);}
 function msHud(){const on=msAct()&&ms.seen;if(on!==ms.hud){ms.hud=on;document.body.classList.toggle('msd',on);}
   if((!on||!msLockOk())&&document.pointerLockElement)msUnlock();if(!on)return;
   const f=MS_FULL[msSens]||.6,bar=$('msBar');if(!bar)return;const p=x=>(50+50*Math.max(-1,Math.min(1,x))).toFixed(1)+'%';
@@ -5684,7 +5713,7 @@ function syncPreset(){const e=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn&
 function setPreset(h){wearMode=h?1:0;dmgMode=h?2:1;assistLv=h?1:0;judgeOn=h;aiLv=h?2:1;aiAdj=aiLv;aiAuto=h?0:1;if(h){if(gridMode===3)gridMode=0;}else gridMode=3;markSeg('jgSeg',h?1:0);markSeg('wearSeg',wearMode);markSeg('dmgSeg',dmgMode);markSeg('asSeg',assistLv);markSeg('aiSeg',aiLv);markSeg('aaSeg',aiAuto);markSeg('gridSeg',gridMode);aiNote();if(!h)recSet();saveSettings();syncPreset();} /* β0.139.0 T264 */
 $('presetSeg').querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>setPreset(b.dataset.v==='1')));
 for(const id of['asSeg','wearSeg','dmgSeg','aiSeg','aaSeg','gridSeg'])$(id).addEventListener('click',()=>setTimeout(syncPreset,0));segWire('gridSeg',v=>gridMode=v,gridMode);segWire('jgSeg',v=>{judgeOn=!!v;syncPreset();},judgeOn?1:0);segWire('tlSeg',v=>tlOn=!!v,tlOn?1:0);segWire('aiSeg',v=>{aiLv=v;aiAdj=v;aiNote();},aiLv);segWire('aaSeg',v=>{aiAuto=v;if(v)aiAdj=aiLv;aiNote();},aiAuto);segWire('rwSeg',v=>{rwSel=v;rwVis();},rwSel);segWire('soSeg',v=>spotOn=v,spotOn);segWire('radSeg',v=>radioOn=!!v,radioOn?1:0);segWire('vbSeg',v=>vibOn=v,vibOn);segWire('rlSeg',v=>{rlN=v;rlSub();},rlN);rlSub();segWire('pnSeg',v=>{pnMode=v;pnReset();},pnMode);segWire('pnwSeg',v=>{pnAll=v;pnReset();},pnAll);
-segWire('msSeg',v=>{msOn=v?1:0;ms.seen=false;ctlSave();},msOn);segWire('mssSeg',v=>{msSens=v;ctlSave();},msSens);segWire('mlSeg',v=>{msLk=v?1:0;ms.fail=false;if(!v)msUnlock();ctlSave();},msLk);segWire('pedSeg',v=>{pedM=v;ctlSave();},pedM);segWire('ipSeg',v=>{inpOn=v?1:0;inpS.key='';ctlSave();},inpOn); /* β0.165.0 T334 */
+segWire('msSeg',v=>{msOn=v?1:0;ms.seen=false;ctlSave();},msOn);segWire('mssSeg',v=>{msSens=v;ctlSave();},msSens);segWire('mlSeg',v=>{msLk=v?1:0;ms.fail=false;if(!v)msUnlock();ctlSave();},msLk);segWire('pedSeg',v=>{pedM=v;ctlSave();},pedM);segWire('isdSeg',v=>{inpSd=v?1:0;inpS.key='';ctlSave();},inpSd);segWire('ipSeg',v=>{inpOn=v?1:0;inpS.key='';ctlSave();},inpOn); /* β0.165.0 T334 */
 segWire('pnpSeg',v=>{pnPitch=v;pnV=null;ctlSave();},pnPitch);pnvFill();$('pnvSel').addEventListener('change',e=>{pnVoiceSel=e.target.value||'';pnV=null;ctlSave();pnTry();});$('pnvTry').addEventListener('click',()=>{initAudio();pnTry();}); /* β0.165.0 T335 */
 const CAMN=['後方','車載','遠め','中継','正面望遠','運転席'],CAMC=[0,1,5,2,3,4],camNext=m=>CAMC[(CAMC.indexOf(m)+1)%CAMC.length]; /* T32 運転席（5）は車載の次 */function setCam(v){camMode=v;$('camBtn').textContent='視点 '+CAMN[v];if(watchCam!=null&&state!=='title')watchCam=null;saveSettings();}
 function setMir(v){mirOn=v;$('mirBtn').textContent='ミラー '+(v?'ON':'OFF');$('mirBtn').setAttribute('aria-pressed',String(v));saveSettings();}
@@ -6058,10 +6087,10 @@ function showResults(){msUnlock();pnHush();retT=0;$('svBtn').hidden=true;if(sess
   resultCamStart();
   const f0=finishOrder[0],lt=f0&&!f0.ret?f0.finishTime+(f0.pen||0):null; // 先頭とのタイム差（β0.55.0 T180⑭）
   const cpos={},crk=new Map();finishOrder.forEach(k=>{cpos[k.cls]=(cpos[k.cls]||0)+1;crk.set(k,cpos[k.cls]);});
-  const setTxt=k=>k.isPlayer?'':`<br><span style="opacity:.6;font-size:.72em">${drvLabel(k.ci||0,DRV_KEYS.indexOf(k.drv))}・${carName(k.ci||0)}・ギア${['加速寄り','標準','最高速寄り'][k.gi??1]}・ウイング${['少なめ','標準','多め'][k.wi??1]}・タイヤ ${TYR[k.ty||0].n}・${SETE[k.en??1].n}${(k.sui??1)!==1?'・サス'+SETSU[k.sui].n:''}${(k.rhi??1)!==1?'・車高'+SETRH[k.rhi].n:''}${k.tq&&k.tq.tb?'・'+TKS[k.tki??1].n+(k.ic===0?'（IC なし）':''):''}</span>`; // T191 CPU のセッティング
+  const setTxt=k=>k.isPlayer?'':(t=>`<span class="rsp" title="${t}">${t}</span>`)(`${drvLabel(k.ci||0,DRV_KEYS.indexOf(k.drv))}・${carName(k.ci||0)}・ギア${['加速寄り','標準','最高速寄り'][k.gi??1]}・ウイング${['少なめ','標準','多め'][k.wi??1]}・タイヤ ${TYR[k.ty||0].n}・${SETE[k.en??1].n}${(k.sui??1)!==1?'・サス'+SETSU[k.sui].n:''}${(k.rhi??1)!==1?'・車高'+SETRH[k.rhi].n:''}${k.tq&&k.tq.tb?'・'+TKS[k.tki??1].n+(k.ic===0?'（IC なし）':''):''}`); // T191 CPU のセッティング
   const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${mixSel?`<small class="cl ${clFast(k)?'gt':''}">${k.cls} ${crk.get(k)}位</small>`:''}${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:.78em">${trFull(TRAITS[k.dr.tr??2])}</span>${setTxt(k)}${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime-raceT0+(k.pen||0))+(k.est?'*':'')}${k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${i&&!k.ret&&lt!=null?'+'+(k.finishTime+(k.pen||0)-lt).toFixed(3):''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}${k.ipt||k.pen?`<br><small style="color:var(--gold);cursor:help" title="${(k.jh||[]).map(e=>e.lap+'周目 '+e.txt).join('\n').replace(/"/g,'')}">${k.ipt?'IP '+(+k.ipt.toFixed(1)):'違反'} ⓘ</small>`:''}</td></tr>`).join('');
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">タイム</td><td class="t">差</td><td class="t">ベストラップ</td><td class="t">接触</td></tr>'+rows+((finishOrder.some(k=>k.est&&!k.ret)||karts.some(k=>k.ipt))?'<tr class="ft"><td></td><td colspan="5" style="font-size:11px;color:var(--muted);padding-top:6px">'+(finishOrder.some(k=>k.est&&!k.ret)?'* ＝ゴール前の見込みのタイム　':'')+(karts.some(k=>k.ipt)?'IP＝インシデントポイント（軽い接触は0.5点。2点で警告、4点で＋5秒、6点でドライブスルー）':'')+'</td></tr>':''); /* β0.97.0 */
-  {const ft=$('resultTable').querySelector('tr.ft');$('resNote').textContent=ft?ft.textContent.trim():'';if(ft)ft.remove();} /* T295② 注は表の外 */
+  {const ft=$('resultTable').querySelector('tr.ft');$('resNote').textContent=ft?ft.textContent.trim():'';$('resNote').classList.toggle('ftn',!!ft);if(ft)ft.remove();} /* T295② 注は表の外 */
   const r=finishOrder.indexOf(player())+1,pcr=crk.get(player());
   $('resultTitle').textContent=mixSel&&!player().ret?(CC[player().kc??ccChoice].name+'クラス '+(pcr===1?'優勝！':pcr+'位')+'（総合 '+r+'位）')+(rwCount?`（巻き戻し ${rwCount}回）`:''):(player().ret?'リタイア（大クラッシュ）':r===1?'優勝！（'+(isForm()?'フォーミュラ・':'')+clsName()+'クラス）':(r<=3?r+'位 表彰台！':r+'位'))+(rwCount?`（巻き戻し ${rwCount}回）`:'');
   {const adj=aiAdjust();if(adj)$('resultTitle').textContent+=adj;}
@@ -6197,7 +6226,7 @@ function dtAfter(p,c,win){$('dtNext').hidden=true;if(!dtour||autoPlay){$('againB
   {const sm=end?(win&&rd===2?'大会：優勝！':'大会：'+TRN[rd]+'で敗退')+'　賞金 ¥'+pr.toLocaleString()+'（合計 ¥'+cashGet().toLocaleString()+'）':'大会：'+TRN[rd]+' 勝ち → 次は '+TRN[rd+1];const n=$('resNote');n.textContent=sm+(n.textContent?'　／　'+n.textContent:'');}
   if(end){if(win&&rd===2)telop('CHAMPION','0-400m 勝ち抜き 優勝　賞金 ¥'+pr.toLocaleString(),'purple');dtour=null;}
   $('resultTitle').textContent='【'+TRN[rd]+'】'+$('resultTitle').textContent;}
-function showDrag(){$('resNote').textContent='';state='results';resultCamStart();$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=true;
+function showDrag(){$('resNote').textContent='';$('resNote').classList.remove('ftn');state='results';resultCamStart();$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=true;
   const p=player(),c=karts.find(k=>!k.isPlayer);const tot=k=>k&&k.dm.t400!=null?k.dm.t400:1e9;
   const cell=(k,key)=>{if(!k)return'—';const m=k.dm;if(key==='rt')return m.rt==null?'—':m.foul&&!m.cl?`<b class="bad">フライング</b>`:m.rt.toFixed(3);
     if(key==='trap')return m.trap!=null?(m.trap*3.6).toFixed(1)+' km/h':'—';if(key==='tot')return m.t400!=null?m.t400.toFixed(3):'—';const v=m[key];return v==null?'—':(v-(m.launch??0)).toFixed(3);};
@@ -6396,7 +6425,7 @@ let hideHint=1;try{const o=JSON.parse(localStorage.getItem('popkart')||'{}');if(
 function setHint(v){hideHint=v?1:0;document.body.classList.toggle('hidehint',!!hideHint);const b=$('hintBtn');b.textContent=hideHint?'説明を出す':'説明を隠す';b.setAttribute('aria-pressed',String(!!hideHint));$('setup').querySelectorAll('.label.open').forEach(l=>l.classList.remove('open'));}
 $('hintBtn').addEventListener('click',()=>{setHint(!hideHint);saveSettings();});setHint(hideHint);
 /* β0.155.0 T323 GARAGE の行の「HOW TO ›」で、操作方法のその項目へ（閉じると GARAGE のその行に戻る）。キーは H、パッドは Y */
-const QJ={'カテゴリー':'フォーミュラ','車種':'車ごとの違い','クラス':'車重','マイカラー':'マイカラー','駆動方式':'セッティング','ギア比':'セッティング','ウイング':'セッティング','ブレーキバランス':'[／]','タイヤ':'タイヤの減り','タイヤの幅':'セッティング','タイヤの空気圧':'タイヤの空気圧','サスペンション':'セッティング','車高':'セッティング','スタビライザー':'セッティング','デフ':'セッティング','エンジン特性':'エンジン','過給機（ターボのエンジンだけ）':'エンジン','冷却（ラジエーター）':'セッティング','ブレーキ冷却':'セッティング','変速':'手動変速',
+const QJ={'入力の表示':'入力の表示','サイドブレーキの位置':'サイドブレーキの位置','カテゴリー':'フォーミュラ','車種':'車ごとの違い','クラス':'車重','マイカラー':'マイカラー','駆動方式':'セッティング','ギア比':'セッティング','ウイング':'セッティング','ブレーキバランス':'[／]','タイヤ':'タイヤの減り','タイヤの幅':'セッティング','タイヤの空気圧':'タイヤの空気圧','サスペンション':'セッティング','車高':'セッティング','スタビライザー':'セッティング','デフ':'セッティング','エンジン特性':'エンジン','過給機（ターボのエンジンだけ）':'エンジン','冷却（ラジエーター）':'セッティング','ブレーキ冷却':'セッティング','変速':'手動変速',
  '周回数':'長いレース','CPU の強さ':'難易度','強さの自動調整':'難易度','巻き戻し':'R','スタート位置':'予選','スタート方式':'スタート','混走クラス':'混走クラス','天気':'天気','RALLY SS の本数':'サービスパーク','路面':'路面','タイヤ摩耗':'タイヤの減り','スタートの燃料':'燃料','ダメージ':'ダメージ','大クラッシュ':'大クラッシュ','セーフティカー・FCY':'セーフティカー・FCY','赤旗':'赤旗','ピットレーンの速度':'ピット','審判':'審判','コース外ペナルティ':'コース外',
  'スタート時の視点':'C','アシスト':'アシスト','スタート時のオート運転':'O','走行ライン':'L','運転の練習表示':'練習表示','バックミラー':'M','ピット無線':'ピット無線','振動':'ゲームパッド','ペースノート':'ペースノート','ペースノートを出す所':'ペースノート','BGM の雰囲気':'B','BGM の音量':'B','スマホのハンドル':'スマホ','距離':'0-400m','ツリー':'0-400m','相手':'0-400m'};
 const qjN=t=>String(t||'').replace(/s/g,'');
