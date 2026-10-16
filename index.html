@@ -954,7 +954,7 @@ body:not(.touch) #mnBtn{display:none!important}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.169.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.170.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1442,6 +1442,7 @@ let DSAY=4,BLIPR=900,BLIPT=.25; // T97：DSAY＝旋回中は落とさない横�
 // T105 エンジンレスポンス：ERQ＝1で有効。erpm＝エンジン自体の回転（クラッチが切れている間＝停車・発進・変速中は車速から離れて、アクセルで素早く上がり、離すと素早く下がる）。ERU・ERD＝上がる・下がる速さ（回転/秒）、ERL＝停車でアクセル全開の時に上がる量、ERC＝クラッチが滑る速さ（m/s、これ未満はエンジンが車速から離れる）
 // T101 DSP＝ブレーキで減らす速さのうち何割まで減ったら先落としを始めるか（0で従来）
 // T95 TBW＝ターボの過給圧が足りない時に落ちるトルクの割合、OHT/OHF/OHL＝水温がこれを超えると OHF℃かけて出力が最大 OHL 落ちる、OIT＝油温の同じ（OHF℃かけて OHL）、COW＝雨で下がる水温、PTC＝ピットで冷える速さ
+let DKD=1,DKR=7400,DKG=.06,DKAY=6,DKT=.08; // T370 キックダウン（オート変速）：アクセルを踏んでいる時、1段下げると回転が DKR 以下に収まり、駆動力（ギア比×トルク）が DKG 割より多く増えるなら落とす。旋回中（横加速度 DKAY 超）は落とさない。DKT＝つなぎ直す間（駆動が抜ける秒）。DKD＝0 で前の版
 let DSMIN=4; // 先落としは、先のコーナーの速さまでまだ DSMIN（m/s）より多く減らす時だけ（すでにコーナーの速さまで落ちていて、ほとんど減速しない時には落とさない）（ほとんど減速しない緩いコーナーでは落とさない。0で従来。T107）
 let ERQ=1,ERU=14000,ERD=9000,ERL=3600,ERC=12,DSP=.5,TBW=.25,OHT=110,OHF=15,OHL=.25,OIT=132,COW=8,PTC=.3;
 const rpmOf=p=>(p.erpm??p.rpm)+(p.blip>0?BLIPR*p.blip:0); // 表示・エンジン音用の回転（物理には使わない）
@@ -3224,6 +3225,9 @@ function stepKart(k,dt,ctl){
   // 次のコーナーでまた落とすことになるギアには上げない（複合コーナーで上げ下げを繰り返さない）。回転が REDLINE 近くまで来たら上げる
   if(k.rpm+(LSS&&k.fmode===0&&sess==='race'&&state==='race'?LSS:0)>(WSU&&k.gear<WSG&&ENV.wet>.2?SHIFT_UP-WSU*Math.min(1,(ENV.wet-.2)/.5):SHIFT_UP)&&k.gear<TOPG&&k.shiftT<=0&&!k.manual&&(k.gear+1<=gtv||k.rpm>REDLINE-150)){k.gear++;k.shiftT=.14;if(k.isPlayer&&ctl.accel){sfx('shift');camKick=.3;}}
   else if(k.rpm<SHIFT_DN&&k.gear>0&&!k.manual){k.gear--;}
+  // T370 キックダウン：立ち上がりなどで回転が落ちて力の出ない所にいたら、1段下げて力の出る回転へ（実際のレースのように回転を保つ）
+  else if(DKD&&!k.manual&&sess!=='drag'&&k.gear>0&&k.shiftT<=0&&(k.dsT||0)<=0&&ctl.accel&&!ctl.brake&&(ctl.thr??1)>.6&&k.u>8&&!(DKAY>0&&Math.abs(k.ay||0)>DKAY)){
+    const r1=Math.abs(k.u)*RATIO[k.gear-1]*K;if(r1<=DKR&&RATIO[k.gear-1]*torque(r1,k.tq)>(1+DKG)*RATIO[k.gear]*torque(k.rpm,k.tq)){k.gear--;k.shiftT=DKT;k.dsT=DSCD;if(BLIPR>0){k.blip=1;sfx('blip',k);}}}
   // ブレーキ・アクセルオフ中は、ひとつ下のギアでも回転が上がりすぎなければ先に落とす（エンジンブレーキ、出口で力のある回転域に備える）
   // 回転が SHIFT_BK まで下がってきた時だけ、1段ずつ DSCD 秒あけて落とす（一瞬抜いただけで連続して落ちない。落とした後は力のある回転域に入る）
   if(k.dsT>0)k.dsT-=dt;
@@ -3401,7 +3405,7 @@ let tlOn=true,fastLap=null;
 /* ================= モード（レース・タイムアタック・予選） ================= */
 let evSet=null,evCls=null,CSR=1;let sess='race',modeSel=0,gridMode=0,gridOrder=null,evSkill=null,qualiRes=null,lastPc=null,gridInfo=null; // gridInfo＝予選のタイム順（決勝の最初に「予選 N位」と出す。T153）
 const solo=()=>sess!=='race';
-const QREF=[63.98,58.95,55.00,58.42,50.47,81.88].map((v,c)=>+(v*crLap(c)).toFixed(2)) /* T282 コースの形の比 */ /* β0.118.0 ラインを広げて 1600cc ×0.972・2000cc ×0.965・ターボ ×0.961（従来 70.0・67.7・63.2） */,QK=[.6,.5,.5,.5,.5,.6]; /* T207 コースが長くなった分（測定で 1600cc ×1.157・2000cc ×1.167・ターボ ×1.13。従来 60.5・58.0・55.9） */ // CPU の予選タイムの目安（強さ1で1周の秒数、強さによる伸び）
+const QREF=[64.07,58.92,55.03,58.45,50.37,81.23].map((v,c)=>+(v*crLap(c)).toFixed(2)) /* T282 コースの形の比 */ /* β0.118.0 ラインを広げて 1600cc ×0.972・2000cc ×0.965・ターボ ×0.961（従来 70.0・67.7・63.2） */,QK=[.6,.5,.5,.5,.5,.6]; /* T207 コースが長くなった分（測定で 1600cc ×1.157・2000cc ×1.167・ターボ ×1.13。従来 60.5・58.0・55.9） */ // CPU の予選タイムの目安（強さ1で1周の秒数、強さによる伸び）
 function newEvent(){if(!bopMode&&!isForm()&&mixSel)mixSel=0;if(mixSel&&mixSel-1===ccChoice)mixSel=MXD[ccChoice]+1;evCar=CPU_CAR.slice();if(CPC){const p0=[...Array(CARS.length).keys()].filter(c=>(CPR||layOf(c)!=='R')&&clsOK(c)),p=p0.length?p0:[0];let o=[];while(o.length<8){const q=p.slice();for(let i=q.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[q[i],q[j]]=[q[j],q[i]];}o=o.concat(q);}evCar=o.slice(0,8); /* β0.143.0 T313 クラスに出られる車から */}evDrv=CPU_DRV.slice();if(DSHUF)for(let i=7;i>0;i--){const j=Math.random()*(i+1)|0;[evDrv[i],evDrv[j]]=[evDrv[j],evDrv[i]];}for(let d=0;d<8;d++){const a=drvAllowed(evCar[d]);if(!a.includes(evDrv[d]))evDrv[d]=a[Math.random()*a.length|0];} /* T221 */evSkill={};for(let d=0;d<8;d++){const P=aiP();evSkill[d]=P.lo+Math.random()*(P.hi-P.lo);}
   // T191：CPU のギア比・ウイング・エンジン特性をレースごとにくじ引き（直線が速い車とコーナーが速い車が混ざる）。CSR＝0で全員標準
   evSet={};for(let d=0;d<8;d++){const r=()=>CSR?Math.random()*3|0:1;evSet[d]={g:r(),w:r(),e:r(),tk:CSR?Math.random()*5|0:1,ic:CSR&&Math.random()<.15?0:1,su:1,rh:1};}
