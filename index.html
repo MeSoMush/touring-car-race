@@ -1059,7 +1059,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.188.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.188.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1575,6 +1575,9 @@ let RS4F=.5,RS4P=1; // T287 路面の種類での CPU の 4WD：RS4F＝前輪の
 let roadSurf=0,AIMUS=.1,RSE=1.15;const RICE=3,RICE_TO=2; /* β0.183.1 T392 RICE＝氷、RICE_TO＝レースで氷を選んでいた時に走る路面（雪） */ // AIMUS＝路面の種類でグリップが低い時の CPU の余裕（舗装との比の AIMUS 乗をさらに掛ける。雨の AIMUP と同じ考え方。.6 だと雪で1周 約1.8倍・.1 で約1.55倍）。RSE＝1周の見積もりの比の補正（CPU は滑る分だけ見積もりより遅い）
 const KA=1.3,KB=1.4,KL=2.7,IZ=1.9,HCG=.1;let YDK=4,YD0=.12,LOK=.55,PWS=.75,BRKG=1.2,YFMIN=.5,DMGG=.25,DMGP=.35,WETR=.42,LTX=1.2,RBR=.6,RG=1.4,TRLB=.3,AITB=.35,AIBL=10,FTH=0,FTM=.25,PSL=0,PSL_L=140,PSL_D=40; // T125：PWS＝出力の倍率（従来1。0-200が約9.5→約12秒）、BRKG＝ブレーキの強さG（従来1.9→1.7→1.4→1.2。200→0 が約120m。LOK＝FF のアクセルオフで荷重が後輪から抜ける倍率〔T139〕。T138：荷重移動の上限 LTX 2.6→1.2・後輪グリップ RG 1.25→1.4 と合わせて、ブレーキ中に切ってもスピンしない）、YFMIN＝旋回中に駆動力を受けた前輪の旋回力の下限（グリップ円の割合。従来0）、DMGG・DMGP＝ダメージ100%でのグリップ・出力の低下（従来 .16・.25）、WETR＝濡れで路面グリップが落ちる割合。 AIBL＝CPU が曲がる手前で減速を終えておく余裕（m。T78）、 TRLB＝キーボードでアクセルとブレーキを同時に押した時のブレーキの強さ、AITB＝CPU（FF車）の同時ブレーキ
 const RATIO=[3.1,2.25,1.75,1.42,1.18,1.0],SHIFT_UP=8200,SHIFT_DN=4300,REDLINE=8700;
+/* β0.188.1 T398 惰性を減らす：ECV＝手前でアクセルを戻すのは、戻すだけで間に合うコーナー（落とす速さが ECV m/s まで）だけ（0 で前の版＝全部のコーナー）。ブレーキが要るコーナーは直前まで踏んでブレーキへ踏み替える。
+   ECW＝濡れた路面（ENV.wet が ECW 以上）は前の版のまま（手前で戻して惰性で姿勢を整える。戻さないと雨でスピンが増えた） */
+let ECV=8,ECW=.4;
 let EBF=3,EBR=.5,ECA=7,EBK=1,SHIFT_BD=7800,SHIFT_BK=5800,DSCD=.5,LFT=.2; // EBF＝エンジンブレーキの強さ（m/s²、いちばん低いギアで高回転の時。0で従来の弱い式）、EBR＝回転0でも残る分、ECA＝CPU がアクセルを戻して惰性で減速する想定の減速度（m/s²。0で使わない）
 let DSAY=4,BLIPR=900,BLIPT=.25; // T97：DSAY＝旋回中は落とさない横加速度のしきい値（m/s²、0で無効）、BLIPR＝落とした瞬間に回転が上がって戻る量（表示と音だけ。0で無効）、BLIPT＝その秒数
 // T105 エンジンレスポンス：ERQ＝1で有効。erpm＝エンジン自体の回転（クラッチが切れている間＝停車・発進・変速中は車速から離れて、アクセルで素早く上がり、離すと素早く下がる）。ERU・ERD＝上がる・下がる速さ（回転/秒）、ERL＝停車でアクセル全開の時に上がる量、ERC＝クラッチが滑る速さ（m/s、これ未満はエンジンが車速から離れる）
@@ -4168,7 +4171,7 @@ function aiControl(k,dt){let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++
   const rsF=rsCur?(k._rsF&&k._rsT===(k.ty||0)&&k._rsW===wgm&&k._rsR===RSF&&k._rsA===AIMUS?k._rsF:(k._rsT=k.ty||0,k._rsW=wgm,k._rsR=RSF,k._rsA=AIMUS,k._rsF=RSF.map((r,i)=>r.mu*TYR[k.ty||0].ms[i]*Math.pow(r.mu,AIMUS)*(1-(1-wgm)*r.wk)/wgm))):null; // T283 路面の種類（舗装は 1）。β0.128.0 T297⑥ 変わった時だけ作り直す
   const sgK=suG(k,RSF[RSI[k.idx]]); /* T286 */
   let vLift=1e9;const eca=ECA>0; /* β0.128.0 T297⑥ vLift も同じループで */
-  let hcL=0;for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);if(HCK&&TERK&&sess!=='drag'){const f=1+u*u*TVK[i]/G;if(f<1)hcL+=(1-Math.max(TNMIN,f))*2*SP*HCK;}if(eca){const fR=rsF?rsF[RSI[i]]:1,lA=latA*fR;const den=1-lA/G*(aeK+TVK[i])*RADL[i];const vc=den>.15?Math.sqrt((lA+G*TBK[i])*RADL[i]/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*ECA*wgm*fR*Math.max(0,j*SP-AIBL)+2*G*(TE[i]-TE[k.idx])));if(v<vLift)vLift=v;}const fR=(rsF?rsF[RSI[i]]:1)*sgK,lA=latA*fR;const R=Math.min(RADL[i],RA[i])+(k.altS&&k.altO?Math.max(0,RA[i]-RADL[i])*ALRB:0);const den=1-lA/G*(aeK+TVK[i])*R;const vc=den>.15?Math.sqrt((lA+G*TBK[i])*R/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*G*1.2*(1-VBD*vcw)*wgm*fR*(k.bfK||1)*(k.bkS||1)*(1+AGB*ag)*Math.max(0,j*SP-hcL-AIBL*(k.blS??1)-VBL*vcw-(BMK&&(!k.isPlayer||autoPlay)&&sess!=='drag'&&CORNER[i]?Math.max(k.bmo?.[CID[i]]??BME,bmA?bmA[CID[i]]??BME:-1e9):0))+2*G*(TE[i]-TE[k.idx])));if(v<vAllow)vAllow=v;} // T81 峠・バンク・上り下りの分も見込む
+  let hcL=0;for(let j=0;j<=80;j+=2){const i=wrap(k.idx+j);if(HCK&&TERK&&sess!=='drag'){const f=1+u*u*TVK[i]/G;if(f<1)hcL+=(1-Math.max(TNMIN,f))*2*SP*HCK;}if(eca){const fR=rsF?rsF[RSI[i]]:1,lA=latA*fR;const den=1-lA/G*(aeK+TVK[i])*RADL[i];const vc=den>.15?Math.sqrt((lA+G*TBK[i])*RADL[i]/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*ECA*wgm*fR*Math.max(0,j*SP-AIBL)+2*G*(TE[i]-TE[k.idx])));if(v<vLift&&!(ECV>0&&ENV.wet<ECW&&vc<u-ECV))vLift=v;}const fR=(rsF?rsF[RSI[i]]:1)*sgK,lA=latA*fR;const R=Math.min(RADL[i],RA[i])+(k.altS&&k.altO?Math.max(0,RA[i]-RADL[i])*ALRB:0);const den=1-lA/G*(aeK+TVK[i])*R;const vc=den>.15?Math.sqrt((lA+G*TBK[i])*R/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*G*1.2*(1-VBD*vcw)*wgm*fR*(k.bfK||1)*(k.bkS||1)*(1+AGB*ag)*Math.max(0,j*SP-hcL-AIBL*(k.blS??1)-VBL*vcw-(BMK&&(!k.isPlayer||autoPlay)&&sess!=='drag'&&CORNER[i]?Math.max(k.bmo?.[CID[i]]??BME,bmA?bmA[CID[i]]??BME:-1e9):0))+2*G*(TE[i]-TE[k.idx])));if(v<vAllow)vAllow=v;} // T81 峠・バンク・上り下りの分も見込む
   if(cau()&&k.scV!=null&&sess==='race')vAllow=Math.min(vAllow,k.scV); // T157 セーフティカー中
   if(k.pdCap<vAllow)vAllow=k.pdCap; // T248 よけられない水たまりの手前
   if(k.npz&&!cau()&&sess==='race'){const o=npzAhead(k);if(o)vAllow=Math.min(vAllow,Math.max(0,o.k.u)+Math.max(0,o.g-NPG)*.6);} // T232 線を越えるまでは、すぐ前の車を抜かない（前の車の速さ＋車間の分まで）
@@ -7095,6 +7098,7 @@ function frame0(now){
     if(!accelHeld())accelDownAt=null;
     // 空ぶかし
     const p=player();if(p&&SRK&&!ROLL.on&&sess==='race'&&!autoPlay)raceRev(p,dt);else if(p){const rev=(accelHeld()?6500:1500);p.rpm+=(rev-p.rpm)*Math.min(1,dt*4);const e0=p.erpm??p.rpm;p.erpm=ERQ?e0+Math.max(-ERD*dt,Math.min(ERU*dt,rev-e0)):p.rpm;}
+    if(sess!=='drag')inpC=autoPlay?{steer:0,accel:false,brake:false,thr:0,brk:0}:playerControl(dt); // β0.188.1 信号の間も入力の表示（オートは止まって待っている）
     if(countdown<=0){state='race';if(!ROLL.on){setLamps(0,true);showBanner('GO!');sfx('go');crowdCheer(1);lampTO=setTimeout(()=>setLamps(0,false),1500);setTimeout(()=>{if(state!=='countdown')$('slights').hidden=true;},800);
       for(const k of karts)if(!k.isPlayer||autoPlay)k.launchT=spOf(k)==='start'?.07+Math.random()*.18:.12+Math.random()*.35; /* T288 スタートがうまい */lchGo();}}}
     envStep(dt,false);syncVisuals(dt);updateCamera(dt);updateHud(dt);updateLine(player());
