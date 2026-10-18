@@ -28,6 +28,9 @@ html,body{height:100%;margin:0;overflow:hidden;background:var(--night);color:var
 canvas#gl{display:block;width:100%;height:100%}
 .outline{text-shadow:0 1px 2px rgba(0,0,0,.75),0 0 12px rgba(0,0,0,.35)}
 #vign{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.28) 100%)}
+/* β0.186.0 T375 後半 見通しの悪い時の画面：まわりのかげり（#visv）とフロントガラスの雨粒・ワイパー（#wsc、運転席・車載視点だけ） */
+#visv{position:fixed;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 48%,rgba(14,18,24,0) 38%,rgba(14,18,24,.55) 82%,rgba(10,13,18,.8) 100%)}
+#wsc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;display:none}
 /* HUD */
 #hud{position:fixed;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px calc(env(safe-area-inset-bottom,0px) + 10px)}
 #hud[hidden]{display:none}
@@ -911,7 +914,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
-<div id="vign"></div>
+<div id="vign"></div><div id="visv"></div><canvas id="wsc"></canvas>
 <div id="bootLoad" role="status" aria-live="polite"><b>LOADING</b><i></i><span>読み込み中…</span></div>
 <div id="rotMsg" role="alert"><b>⟳</b><p>横向きにしてください</p><span>画面をタップすると、このまま続けます</span></div>
 
@@ -1041,7 +1044,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.185.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.186.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1913,6 +1916,11 @@ function paintSky(P,cloud,rain){const g=sky.geometry,p=g.attributes.position,ca=
 const stars=(()=>{const pos=[];let sd=777;const r=()=>{sd=(sd*16807)%2147483647;return sd/2147483647;};for(let i=0;i<700;i++){const a=r()*6.283,e=Math.asin(.08+r()*.92),R=2400;pos.push(Math.cos(a)*Math.cos(e)*R,Math.sin(e)*R,Math.sin(a)*Math.cos(e)*R);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));const m=new THREE.Points(g,new THREE.PointsMaterial({color:0xdfe6ff,size:1.6,sizeAttenuation:false,fog:false,transparent:true,depthWrite:false}));m.material.userData.lin=1;m.visible=false;m.renderOrder=-1;sky.add(m);return m;})();
 // 雨粒（カメラのまわりだけ降らせる）
+/* β0.186.0 T375 後半 見通しの悪い時の画面（人の操作の効きは変えず、見づらさで自然に遅れる）。VFX＝0 で前の版の見た目。
+   VFG＝霧と雨の霧の濃さを足す割合、VNF＝夜の暗い霧（ライトの外が闇に沈む）、SPY＝前の車の後ろの水しぶきの濃さ、
+   WSD＝フロントガラスに付く雨粒（1秒あたり、雨1・時速100km）、WSM＝雨粒の上限、WSP＝ワイパーの間隔（秒、強い雨で半分）、VVG＝まわりのかげりの濃さ */
+let VFX=1,VFG=.3,VNF=.0026,SPY=.42,WSD=34,WSM=70,WSP=1.9,VVG=.55;
+const visDk=P=>Math.max(0,Math.min(1,(1.6-((P&&P.si)??3.4))/1.1)); // 暗さ（visOf と同じ。夜＝1）
 const NRAIN=isTouch?520:1200;let RNF=1; // RNF＝雨がカメラの動き（車速）に比例して流れる強さ（T104。0で従来の真上から）
 const rainMesh=(()=>{const a=new Float32Array(NRAIN*6);const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(a,3));
  const m=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0xb8c2cc,transparent:true,opacity:.4,depthWrite:false,fog:false}));m.material.userData.lin=1;m.material.defines={NO_TERR:''};m.frustumCulled=false;m.visible=false;scene.add(m);
@@ -1947,7 +1955,8 @@ function envApply(force){const P=ENV.P||TOD[ENV.tod];
  const cl=ENV.cloud,rn=ENV.rain,fg=ENV.fog;
  const hzC=paintSky(P,cl,rn);
  const fc=hzC.clone().lerp(_c2.set(P.night?0x10141c:0xc4c9ce),fg*.75);scene.fog.color.copy(fc).convertSRGBToLinear();scene.background.copy(scene.fog.color);
- scene.fog.density=.0005+fg*.0095+rn*.0022+cl*.0003;
+ scene.fog.density=.0005+(fg*.0095+rn*.0022)*(1+VFX*VFG)+cl*.0003+VFX*VNF*visDk(P)*(1-fg*.5); /* β0.186.0 T375 後半 霧・雨を少し濃く、夜は遠くを闇に沈める */
+ if(P.night&&VFX&&VNF)scene.fog.color.multiplyScalar(.55),scene.background.copy(scene.fog.color);
  sun.color.set(P.sc).convertSRGBToLinear();sun.intensity=P.si*(1-.82*cl)*(1-.3*fg);
  hemi.color.set(P.hs).lerp(_c1.set(P.night?0x3a4050:0xc8ccd2),cl*.7).convertSRGBToLinear();hemi.groundColor.set(P.hg).convertSRGBToLinear();hemi.intensity=P.hi*(1+.32*cl)*(1-.12*rn);
  renderer.toneMappingExposure=P.ex*(1-.1*rn);
@@ -1997,7 +2006,8 @@ function envStep(dt,race){const e=ENV;e.t+=dt;
  const p=player();const on=TOD[e.tod].night||e.fog>.5;
  headSpot.visible=!!(p&&on); // 昼は光源ごと外して、全部の面の計算から省く（T124）
  if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
- else headSpot.intensity=0;}
+ else headSpot.intensity=0;
+ wsStep(dt);visvStep();} /* β0.186.0 T375 後半 */
 function updEnvHud(){const P=TOD[ENV.tod],w=WXN[ENV.wx];const ic=ENV.rain>.3?'☂':ENV.fog>.5?'🌫':ENV.cloud>.6?'☁':P.ic;
  const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const fc=fcText();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}${ENV.clkOn?' '+clkTxt(ENV.clk):''}　${rsN}<b class="${cond}">${cj}</b>${p&&(tyCv.hidden||document.body.classList.contains('hudmin'))?`　<span>${TYR[p.ty||0].n}</span>`:''}${fc?`<i class="fc">${fc}</i>`:''}`;
  const ts=document.getElementById('tsEnv');if(ts)ts.textContent=`${P.en} / ${w.en}${roadSurf?' / '+RSF[roadSurf].en:''}`;}
@@ -4857,6 +4867,40 @@ function collisions(){
       if(a.drifting&&-vn>5)a.drifting=false;if(b.drifting&&-vn>5)b.drifting=false;}}
 }
 
+/* β0.186.0 T375 後半 濡れた路面で車の後ろに立つ水しぶきの幕（1台に1枚の板。速いほど長く濃い。後ろの車の前が白く煙る）。乱数は使わない。
+   自分の車の分は中継の視点だけ（後方視点ではカメラの前に、運転席ではミラーいっぱいに写るため） */
+function sprayStep(k,g,on,fx,fz,dt){const RS=RSF[rsCur]||RSF[0],w=ENV.wet*(RS.wk??1),u=Math.abs(k.u);
+  const a=on&&VFX&&SPY>0&&!k.gone&&k.u>0&&(!k.isPlayer||isTV(camEff()))?SPY*Math.min(1,w*1.4)*Math.max(0,Math.min(1,(u-10)/32)):0;
+  if(!g.spr){if(a<=0)return;const m=new THREE.SpriteMaterial({map:smokeTex,transparent:true,depthWrite:false,opacity:0});m.userData.lin=1;g.spr=new THREE.Sprite(m);g.spr.visible=false;scene.add(g.spr);g.sprA=0;}
+  const s=g.spr;g.sprA+=(a-g.sprA)*Math.min(1,dt*3);if(g.sprA<.01){s.visible=false;return;}
+  const L=2.2+u*.05,nt=TOD[ENV.tod]&&TOD[ENV.tod].night;s.visible=true;s.position.set(k.x-fx*(2.6+L*.5),.75+u*.006,k.z-fz*(2.6+L*.5));s.scale.set(3.4+L*.35,1.5+u*.012,1);
+  s.material.opacity=g.sprA;s.material.color.setHex(nt?0x4c535b:0xd5dce3);}
+/* β0.186.0 T375 後半 フロントガラスの雨粒とワイパー（運転席・車載視点だけ。2D の板に半分の細かさで描く）。乱数は自前（レースの乱数を動かさない） */
+const WS={cv:null,cx:null,d:[],t:0,ph:-1,sd:12345,on:false,w:0,h:0,acc:0};
+function wsRnd(){WS.sd=(WS.sd*16807)%2147483647;return WS.sd/2147483647;}
+function wsStep(dt){const e=ENV,p=plrSafe();
+  if(!WS.cv){try{WS.cv=document.getElementById('wsc');WS.cx=WS.cv&&WS.cv.getContext&&WS.cv.getContext('2d');}catch(_){WS.cx=null;}if(!WS.cx){WS.cv=WS.cv||{};return;}}
+  if(!WS.cx)return;const cm=camEff(),ck=isCk(cm)||cm===3&&DIR.sub==='onboard';
+  const live=VFX&&WSD>0&&ck&&p&&(state==='race'||state==='countdown'||state==='finished'||state==='paused')&&e.rain>.05;
+  if(!live){if(WS.on){WS.on=false;WS.cv.style.display='none';WS.d.length=0;WS.ph=-1;}return;}
+  if(!WS.on){WS.on=true;WS.cv.style.display='block';}
+  const W=Math.max(2,innerWidth>>1),H=Math.max(2,innerHeight>>1);if(WS.w!==W||WS.h!==H){WS.w=WS.cv.width=W;WS.h=WS.cv.height=H;}
+  const u=Math.abs(p.u),run=state!=='paused';
+  if(run){WS.acc+=dt*WSD*e.rain*(.35+u/28);while(WS.acc>=1&&WS.d.length<WSM){WS.acc-=1;const r=1.2+wsRnd()*2.6;WS.d.push({x:wsRnd()*W,y:wsRnd()*H*.82,r:r*(H/360),a:0});}if(WS.acc>1)WS.acc=1;
+   for(const d of WS.d){d.a=Math.min(1,d.a+dt*4);d.y+=dt*(u<6?6:-u*.12)*(H/360);d.x+=dt*(d.x-W/2)*(u/600);} // 止まると下へ、走ると風で上と外へ流れる
+   WS.d=WS.d.filter(d=>d.y>-8&&d.y<H+8&&d.x>-8&&d.x<W+8);
+   WS.t+=dt;const per=WSP*(e.rain>.6?.55:1);if(WS.ph<0&&WS.t>=per){WS.ph=0;WS.t=0;}
+   if(WS.ph>=0){WS.ph+=dt/.62;if(WS.ph>=1)WS.ph=-1;}}
+  const g=WS.cx;g.clearRect(0,0,W,H);
+  const px=W*.3,py=H*1.05,R=H*1.02,ang=WS.ph<0?null:Math.PI*(1-Math.sin(Math.min(1,WS.ph)*Math.PI)*.82); // ワイパーの軸は左下、行って戻る
+  if(ang!=null){const ca=Math.cos(ang),sa=Math.sin(ang);WS.d=WS.d.filter(d=>{const dx=d.x-px,dy=py-d.y,dist=Math.hypot(dx,dy);if(dist>R)return true;const da=Math.atan2(dy,dx);return Math.abs(da-ang)>.09;});
+   g.strokeStyle='rgba(12,14,16,.85)';g.lineWidth=Math.max(2,H*.012);g.beginPath();g.moveTo(px,py);g.lineTo(px+ca*R,py-sa*R);g.stroke();}
+  const nt=TOD[e.tod]&&TOD[e.tod].night;
+  for(const d of WS.d){const al=d.a*(nt?.3:.42);g.fillStyle=`rgba(${nt?'150,160,175':'205,215,228'},${al*.55})`;g.beginPath();g.ellipse(d.x,d.y,d.r,d.r*.85,0,0,6.283);g.fill();
+   g.fillStyle=`rgba(255,255,255,${al*.7})`;g.beginPath();g.arc(d.x-d.r*.3,d.y-d.r*.35,d.r*.28,0,6.283);g.fill();}}
+/* β0.186.0 T375 後半 まわりのかげり：見通し（visOf）が悪いほど画面の外側を暗く。晴れの昼は 0 */
+let visvA=-1;function visvStep(){const el=document.getElementById('visv');if(!el||!el.style)return;const on=VFX&&(state==='race'||state==='countdown'||state==='finished'||state==='paused');
+  const a=on?Math.max(0,Math.min(1,VVG*(1-visOf())/.45)):0,q=Math.round(a*50)/50;if(q!==visvA){visvA=q;el.style.opacity=q;}}
 /* ================= 描画同期 ================= */
 let clockT=0;const DMGC=new THREE.Color(0x2a2a2e).convertSRGBToLinear();
 const tmpV=new THREE.Vector3(),tmpS=new THREE.Vector3();
@@ -4885,6 +4929,7 @@ function syncVisuals(dt){
     const rw=[[k.x-fx*1.36+lx*.82,k.z-fz*1.36+lz*.82],[k.x-fx*1.36-lx*.82,k.z-fz*1.36-lz*.82]];
     // 濡れた路面のしぶき（1秒あたりの数で決める。フレームの速さに左右されない）
     if(near&&(k.pdD||0)>.05&&Math.abs(k.u)>8){for(let q=0;q<2;q++)if(Math.random()<Math.min(1,k.pdD*Math.abs(k.u)/15)){const w=rw[q];puff(w[0],w[1],k.vx*1.3,k.vz*1.3,false,0xdfe6ec);}} // T248 水たまりの大きなしぶき
+    sprayStep(k,g,near&&(surf==='road'||surf==='curb'),fx,fz,dt); // β0.186.0 T375 後半
     if(near&&ENV.wet>.25&&Math.abs(k.u)>14&&(surf==='road'||surf==='curb')&&Math.random()<ENV.wet*14*dt){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,false);}
     if(near&&sliding&&(surf==='road'||surf==='curb')){if(k.prevWheel){addSkid(rw[0][0],rw[0][1],k.prevWheel[0][0],k.prevWheel[0][1]);addSkid(rw[1][0],rw[1][1],k.prevWheel[1][0],k.prevWheel[1][1]);}
       if(Math.random()<.35){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;}
