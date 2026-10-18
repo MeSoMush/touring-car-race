@@ -1045,7 +1045,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.187.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.187.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4390,10 +4390,14 @@ let SPW=1,SPB=.55,SPH=.4;
 function crashCheck(k,v,th){if(!crashMode||k.dnf||!(sess==='race'||isSS())||state!=='race'||v<th)return;
   k.dnf=true;const s=Math.min(1,(v-th)/12);k.drifting=false;k.pitReq=false;
   k.cr={y:0,vy:2.5+v*.28,px:0,pz:0,wx:(Math.random()*2-1)*(1+3*s),wz:(Math.random()<.5?-1:1)*(2.5+5*s),air:true,t:0};
-  telop('CRASH',k.name+'　大クラッシュ　リタイア','yellow');crashTimes.push(raceTime);crashLog(k,v,th);cauDeploy();rfCheck();debSpawn(k,12+Math.floor(8*s),true);
+  telop('CRASH',k.name+'　大クラッシュ　リタイア','yellow');if(!crashSame(k))crashTimes.push(raceTime);crashLog(k,v,th);cauDeploy();rfCheck();debSpawn(k,12+Math.floor(8*s),true);
   for(let q=0;q<8;q++)puff(k.x+(Math.random()-.5)*2,k.z+(Math.random()-.5)*2,k.vx*.3,k.vz*.3,q%2===0,q%2?0x3a3a3c:0xe8e8e8);
   sfx('boom',k);
   if(k.isPlayer){state='finished';afterFinish=0;showBanner('RETIRE');shake=.6;retireOffer();}}
+/* β0.187.1 赤旗の数え方：RFI 秒以内・RFM m 以内に続いた大クラッシュは同じ事故（2台がぶつかって両方クラッシュ・玉突き）として1回と数える。RFI＝0 で前の版（1台ごとに数える） */
+let RFI=3,RFM=40;const crashAt=[];
+function crashSame(k){for(let i=crashAt.length-1;i>=0;i--)if(crashAt[i].t>raceTime||raceTime-crashAt[i].t>RFW)crashAt.splice(i,1); /* 巻き戻した先より後・古い物は消す */
+  const same=RFI>0&&crashAt.some(c=>raceTime-c.t<=RFI&&Math.hypot(k.x-c.x,k.z-c.z)<=RFM);crashAt.push({t:raceTime,x:k.x,z:k.z});return same;}
 const crashRec=[];function crashLog(k,v,th){crashRec.push(raceTime.toFixed(1)+'秒 '+k.name+' '+(th===17?'壁':'車')+' '+(v*3.6).toFixed(0)+'km/h '+k.lap+'周目 地点'+Math.round(k.idx*SP)+'m');if(crashRec.length>5)crashRec.shift();}
 function stepCrash(k,dt){const c=k.cr;if(!c)return;c.t+=dt;
   if(c.air){c.vy-=G*dt;c.y+=c.vy*dt;c.px+=c.wx*dt;c.pz+=c.wz*dt;k.u*=1-dt*.12;k.vl*=1-dt*.12;
@@ -4607,7 +4611,7 @@ let SCWV=1,SCWT=8,SCWK=1,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
 const SC={on:false,ph:1,d:0,t:0,t1:0,u:0,lp:0,inLap:false,out:false,ret:false,wv:0,fin:false,g:null,x:0,z:0,h:0,ahead:null,n:0,rf:0,rfD:0,rfT:0,rfn:0};
 const FCY={on:false,ph:0,t:0,n:0};
 const cau=()=>SC.on||FCY.on,SCN=['なし','短め','実際どおり'];
-function SC_reset(){SC.on=false;SC.ret=false;SC.out=false;SC.inLap=false;SC.wv=0;SC.fin=false;SC.t=0;SC.ahead=null;SC.rf=0;FCY.on=false;crashTimes.length=0;if(SC.g)SC.g.root.visible=false;for(const k of karts){k.scV=null;k.fcyC=null;k.npz=false;k.wav=0;}NPZ.ahead=null;NPZ.owe=[];}
+function SC_reset(){SC.on=false;SC.ret=false;SC.out=false;SC.inLap=false;SC.wv=0;SC.fin=false;SC.t=0;SC.ahead=null;SC.rf=0;FCY.on=false;crashTimes.length=0;crashAt.length=0;if(SC.g)SC.g.root.visible=false;for(const k of karts){k.scV=null;k.fcyC=null;k.npz=false;k.wav=0;}NPZ.ahead=null;NPZ.owe=[];}
 function scMesh(){if(SC.g)return SC.g;const g=carLod(makeKart({name:'SAFETY',color:0xdfe2e6,accent:0xff7a1a},'SC',0));
   g.lb=[0xff8a00,0x2a7bff].map((c,i)=>{const m=new THREE.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:2});const b=new THREE.Mesh(new THREE.BoxGeometry(.46,.12,.22),m);b.position.set(i?.25:-.25,CARS[0].roofY+.07,-.1);g.body.add(b);return m;});
   g.root.visible=false;SC.g=g;return g;}
