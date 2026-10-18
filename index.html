@@ -1041,7 +1041,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.182.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.183.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3394,7 +3394,7 @@ function stepKart(k,dt,ctl){
     else if(ctl.accel&&k.shiftT<=0)Fd=drv();
     else if(!ctl.accel)Fd=EBF>0?-(EBR+EBF*(RATIO[k.gear]/RATIO[0])*Math.max(.3,Math.min(1.1,k.rpm/8000)))*Math.sign(k.u):-(.6+k.gc*.05)*Math.sign(k.u)*(1+ (5-k.gc)*.12);
   }
-  if(Fd>0&&k.shiftT<=0&&ctl.accel){k.fdL=Fd;k.resE=Fd-k.ax;} // T382 駆動の加速と走る抵抗の見込み（駆動が切れている間は前の値のまま）
+  if(Fd>0&&k.shiftT<=0&&ctl.accel){k.fdL=Fd;k.resE=Fd-k.ax;k.fdF=Fd/Math.max(.05,ctl.thr??1);} /* T390 fdF＝全開の時の駆動力 */ // T382 駆動の加速と走る抵抗の見込み（駆動が切れている間は前の値のまま）
   // 回転を合わせずにシフトダウンした時のショック（エンジンブレーキの衝撃が駆動輪にかかる）。短く減衰
   if(k.shk>0){Fd-=k.shk*Math.sign(k.u||1);k.shk=Math.max(0,k.shk-dt*SHKM/.35);}
   // T185 雨がやんで乾いていく間は、ライン上（ラバーの帯）から先に乾く。濡れたラバーは逆に滑る
@@ -3425,7 +3425,7 @@ function stepKart(k,dt,ctl){
     const capF=mF*Nf,cFx=capF*cxF;let FxF=Fd*fs-Fb*(ctl.fo?1:bb)*sg;let lock=false;if(Fb<=0){const cx=cFx*tc*(LSQ?LSFX:k.ftx||1)*(Fd>0?dTr:1)*(k.aiDriven&&RSI[k.idx]&&fs>.3&&fs<.9?RS4F:1);if(Math.abs(FxF)>cx){ws=1;FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>cFx*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>cFx){lock=true;FxF=Math.sign(FxF)*cFx*.85;}else{FxF=Math.sign(FxF)*cFx*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
     const ff=FxF/cxF,yf=cyF*Math.max(capF*YFMIN,LSQ&&Fb<=0&&FxF*sg>0?capF*Math.sqrt(Math.max(0,1-(ff/(capF*LSFX))**2)):Math.sqrt(Math.max(0,capF*capF-ff*ff)));if(Math.abs(Fyf)>yf)Fyf=Math.sign(Fyf)*yf;if(lock){Fyf*=.15;k.locked=true;if(FSA)k.fsp=Math.min(1,(k.fsp||0)+FSA*Math.abs(k.u)*h);}
     const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
-    const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;
+    const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;k.drE=drag+G*tgs*k.st.mass; /* T390 走る抵抗（空気・転がり・坂） */
     const du=FxR+FxF*cD-Fyf*sD-drag+k.vl*k.r;
     const dvl=Fyf*cD+FxF*sD+Fyr-k.u*k.r;
     const dr=(ka*(Fyf*cD+FxF*sD)-kb*Fyr)/(IZ*(k.izm||1)*k.st.mass)+(dif.lo&&Fd>0?DOY*k.r*latL:0)-(dif.dw&&(Fb>0||!ctl.accel)?D2W*k.r*Math.min(1,Math.abs(k.u)/20):0)-(Fb>0&&YDK>0?YDK*k.r*Math.max(0,Math.abs(ar)-YD0)*Math.min(1,Math.abs(k.u)/20):0); // T143：ブレーキ中に後輪が限界を超えて滑り出したら、その分だけヨーの回転を抑える（滑り始めを穏やかに。逆ハンドルで受ける時間ができる）
@@ -4018,6 +4018,7 @@ let SLK=1,SL0=300,SL1=430;{const d=Math.round(CREF.fc-CREF0.fc);if(Math.abs(d)>5
 let SCV=6; // T120 SCV＝いちばん近づけたコーナーとの差がこの距離(m)以内のコーナーから毎周選び直す（0で従来どおり固定）
 let YLW=.9,DNF0=40,DNF1=3.6,DNFA=8; // T127 大クラッシュの対策：YLW＝黄旗中のコーナー速度の係数、DNF0・DNF1＝止まった車を見つける距離（m＝DNF0＋速さ×DNF1）、DNFA＝止まった車の手前でのブレーキの見積り減速(m/s²)
 let RTK=0,RTF=6.5,RTW=.6; // T148 RTK＝1で、ラインへ戻る動きが横の車の側へ向かう間は戻らない（RTF＝前後 m、RTW＝間隔の余裕 m）
+let FPT=1,FGK=.3,FGM=1,FPC=2,FPY=1,HDK=1,HKP=.2; // β0.183.0 T390：FPT＝前の車について行く時は「離す」の入切ではなく、ついて行く速さ（前の車の速さ＋〔車間−決めた車間×FGM〕×FGK）を目標の速さにして途中まで踏む。横に並んで引く時は FPY＝1 なら今までどおりはっきり離す（部分踏みにすると下がり方が弱く、並んだまま当たっていた）（急に詰まった時〔hard〕・ブレーキングで差しに行っている間〔atkT〕・速さの差 FPC m/s より速く近づいている時・発進〔LOWV 未満〕は今までどおり離す。0 で β0.182.0）。HDK＝目標の速さの近くの踏む量を「今の速さを保つのに要る踏む量（走る抵抗 drE÷全開の駆動力 fdF）＋目標との差×HKP」にする（前は差だけで決めていたので、速い所で 1〜2m/s 速すぎると 0 まで離していた。コーナーの中の「保つアクセル」もこれで出る。0 で β0.182.0）
 let ATH=1,AVC=2; // AVC＝次のコーナーまでこの秒以内なら、前の車をよける側をコーナーの内側にする（よけた後に反対側へ差しに行って左右に振れていた）。 β0.182.0 T386：ブレーキングで差しに行っている間（atkT）は、その相手を「前の車をよける」の横の逃げで外へ戻さない（内側が道の端で狭い時、差す→よけるで外へ戻る→また差す、を1秒足らずで繰り返していた。ほかの車はこれまでどおりよける。0 で β0.181.0）
 let AVH=3,AVZ=.4; // β0.181.0 T383：前の車をよける向きは自分が今いる側（横の差が AVZ m 以内なら従来どおりコースの中心の側。そちらに余地がなければ反対側）にし、同じ相手をよけ続ける間と離れて AVH 秒は同じ側を保つ（0 で β0.180.1＝相手がコースの中心のどちら側かで毎フレーム決め直し、中心をまたぐと左右に振れた）
 function avoidLat(k,o,d){if(!(AVH>0))return o.lat+(o.lat>0?-1:1)*d;const m=k.avS||(k.avS={});let e=m[o.id];if(!e||raceTime-e.t>AVH){const dl=k.lat-o.lat;let sd=Math.abs(dl)>AVZ?Math.sign(dl):o.lat>0?-1:1;if(AVC>0&&k.u>20){const n=Math.min(40,Math.ceil(k.u*AVC/SP));for(let j=4;j<=n;j+=4){const ci=wrap(k.idx+j);if(CORNER[ci]){sd=-OUTS[ci];break;}}} /* T386 コーナーが AVC 秒以内なら内側へよける（差す側と同じ） */if(Math.abs(o.lat+sd*d)>W-2.2&&Math.abs(o.lat-sd*d)<=W-2.2)sd=-sd;e=m[o.id]={s:sd,t:raceTime};}else e.t=raceTime;return Math.max(-W+2.2,Math.min(W-2.2,o.lat+e.s*d));}
@@ -4117,7 +4118,7 @@ function aiControl(k,dt){let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++
     k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,tr=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0; // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
-  let follow=false,hard=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);let afvNo=AFVS>0&&raceTime<AFVS;if(!afvNo&&AFVD>0){const jn=Math.round(u*AFVD/SP);for(let j=0;j<=jn;j+=3)if(CORNER[wrap(k.idx+j)]){afvNo=true;break;}} /* T256 の続き：スタート直後とコーナーの手前は、前の車が離れていく間も車間を保つ */k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
+  let follow=false,hard=false,fV=1e9,folB=false;const fx=Math.sin(k.h),fz=Math.cos(k.h);let afvNo=AFVS>0&&raceTime<AFVS;if(!afvNo&&AFVD>0){const jn=Math.round(u*AFVD/SP);for(let j=0;j<=jn;j+=3)if(CORNER[wrap(k.idx+j)]){afvNo=true;break;}} /* T256 の続き：スタート直後とコーナーの手前は、前の車が離れていく間も車間を保つ */k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
   // β0.53.1：片付けた残骸（gone）は見ない。前の車をどこまで先から見るかは速さの差で伸ばす（ピットへ減速する車に、全開の車が26m手前まで気づかず追突していた）
   for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;const osl=SPW>0&&!o.dnf&&(o.spin>0||Math.abs(o.vl)>Math.abs(o.u)*SPB&&Math.abs(o.u)>3||o.u<-3);if(fwd>(o.dnf||osl?30+u*3.5:Math.max(26,8+Math.max(0,u-Math.max(0,o.u))*CLK))||fwd<-6.4)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);
     const rcx=RCX>0&&(CORNER[k.idx]||CORNER[wrap(k.idx+14)])?RCX:0; // T256 コーナーでは横の間隔を広げる
@@ -4128,13 +4129,13 @@ function aiControl(k,dt){let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++
       if(!(k.enc[ek]>raceTime-1.5)&&Math.random()<py){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[ek]=raceTime;
       const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2+rcx)));
       if(!lead||RRL>0&&fwd>-RRL){if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;}
-      if(fwd>(u<LOWV&&Math.abs(o.u)<LOWV?0:-3)&&!(k.wav&&!o.wav)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id))follow=true;} /* β0.129.0 遅い時は前の車が先に行く（お互いに待って止まらない） */
+      if(fwd>(u<LOWV&&Math.abs(o.u)<LOWV?0:-3)&&!(k.wav&&!o.wav)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id)){follow=true;if(FPY>0)folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+FPY);}} /* β0.129.0 遅い時は前の車が先に行く（お互いに待って止まらない） */
     let sdm=Math.abs(side);if(SDP>0&&sdm>=2.3&&fwd>0){const cl=k.u-(o.vx*fx+o.vz*fz);if(cl>SDC){const ch=Math.cos(k.h),sh=Math.sin(k.h),t=Math.min(SDT,fwd/cl),sp=side+((o.vx-k.vx)*ch-(o.vz-k.vz)*sh)*t;sdm=sp*side<=0?0:Math.min(sdm,Math.abs(sp));}} // T256 横から入ってくる遅い車を先読み（横の位置を届くまで進めて、真ん中をまたぐなら 0）
     if(fwd<=0||sdm>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1); // T73（β0.82.0）横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大クラッシュの最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFT（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
-    if(AFT>0&&fwd<(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)&&(AFV<0||u<LOWV||AFVC&&CORNER[k.idx]||afvNo||k.u-(o.vx*fx+o.vz*fz)>-AFV)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX))follow=true; /* T254①：前の車が離れていく間（コーナーの出口など）は抜かない（以前はいつでも抜いて、直線で離されていた） */ // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
-    if(close>0){if(!(slw>0)&&!(k.slT>0&&k.slO===o.id)&&!(ATH>0&&k.atkT>0&&k.atkO===o.id)&&Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=avoidLat(k,o,tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX))follow=true;const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
+    if(AFT>0&&fwd<(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)&&(AFV<0||u<LOWV||AFVC&&CORNER[k.idx]||afvNo||k.u-(o.vx*fx+o.vz*fz)>-AFV)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX)){follow=true;fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-(u<LOWV?Math.min(AFM+u*AFT,LGAP):AFM+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)*FGM)*FGK);} /* T390 ついて行く速さ */ /* T254①：前の車が離れていく間（コーナーの出口など）は抜かない（以前はいつでも抜いて、直線で離されていた） */ // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
+    if(close>0){if(!(slw>0)&&!(k.slT>0&&k.slO===o.id)&&!(ATH>0&&k.atkT>0&&k.atkO===o.id)&&Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=avoidLat(k,o,tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX)){follow=true;if(FPC>0&&close>FPC)folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-(9+close*.7+u*AFT)*tr.gap*(k.slT>0&&k.slO===o.id?SGF:1)*FGM)*FGK);}const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm))hard=true;}}
   // スリップストリームから抜く（T83⑥）：直線で前の車の真後ろの空気に入ったら、早めに横へ出て（ブレーキで詰めずに）そのまま並びかけて抜く
   if(PSL>0&&sess==='race'&&!k.finished&&!k.yieldF&&(k.draft||0)>.15&&u>25){let st=true;for(let j=4;j<=PSL_L;j+=6)if(Math.abs(KAP[wrap(k.idx+j)])>1/450){st=false;break;}
     if(st)for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd<5||fwd>PSL_D)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);if(Math.abs(side)>2.2)continue;
@@ -4197,7 +4198,8 @@ function aiControl(k,dt){let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++
   if(k.launchT>0){k.launchT-=dt;return {steer,accel:false,brake:false,drift:false};}
   // T186 A4 タックイン：FF はコーナーに入る瞬間に一瞬アクセルを抜き、前へ荷重を移して向きを変える
   if(TKI>0&&k.fs>.8&&sess==='race'){if(CORNER[k.idx]&&!k.tkC&&u>15)k.tkT=TKT;k.tkC=CORNER[k.idx];if(k.tkT>0)k.tkT-=dt;}
-  const accel=!follow&&!hard&&!(k.tkT>0)&&u<Math.min(vAllow,vLift)*(k.yieldF?YLD_V:1)-.5+(FTH>0?1:0),brake=u>vAllow+2.5||hard;k.aiBrake=brake;
+  const folP=FPT>0&&follow&&!hard&&!folB&&!(k.atkT>0)&&sess!=='drag'&&u>=LOWV&&fV<1e8,fVl=folP?Math.max(0,fV):1e9; // T390
+  const accel=(!follow||folP)&&!hard&&!(k.tkT>0)&&u<Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V:1)-.5+(FTH>0?1:0),brake=u>vAllow+2.5||hard;k.aiBrake=brake;
   // T186 A3 曲がりながらのブレーキは、舵を切るほど抜く（タイヤの力をブレーキと曲がるのに分け合う）
   const atb=ATB>0&&brake&&!hard&&sess!=='drag'&&Math.abs(steer)>.15?Math.max(ATBM,1-ATBK*(Math.abs(steer)-.15)):undefined;
   // T186 B7：ターボの CPU はコーナーの中で、踏み始める少し前から軽くアクセルを開けて過給を立ち上げておく（出口のラグを減らす）
@@ -4227,13 +4229,13 @@ function aiControl(k,dt){let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++
   const xth=XTH>0&&sess!=='drag'&&!lowv&&!k.pwr&&!(SBX>0&&k.lostT>0)?Math.max(XTM,Math.min(1,1-XTH*(Math.abs(steer)-XT0)/(1-XT0))):1;
   let pA=accel||tbe||lfb,pB=brake||trail||lfb||tdb,brk=trail?AITB:lfb?LFB:tdb?tdv:atb,thr=lfb?LFQ:tbe?.25:xth*fth*Math.min(k.pwr?Math.max(k.aiThr,.9):k.aiThr,Math.max(.1,1-(Math.abs(beta)-BLF*RSF[RSI[k.idx]].sk)*BLK));
   // β0.167.0 T365 ペダルをジワッと：目標の速さの近くは「踏む・離す」を刻まず途中まで踏んで保ち、ブレーキは超えた分に応じて踏む。踏む・離す速さにも上限（人の足と同じ）
-  if(PDP>0&&sess!=='drag'&&(!lowv||PDQ>0)){const lim=Math.min(vAllow,vLift)*(k.yieldF?YLD_V:1);
-    if(!pA&&!pB&&!follow&&!hard&&!(k.tkT>0)&&u<lim+PDH)pA=true;
-    if(pA&&!lfb&&!tbe)thr*=Math.max(PDM,Math.min(1,(lim+PDH-u)/PDW));
+  if(PDP>0&&sess!=='drag'&&(!lowv||PDQ>0)){const lim=Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V:1);const hold=HDK>0&&!lowv&&k.fdF>0&&k.drE!=null?Math.max(0,Math.min(1,k.drE/k.fdF)):0,pdh=hold>0?Math.max(PDH,hold/HKP):PDH; // T390 hold＝今の速さを保つ踏む量、pdh＝目標をこれだけ超えるまでは踏んでおく
+    if(!pA&&!pB&&(!follow||folP)&&!hard&&!(k.tkT>0)&&u<lim+pdh)pA=true;
+    if(pA&&!lfb&&!tbe){if(hold>0){const fr=Math.min(1,hold+(lim-u)*HKP);if(fr<.03)pA=false;else thr*=fr;}else thr*=Math.max(PDM,Math.min(1,(lim+PDH-u)/PDW));}
     if(brake&&!hard)k.aiBk=1;else if(hard||u<vAllow+PDBL||trail||lfb||tdb)k.aiBk=0;
     if(k.aiBk&&!brake){pB=true;pA=false;}
     if(pB&&!hard&&!trail&&!lfb&&!tdb)brk=(brk??1)*Math.max(PDBM,Math.min(1,(u-vAllow)/PDBW));
-    if(PDQ>0&&!hard){k.aiSw=(k.aiSw||0)+dt;const on=!!k.aiOn;if(pA!==on&&k.aiSw<PDDW&&!pB&&!(on&&follow))pA=on;if(pA!==on){k.aiSw=0;k.aiOn=pA;}} /* T372 アクセルを踏む・離すを切り替えたら PDDW 秒はそのまま（ブレーキを踏む時・前の車に詰まった時は待たずに離す） */
+    if(PDQ>0&&!hard){k.aiSw=(k.aiSw||0)+dt;const on=!!k.aiOn;if(pA!==on&&k.aiSw<PDDW&&!pB&&!(on&&follow&&!folP))pA=on;if(pA!==on){k.aiSw=0;k.aiOn=pA;}} /* T372 アクセルを踏む・離すを切り替えたら PDDW 秒はそのまま（ブレーキを踏む時・前の車に詰まった時は待たずに離す） */
     let ta=pA?thr:0,tb=pB?(brk??1):0;const a0=k.aiA??ta,b0=k.aiB??tb;if(PDQ>0&&!hard&&tb>0&&b0>.02)tb=b0+(tb-b0)*Math.min(1,dt/PDBS); /* T372 踏んでいる間の踏む量はならす */
     k.aiA=ta>a0?Math.min(ta,a0+dt/PDRA):Math.max(ta,a0-dt/PDFA);k.aiB=hard?tb:tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);
     pA=k.aiA>.02;pB=k.aiB>.02;thr=k.aiA;brk=k.aiB;k.aiBrake=pB;}else{k.aiA=pA?thr:0;k.aiB=pB?(brk??1):0;}
