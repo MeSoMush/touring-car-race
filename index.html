@@ -1059,7 +1059,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.188.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.189.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1834,8 +1834,9 @@ terrBank();terrGLSL();
 const SAUS=new Uint8Array(N);let SAUK=1,SAUG=.55,SAUW0=.75,SAUW1=2.4,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
 // T206 ピットレーン（線からの距離 m。負＝線の手前）：実際のサーキットのように最終コーナーの内側（PIT_A）で分かれ、PIT_B（80km/h の線）から先はピットウォールの内側。
 // ボックスは線をまたいで並び（PIT_BX から PBS m おき。β0.92.0 T244 で 6.5→7.5、のち 13、β0.124.0 T289 で 17）、PIT_C（80km/h の線）を過ぎて PIT_D で本線に合流。PIT_LF＝ピットレーンの通り道、PIT_LB＝ボックス、PIT_EL＝分かれる・合流する時の本線側の位置、PWL＝ピットウォールの中心
-let PLK=1,PLA=-300,PLD=50,PLM=1.05,PLS=320,PLT=.9; // β0.148.0 T320 ピット入口の白線（PLA＝始まり、PLD＝斜めに入る長さ、PLM＝車の半幅＋すき間、PLS＝白線の何 m 手前からピット側へ寄り始めるか）
-const PIT_A=-140,PIT_B=-90,PIT_C=70,PIT_D=130,PIT_BX=-62,PIT_V=22.2,PIT_LF=W+3.3,PIT_LB=W+7,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
+let PLN=1;const PLW=PLN?(REV?[-400,-520,180]:[-300,-420,300]):[-140,-300,130]; /* β0.189.0 ピットの入口・出口を長く：［分かれる所 PIT_A・入口の白線の始まり PLA・合流 PIT_D］（線からの m） */
+let PLK=1,PLA=PLW[1],PLD=50,PLM=1.05,PLS=320,PLT=.9; // β0.148.0 T320 ピット入口の白線（PLA＝始まり、PLD＝斜めに入る長さ、PLM＝車の半幅＋すき間、PLS＝白線の何 m 手前からピット側へ寄り始めるか）
+const PIT_A=PLW[0],PIT_B=-90,PIT_C=70,PIT_D=PLW[2],PIT_AT=50,PIT_DT=70,PIT_BX=-62,PIT_V=22.2,PIT_LF=W+3.3,PIT_LB=W+7,PIT_EL=W-2.2,PIT_STOP=3.2,PWL=W+.75,PWH=.2;
 const PLX=W-2;function plLat(r){if(!PLK||r<PLA||r>PIT_A+PLD)return null;if(r<PLA+PLD)return W-.15+(PLX-W+.15)*(r-PLA)/PLD;if(r<=PIT_A)return PLX;return PLX+(W+.23-PLX)*(r-PIT_A)/PLD;} // 白線の横の位置（ピット側が＋、線からの距離 r）
 const relOfI=i=>{const r=i*SP;return r>L/2?r-L:r;};
 /* T283 点ごとの路面の種類（RSF の番号）。今は1コースなので全部同じ（GARAGE「路面」）。コースを足す時（T10）は区間ごとに書ける */
@@ -2087,7 +2088,7 @@ function ribbon(l0,l1,y,mat,vScale,mask){
  roadMat=new THREE.MeshStandardMaterial({map:t,roughness:.92,metalness:0,bumpMap:t,bumpScale:.06});ribbon(-W,W,.04,roadMat,22);}
 // 縁石（コーナーだけ）
 {const t=canvasTex(64,128,(g,w,h)=>{g.fillStyle='#c8201a';g.fillRect(0,0,w,h/2);g.fillStyle='#f1f1ee';g.fillRect(0,h/2,w,h/2);g.fillStyle='rgba(0,0,0,.12)';for(let y=0;y<h;y+=8)g.fillRect(0,y,w,2);},true);
- const m=new THREE.MeshStandardMaterial({map:t,roughness:.7});const ky=l=>.05+(Math.abs(l)-W)/1.5*.09;ribbon(W,W+1.5,ky,m,3.2,i=>CORNER[i]);ribbon(-W-1.5,-W,ky,m,3.2,i=>CORNER[i]);}
+ const m=new THREE.MeshStandardMaterial({map:t,roughness:.7});const ky=l=>.05+(Math.abs(l)-W)/1.5*.09;const kc=sg=>i=>CORNER[i]&&!(PLN&&PITZ[i]&&sg===PS);ribbon(W,W+1.5,ky,m,3.2,kc(1));ribbon(-W-1.5,-W,ky,m,3.2,kc(-1)); /* β0.189.0 */}
 // グラベル（コーナー外側）
 {const t=canvasTex(256,256,(g,w,h)=>{noiseFill(g,w,h,'#b7a37c',.22,14000,2.4);},true);
  ribbon(i=>OUTS[i]*(W+1.5),i=>OUTS[i]*(WALL+1),.03,SNW.vm=new THREE.MeshLambertMaterial({map:t}),10,i=>CORNER[i]);SNW.vt=t;}
@@ -4328,8 +4329,9 @@ const boxRelOf=k=>PIT_BX+(k.box!=null?k.box:k.id%8)*PBS;
 function boxFix(){const o=karts.slice().sort((a,b)=>relIdx(b.idx,0)-relIdx(a.idx,0));o.forEach((k,i)=>{k.boxF=Math.max(0,7-i%8);});}
 function pitAssignBox(k){if(PBX===2&&k.boxF!=null){k.box=k.boxF;return;}const used=new Set();for(const o of karts)if(o!==k&&o.pit>0&&o.box!=null)used.add(o.box);let b=7;while(b>0&&used.has(b))b--;k.box=b;}
 function relLine(k){let d=k.idx*SP+alongAt(k.idx,k.x,k.z);if(d>L/2)d-=L;return d;}
+function pitBase(r){if(!PLN)return smoothS((r-PIT_A)/(PIT_B-PIT_A))*(1-smoothS((r-PIT_C)/(PIT_D-PIT_C)));const a=Math.min(PIT_AT,PIT_B-PIT_A),d=Math.min(PIT_DT,PIT_D-PIT_C);return smoothS((r-PIT_A)/a)*(1-smoothS((r-(PIT_D-d))/d));} // β0.189.0
 function pitLatAt(k,rel){const box=boxRelOf(k);
-  const base=smoothS((rel-PIT_A)/(PIT_B-PIT_A))*(1-smoothS((rel-PIT_C)/(PIT_D-PIT_C)));
+  const base=pitBase(rel);
   const bx=k.dt?0:smoothS((rel-(box-PBI0))/PBI1)*(1-(k.pit===3?smoothS((rel-box+1)/PBO):smoothS((rel-(box+4))/12))); // β0.110.0 作業を終えたら（pit 3）すぐ走路へ出る
   return PS*(PIT_EL+(PIT_LF-PIT_EL)*base+(PIT_LB-PIT_LF)*bx);}
 let PBD=.6,PAT=1,PWW=1; // β0.148.1 T321 PBD＝ピットへの減速の強さの上限（G。前は .9×路面のグリップ。雪・氷など滑る路面では前のまま）、PAT＝曲がりながらのピットへのブレーキを舵の量で弱める、PWW＝後ろ向きの時の立て直し
@@ -4665,7 +4667,7 @@ function rfCheck(){if(!rfMode||SC.rf||sess!=='race'||state!=='race')return;const
   SC.rf=1;SC.rfT=0;SC.rfn++;SC.inLap=false;const tp=(L+RFS)%L,cur=((SC.d%L)+L)%L;let dd=(tp-cur+L)%L;if(dd<150)dd+=L;SC.rfD=SC.d+dd;
   telop('RED FLAG','赤旗　レース中断　ゆっくり走ってホームストレートに並んで止まる','red');radio('赤旗だ！ 前について行って止まろう','rf',10);sfx('warn');}
 // ピットレーンの横位置（ボックスに寄らない通り道）
-const scPL=rel=>PS*(PIT_EL+(PIT_LF-PIT_EL)*smoothS((rel-PIT_A)/(PIT_B-PIT_A))*(1-smoothS((rel-PIT_C)/(PIT_D-PIT_C))));
+const scPL=rel=>PS*(PIT_EL+(PIT_LF-PIT_EL)*pitBase(rel));
 const scRel=()=>{const dd=((SC.d%L)+L)%L;return dd>L/2?dd-L:dd;};
 function scPos(){const dd=((SC.d%L)+L)%L,f=dd/SP,i=Math.floor(f)%N,j=wrap(i+1),t=f-Math.floor(f);let l=IL[i]+(IL[j]-IL[i])*t;const rel=dd>L/2?dd-L:dd;
   if(!SC.ph||SC.ret&&rel>PIT_A)l=scPL(rel);
