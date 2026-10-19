@@ -926,6 +926,36 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 #dlt .dn{display:flex;align-items:baseline;justify-content:space-between;gap:.6em}#dlt .dn span{font-size:.92em;color:#c9ced6;font-weight:700}#dlt .dn b{font-family:var(--num);font-size:1.75em;font-weight:800;line-height:1.05}#dlt b.f{color:#5fe08f}#dlt b.s{color:#ff8a80}
 #dlt .db{position:relative;height:6px;background:rgba(255,255,255,.14);margin:2px 0 3px;border-radius:2px}#dlt .db:after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#fff}#dlt .db i{position:absolute;top:0;bottom:0;border-radius:2px}#dlt .db i.f{background:#3ccf73}#dlt .db i.s{background:#ff5a4f}
 #dlt .dt{font-size:.88em;color:#e8eaee;font-weight:700;font-family:var(--num);white-space:nowrap}
+
+/* ===== β0.190.0 見た目の版 ===== */
+/* T403 GARAGE「表示・操作・音」：狭い時（スマホ横など）は1列（2列だと中身が縮まず横にはみ出していた） */
+#gtab3{grid-template-columns:minmax(0,1fr)}#gtab3>.gfold{min-width:0}@container gar (max-width:659px){#gtab3 .setrow{grid-template-columns:minmax(0,1fr)}}
+/* T408 結果画面：戦績の行を詰める・この回の点は押すと開く・自分の行が見出しに隠れない・低い画面は車の説明の行を隠す */
+#resRec{line-height:1.5}#resRec .rsep{opacity:.4;margin:0 6px}
+#resRec details.srd{display:inline-block;margin-left:8px;font-size:12px;opacity:.8;vertical-align:top}#resRec details.srd summary{cursor:pointer}#resRec details.srd[open]{display:block;margin-left:0}
+#resultTable tr{scroll-margin-top:30px}
+@media (max-height:600px){#resultTable .rsp{display:none}#resRec{font-size:12px}#resultScreen .panel{gap:6px;padding-top:10px;padding-bottom:10px}#resultScreen .row{gap:6px}#resultScreen .row .btn{padding:6px 10px;font-size:15px;min-height:0;flex:1 1 auto}#resultScreen h2{margin:0}}
+/* T409 スマホのタイヤの小窓・燃料計を大きく（T295 の大きさに戻す）、天気・時刻の行を出す */
+body.touch #drv #tyreCv{width:60px!important;height:95px!important}body.touch #drv #fuelCv{width:36px;height:95px}
+body.touch #wx{display:block;font-size:11px;padding:2px 8px;left:auto;right:12px;bottom:auto;top:calc(env(safe-area-inset-top,0px) + 68px + clamp(78px,11vw,104px));white-space:nowrap}
+/* T410 ② サービスパーク：「ラリーをやめる」は控えめに */
+#svQuit{background:transparent;border:1px solid rgba(255,255,255,.3);color:#c8ccd4;font-size:13px;flex:0 0 auto;box-shadow:none}
+/* T410 ③ 戦績（RECORDS）：閉じるが画面の外に出ない（中だけ送る） */
+#recScreen .panel{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);display:flex;flex-direction:column;box-sizing:border-box}#recScreen .panel>*{flex:none}#recScreen #recBody{flex:0 1 auto;min-height:0;overflow:auto}@media (max-height:560px){#recScreen .panel{max-height:calc(100vh - 84px);max-height:calc(100dvh - 84px);gap:8px}}
+/* T410 ④ スマホの時間帯・天気の5つ並びは 3＋2 の2段（単語の途中で折らない） */
+body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,body.touch #wxSeg button{flex:1 1 30%;white-space:nowrap}
+/* T410 ⑤ ピット予約・作業中の字を黄色に（青い看板・雨の夜で読めなかった） */
+#carst b.pit{color:#ffd24a;text-shadow:0 0 3px #000}
+/* T410 ⑥ PC の小さい字・ボタン */
+#whlBtns .cap{font-size:11px;max-width:54px}#hlog .hh button{min-width:28px;min-height:26px}.tw s.tk{font-size:11px}
+/* T410 ⑦ 知らせ（toast）に半透明の帯。スマホは字を小さく */
+#toast{width:max-content;max-width:min(92vw,900px);margin:0 auto;padding:2px 14px;border-radius:6px;background:rgba(10,12,16,.55)}#toast:empty{display:none}body.touch #cstack>#toast{font-size:16px}
+/* T410 ⑨ スマホの最初の案内を1行に */
+.hint1{white-space:nowrap}body.touch .hint1{font-size:14px}
+/* T410 ⑩ 低い PC の画面（960×540 など）のタイトル：準備中の STREET を隠し、説明は1行で省く */
+@media (max-height:560px) and (min-width:761px){#catSt{display:none!important}#tmenu .mi span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+/* T410 ① 逆回りで使えない入口に理由を出す */
+#tmenu .mi.revOff em{display:block!important;color:#ffb34d;white-space:nowrap}
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -1059,7 +1089,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.189.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.190.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1454,7 +1484,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
   <div class="panel">
     <h2 id="resultTitle">結果</h2>
     <div id="resWrap" style="overflow:auto"><table id="resultTable"></table></div>
-    <p id="resRec" hidden></p>
+    <div id="resRec" hidden></div>
     <p class="note" id="resNote"></p>
     <div class="row">
       <button class="btn" id="raceBtn" type="button" hidden>決勝スタート</button>
@@ -3711,9 +3741,9 @@ function svRender(){const c=rly.car,k=rly.pick,nx=rly.nx||envPick(),w0=ENV0[nx.w
   const row=(n,info,sg)=>'<div class="svRow"><div class="label">'+n+'<span class="hint">'+info+'</span></div>'+sg+'</div>';
   $('svSub').textContent='SS'+(rly.st+2)+' の前　次の SS：'+WXN[nx.w].n+'・'+['朝焼け','昼','夕方','夜'][nx.t]+'　持ち時間 '+SVT+'分';
   $('svBody').innerHTML=
+    row('タイヤ（4本交換 '+SVY+'分）','今 '+TYR[c.ty].n+'・減り '+rlPc(c.wear)+'（グリップ −'+rlPc(TYR[c.ty].wd*Math.pow(c.wear,1.3))+'）　★＝次のステージの路面・天気に合うタイヤ',seg('t',[['替えない',-1],...TYR.map((t,i)=>[t.n+(i===best?' ★':''),i])]))+
     row('足回り（サスペンション・ステアリング）','ダメージ '+rlPc(c.dmS)+(c.dmS>.005?'　コーナーのグリップ −'+rlPc(DMGG*c.dmS):'　傷みなし'),seg('s',[['そのまま',0],[mS?'直す（'+mS+'分）':'直す所なし',1,!mS]]))+
     row('エンジン・駆動','ダメージ '+rlPc(c.dmE)+(c.dmE>.005?'　出力 −'+rlPc(DMGP*c.dmE):'　傷みなし'),seg('e',[['そのまま',0],[mE?'直す（'+mE+'分）':'直す所なし',1,!mE]]))+
-    row('タイヤ（4本交換 '+SVY+'分）','今 '+TYR[c.ty].n+'・減り '+rlPc(c.wear)+'（グリップ −'+rlPc(TYR[c.ty].wd*Math.pow(c.wear,1.3))+'）　★＝次のステージの路面・天気に合うタイヤ',seg('t',[['替えない',-1],...TYR.map((t,i)=>[t.n+(i===best?' ★':''),i])]))+
     row('サスペンション（変えると '+SVS+'分）','今 '+SETSU[setSU].n+'。砂利道・雪は柔らかめ、舗装は硬め',seg('su',SETSU.map((x,i)=>[x.n,i])))+
     row('車高（変えると '+SVS+'分）','今 '+SETRH[setRH].n+'。荒れた路面は高め、舗装は低め',seg('rh',SETRH.map((x,i)=>[x.n,i])));
   const u=svUsed(),late=Math.max(0,u-SVT);
@@ -5569,7 +5599,7 @@ function toast(t){$('toast').textContent=t;toastTimer=2;}
 let layNext=(()=>{try{return JSON.parse(localStorage.getItem('popkart')||'{}').lay===1?1:0;}catch(_){return REV;}})(); /* β0.189.1 T407 ?rev は保存しない */const CRSN='HIGASHI RACEWAY'+(REV?' REVERSE':'');
 function layPick(v){if(v===REV){layNext=REV;return;}if(state!=='title'){toast('コースの向きはタイトル画面の GARAGE で切り替えます');setTimeout(()=>markSeg('laySeg',REV),0);return;}
   layNext=v;saveSettings();const el=$('setup');if(el)el.style.pointerEvents='none';toast(v?'逆回りのコースを作ります…':'順回りのコースを作ります…');setTimeout(()=>location.reload(),350);}
-function layInit(){try{$('tsCourse').textContent=CRSN;}catch(_){}if(!REV)return;for(const id of['dragBtn','chBtn','dyBtn']){const b=$(id);if(!b)continue;b.disabled=true;b.classList.add('revOff');const sp=b.querySelector('span');if(sp)sp.textContent='順回りのコースだけ（GARAGE の「コースの向き」）';const em=b.querySelector('em');if(em)em.hidden=true;}}
+function layInit(){try{$('tsCourse').textContent=CRSN;}catch(_){}if(!REV)return;for(const id of['dragBtn','chBtn','dyBtn']){const b=$(id);if(!b)continue;b.disabled=true;b.classList.add('revOff');const sp=b.querySelector('span');if(sp)sp.textContent='順回りのコースだけ（GARAGE の「コースの向き」）';let em=b.querySelector('em');if(!em){em=document.createElement('em');b.appendChild(em);}em.hidden=false;em.textContent='順回りのコースだけ';}try{const c=$('catOn').querySelector('span');if(c)c.textContent='サーキット　レース・タイムアタック';}catch(_){}} /* β0.190.0 T410① */
 
 /* ================= サウンド ================= */
 let envS=null,ac=null,eng=null,squeal=null,muted=false,master=null,scrape=null,npcV=[];const AUD={x:0,z:0,t:0,vx:0,vz:0},audDir=new THREE.Vector3();
@@ -6489,15 +6519,15 @@ function recRace(pos){const el=$('resRec');el.hidden=true;el.innerHTML='';if(!st
   if(olp){const now=ret?'リタイア':pos+'位',d=ret?0:olp-pos;L.push('前回 '+olp+'位 → 今回 '+now+(d>0?' <span class="up">↑'+d+'</span>':d<0?' <span class="dn">↓'+(-d)+'</span>':''));}
   if(!ret){g.lp=pos;g.lo=of;}g.at=Date.now();
   L.push('戦績（'+key+'）：'+g.n+'戦 '+g.w+'勝・表彰台 '+g.p+(g.r?'・リタイア '+g.r:''));
-  const s=srRace(R.sr,p);if(s)L.push(s);
-  recPut(R);el.innerHTML=L.join('<br>');el.hidden=false;}
+  const s=srRace(R.sr,p);
+  recPut(R);el.innerHTML=L.join('<span class="rsep">｜</span>')+(s?'<br>'+s:''); /* β0.190.0 T408 */el.hidden=false;}
 function srRace(sr,p){if(!judgeOn||LAPS<2)return '';const laps=Math.max(1,Math.min(LAPS,p.ret?(p.lap||1):LAPS)),c={tl:p.tl||0,sp:p.spn||0,ct:p.cont||0,ip:+(p.ipt||0).toFixed(1),rw:rwCount||0};
   const pts=c.tl+2*c.sp+c.ct+c.ip+2*c.rw+(p.ret?CNCR:0),ipl=pts/laps,d=Math.max(-CNMN,Math.min(CNMX,CNK*(CNI-ipl)*Math.min(1,laps/3))),o=sr.r,ol=sr.l;
   sr.r=Math.max(0,Math.min(4.99,o+d));sr.n=(sr.n||0)+1;let lv='';
   if(sr.r>=CNUP&&sr.l<SRL.length-1){sr.l++;sr.r=CNU0;lv=' <span class="gd">級が上がった！ '+SRL[ol]+' → '+SRL[sr.l]+'</span>';}
   else if(sr.r<CNDN&&sr.l>0){sr.l--;sr.r=CN0;lv=' <span class="dn">級が下がった '+SRL[ol]+' → '+SRL[sr.l]+'</span>';}
   const dd=sr.r-o;const ds=lv?'':'（'+(d>=0?'<span class="up">＋':'<span class="dn">−')+Math.abs(dd).toFixed(2)+'</span>）';
-  return '走りのきれいさ <b>'+srTxt(sr)+'</b>'+ds+lv+'<br><small style="opacity:.75">この回の点 '+(+pts.toFixed(1))+'（コース外 '+c.tl+'・スピン '+c.sp+'・接触 '+c.ct+'・IP '+c.ip+'・巻き戻し '+c.rw+(p.ret?'・大クラッシュ':'')+'）　1周あたり '+ipl.toFixed(2)+'</small>';}
+  return '走りのきれいさ <b>'+srTxt(sr)+'</b>'+ds+lv+'<details class="srd"><summary>この回の点 '+(+pts.toFixed(1))+'</summary><small>（コース外 '+c.tl+'・スピン '+c.sp+'・接触 '+c.ct+'・IP '+c.ip+'・巻き戻し '+c.rw+(p.ret?'・大クラッシュ':'')+'）　1周あたり '+ipl.toFixed(2)+'</small></details>';}
 function recEmSync(){const el=$('recEm');if(!el)return;const R=recGet();let n=0,w=0;for(const k in R.g){n+=R.g[k].n;w+=R.g[k].w;}el.textContent=n?n+'戦'+w+'勝・きれいさ '+srTxt(R.sr):'';}
 function openRec(){const R=recGet(),sr=R.sr,ks=Object.keys(R.g).sort((a,b)=>R.g[b].n-R.g[a].n||R.g[b].at-R.g[a].at);
   const nx=sr.l<SRL.length-1?'あと '+Math.max(0,CNUP-sr.r).toFixed(2)+' で '+SRL[sr.l+1]+' へ':'いちばん上の級';
