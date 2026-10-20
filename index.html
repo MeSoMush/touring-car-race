@@ -1090,7 +1090,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.194.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.195.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2009,7 +2009,7 @@ function carLights(on,rainy){for(const k of karts){const g=k.g;if(!g)continue;if
 const envPick=()=>({t:todSel===4?[0,1,1,2,3][Math.random()*5|0]:todSel,w:wxSel===5?[0,0,1,2,3,4][Math.random()*6|0]:wxSel}); /* β0.183.2 T341 ランダムの時間帯・天気の抽選（ラリーはサービスパークで次の SS の分を先に決めて rly.nx に持つ） */
 const ENV0={0:[0,0,0,0],1:[.75,0,0,0],2:[.95,.85,0,.9],3:[.7,0,1,.12],4:[.5,0,0,0]}; // 天気ごとの始まりの [雲, 雨, 霧, 路面の濡れ]
 function envStart(){const rr=typeof rly!=="undefined"&&rly?rly:null,nx=rr&&rr.nx||rr&&rr.re&&rr.cur||envPick();if(rr){rr.cur=nx;rr.nx=null;rr.re=0;} /* β0.189.1 T405 */const P0=nx.t;let w=nx.w;
- ENV.tod=P0;ENV.clk=TODH[P0];ENV.pk=''+P0;ENV.P=TOD[P0];ENV.ta=todAir(ENV.clk);ENV.clkOn=false;ENV.wx=w;ENV.t=0;ENV.said=0;ENV.plan=null;
+ ENV.tod=P0;ENV.clk=TODH[P0];ENV.pk=''+P0;ENV.P=TOD[P0];ENV.ta=todAir(ENV.clk);ENV.clkOn=false;ENV.hdK=0;ENV.wx=w;ENV.t=0;ENV.said=0;ENV.plan=null;
  const s=ENV0[w];
  ENV.cloud=ENV.tc=s[0];ENV.rain=ENV.tr=s[1];ENV.fog=ENV.tf=s[2];ENV.wet=s[3];ENV.pl=w===2&&PDK?PL0:0;ENV.plSaid=0;if(typeof pudStep==='function')pudStep(0,false); // T248 雨で始まるレースは少し水たまりがある
  ENV.fc=null;ENV.fcS=0;
@@ -2071,7 +2071,8 @@ function envStep(dt,race){const e=ENV;e.t+=dt;
   rainMesh.geometry.attributes.position.needsUpdate=true;}
  // 自分の車のヘッドライト
  const p=player();const on=TOD[e.tod].night||e.fog>.5;
- headSpot.visible=!!(p&&on); // 昼は光源ごと外して、全部の面の計算から省く（T124）
+ if(p&&(on||race&&todSpd&&sess==='race'&&lapsEff()>=TDL))e.hdK=1; // β0.194.1 T404：一度入れた光はそのレースの間は外さない（光の数が変わると全部の面の描き方を作り直して数秒止まる）。時間が進むレースは最初から入れておく
+ headSpot.visible=!!(p&&(on||e.hdK)); // 昼は光源ごと外して、全部の面の計算から省く（T124）
  if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
  else headSpot.intensity=0;
  wsStep(dt);visvStep();} /* β0.186.0 T375 後半 */
@@ -2627,42 +2628,9 @@ const CARS=[
  gr:{w:1,h:.11,y:.36},gr2:{w:.4,h:.05,y:.48},hl:{s:'slim',x:.58,y:.55,z:2.05},split:{w:1.7,y:.1},
  tl:{s:'bar',y:.82},diff:{w:1.36,h:.1,y:.2},wing:{s:'duck',y:.98,z:-2.1,w:1.4},
  mir:{z:.3,y:.93},ex:[-.5,.5],ey:.22,wh:{k:1,r:.32,w:.25,x:.75,z:[1.34,-1.24]},bump:0,vent:1,canard:0},
-{name:'ハッチバック',en:'HATCH',d:'短いお尻の小型ホットハッチ。屋根が後ろまで伸び、大きなウイング付き',
- YB:[[2.37,.3],[2.28,.19],[-2.25,.2],[-2.37,.38]],arch:.40,fl:.045,tum:.08,
- BT:[[2.37,.5],[2.33,.64],[2.15,.74],[1.7,.8],[1.2,.86],[.8,.9],[0,.95],[-1.2,1],[-2,1.02],[-2.3,.98],[-2.37,.9]],
- BW:[[2.37,.68],[2.3,.86],[2.12,.92],[1.38,.96],[.6,.94],[-.4,.94],[-1.36,.96],[-2.1,.95],[-2.3,.92],[-2.37,.86]],
- n:z=>(z>2.2?3.0:z<-2.25?6.5:z<-1.9?5.6:5),
- GL:{z0:1.0,z1:-2.28,wb:.88,wt:.68,yb:.9,yt:[[1,.93],[.3,1.34],[-1,1.38],[-1.8,1.3],[-2.28,1.05]],n:4.5},
- RF:{z0:.32,z1:-1.9,wb:.72,wt:.66,yb:1.22,yt:[[.32,1.352],[.2,1.39],[-1.4,1.4],[-1.9,1.32]],n:4},
- belt:.98,trimZ:-.6,trimL:3.0,bp:[-.1,1.12,.36],roofY:1.398,roofZ:-.55,roofL:1.3,numRY:1.402,numRZ:-.4,
- strips:[[2.3,1.1]],spZ:-.6,spY:.72,numZ:.2,numY:.72,hoodZ:1.65,lineY:.52,
- gr:{w:.9,h:.14,y:.46},gr2:{w:.45,h:.06,y:.62},hl:{s:'angular',x:.58,y:.64,z:2.22},split:{w:1.86,y:.14},
- tl:{s:'vert',y:1.0},diff:{w:1.4,h:.12,y:.26},wing:{s:'gt',y:1.3,z:-2.22,w:1.7},
- mir:{z:.95,y:1.06},ex:[0],ey:.26,wh:{k:2,r:.33,w:.26,x:.82,z:[1.36,-1.34]},bump:0,vent:0,canard:1},
-{name:'GTワイド',en:'GT WIDE',d:'幅広・低重心の本格GTカー。ワイドフェンダーと大きなウイング',
- YB:[[2.37,.2],[2.28,.1],[-2.25,.11],[-2.37,.26]],arch:.40,fl:.05,tum:.12,
- BT:[[2.37,.34],[2.33,.5],[2.15,.6],[1.8,.66],[1.3,.72],[.8,.78],[.2,.84],[-.8,.9],[-1.5,.96],[-2.05,1],[-2.3,.98],[-2.37,.88]],
- BW:[[2.37,.66],[2.3,.88],[2.12,.97],[1.38,1.03],[.6,.98],[-.4,.97],[-1.36,1.04],[-2.1,1.02],[-2.3,.96],[-2.37,.88]],
- n:z=>(z>2.2?2.8:z<-2.25?6.2:4.6),
- GL:{z0:.78,z1:-1.2,wb:.9,wt:.62,yb:.8,yt:[[.78,.84],[.1,1.16],[-.5,1.2],[-1.2,.98]],n:4.2},
- RF:{z0:.2,z1:-.8,wb:.72,wt:.58,yb:1,yt:[[.2,1.15],[0,1.2],[-.5,1.21],[-.8,1.12]],n:4},
- belt:.9,trimZ:-.2,trimL:1.9,bp:[-.2,1,.3],roofY:1.218,roofZ:-.25,roofL:.8,numRY:1.222,numRZ:-.2,
- strips:[[2.3,1.2],[-1.5,-2.3]],spZ:-.6,spY:.62,numZ:.1,numY:.6,hoodZ:1.7,lineY:.42,
- gr:{w:1.3,h:.1,y:.27},gr2:{w:.7,h:.04,y:.43},hl:{s:'slim',x:.7,y:.5,z:2.12},split:{w:2.04,y:.07},
- tl:{s:'bar',y:.9},diff:{w:1.7,h:.14,y:.2},wing:{s:'gt',y:1.34,z:-2.14,w:1.98,neck:1},
- mir:{z:.62,y:.93},ex:[-.5,.5],ey:.2,wh:{k:1,r:.35,w:.32,x:.9,z:[1.42,-1.3],xr:.93},bump:0,vent:1,canard:1},
-{name:'クラシックボックス',en:'CLASSIC BOX',d:'80年代グループAの角ばった箱型セダン。細いタイヤと張り出したオーバーフェンダー',
- YB:[[2.37,.34],[2.28,.24],[-2.25,.24],[-2.37,.36]],arch:.40,fl:.075,tum:.03,
- BT:[[2.37,.62],[2.33,.74],[2.15,.8],[1.6,.82],[1,.84],[.7,.88],[-1.4,.92],[-2,.94],[-2.3,.93],[-2.37,.9]],
- BW:[[2.37,.86],[2.3,.89],[2.12,.9],[1.38,.91],[.6,.9],[-.4,.9],[-1.36,.91],[-2.1,.9],[-2.3,.89],[-2.37,.86]],
- n:z=>(z>2.2?4.4:5.4),
- GL:{z0:.8,z1:-1.55,wb:.86,wt:.76,yb:.86,yt:[[.8,.9],[.3,1.36],[-.9,1.38],[-1.55,.98]],n:5},
- RF:{z0:.3,z1:-.95,wb:.78,wt:.74,yb:1.3,yt:[[.3,1.4],[.2,1.42],[-.95,1.42]],n:5},
- belt:.92,trimZ:-.4,trimL:2.1,bp:[-.3,1.12,.4],roofY:1.428,roofZ:-.35,roofL:1.0,numRY:1.432,numRZ:-.3,
- strips:[],spZ:-.6,spY:.68,numZ:.1,numY:.7,hoodZ:1.7,lineY:.5,
- gr:{w:.9,h:.2,y:.58},gr2:{w:.4,h:.06,y:.7},hl:{s:'box',x:.6,y:.66,z:2.28},split:{w:1.8,y:.2},
- tl:{s:'box',y:.82},diff:{w:1.4,h:.1,y:.3},wing:{s:'lip',y:.97,z:-2.2,w:1.4},
- mir:{z:.7,y:1.0},ex:[-.5],ey:.3,wh:{k:2,r:.31,w:.24,x:.78,z:[1.36,-1.34]},bump:1,vent:0,canard:0},
+{name:'ハッチバック',en:'HATCH',d:'短いお尻の小型ホットハッチ。屋根が後ろまで伸び、大きなウイング付き',YB:[[2.25,.3],[2.165,.19],[-2.136,.2],[-2.25,.38]],arch:.38,fl:.045,tum:.08,BT:[[2.25,.5],[2.212,.64],[2.041,.74],[1.614,.8],[1.139,.86],[.759,.9],[0,.95],[-1.139,1],[-1.899,1.02],[-2.184,.98],[-2.25,.9]],BW:[[2.25,.641],[2.184,.811],[2.013,.867],[1.31,.905],[.57,.886],[-.38,.886],[-1.291,.905],[-1.994,.896],[-2.184,.867],[-2.25,.811]],n:z=>(z>2.089?3.0:z<-2.136?6.5:z<-1.804?5.6:5),GL:{z0:.949,z1:-2.165,wb:.83,wt:.641,yb:.9,yt:[[.949,.93],[.285,1.366],[-.949,1.409],[-1.709,1.323],[-2.165,1.055]],n:4.5},RF:{z0:.304,z1:-1.804,wb:.679,wt:.622,yb:1.237,yt:[[.304,1.379],[.19,1.419],[-1.329,1.43],[-1.804,1.344]],n:4},belt:.98,trimZ:-.57,trimL:2.848,bp:[-.095,1.13,.36],roofY:1.428,roofZ:-.522,roofL:1.234,numRY:1.432,numRZ:-.38,strips:[[2.184,1.044]],spZ:-.57,spY:.72,numZ:.19,numY:.72,hoodZ:1.566,lineY:.52,gr:{w:.848,h:.14,y:.46},gr2:{w:.424,h:.06,y:.62},hl:{s:'angular',x:.547,y:.64,z:2.108},split:{w:1.753,y:.14},tl:{s:'vert',y:1},diff:{w:1.32,h:.12,y:.26},wing:{s:'gt',y:1.3,z:-2.108,w:1.603},mir:{z:.902,y:1.06},ex:[0],ey:.26,wh:{k:2,r:.33,w:.25,x:.795,z:[1.3,-1.4],xr:.787},bump:0,vent:0,canard:1,L:2.25},
+{name:'GTワイド',en:'GT WIDE',d:'幅広・低重心の本格GTカー。ワイドフェンダーと大きなウイング',YB:[[2.37,.2],[2.28,.1],[-2.25,.11],[-2.37,.26]],arch:.4,fl:.05,tum:.12,BT:[[2.37,.34],[2.33,.5],[2.15,.6],[1.8,.66],[1.3,.72],[.8,.78],[.2,.84],[-.8,.9],[-1.5,.96],[-2.05,1],[-2.3,.98],[-2.37,.88]],BW:[[2.37,.581],[2.3,.774],[2.12,.853],[1.38,.906],[.6,.862],[-.4,.853],[-1.36,.915],[-2.1,.897],[-2.3,.845],[-2.37,.774]],n:z=>(z>2.2?2.8:z<-2.25?6.2:4.6),GL:{z0:.78,z1:-1.2,wb:.792,wt:.545,yb:.8,yt:[[.78,.84],[.1,1.307],[-.5,1.369],[-1.2,1.025]],n:4.2},RF:{z0:.2,z1:-.8,wb:.633,wt:.51,yb:1.056,yt:[[.2,1.291],[0,1.369],[-.5,1.385],[-.8,1.244]],n:4},belt:.9,trimZ:-.2,trimL:1.9,bp:[-.2,1.056,.3],roofY:1.398,roofZ:-.25,roofL:.8,numRY:1.404,numRZ:-.2,strips:[[2.3,1.2],[-1.5,-2.3]],spZ:-.6,spY:.62,numZ:.1,numY:.6,hoodZ:1.7,lineY:.42,gr:{w:1.144,h:.1,y:.27},gr2:{w:.616,h:.04,y:.43},hl:{s:'slim',x:.616,y:.5,z:2.12},split:{w:1.795,y:.07},tl:{s:'bar',y:.9},diff:{w:1.496,h:.14,y:.2},wing:{s:'gt',y:1.34,z:-2.14,w:1.742,neck:1},mir:{z:.62,y:.93},ex:[-.44,.44],ey:.2,wh:{k:1,r:.35,w:.28,x:.795,z:[1.4,-1.39]},bump:0,vent:1,canard:1,L:2.37},
+{name:'クラシックボックス',en:'CLASSIC BOX',d:'80年代グループAの角ばった箱型セダン。細いタイヤと張り出したオーバーフェンダー',YB:[[2.225,.34],[2.141,.24],[-2.112,.24],[-2.225,.36]],arch:.35,fl:.075,tum:.03,BT:[[2.225,.62],[2.187,.74],[2.018,.8],[1.502,.82],[.939,.84],[.657,.88],[-1.314,.92],[-1.878,.94],[-2.159,.93],[-2.225,.9]],BW:[[2.225,.789],[2.159,.817],[1.99,.826],[1.296,.835],[.563,.826],[-.376,.826],[-1.277,.835],[-1.972,.826],[-2.159,.817],[-2.225,.789]],n:z=>(z>2.065?4.4:5.4),GL:{z0:.751,z1:-1.455,wb:.789,wt:.697,yb:.86,yt:[[.751,.9],[.282,1.307],[-.845,1.325],[-1.455,.973]],n:5},RF:{z0:.282,z1:-.892,wb:.716,wt:.679,yb:1.254,yt:[[.282,1.342],[.188,1.36],[-.892,1.36]],n:5},belt:.92,trimZ:-.376,trimL:1.972,bp:[-.282,1.096,.4],roofY:1.367,roofZ:-.329,roofL:.939,numRY:1.371,numRZ:-.282,strips:[],spZ:-.563,spY:.68,numZ:.094,numY:.7,hoodZ:1.596,lineY:.5,gr:{w:.826,h:.2,y:.58},gr2:{w:.367,h:.06,y:.7},hl:{s:'box',x:.551,y:.66,z:2.141},split:{w:1.652,y:.2},tl:{s:'box',y:.82},diff:{w:1.285,h:.1,y:.3},wing:{s:'lip',y:.97,z:-2.065,w:1.285},mir:{z:.657,y:1},ex:[-.459],ey:.3,wh:{k:2,r:.3,w:.21,x:.725,z:[1.325,-1.275],xr:.73},bump:1,vent:0,canard:0,L:2.225},
 /* β0.31.0 追加の5車種（実車の定番スタイルをもとにした、すべてオリジナルの形）。scoop＝ボンネットの空気取り入れ口、rails＝ルーフレール、
    intake＝サイドの空気取り入れ口、rvent＝リアデッキの排熱ルーバー、fog＝バンパーの丸いライト */
 {name:'ワゴン',en:'WAGON',d:'屋根が後ろまで伸びたツーリングワゴン。ルーフレールと縦長のテールランプ',
@@ -2689,18 +2657,7 @@ const CARS=[
  gr:{w:.8,h:.07,y:.28},gr2:{w:.4,h:.04,y:.38},hl:{s:'popup',x:.5,y:.58,z:1.75},split:{w:1.66,y:.08},
  tl:{s:'bar',y:.9},diff:{w:1.36,h:.1,y:.2},wing:{s:'duck',y:1.04,z:-2.15,w:1.4},
  mir:{z:.38,y:.88},ex:[.5],ey:.2,wh:{k:0,r:.31,w:.25,x:.73,z:[1.225,-1.25]},bump:0,vent:0,canard:0},
-{name:'ラリーセダン',en:'RALLY',d:'車高が高めのラリー系ターボセダン。ボンネットのスクープと大きなウイング',
- YB:[[2.37,.38],[2.28,.27],[-2.25,.27],[-2.37,.4]],arch:.40,fl:.06,tum:.06,
- BT:[[2.37,.52],[2.33,.68],[2.15,.78],[1.6,.88],[1.1,.94],[.3,.98],[-1.2,1],[-2.05,1.02],[-2.3,1],[-2.37,.9]],
- BW:[[2.37,.7],[2.3,.88],[2.12,.95],[1.38,1],[.6,.95],[-.4,.95],[-1.36,1],[-2.1,.97],[-2.3,.93],[-2.37,.86]],
- n:z=>(z>2.2?3.0:z<-2.25?6.5:z<-1.9?5.8:5),
- GL:{z0:1.1,z1:-1.36,wb:.88,wt:.67,yb:.92,yt:[[1.1,.96],[.36,1.38],[-.55,1.4],[-1.36,1.02]],n:4.5},
- RF:{z0:.34,z1:-.6,wb:.72,wt:.65,yb:1.26,yt:[[.34,1.4],[.2,1.43],[-.6,1.43]],n:4},
- belt:1,trimZ:-.12,trimL:2.3,bp:[-.12,1.14,.36],roofY:1.438,roofZ:-.13,roofL:.9,numRY:1.442,numRZ:.02,
- strips:[],spZ:-.6,spY:.76,numZ:.15,numY:.76,hoodZ:1.95,lineY:.56,
- gr:{w:1,h:.2,y:.5},gr2:{w:.5,h:.08,y:.66},hl:{s:'angular',x:.6,y:.7,z:2.24},split:{w:1.84,y:.2},
- tl:{s:'pair',y:.84},diff:{w:1.5,h:.12,y:.3},wing:{s:'gt',y:1.4,z:-2.12,w:1.76,neck:1},
- mir:{z:1,y:1.08},ex:[-.62],ey:.3,wh:{k:1,r:.36,w:.26,x:.86,z:[1.38,-1.36]},bump:0,vent:0,canard:0,scoop:{z:1.25,w:.5,h:.1,l:.5},fog:1},
+{name:'ラリーセダン',en:'RALLY',d:'車高が高めのラリー系ターボセダン。ボンネットのスクープと大きなウイング',YB:[[2.235,.38],[2.15,.27],[-2.122,.27],[-2.235,.4]],arch:.37,fl:.06,tum:.06,BT:[[2.235,.52],[2.197,.68],[2.028,.78],[1.509,.88],[1.037,.94],[.283,.98],[-1.132,1],[-1.933,1.02],[-2.169,1],[-2.235,.9]],BW:[[2.235,.602],[2.169,.757],[1.999,.817],[1.301,.86],[.566,.817],[-.377,.817],[-1.283,.86],[-1.98,.834],[-2.169,.8],[-2.235,.74]],n:z=>(z>2.075?3.0:z<-2.122?6.5:z<-1.792?5.8:5),GL:{z0:1.037,z1:-1.283,wb:.757,wt:.576,yb:.92,yt:[[1.037,.96],[.339,1.398],[-.519,1.419],[-1.283,1.021]],n:4.5},RF:{z0:.321,z1:-.566,wb:.619,wt:.559,yb:1.272,yt:[[.321,1.419],[.189,1.45],[-.566,1.45]],n:4},belt:1,trimZ:-.113,trimL:2.169,bp:[-.113,1.147,.36],roofY:1.458,roofZ:-.123,roofL:.849,numRY:1.463,numRZ:.019,strips:[],spZ:-.566,spY:.76,numZ:.141,numY:.76,hoodZ:1.839,lineY:.56,gr:{w:.86,h:.2,y:.5},gr2:{w:.43,h:.08,y:.66},hl:{s:'angular',x:.516,y:.7,z:2.112},split:{w:1.582,y:.2},tl:{s:'pair',y:.84},diff:{w:1.29,h:.12,y:.3},wing:{s:'gt',y:1.4,z:-1.999,w:1.514,neck:1},mir:{z:.943,y:1.08},ex:[-.533],ey:.3,wh:{k:1,r:.32,w:.235,x:.757,z:[1.305,-1.32]},bump:0,vent:0,canard:0,scoop:{z:1.179,w:.5,h:.1,l:.472},fog:1,L:2.235},
 {name:'マッスルGT',en:'MUSCLE',d:'長いボンネットと流れる屋根の大排気量クーペ。丸目2灯と3本のテールランプ',
  YB:[[2.37,.28],[2.28,.17],[-2.25,.18],[-2.37,.3]],arch:.40,fl:.05,tum:.06,
  BT:[[2.37,.46],[2.33,.62],[2.15,.72],[1.9,.78],[1.3,.84],[.8,.9],[.3,.94],[-.5,.98],[-1.5,1],[-2.1,1],[-2.3,.98],[-2.37,.9]],
@@ -2738,18 +2695,7 @@ const CARS=[
  gr:{w:.7,h:.08,y:.32},gr2:{w:.5,h:.04,y:.44},hl:{s:'round',x:.6,y:.64,z:1.95},split:{w:1.7,y:.11},
  tl:{s:'bar',y:.6},diff:{w:1.4,h:.1,y:.2},wing:{s:'duck',y:.86,z:-2.05,w:1.45},
  mir:{z:.45,y:.92},ex:[-.42,.42],ey:.22,wh:{k:1,r:.34,w:.27,x:.75,z:[1.245,-1.115],xr:.76},bump:0,vent:0,canard:0,rvent:1,rvZ:-1.8,rvS:.045},
-{name:'フロントミッドGT',en:'FRONT-MID GT',d:'大きなエンジンを前輪の後ろに積んだ長い鼻先のGT。後ろに寄せたキャビンと短いお尻',
- YB:[[2.37,.22],[2.28,.12],[-2.25,.13],[-2.37,.28]],arch:.40,fl:.05,tum:.1,
- BT:[[2.37,.4],[2.33,.55],[2.15,.63],[1.8,.68],[1.3,.74],[.8,.8],[.4,.84],[-.2,.88],[-1,.92],[-1.6,.95],[-2.1,.97],[-2.3,.95],[-2.37,.86]],
- BW:[[2.37,.66],[2.3,.86],[2.12,.94],[1.38,.99],[.6,.95],[-.4,.95],[-1.36,1.02],[-2.1,1],[-2.3,.95],[-2.37,.87]],
- n:z=>(z>2.2?2.8:z<-2.25?6.2:4.6),
- GL:{z0:.55,z1:-1.55,wb:.88,wt:.63,yb:.84,yt:[[.55,.88],[-.1,1.2],[-.7,1.23],[-1.2,1.1],[-1.55,.98]],n:4.4},
- RF:{z0:-.05,z1:-1.05,wb:.7,wt:.58,yb:1,yt:[[-.05,1.16],[-.25,1.22],[-.7,1.23],[-1.05,1.13]],n:4},
- belt:.9,trimZ:-.55,trimL:2,bp:[-.6,1.02,.3],roofY:1.238,roofZ:-.55,roofL:.8,numRY:1.242,numRZ:-.5,
- strips:[[2.3,.6],[-1.6,-2.3]],spZ:-.55,spY:.6,numZ:.15,numY:.62,hoodZ:1.4,lineY:.44,
- gr:{w:1.2,h:.12,y:.32},gr2:{w:.6,h:.05,y:.46},hl:{s:'slim',x:.66,y:.54,z:2.16},split:{w:1.96,y:.08},
- tl:{s:'bar',y:.86},diff:{w:1.6,h:.12,y:.2},wing:{s:'lip',y:.99,z:-2.24,w:1.5},
- mir:{z:.42,y:.94},ex:[-.55,.55],ey:.2,wh:{k:1,r:.35,w:.3,x:.88,z:[1.42,-1.3],xr:.92},bump:0,vent:1,canard:0},
+{name:'フロントミッドGT',en:'FRONT-MID GT',d:'大きなエンジンを前輪の後ろに積んだ長い鼻先のGT。後ろに寄せたキャビンと短いお尻',YB:[[2.25,.22],[2.165,.12],[-2.136,.13],[-2.25,.28]],arch:.39,fl:.05,tum:.1,BT:[[2.25,.4],[2.212,.55],[2.041,.63],[1.709,.68],[1.234,.74],[.759,.8],[.38,.84],[-.19,.88],[-.949,.92],[-1.519,.95],[-1.994,.97],[-2.184,.95],[-2.25,.86]],BW:[[2.25,.592],[2.184,.771],[2.013,.843],[1.31,.888],[.57,.852],[-.38,.852],[-1.291,.915],[-1.994,.897],[-2.184,.852],[-2.25,.78]],n:z=>(z>2.089?2.8:z<-2.136?6.2:4.6),GL:{z0:.3,z1:-1.472,wb:.789,wt:.565,yb:.84,yt:[[.3,.88],[-.206,1.255],[-.665,1.29],[-1.139,1.136],[-1.472,.995]],n:4.4},RF:{z0:-.047,z1:-.997,wb:.628,wt:.52,yb:1.018,yt:[[-.047,1.207],[-.237,1.278],[-.665,1.29],[-.997,1.172]],n:4},belt:.9,trimZ:-.522,trimL:1.899,bp:[-.57,1.042,.3],roofY:1.299,roofZ:-.522,roofL:.759,numRY:1.304,numRZ:-.475,strips:[[2.184,.57],[-1.519,-2.184]],spZ:-.522,spY:.6,numZ:.142,numY:.62,hoodZ:1.329,lineY:.44,gr:{w:1.076,h:.12,y:.32},gr2:{w:.538,h:.05,y:.46},hl:{s:'slim',x:.592,y:.54,z:2.051},split:{w:1.758,y:.08},tl:{s:'bar',y:.86},diff:{w:1.435,h:.12,y:.2},wing:{s:'lip',y:.99,z:-2.127,w:1.346},mir:{z:.399,y:.94},ex:[-.493,.493],ey:.2,wh:{k:1,r:.34,w:.27,x:.8,z:[1.27,-1.36],xr:.79},bump:0,vent:1,canard:0,L:2.25},
 /* β0.147.0 T312 追加の4車種（実車の定番の大きさ・配置をもとにした、すべてオリジナルの形）。ここからは車ごとに大きさが違う：L＝前後の端（m）、hx＝当たり判定の半幅、camF・camY＝車載カメラ */
 {name:'軽ハッチ',en:'KEI HATCH',d:'全長3.4m・幅1.48mの軽自動車。背が高く角ばった箱型、細いタイヤ',L:1.70,hx:.73,camF:.75,camY:1.3,
  YB:[[1.70,.3],[1.62,.18],[-1.6,.19],[-1.70,.34]],arch:.36,fl:.03,tum:.06,
@@ -2970,7 +2916,7 @@ let WVK=1,WVA=2.2,WVP=1.8,WVL=45,WVM=5,WVG=.3,WVH=2.2,WSU=1800,WSG=3;
 let RWG=.1,RWW=.006,WLW=2.2,LDRY=.45;
 let BHK=.13,BC0=.012,BC1=.0011,BFT=600,BFR=200,BFD=.2,WMK=1.5,TBE=1.5;
 // ドアの合わせ目の位置（z。前端・間・後端の順。車種の番号順）。2ドアは2つ、4ドアは3つ
-const DOORS=[[.97,-.1,-.95],[.8,-.72],[.95,-.55],[.7,-.7],[.75,-.2,-1.2],[1.05,.05,-.9],[.72,-.8],[1,0,-1.05],[.6,-.8],[.68,-.42],[.72,-.6],[.45,-.8],[.82,-.08,-.95],[.55,-.72],[.86,-.62],[.72,-.62]];
+const DOORS=[[.97,-.1,-.95],[.8,-.72],[.902,-.522],[.7,-.7],[.704,-.188,-1.127],[1.05,.05,-.9],[.72,-.8],[.943,0,-.99],[.6,-.8],[.68,-.42],[.72,-.6],[.427,-.759],[.82,-.08,-.95],[.55,-.72],[.86,-.62],[.72,-.62]];
 let _plM=null;
 function plateMat(){if(_plM)return _plM;const t=canvasTex(128,64,(g,w,h)=>{g.fillStyle='#e9e9e4';g.fillRect(0,0,w,h);g.strokeStyle='#1a1a1c';g.lineWidth=3;g.strokeRect(3,3,w-6,h-6);g.fillStyle='#1a1a1c';g.font='bold 25px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('GP 27-27',w/2,h/2+2);});
   _plM=new THREE.MeshStandardMaterial({map:t,roughness:.5,polygonOffset:true,polygonOffsetFactor:-2});_plM.userData.shared=1;return _plM;}
@@ -3118,8 +3064,8 @@ function makeKart(dr,num,ci){
   bx(spw,.03,.2,black,0,c.split.y,Z(2.33));
   for(const s of[-1,1])bx(.06,.12,.26,black,s*(spw/2-.02),c.split.y+.06,Z(2.3));
   if(c.canard)for(const s of[-1,1]){const cy=c.split.y+.22;bx(.2,.016,.14,black,s*(sideX(c,Z(2.2),cy)-.02),cy,Z(2.2),0,s*.2,s*.1);} // β0.53.0：車体の側面から 8cm ほどだけ出す（以前は 20cm 以上はみ出していた）
-  if(c.bump===1){bx(Math.min(1.86,2*sideX(c,2.33,.4)),.2,.12,black,0,.4,2.36);bx(Math.min(1.86,2*sideX(c,-2.33,.42)),.18,.12,black,0,.42,-2.37);} // 黒い樹脂バンパー（クラシック）
-  else if(c.bump===2){const ch=S(0xc8ccd2,.9,.25);bx(2*sideX(c,2.32,.3),.07,.1,ch,0,.3,2.35);bx(2*sideX(c,-2.32,.44),.07,.1,ch,0,.44,-2.36);} // クロームのバンパー（マッスル）
+  if(c.bump===1){bx(Math.min(1.86,2*sideX(c,Z(2.33),.4)),.2,.12,black,0,.4,Z(2.36));bx(Math.min(1.86,2*sideX(c,Z(-2.33),.42)),.18,.12,black,0,.42,Z(-2.37));} // 黒い樹脂バンパー（クラシック）
+  else if(c.bump===2){const ch=S(0xc8ccd2,.9,.25);bx(2*sideX(c,Z(2.32),.3),.07,.1,ch,0,.3,Z(2.35));bx(2*sideX(c,Z(-2.32),.44),.07,.1,ch,0,.44,Z(-2.36));} // クロームのバンパー（マッスル）
   // ボンネットのスクープ（空気取り入れ口）
   if(c.scoop){const q=c.scoop,pz=Math.atan2(BTz(q.z-.1)-BTz(q.z+.1),.2);
     add(new THREE.BoxGeometry(q.w,q.h,q.l),paint,0,BTz(q.z)+q.h/2-.01,q.z,body,pz);
@@ -3173,7 +3119,7 @@ function makeKart(dr,num,ci){
     for(const o of[-.3,.3])bx(.5,.016,.026,wm,o,wy+.014,wz,ws,o*.4);
     glue(endF(0,c.diff.y+c.diff.h+.16,-1),PL(.5,.25),plateMat(),0,0,0,-.004);}
   // 前のナンバープレートと牽引フック（β0.33.0）。ナンバーはグリルの前に付け、鼻先の低い車は小さくする
-  {const topF=btop(c,Z(2.345))-.02,botF=pl(c.YB,Z(2.345))+.03,hP=Math.min(.22,topF-botF),yC=c.bump===1?.42:Math.min(topF-hP/2,Math.max(botF+hP/2,c.gr.y)),zP=c.bump===1?2.43:Z(2.382); // 樹脂バンパーの車は、ライトに重ならないようバンパーの上に付ける
+  {const topF=btop(c,Z(2.345))-.02,botF=pl(c.YB,Z(2.345))+.03,hP=Math.min(.22,topF-botF),yC=c.bump===1?.42:Math.min(topF-hP/2,Math.max(botF+hP/2,c.gr.y)),zP=c.bump===1?Z(2.43):Z(2.382); // 樹脂バンパーの車は、ライトに重ならないようバンパーの上に付ける
     if(c.bump===1){bx(hP*2.1,hP+.02,.02,black,0,yC,zP);const fp=add(new THREE.PlaneGeometry(hP*2,hP),plateMat(),0,yC,zP+.012,body,0,0);fp.castShadow=false;}
     else{const F=endF(0,yC,1);glue(F,BX(hP*2.1,hP+.02,.012),black);glue(F,PL(hP*2,hP),plateMat(),0,0,0,-.014);} // β0.192.0 鼻先の面に沿わせる
     const tm=S(0xe0580f,.2,.5),hy=Math.max(botF+.07,c.split.y+.1);
@@ -7193,7 +7139,7 @@ let last=performance.now();
 let titleT=0;
 function titleCam(dt){titleT+=dt*.05;const i=wrap(Math.floor(titleT*N*.6));const h=heading(i);camera.position.set(TX[i]-Math.sin(h)*14+NX[i]*6,6,TZ[i]-Math.cos(h)*14+NZ[i]*6);camera.lookAt(TX[wrap(i+8)],1,TZ[wrap(i+8)]);followSun(TX[i],TZ[i]);}
 // スマホの解像度の自動調整（T124）：レース中に3秒平均が約30fps未満なら、描画の細かさを 1.5→1.25→1.0 へ段階的に下げる（上げ戻しはしない）
-{const r0=renderer.render.bind(renderer);let pc=0;renderer.render=function(sc,cam){if(!pc&&sc===scene){pc=1;const tr=scene.traverse;scene.traverse=scene.traverseVisible;try{renderer.compile(scene,cam);}catch(_){}scene.traverse=tr;}const r=r0(sc,cam);if(shPend&&sc===scene&&SHADOWS&&sun.shadow.map){shPend=0;shClear();}return r;};} /* β0.104.0 T262 最初の描画の前にまとめて準備 */
+{const r0=renderer.render.bind(renderer);let pc=0;renderer.render=function(sc,cam){if(!pc&&sc===scene){pc=1;const tr=scene.traverse;scene.traverse=scene.traverseVisible;try{renderer.compile(scene,cam);const hv=headSpot.visible;headSpot.visible=true;renderer.compile(scene,cam);headSpot.visible=hv;}catch(_){}scene.traverse=tr;} /* β0.194.1 T404 ヘッドライトの光が入った描き方も先に作る（夜・霧のレースの始まりで止まらないように） */const r=r0(sc,cam);if(shPend&&sc===scene&&SHADOWS&&sun.shadow.map){shPend=0;shClear();}return r;};} /* β0.104.0 T262 最初の描画の前にまとめて準備 */
 const AR_FPS=1/33,AR_PC=1/45;let _arBad=0; /* β0.104.0 T262 PC は約45fps */let _arT=0,_arN=0;const AR_LOG={drops:0,fps:0,minFps:0,n:0};
 function autoRes(raw){if(bmk||gfxRes!==0||(state!=='race'&&state!=='countdown')||raw>.25){_arT=0;_arN=0;return;}
   _arT+=raw;_arN++;if(_arT<3)return;const avg=_arT/_arN;_arT=0;_arN=0;AR_LOG.fps=1/avg;AR_LOG.n++;AR_LOG.minFps=AR_LOG.n===1?1/avg:Math.min(AR_LOG.minFps,1/avg);
