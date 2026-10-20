@@ -1090,7 +1090,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.198.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.198.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5057,7 +5057,7 @@ function ckBuild(p){
 //   遠い側のドアミラーは本当の位置だと画面の外（横 45° ほど）なので、画面の端の内側まで寄せる。近い側は窓の柱にかからない所へ。画面が細い時（縦長など）はドアミラーを出さない
 let CKV=1;var handL=2; // handL：0＝右 1＝左 2＝車種で自動（ワゴン・マッスルGT・ミッドシップ・リアエンジン・フロントミッドGT・ホットコンパクト・ハイパーカーは海外の車として左）。保存キー hd2
 function lhdOf(ci){return handL===2?[5,8,9,10,11,14,15].includes(ci|0):handL===1;} // 関数にして先に使えるように（車を作る所からも呼ぶ）
-let CKHS=.32,CKTH=19.5,CKLA=.16,CKSL=.35,CKYK=60,CKYC=11,CKYJ=.018,CKHL=.6,CKLG=.0045,CKMS=1.1,CKMF=30; // 屋根の縁の見上げ角・コーナーで先を見る量（ヨーレート×秒）・横すべりの向きを見る割合・頭の向きのばね・ねばり・向きを変えた瞬間に頭が残る量・頭を水平に保つ割合・横Gで頭が外へ動く量（m/(m/s²)）・鏡の大きさの倍率・ドアミラーの横の画角
+let CKP2=0,CKHP=.5,CKHS=.32,CKTH=15,CKLA=.16,CKSL=.35,CKYK=60,CKYC=11,CKYJ=.018,CKHL=.6,CKLG=.0045,CKMS=1.1,CKMF=30; // 屋根の縁の見上げ角・コーナーで先を見る量（ヨーレート×秒）・横すべりの向きを見る割合・頭の向きのばね・ねばり・向きを変えた瞬間に頭が残る量・頭を水平に保つ割合・横Gで頭が外へ動く量（m/(m/s²)）・鏡の大きさの倍率・ドアミラーの横の画角
 function ckDispose(){if(!CK.g)return;if(CK.g.parent)CK.g.parent.remove(CK.g);CK.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map&&!o.material.map.isRenderTargetTexture&&!o.userData.rt)o.material.map.dispose();o.material.dispose();}});}
 // 鏡の映像を描く先（ドアミラー2枚。ルームミラーは mirRT を使う）
 const ckRT=[0,1].map(()=>{const r=new THREE.WebGLRenderTarget(320,192,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});r.texture.encoding=THREE.sRGBEncoding;r.texture.wrapS=THREE.RepeatWrapping;r.texture.repeat.x=-1;r.texture.offset.x=1;return r;});
@@ -5126,7 +5126,7 @@ function ckBuildC(p,f,asp){
   let zH;{const ymx=Math.max(...G.yt.map(q=>q[1]));zH=G.z0;while(zH>G.z1&&yt(zH)<ymx-.03)zH-=.02;zH=Math.max(ez+.36,Math.min(ez+.9,zH));}
   const yH=ey+(zH-ez)*Math.tan(CKTH*D),xb=glassX(c,zW-.02,G.yb+.03)+.01,xh=Math.max(.45,glassX(c,zH,Math.min(yt(zH)-.05,yH))+.01);
   const PB=s=>V(s*xb,Math.max(G.yb,bt(zW))+.01,zW-.02),PT=s=>V(s*xh,yH,zH);
-  for(const s of[-1,1]){const near=s===-hs;bar(PB(s),PT(s),near?.066:.06,.045,dk);bar(PB(s).add(V(-s*.04,0,-.02)),PT(s).add(V(-s*.04,-.01,-.02)),.008,.008,trim);}
+  for(const s of[-1,1]){const near=s===-hs;if(!near&&!CKP2)continue; /* β0.198.1 反対側の柱は出さない（ご本人「右ハンドルの場合左のピラーは表示しなくていい」。CKP2＝1 で出す） */bar(PB(s),PT(s),near?.066:.06,.045,dk);bar(PB(s).add(V(-s*.04,0,-.02)),PT(s).add(V(-s*.04,-.01,-.02)),.008,.008,trim);}
   {const rw=2*xh+.12;const hb=box(rw,.06,.05,dk,0,yH+.03,zH+.025);
    const ln=new THREE.Mesh(new THREE.PlaneGeometry(rw,zH-ez+.9),lin);ln.rotation.x=Math.PI/2;ln.position.set(0,yH+.07,(zH+ez-.9)/2);grp.add(ln);
    const cg=new THREE.Mesh(new THREE.CylinderGeometry(.02,.02,rw-.2,8),cage);cg.rotation.z=Math.PI/2;cg.position.set(0,yH+.01,ez-.25);grp.add(cg);} // 頭の上のロールケージの横棒
@@ -5175,7 +5175,7 @@ function ckGauge(p,dt){CK.t-=dt;if(CK.t>0)return;CK.t=1/15;
 // ・横：曲がると横Gで頭が外へ（HD.lx）
 // ・向き：コーナーの内側（ヨーレート×CKLA）と横すべりの向き（CKSL）を見る。向きを変えた瞬間は頭が少し残る（CKYJ）ので、車内の枠が景色に対して先に回って見える
 // ・傾き：車体のロールの CKHL の割合だけ頭を水平に保つ（車内の枠は車体と一緒に傾く）
-const ckQ=new THREE.Quaternion(),ckL=new THREE.Vector3(),ckU=new THREE.Vector3(),HD={k:null,h0:0,yr:0,yrp:0,yo:0,yv:0,lx:0,lv:0};
+const ckE=new THREE.Euler(),ckQ=new THREE.Quaternion(),ckL=new THREE.Vector3(),ckU=new THREE.Vector3(),HD={k:null,h0:0,yr:0,yrp:0,yo:0,yv:0,lx:0,lv:0};
 const wrapA=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a;};
 function seatCam(p,dt,snap){
   const fT=ckFov(),asp=innerWidth/innerHeight,useV=CKV&&!p.g.formula;
@@ -5197,11 +5197,11 @@ function seatCam(p,dt,snap){
   const eye=tmpS.set(CK.ex+HD.lx,CK.ey+ny,CK.ez+hdX*.6);b.localToWorld(eye);camera.position.copy(eye);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(Math.random()-.5)*shake*.3;camera.position.y+=(Math.random()-.5)*shake*.2;}}
   const bq=b.getWorldQuaternion(ckQ);ckU.set(0,1,0).applyQuaternion(bq).lerp(tmpS2.set(0,1,0),RM?1:CKHL).normalize();camera.up.copy(ckU);
-  const look=ckL.set(CK.ex+HD.lx+Math.sin(HD.yo)*30,CK.ey-1.2-hdX*2-(CK.lk||0),CK.ez+Math.cos(HD.yo)*30);b.localToWorld(look);camera.lookAt(look);camera.up.set(0,1,0);
+  const look=ckL.set(CK.ex+HD.lx+Math.sin(HD.yo)*30,CK.ey-1.2-hdX*2-(CK.lk||0),CK.ez+Math.cos(HD.yo)*30);b.localToWorld(look);if(!RM&&CKHP){const bpch=ckE.setFromQuaternion(bq,'YXZ').x;look.y+=30*Math.tan(bpch)*CKHP;} /* β0.198.1 車体の前後の傾き（加速で沈む・ブレーキでのめる）は CKHP の割合だけ水平に保つ（ご本人「加速すると視点が下がりすぎる」） */camera.lookAt(look);camera.up.set(0,1,0);
   if(snap)camera.fov=fT;else camera.fov+=(fT-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();camH=p.h;}
 const tmpS2=new THREE.Vector3();
 function ckFov(){return innerWidth<innerHeight?86:Math.max(46,Math.min(70,2*Math.atan(Math.tan(CKHF*Math.PI/360)*innerHeight/innerWidth)*180/Math.PI));} // 運転席の視野角：横の角度 CKHF から
-const CKHF=82;let CKF=.1,CKU=.05; // β0.198.0 横 88°→82°（16:9 で縦 約53°。景色の大きさが他のレースゲームの運転席視点に近い）。座席を前へ 10cm・目を上へ 5cm
+const CKHF=90;let CKF=.1,CKU=.05; // β0.198.1 横 82°→90°（ご本人「もう少し引いた画面で」）。β0.198.0 横 88°→82°（16:9 で縦 約53°。景色の大きさが他のレースゲームの運転席視点に近い）。座席を前へ 10cm・目を上へ 5cm
 function ckHide(){if(CK.g)CK.g.visible=false;}
 const ckScene=new THREE.Scene(),ckHold=new THREE.Group();ckHold.matrixAutoUpdate=false;ckScene.add(ckHold);
 const ckHemi=new THREE.HemisphereLight(),ckSun=new THREE.DirectionalLight();ckScene.add(ckHemi,ckSun,ckSun.target);
