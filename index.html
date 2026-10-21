@@ -1091,7 +1091,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.202.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.203.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2696,23 +2696,23 @@ const LAY={F:{n:'フロント',wd:{FF:0,FR:0,'4WD':0},iz:1,hc:1},FM:{n:'フロ�
  RM:{n:'リアミッドシップ',wd:{FF:.25,FR:.25,'4WD':.38},iz:.8,hc:.9},R:{n:'リア',wd:{FF:.35,FR:.35,'4WD':.45},iz:1,hc:.95}};
 const SPEC=[
  {ly:'F',kg:1250,rk:1470,rh:.53,wb:2.76,dr:[1,0,2],snd:0,cd:1,df:1},                          // 0 セダン（基準）
- {ly:'F',kg:1187.5,rk:1270,rh:.46,wb:2.58,dr:[1,0,2],snd:1,cd:.97,df:.95,hc:.96},             // 1 クーペ
- {ly:'F',kg:1215,rk:1400,rh:.51,wb:2.7,dr:[0,2],snd:2,cd:1.02,df:1.06,iz:.95,wd:-.04,hc:1.02},// 2 ハッチバック：短く前が重い
+ {ly:'F',kg:1187.5,rk:1270,rh:.46,wb:2.58,dr:[1,0,2],snd:17,cd:.97,df:.95,hc:.96},             // 1 クーペ
+ {ly:'F',kg:1215,rk:1400,rh:.51,wb:2.7,dr:[0,2],snd:18,cd:1.02,df:1.06,iz:.95,wd:-.04,hc:1.02},// 2 ハッチバック：短く前が重い
  {ly:'F',kg:1250,rk:1780,rh:.49,wb:2.79,dr:[1,2],snd:3,cd:1.04,df:1.18,iz:1.02,hc:.92},        // 3 GTワイド：低く広い
  {ly:'F',kg:1375,rk:1250,rh:.50,wb:2.6,dr:[1,0],snd:4,cd:1.06,df:.85,iz:1.04,wd:-.02,hc:1.12},// 4 クラシックボックス：重心が高い
  {ly:'F',kg:1350,rk:1500,rh:.54,wb:2.66,dr:[1,0,2],snd:5,cd:1.03,df:.95,iz:1.08,wd:.03,hc:1.1},// 5 ワゴン：後ろが長く重い
  {ly:'FM',kg:1225,rk:1210,rh:.46,wb:2.475,dr:[1],snd:6,cd:.95,df:.9,wd:.02,hc:.92},             // 6 ウェッジクーペ：小さなロータリーを前軸の後ろに
  {ly:'F',kg:1312.5,rk:1440,rh:.52,wb:2.62,dr:[2,0],snd:7,cd:1.04,df:1.1,wd:-.02,hc:1.1},       // 7 ラリーセダン：車高が高い
  {ly:'F',kg:1400,rk:1770,rh:.51,wb:2.8,fr:53,dr:[1],snd:8,cd:1.02,df:.9,iz:1.1,hc:1},       // 8 マッスルGT：大きな V8 で前が重く長い
- {ly:'RM',kg:1215,rk:1550,rh:.43,wb:2.62,fr:42,dr:[1,2],snd:9,cd:1,df:1.05,iz:.78},           // 9 ミッドシップ（β0.197.0 T430 前42%＝実車の MR）
+ {ly:'RM',kg:1215,rk:1550,rh:.43,wb:2.62,fr:42,dr:[1,2],snd:19,cd:1,df:1.05,iz:.78},           // 9 ミッドシップ（β0.197.0 T430 前42%＝実車の MR）
  /* β0.135.0 T306：実車の数字から起こした2台（車名・形はオリジナル。使うのは数字だけ）。出力は全車共通のまま、車重と空力で速さをそろえた（BoP） */
  {ly:'R',kg:1375,rk:1400,rh:.46,dr:[1,2],snd:11,cd:.98,df:1,wb:2.36,h:.40,iz:1.2,rg:1.05},// 10 リアエンジン（前39%。後ろのタイヤが太い）
- {ly:'FM',kg:1345,rk:1560,rh:.46,wb:2.63,fr:48,dr:[1],snd:12,cd:1.02,df:1},        // 11 フロントミッドGT（前50%）
+ {ly:'FM',kg:1345,rk:1560,rh:.46,wb:2.63,fr:48,dr:[1],snd:20,cd:1.02,df:1},        // 11 フロントミッドGT（前50%）
  /* β0.147.0 T312：実車の数字（大きさ・重さ・前後の重さ）をもとにした4台。そろえたモードの車重は BWN〜BWX の幅に寄せる（重りと軽量化） */
  {ly:'F',kg:870,rk:700,rh:.56,dr:[0,2],snd:13,cd:1.08,df:.9,wb:2.47,h:.56,iz:.9},     // 12 軽ハッチ：背が高く細い
  {ly:'FM',kg:1000,rk:950,rh:.43,dr:[1],snd:14,cd:.98,df:.92,wb:2.3,h:.41,iz:.86},     // 13 ライトウェイト：小さく軽い FR（前50%）
  {ly:'F',kg:1210,rk:1200,rh:.52,dr:[2,0],snd:15,cd:1.04,df:1,wb:2.5,h:.52},           // 14 ホットコンパクト：短い 4WD
- {ly:'RM',kg:1840,rk:1600,rh:.41,dr:[2,1],snd:16,cd:.95,df:1.15,wb:2.67,fr:41,iz:1.05,hc:.85,rg:1.1}, // 15 ハイパーカー：重い 4WD のミッドシップ
+ {ly:'RM',kg:1840,rk:1600,rh:.41,dr:[2,1],snd:21,cd:.95,df:1.15,wb:2.67,fr:41,iz:1.05,hc:.85,rg:1.1}, // 15 ハイパーカー：重い 4WD のミッドシップ
  {ly:'RM',kg:775,dr:[1],snd:10,cd:1,df:2.4,iz:.7,wd:.12,hc:.75},        // 16 フォーミュラ（FCI）
 ];
 function chdOf(ci,dk){const p=SPEC[ci]||SPEC[0],L=LAY[p.ly]||LAY.F,dd=DRV_KEYS[(p.dr||[1])[0]],d=DRV[dk]||DRV[dd];
@@ -5691,23 +5691,29 @@ let mVol=100;try{const v=localStorage.getItem('popkart_vol');if(v!=null&&/^\d{1,
 // v＝車種ごとの音量の補正（8000回転の大きさをそろえる）。実在の車の音は使わず、気筒の数と排気の雰囲気から作った自作の合成音
 const ENGV=[
  {n:'直4',cyl:4,w:'sawtooth',sub:.5,sv:.8,hi:2,hv:.18,cut:320,cs:.18,q:2,lo:.55,ex:1,lf:0,ld:0,v:1.1},      // セダン：素直な直列4気筒
- {n:'直6',cyl:6,w:'sawtooth',sub:.5,sv:.45,hi:2,hv:.3,cut:420,cs:.2,q:1.2,lo:.5,ex:1.2,lf:0,ld:0,v:1.5},    // クーペ：なめらかな直列6気筒
- {n:'直4高回転',cyl:4,w:'square',sub:.5,sv:.5,hi:3,hv:.3,cut:380,cs:.26,q:3.2,lo:.42,ex:1.6,lf:0,ld:0,v:1},// ハッチバック：高回転まで回るかん高い4気筒
+ {n:'直6',cyl:6,w:'sawtooth',sub:.5,sv:.45,hi:2,hv:.3,cut:420,cs:.2,q:1.2,lo:.5,ex:1.2,lf:0,ld:0,v:1.5},    // なめらかな直列6気筒（β0.202.0 までのクーペ。今は試聴だけ）
+ {n:'直4高回転',cyl:4,w:'square',sub:.5,sv:.5,hi:3,hv:.3,cut:380,cs:.26,q:3.2,lo:.42,ex:1.6,lf:0,ld:0,v:1},// 高回転まで回るかん高い4気筒（β0.202.0 までのハッチバック。今は試聴だけ）
  {n:'V6ツイン',cyl:6,w:'sawtooth',sub:.5,sv:.7,hi:1.5,hv:.35,cut:360,cs:.2,q:2.4,lo:.55,ex:1.1,lf:0,ld:0,v:1.15}, // GTワイド：太いV6
  {n:'旧4気筒',cyl:4,w:'square',sub:.5,sv:1,hi:2,hv:.08,cut:240,cs:.12,q:1.6,lo:.7,ex:.8,lf:.25,ld:.18,v:0.85},// クラシック：キャブの古い4気筒（少しばらつく）
  {n:'直5',cyl:5,w:'sawtooth',sub:.5,sv:.75,hi:1.5,hv:.25,cut:340,cs:.18,q:2.2,lo:.55,ex:1,lf:.5,ld:.12,v:1.1},// ワゴン：5気筒の独特のうなり
  {n:'ロータリー',cyl:4,w:'square',sub:1,sv:.0,hi:2,hv:.45,cut:520,cs:.24,q:4.5,lo:.4,ex:1.5,lf:0,ld:0,v:1.05},  // ウェッジ：2ローター（ブーンと鋭い）
  {n:'水平対向4',cyl:4,w:'sawtooth',sub:.25,sv:.9,hi:2,hv:.15,cut:300,cs:.17,q:2,lo:.62,ex:1,lf:.25,ld:.3,v:1},// ラリー：ボクサーのドコドコ
  {n:'V8',cyl:8,w:'sawtooth',sub:.25,sv:1.1,hi:1.5,hv:.2,cut:230,cs:.14,q:1.8,lo:.8,ex:.8,lf:.25,ld:.35,v:0.9}, // マッスル：クロスプレーンV8のドロドロ
- {n:'V10',cyl:10,w:'sawtooth',sub:.5,sv:.35,hi:2,hv:.4,cut:520,cs:.3,q:3,lo:.4,ex:1.7,lf:0,ld:0,v:1.7},     // ミッドシップ：高回転で叫ぶV10
+ {n:'V10',cyl:10,w:'sawtooth',sub:.5,sv:.35,hi:2,hv:.4,cut:520,cs:.3,q:3,lo:.4,ex:1.7,lf:0,ld:0,v:1.7},     // 高回転で叫ぶV10（β0.202.0 までのミッドシップ。今は試聴だけ）
  {n:'V10（フォーミュラ）',cyl:10,w:'sawtooth',sub:.5,sv:.3,hi:2,hv:.5,cut:700,cs:.34,q:3.5,lo:.35,ex:1.9,lf:0,ld:0,v:1.6}, // T50 フォーミュラ：さらに高く鋭い
  {n:'水平対向6',cyl:6,w:'sawtooth',sub:.25,sv:.7,hi:2,hv:.35,cut:450,cs:.24,q:2.6,lo:.5,ex:1.4,lf:.15,ld:.15,v:1.3}, // T306 リアエンジン：乾いた高い唸りのボクサー6
- {n:'V12',cyl:12,w:'sawtooth',sub:.5,sv:.3,hi:2,hv:.45,cut:560,cs:.3,q:3,lo:.38,ex:1.8,lf:0,ld:0,v:1.6},       // T306 フロントミッドGT：なめらかに伸びる V12
+ {n:'V12',cyl:12,w:'sawtooth',sub:.5,sv:.3,hi:2,hv:.45,cut:560,cs:.3,q:3,lo:.38,ex:1.8,lf:0,ld:0,v:1.6},       // T306 なめらかに伸びる V12（β0.202.0 までのフロントミッドGT。今は試聴だけ）
  // β0.147.0 3気筒は回転の半分の揺れ（lf .5）で「ブルル」とばらつく。W16 は低い音を厚く・こもらせて重い唸り
  {n:'直3ターボ（軽）',cyl:3,w:'sawtooth',sub:.5,sv:.55,hi:2,hv:.28,cut:330,cs:.24,q:2.6,lo:.45,ex:1.4,lf:.5,ld:.2,v:1.2},  // 軽ハッチ：小さく軽い3気筒
  {n:'直4（小排気量）',cyl:4,w:'sawtooth',sub:.5,sv:.55,hi:2,hv:.28,cut:380,cs:.22,q:2.8,lo:.48,ex:1.35,lf:0,ld:0,v:1.4},// ライトウェイト：軽く回る4気筒
  {n:'直3ターボ',cyl:3,w:'sawtooth',sub:.5,sv:.85,hi:1.5,hv:.3,cut:300,cs:.2,q:2.2,lo:.6,ex:1.1,lf:.5,ld:.24,v:1},      // ホットコンパクト：太い3気筒
- {n:'W16 4ターボ',cyl:16,w:'sawtooth',sub:.25,sv:1.1,hi:1.5,hv:.25,cut:250,cs:.15,q:1.6,lo:.75,ex:.9,lf:.125,ld:.12,v:.85}, // ハイパーカー：重く厚い唸り
+ {n:'W16 4ターボ',cyl:16,w:'sawtooth',sub:.25,sv:1.1,hi:1.5,hv:.25,cut:250,cs:.15,q:1.6,lo:.75,ex:.9,lf:.125,ld:.12,v:.85}, // 重く厚い唸り（β0.202.0 までのハイパーカー。今は試聴だけ）
+ // β0.203.0 T438 β0.197.0 のエンジンの形式に合わせた5つ（17〜21）。ターボの笛とこもりは ENG の tb から自動で付く。mw＝モーターの唸りの量・mf＝速さ（m/s）あたりの高さ（Hz）
+ {n:'直4ターボ',cyl:4,w:'sawtooth',sub:.5,sv:.75,hi:2,hv:.22,cut:350,cs:.2,q:2.2,lo:.55,ex:1.1,lf:0,ld:0,v:1.15},          // クーペ：太めで素直な2L ターボ
+ {n:'直4ターボ（高回転）',cyl:4,w:'square',sub:.5,sv:.55,hi:3,hv:.26,cut:400,cs:.24,q:2.8,lo:.46,ex:1.4,lf:0,ld:0,v:1.05},// ハッチバック：上まで回る鋭い2L ターボ
+ {n:'V8（高回転）',cyl:8,w:'sawtooth',sub:.5,sv:.45,hi:2,hv:.42,cut:480,cs:.3,q:3,lo:.42,ex:1.7,lf:0,ld:0,v:1.5},            // ミッドシップ：フラットプレーンの V8（ドロドロせず、上で叫ぶ）
+ {n:'V8ツインターボ',cyl:8,w:'sawtooth',sub:.25,sv:1,hi:1.5,hv:.25,cut:280,cs:.18,q:2,lo:.7,ex:1,lf:.25,ld:.25,v:1},         // フロントミッドGT：ドロドロした V8 をターボでこもらせた音
+ {n:'V8＋モーター',cyl:8,w:'sawtooth',sub:.5,sv:.4,hi:2,hv:.45,cut:500,cs:.3,q:3.2,lo:.38,ex:1.8,lf:0,ld:0,v:1.5,mw:.22,mf:26}, // ハイパーカー：高回転の V8 に、速さで上がるモーターの唸り
 ];
 // エンジンの種類（排気量）での違い：1600cc は軽く高め、ターボは排気がこもって太い
 const ENGC=[{p:1.04,v:.9,cut:1.05},{p:1,v:1,cut:1},{p:.97,v:1,cut:.82}];
@@ -5718,26 +5724,28 @@ function engVoice(dst){const o=ac.createOscillator(),o2=ac.createOscillator(),o3
   const ga=ac.createGain(),g2=ac.createGain(),g3=ac.createGain();ga.gain.value=1;g2.gain.value=1;g3.gain.value=0;
   const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;f.Q.value=2;const am=ac.createGain();am.gain.value=1;const g=ac.createGain();g.gain.value=0;
   const lfo=ac.createOscillator(),ld=ac.createGain();lfo.frequency.value=8;ld.gain.value=0;lfo.connect(ld);ld.connect(am.gain);
+  const o4=ac.createOscillator(),g4=ac.createGain();o4.type='sine';o4.frequency.value=200;g4.gain.value=0;o4.connect(g4);g4.connect(am);o4.start(); // β0.203.0 T438 モーターの唸り（ENGV の mw）
   o.connect(ga);o2.connect(g2);o3.connect(g3);ga.connect(f);g2.connect(f);g3.connect(f);f.connect(am);am.connect(g);g.connect(dst);o.start();o2.start();o3.start();lfo.start();
-  return{o,o2,o3,ga,g2,g3,f,g,am,lfo,ld,cur:null};}
+  return{o,o2,o3,o4,ga,g2,g3,g4,f,g,am,lfo,ld,cur:null};}
 // 車種の設定を音の部品に入れる（変わった時だけ）
 /* β0.179.0 T379 音の見張り（EWK＝1）：エンジン音の部品（自分の車 eng・ほかの車 npcV）のこもり（フィルター f）の出口を EWI 秒ごとに測る。発振は止めずに鳴り続けているので、
    出口が無音か壊れた値（NaN。Web Audio のフィルターは急な設定や出力機器の切り替えで壊れたままになることがある）が EWN 回続いたら、その部品を作り直す。回数は不具合報告の「音」の行に */
 let EWK=1,EWI=.5,EWN=2,ewT0=0,ewFix=0,ewLast='';const ewBuf=new Float32Array(256);
 function ewTap(v){if(!v||v.an)return v;try{const a=ac.createAnalyser();a.fftSize=256;v.f.connect(a);v.an=a;v.bad=0;}catch(_){}return v;}
 function ewBad(v){if(!v||!v.an)return false;v.an.getFloatTimeDomainData(ewBuf);let m=0;for(let i=0;i<ewBuf.length;i++){const x=ewBuf[i];if(!Number.isFinite(x))return true;const a=x<0?-x:x;if(a>m)m=a;}return m<1e-7;}
-function ewKill(v){try{v.o.stop();v.o2.stop();v.o3.stop();v.lfo.stop();}catch(_){}try{v.g.disconnect();}catch(_){}try{v.f.disconnect();}catch(_){}}
+function ewKill(v){try{v.o.stop();v.o2.stop();v.o3.stop();v.lfo.stop();if(v.o4)v.o4.stop();}catch(_){}try{v.g.disconnect();}catch(_){}try{v.f.disconnect();}catch(_){}}
 function ewRe(v,dst,who){ewKill(v);const n=engVoice(dst);n.pn=v.pn;n.k=v.k;n.fresh=1;n.g.gain._v=0;ewFix++;ewLast=who+'（'+(typeof raceTime==='number'?raceTime.toFixed(0):'?')+'秒）';return ewTap(n);}
 function engWatch(){if(!EWK||!ac||ac.state!=='running'||!eng)return;const now=performance.now();if(now-ewT0<EWI*1000)return;ewT0=now;
   try{if(ewBad(ewTap(eng))){if(++eng.bad>=EWN)eng=ewRe(eng,master,'自分');}else eng.bad=0;
    if(npcV)npcV.forEach((v,i)=>{if(ewBad(ewTap(v))){if(++v.bad>=EWN)npcV[i]=ewRe(v,v.pn||master,'ほかの車');}else v.bad=0;});}catch(_){}}
 function engSet(v,k){const e=engvOf(k),key=e?k.ci+'_'+(k.tq&&k.tq.tb?2:tqKind(k.ci)):'0';if(v.cur===key)return;v.cur=key;const t=ac.currentTime;
-  if(!e){v.o.type='sawtooth';v.o2.type='square';v.ga.gain.setValueAtTime(1,t);v.g2.gain.setValueAtTime(1,t);v.g3.gain.setValueAtTime(0,t);v.ld.gain.setValueAtTime(0,t);v.f.Q.setValueAtTime(2,t);v.e=null;return;}
+  if(!e){v.o.type='sawtooth';v.o2.type='square';v.ga.gain.setValueAtTime(1,t);v.g2.gain.setValueAtTime(1,t);v.g3.gain.setValueAtTime(0,t);v.ld.gain.setValueAtTime(0,t);v.f.Q.setValueAtTime(2,t);if(v.g4)v.g4.gain.setValueAtTime(0,t);v.e=null;return;}
   v.o.type=e.w;v.o2.type=e.w==='square'?'triangle':'square';v.ga.gain.setValueAtTime(1,t);v.g2.gain.setValueAtTime(e.sv,t);v.g3.gain.setValueAtTime(e.hv,t);v.f.Q.setValueAtTime(e.q,t);v.ld.gain.setValueAtTime(e.ld,t);v.e=e;}
 // 回転と踏み具合から、音の高さ・こもり・音量の倍率を決める（dop＝ドップラー）。戻り値は音量の倍率
 function engDrive(v,k,rpm,thr,ts,dop,fresh){if(!Number.isFinite(rpm)||rpm<0)rpm=1000;if(!Number.isFinite(dop))dop=1;if(!Number.isFinite(thr))thr=.4;const t=ac.currentTime,e=v.e,T=k&&k.tq,c0=ENGC[T&&T.tb?2:k&&k.ci!=null?tqKind(k.ci):1]||ENGC[1],c=T&&T.tb&&TKX&&T.xc?{p:c0.p,v:c0.v*(T.xv||1),cut:T.xc}:c0; // T219 過給機の種類でこもり方（ターボは排気がタービンを通るのでこもる。大径ほどこもり、スーパーチャージャーは自然吸気に近い乾いた音）
   const f=e?rpm/60*e.cyl/2*c.p*dop:rpm/30*dop,set=(p,x)=>fresh?p.setValueAtTime(x,t):p.setTargetAtTime(x,t,ts);
   set(v.o.frequency,f);set(v.o2.frequency,f*(e?e.sub:.5));set(v.o3.frequency,f*(e?e.hi:2));if(e&&e.lf)set(v.lfo.frequency,f*e.lf);
+  if(v.g4){const sp=k&&k.u!=null?Math.abs(k.u):rpm/8000*60;if(e&&e.mw){set(v.o4.frequency,(80+sp*e.mf)*dop);set(v.g4.gain,e.mw*Math.min(1,sp/25)*(.25+.75*thr));}else if(v.g4.gain._m!==0){v.g4.gain._m=0;v.g4.gain.setTargetAtTime(0,t,ts);}if(e&&e.mw)v.g4.gain._m=1;} // β0.203.0 T438 モーターの唸りは速さで上がる（試聴は回転から仮の速さ）
   const cut=e?(e.cut+rpm*e.cs*(.35+.65*thr))*c.cut:300+rpm*.18*thr;v.f.frequency.setTargetAtTime(cut,t,ts*1.5);
   return e?(e.lo+(1-e.lo)*Math.pow(Math.min(1,rpm/8500),e.ex))*c.v*1.25*(e.v||1):1;}
 // ターボの笛とプシュッ（自分の車だけ）
