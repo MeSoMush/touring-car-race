@@ -1092,7 +1092,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.212.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.213.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1621,7 +1621,7 @@ const COURSES=[{id:'higashi',name:'HIGASHI RACEWAY',
  plw:[-300,-420,300],plw0:[-140,-300,130],pitB:-90,pitC:70,pitBX:-62,pitI:45,pxl:470, // ピット：［分かれる所・入口の白線の始まり・合流］（plw0＝短い入口 PLN=0 の時）・80km/h の線2つ・最初のボックス・定点カメラ（線の何 m 手前）・出口から本線へ寄る所
  gridB:10,rsd:420,rfs:400,sl:[300,430], // グリッドの先頭（線の何 m 手前）・ローリングスタートの始まり（線の何 m 手前）・赤旗で止まる所（線の何 m 先）・スタートの列を保つ区間
  cpu:{CVX:0,CVO:0,DRK:.3,CVB:0,PBA:0}, // 抜き合いの仕掛け（T281。市街地など抜く所の少ないコースで変える）
- ref:{cref0:{lap:[65.397,60.594,53.96,58.35,53.23,76.012],L:3150.2,pit:8.6,fc:624},qref:[64.10,59.00,55.10,58.25,50.42,76.46],fpl:2.3,fplc:[1.87,2.27,2.54,2.26,2.59,1.45]},
+ ref:{cref0:{lap:[65.351,60.508,53.834,58.248,53.086,76],L:3150.2,pit:8.6,fc:624},qref:[64.10,59.00,55.10,58.25,50.42,76.46],fpl:2.3,fplc:[1.87,2.27,2.54,2.26,2.59,1.45]},
  rev:{plw:[-400,-520,180]}}];
 const REV=(()=>{try{if(typeof location!=='undefined'&&/[?&]rev(=1)?(&|$)/.test(location.search||''))return 1;return JSON.parse(localStorage.getItem('popkart')||'{}').lay===1?1:0;}catch(_){return 0;}})(); /* β0.187.0 T361 逆回り（β0.212.0 でコースの設定より前へ移した） */
 const CRSI=(()=>{try{const m=typeof location!=='undefined'&&/[?&]crs=(d+)/.exec(location.search||'');const v=m?+m[1]:+(JSON.parse(localStorage.getItem('popkart')||'{}').crs||0);return COURSES[v]?v:0;}catch(_){return 0;}})();
@@ -2228,7 +2228,7 @@ let vcVer=0;function calcVC(){vcVer++;terrPre();const p=plrSafe();const gm=wetMu
 calcVC();
 /* T282（β0.120.0）コースの形から見積もる値。手で測った値（QREF・FPLC・PITL・SL0/SL1・おすすめの表の1周）は今のコース（HIGASHI RACEWAY）で測ったものなので、
    コースを足した時は「そのコースの見積もり ÷ CREF0（今のコースの見積もり）」の比で合わせる（比が 1 から CRT 以内なら 1＝今のコースは今までどおり）。
-   1周の見積もり：乾いた路面で曲がれる速さ（走行ラインの半径・バンク・ダウンフォース）と、エンジンごとの加速（ACCT）・ブレーキ（1.2G）・上り下りで点の速さを決めて足す */
+   1周の見積もり：乾いた路面で曲がれる速さ（走行ラインの半径・バンク・ダウンフォース）と、エンジンごとの加速（ACCT）・ブレーキ（AIBG。β0.212.0 までは 1.2G）・上り下りで点の速さを決めて足す */
 const CREF0=CREFB.cref0 /* β0.149.0 クラスの仕様を入れた見積もりで書き直した（β0.212.0 からコースの設定の ref） */,CRT=.003;
 /* 加速の表（平らな所・全開・アシスト標準で 5m/s ごとの平均 m/s²。β0.149.0 にクラスの車重〔KIT の m〕を入れて測り直した acc149.js。エンジンやクラスの仕様を変えたら測り直す） */
 const ACCT=[[9.68,10,9.68,6.82,6.67,4.35,3.37,3.06,1.96,1.42,0.68],[9.68,10,9.68,10,6.67,6.98,4.55,4.41,3.13,2.78,1.92,1.43,0.81],[9.09,8.57,9.37,10,10,7.32,8.33,5.56,5.88,4.11,4,2.75,2.44,1.79,0.91,0.29],[9.68,10,9.68,10.34,9.09,6,4.92,5,3.45,3.37,2.27,2.07,1.4,0.83,0.24],[9.68,10,9.68,10.34,10.34,7.32,8.11,6.82,4.84,4.92,3.53,3.53,2.44,2.34,1.73,1.07,0.73],[4.84,5.26,5.08,4.41,2.86,2.07,1.42,0.82,0.25]];
@@ -2236,7 +2236,7 @@ const ACCT=[[9.68,10,9.68,6.82,6.67,4.35,3.37,3.06,1.96,1.42,0.68],[9.68,10,9.68
 let KIT=[{g:.98,df:.75,m:1,n:'市販車に近い車体＋レース用タイヤ・小さなスポイラー'},{g:1,df:.8,m:.97,n:'細めのスリック・控えめの空力'},{g:1.06,df:1.25,m:.95,n:'太いスリック・大きなウイングとディフューザー・軽い車体'},{g:1.03,df:.9,m:1.02,n:'中くらいの幅のスリック・市販車に近い空力・重め'},{g:1.07,df:1.25,m:1,n:'いちばん太いスリック・強いダウンフォース・ほぼ専用の車体'},{g:.96,df:.6,m:1,n:'軽自動車の車体＋細いレース用タイヤ・空力はほぼなし（ロールケージと安全装備）'}];
 function lapEst(c){const top=CC[c].top,A=ACCT[c],KK=KIT[c]||{g:1,df:1},la0=MU.road*G*.82*KK.g,v=new Float64Array(N);
   for(let i=0;i<N;i++){const la=la0*RSF[RSI[i]].mu,den=1-la/G*(AERO*KK.df+TVK[i])*RADL[i];v[i]=Math.min(top,den>.15?Math.sqrt((la+G*TBK[i])*RADL[i]/den):200);}
-  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*1.2*RSF[RSI[i]].mu*SP+2*G*(TE[j]-TE[i]))));}
+  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*RSF[RSI[i]].mu*SP+2*G*(TE[j]-TE[i]))));} /* β0.213.0 ブレーキは CPU と同じ AIBG（前は 1.2 の決め打ち） */
   for(let p=0;p<2;p++)for(let i=0;i<N;i++){const j=wrap(i+1),m=RSF[RSI[i]].mu,a=m<1?Math.min(A[Math.floor(v[i]/5)]||0,MU.road*m*G*.5):A[Math.floor(v[i]/5)]||0;v[j]=Math.min(v[j],Math.sqrt(Math.max(0,v[i]*v[i]+2*a*SP-2*G*(TE[j]-TE[i]))));}
   let t=0;for(let i=0;i<N;i++)t+=SP/Math.max(1,(v[i]+v[wrap(i+1)])/2);return {t,v};}
 function courseRef(){const r={lap:[],L};let v1=null;for(let c=0;c<CC.length;c++){const e=lapEst(c);r.lap.push(e.t);if(c===1)v1=e.v;}
@@ -2839,7 +2839,7 @@ const tnKg=(ci,a,drv='FR')=>{const F=tnFx(ci,a);return 1250*carMass(ci,drv)*KST.
 function lapEstX(top,g,df,mr,wet){const A=[];for(let i=0;i<40;i++){const col=ACCT.map(r=>r[i]),q=col.filter(x=>x!=null);if(!q.length)break;A.push(Math.max(0,q.length<2?q[0]:tabT(col,top))/mr);}
   const wm=wet?.7:1,la0=MU.road*G*.82*g*wm*Math.pow(mr,-MGP),v=new Float64Array(N);
   for(let i=0;i<N;i++){const la=la0*RSF[RSI[i]].mu,den=1-la/G*(AERO*df+TVK[i])*RADL[i];v[i]=Math.min(top,den>.15?Math.sqrt((la+G*TBK[i])*RADL[i]/den):200);}
-  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*1.2*RSF[RSI[i]].mu*wm*SP+2*G*(TE[j]-TE[i]))));}
+  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*RSF[RSI[i]].mu*wm*SP+2*G*(TE[j]-TE[i]))));}
   for(let p=0;p<2;p++)for(let i=0;i<N;i++){const j=wrap(i+1),m=RSF[RSI[i]].mu*wm,a=m<1?Math.min(A[Math.floor(v[i]/5)]||0,MU.road*m*G*.5):A[Math.floor(v[i]/5)]||0;v[j]=Math.min(v[j],Math.sqrt(Math.max(0,v[i]*v[i]+2*a*SP-2*G*(TE[j]-TE[i]))));}
   let t=0;for(let i=0;i<N;i++)t+=SP/Math.max(1,(v[i]+v[wrap(i+1)])/2);return t;}
 function tnLap(ci,a,wet){const F=tnFx(ci,a),m0=1250*carMass(ci,'FR')*KST.m,mr=(m0*F.mf+F.kg+(F.tb?TKS[1].kg+IC_KG:0))/m0;const t=topFree(ci,a)/Math.cbrt(F.cd);return lapEstX(t,F.g*F.gr,F.df,mr/frAccK(t),wet);}
