@@ -1102,7 +1102,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.216.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.216.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3506,7 +3506,7 @@ function stepKart(k,dt,ctl){
   }
   if(k.ev){const rgK=k.batCap?Math.max(0,Math.min(1,(k.batCap-k.fuel)/(k.batCap*RGFL))):1,R=RGN[k.rgi??1],full=k.Fp/(k.gf||1)*(k.heatK||1)*k.st.acc/(k.fm||1)*RATIO[TOPG]*torque(k.rpm,k.tq);let fr=0;
     if(k.spin<=0&&Math.abs(k.u)>3){if(ctl.brake&&k.u>.8)fr=Math.min(Fb,R.b*rgK,full*RGPM);else if(!ctl.accel)fr=R.f*rgK;}
-    k.rgK=rgK;k.rgP=full>0?Math.min(RGPM,fr/full):0;k.rgOn=fr>.3;} /* β0.210.0 T457 rgK＝満タン近くで回生が弱い割合 */
+    k.rgK=rgK;k.rgP=full>0?Math.min(RGPM,fr/full):0;k.rgOn=fr>.3;k.evkW=(k.evkW||0)+(((Fd>0?Fd:0)-fr)*Math.abs(k.u)*1.25*(k.mm||1)*(k.fm||1)-(k.evkW||0))*Math.min(1,dt*8);} /* β0.210.0 T457 rgK＝満タン近くで回生が弱い割合 */ /* β0.216.1 T476 evkW＝表示用の出力（kW、回生はマイナス。力×速さ×車重） */
   if(k.st2){if(ctl.accel){if((k.lfT||0)>.6)k.smk=1;k.lfT=0;}else k.lfT=(k.lfT||0)+dt;if(k.smk>0)k.smk-=dt;} /* β0.209.0 T456 2スト：長く戻した後に踏み直すと、たまったオイルが燃えて白い煙（k.smk 秒） */
   if(Fd>0&&k.shiftT<=0&&ctl.accel){k.fdL=Fd;k.resE=Fd-k.ax;k.fdF=Fd/Math.max(.05,ctl.thr??1);} /* T390 fdF＝全開の時の駆動力 */ // T382 駆動の加速と走る抵抗の見込み（駆動が切れている間は前の値のまま）
   // 回転を合わせずにシフトダウンした時のショック（エンジンブレーキの衝撃が駆動輪にかかる）。短く減衰
@@ -3573,7 +3573,7 @@ function stepKart(k,dt,ctl){
     k.fpw=(sess==='race'&&k.fuel<=0?(k.pit?.35:0):FMP[k.fmode??1])*(k.ev?k.btK??1:1); /* ガス欠は力が出ない（ピットレーンでは押してもらう） */k.fm=k.ev?1:1+(k.fuel-FREF)/(1250*(k.mm||1));
     if(FTK&&!k.ev&&k.ka0!=null){const M=1250*(k.mm||1),d=FTZ*(k.fuel/(M+k.fuel)-FREF/(M+FREF));k.ka=k.ka0+d;k.kb=k.kb0-d;k.cgd=d;if(k.cgd0==null)k.cgd0=d;}} // T83（β0.115.0）タンクは後ろ寄り：燃料が多いほど重心が後ろ（ka が長い）
    if(k.tb==null)k.tb=150;{const Ta=30;k.tb+=(BHK*Fb*BRKH/BRKG*Math.abs(k.u)*(k.mm||1)*(1+AGW*agOf(k))-(k.tb-Ta)*(BC0+BC1*Math.abs(k.u))*(k.bck||1)*(1+cw*.04+pc*2))*dt;k.tb=Math.max(Ta,Math.min(1100,k.tb));k.bfK=1-BFD*Math.max(0,Math.min(1,(k.tb-BFT)/BFR));}
-   k.heatK=1-OHL*Math.max(Math.max(0,Math.min(1,(k.tw-OHT)/OHF)),Math.max(0,Math.min(1,(k.to-OIT)/OHF)));
+   k.heatK=k.ev?1:1-OHL*Math.max(Math.max(0,Math.min(1,(k.tw-OHT)/OHF)),Math.max(0,Math.min(1,(k.to-OIT)/OHF)));
    const T=k.tq||{},turbo=!!T.tb,bm=T.bmax||1.3,bt=thr>.02?(turbo?(T.sc?bm*Math.min(1,.45+.55*k.rpm/6000):Math.min(bm,Math.max(0,(k.rpm-(T.b0||2800))/(T.bs||3000))*bm)):0)*thr+(thr-1)*.05:-.85+.8*thr*Math.min(1,k.rpm/4000)-.1*(1-rn);
    const up=turbo?(T.up||2.2):12;k.bst+=(bt-k.bst)*Math.min(1,dt*(bt>k.bst?up:7));
    // T209 吸気温度：過給で空気が熱くなる。インタークーラーなしは過給に比例して速く上がる。ありでも全開が続くとコア k.ict が熱をためる（走行風・雨で冷える）
@@ -5274,21 +5274,36 @@ function ckBuildC(p,f,asp){
   ckHold.add(grp);
   Object.assign(CK,{g:grp,k:p,ci,wheel:rot,wsg:-1,cv,tex,cv2,tex2,t2:0,key2:'',t:0,key:'',vkey:f.toFixed(1)+'|'+asp.toFixed(2)+'|'+handL+'|'+mirOn,v:1,mirs,mf:0});}
 // メーター板の絵（回転計の弧・回転数の針・速度・ギア・シフトランプ）。15回/秒まで
+/* β0.216.1 T476 EV の運転席の計器：回転計の代わりに出力計（−40〜100%、緑＝回生）、シフトランプなし */
+function ckGaugeEv(p){const pk=evPk(p),spd=Math.max(0,Math.round(p.u*3.6)),gt=p.u<-.5?'R':'D',key='ev|'+Math.round(pk*120)+'|'+spd+'|'+gt;if(key===CK.key)return;CK.key=key;
+  const g=CK.cv.getContext('2d'),W=512,H=192;g.fillStyle='#07080a';g.fillRect(0,0,W,H);
+  const cx=150,cy=112,R=88,A0=Math.PI*.8,A1=Math.PI*2.2,an=v=>A0+(A1-A0)*Math.max(0,Math.min(1,(v+40)/140));
+  g.lineCap='butt';g.lineWidth=12;g.strokeStyle='#30343a';g.beginPath();g.arc(cx,cy,R,an(0),A1);g.stroke();g.strokeStyle='#1f5a36';g.beginPath();g.arc(cx,cy,R,A0,an(0));g.stroke();
+  if(Math.abs(pk)>.005){g.strokeStyle=pk<0?'#3be07a':'#3aa0ff';g.beginPath();pk<0?g.arc(cx,cy,R,an(pk*100),an(0)):g.arc(cx,cy,R,an(0),an(pk*100));g.stroke();}
+  g.strokeStyle='#e9ecef';g.lineWidth=3;for(let v=-40;v<=100;v+=20){const a=an(v);g.beginPath();g.moveTo(cx+Math.cos(a)*(R-16),cy+Math.sin(a)*(R-16));g.lineTo(cx+Math.cos(a)*(R-30),cy+Math.sin(a)*(R-30));g.stroke();}
+  g.fillStyle='#cfd3d8';g.font='700 18px '+GF;g.textAlign='center';g.textBaseline='middle';for(let v=0;v<=100;v+=20){const a=an(v);g.fillText(String(v),cx+Math.cos(a)*(R-44),cy+Math.sin(a)*(R-44));}
+  g.fillStyle='#3be07a';g.font='700 15px '+GF;{const a=an(-20);g.fillText('CHG',cx+Math.cos(a)*(R-44),cy+Math.sin(a)*(R-44));}g.fillStyle='#8f969e';g.font='700 15px '+GF;g.fillText('POWER %',cx,cy+62);
+  const a=an(pk*100);g.strokeStyle=pk<0?'#3be07a':'#ff4a3d';g.lineWidth=6;g.lineCap='round';g.beginPath();g.moveTo(cx-Math.cos(a)*12,cy-Math.sin(a)*12);g.lineTo(cx+Math.cos(a)*(R-10),cy+Math.sin(a)*(R-10));g.stroke();
+  g.fillStyle='#1b1f26';g.beginPath();g.arc(cx,cy,12,0,7);g.fill();
+  g.fillStyle='#fff';g.font='italic 800 84px '+GF;g.textAlign='right';g.fillText(String(spd),470,100);g.fillStyle='#9aa1a9';g.font='700 22px '+GF;g.fillText('km/h',494,150);
+  g.fillStyle='#f5b400';g.font='italic 800 64px '+GF;g.textAlign='center';g.fillText(gt,300,150);
+  CK.tex.needsUpdate=true;}
 /* β0.201.0 T446 真ん中のパネル：水温・油温・ブースト（ターボだけ）・ブレーキの温度・燃料（ご本人「タコメーター、スピード表示、油温水温等はダッシュボードに表示してアイコン等では出さない」）。4回/秒 */
 function ckGauge2(p,dt){if(!CK.cv2)return;CK.t2-=dt;if(CK.t2>0)return;CK.t2=.25;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}
   const tb=!!(p.tq&&p.tq.tb),fu=FUELK&&sess==='race'&&p.fuel!=null,fr=fu?Math.max(0,Math.min(1,p.fuel/(p.ev&&p.batCap||FCAP))):0,lp=fu?Math.min(99,fuelLaps(p)):0,wn=fu&&fuelWarn(p)>0&&!p.pitReq&&!p.pit;
-  const key=Math.round(p.tw)+'|'+Math.round(p.to)+'|'+(tb?Math.round(p.bst*20):'-')+'|'+Math.round((p.tb||0)/5)+'|'+(fu?fr.toFixed(2)+'|'+lp.toFixed(1)+'|'+wn:'-');if(key===CK.key2)return;CK.key2=key;
+  const key=(p.ev?'ev|'+Math.round(p.btT||0)+'|'+Math.round((p.evkW||0)/5):Math.round(p.tw)+'|'+Math.round(p.to)+'|'+(tb?Math.round(p.bst*20):'-'))+'|'+Math.round((p.tb||0)/5)+'|'+(fu?fr.toFixed(2)+'|'+lp.toFixed(1)+'|'+wn:'-');if(key===CK.key2)return;CK.key2=key;
   const g=CK.cv2.getContext('2d'),W=512,H=256,col=(v,w,h)=>v>=h?'#ff4a3d':v>=w?'#f5b400':'#e9ecef';g.fillStyle='#07080a';g.fillRect(0,0,W,H);
   const cell=(x,y,lb,tx,c)=>{g.textAlign='left';g.textBaseline='alphabetic';g.fillStyle='#8f969e';g.font='700 26px '+GF;g.fillText(lb,x,y);g.fillStyle=c;g.font='italic 800 50px '+GF;g.fillText(tx,x,y+52);};
-  cell(16,40,'水温',Math.round(p.tw)+'°',col(p.tw,105,115));cell(182,40,'油温',Math.round(p.to)+'°',col(p.to,125,138));
-  cell(348,40,tb?'ブースト':'吸気',tb?(p.bst<0?'−':'+')+Math.abs(p.bst).toFixed(1):'NA',tb?col(p.bst,1.15,1.4):'#9aa1a9');
+  if(p.ev){const w=Math.round(p.evkW||0);cell(16,40,'電池',Math.round(p.btT||0)+'°',col(p.btT||0,BTL-5,BTL));cell(182,40,'出力',Math.max(0,w)+'',w>0?'#e9ecef':'#9aa1a9');cell(348,40,'回生',Math.max(0,-w)+'',w<0?'#3be07a':'#9aa1a9');} /* β0.216.1 T476 EV：電池の温度・出力 kW・回生 kW */
+  else{cell(16,40,'水温',Math.round(p.tw)+'°',col(p.tw,105,115));cell(182,40,'油温',Math.round(p.to)+'°',col(p.to,125,138));}
+  if(!p.ev)cell(348,40,tb?'ブースト':'吸気',tb?(p.bst<0?'−':'+')+Math.abs(p.bst).toFixed(1):'NA',tb?col(p.bst,1.15,1.4):'#9aa1a9');
   cell(16,168,'ブレーキ',Math.round(p.tb||0)+'°',col(p.tb||0,BFT-150,BFT));
-  g.fillStyle='#8f969e';g.font='700 26px '+GF;g.fillText('燃料',260,168);
+  g.fillStyle='#8f969e';g.font='700 26px '+GF;g.fillText(p.ev?'電池':'燃料',260,168);
   if(fu){const c=wn?'#ff4a3d':fr<.15?'#f5b400':'#e9ecef',x=260,y=180,w=110,h=30;g.fillStyle='#24272c';g.fillRect(x,y,w,h);g.fillStyle=c;g.fillRect(x,y,w*fr,h);g.fillStyle=c;g.font='italic 800 40px '+GF;g.fillText(lp.toFixed(1),380,210);g.fillStyle='#8f969e';g.font='700 22px '+GF;g.fillText('周',460,210);}
   else{g.fillStyle='#9aa1a9';g.font='italic 800 40px '+GF;g.fillText('—',260,215);}
   g.strokeStyle='#30343a';g.lineWidth=2;g.beginPath();g.moveTo(8,124);g.lineTo(W-8,124);g.stroke();
   CK.tex2.needsUpdate=true;}
-function ckGauge(p,dt){ckGauge2(p,dt);CK.t-=dt;if(CK.t>0)return;CK.t=1/15;
+function ckGauge(p,dt){ckGauge2(p,dt);CK.t-=dt;if(CK.t>0)return;CK.t=1/15;if(p.ev){ckGaugeEv(p);return;}
   const rpm=rpmOf(p),spd=Math.max(0,Math.round(p.u*3.6)),gt=p.u<-.5?'R':p.ev?'D':String(p.gear+1),fl=rpm>SHIFT_UP-150&&p.gear<TOPG&&Math.floor(clockT*12)%2===0,key=Math.round(rpm/60)+'|'+spd+'|'+gt+'|'+fl;if(key===CK.key)return;CK.key=key;
   const g=CK.cv.getContext('2d'),W=512,H=192;g.fillStyle='#07080a';g.fillRect(0,0,W,H);
   const cx=150,cy=112,R=88,A0=Math.PI*.8,A1=Math.PI*2.2,MX=9000,an=r=>A0+(A1-A0)*Math.min(1,Math.max(0,r)/MX);
@@ -5588,7 +5603,7 @@ let lastHud=0,towerT=0;
 function tkState(k){if(sess!=='race'||state==='results'||k.dnf||k.finished||k.gone)return [];const a=[];
   if(wearMode&&k.wear>.55||TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+15){const ow=wearMode&&k.wear>.55,oh=TTK&&k.tt!=null&&k.tt>ttWin(k)[1]+15;a.push(['t','タ','タイヤがきつい（'+[ow?'摩耗 '+Math.round(k.wear*100)+'%':'',oh?'温度 '+Math.round(k.tt)+'℃':''].filter(x=>x).join('・')+'）']);}
   if((k.bfK||1)<.96)a.push(['b','ブ','ブレーキが熱い（'+Math.round(k.tb)+'℃、ききが '+Math.round((1-k.bfK)*100)+'% 落ちている）']);
-  if((k.heatK||1)<.97||(k.icK||1)<.95)a.push(['h','熱','エンジンが熱い（水温 '+Math.round(k.tw)+'℃・油温 '+Math.round(k.to)+'℃）']);
+  if(k.ev?(k.btK??1)<.99:(k.heatK||1)<.97||(k.icK||1)<.95)a.push(['h','熱',k.ev?'電池が熱い（'+Math.round(k.btT||0)+'℃）':'エンジンが熱い（水温 '+Math.round(k.tw)+'℃・油温 '+Math.round(k.to)+'℃）']);
   if(STK&&!k.isPlayer&&(k.stam??1)<.5)a.push(['s','疲','疲れている（スタミナ '+Math.round(k.stam*100)+'%。競り合いが続くと減り、ミスが増える）']);
   if(PZK&&!k.isPlayer&&(k.prs||0)>.5){const pr=prOf(k);a.push(['p','迫','後ろから迫られ続けて焦っている（ミスが増える。'+TRAITS[k.dr.tr??2].n+'は'+(pr<=.6?'動じにくい':pr>=1.2?'崩れやすい':'ふつう')+'）']);}
   if(MBK&&(k.mbl||0)>.3)a.push(['m','ゴ','タイヤにゴムかす（ラインの外で拾った。グリップ −'+Math.round(MBG*k.mbl*100)+'%、ラインに戻ると取れる）']);
@@ -5645,10 +5660,14 @@ const gc=$('gauge'),gx=gc.getContext('2d');let gDpr=0;const GH=200,GWQ=matchMedi
 const GF='"Saira Condensed","Arial Narrow",sans-serif',GWH='rgba(240,242,245,.92)',GAM='#f5b400',GRD='#ff4a3d';
 // 目盛り・数字・円盤など動かない部分は別の絵に1回だけ描き、毎回はそれを貼って針と数字だけ描く（軽量化 β0.54.2）
 const gBg=document.createElement('canvas');let gKey='';
-function gaugeFit(){{const w=document.body.classList.contains('touch')||GWQ.matches?214:360;if(w!==GW){GW=w;gDpr=0;}}const d=Math.min(2,devicePixelRatio||1);if(gDpr===d)return;gDpr=d;gc.width=gBg.width=Math.round(GW*d);gc.height=gBg.height=GH*d;gKey='';
+let gEv=-1;function gaugeFit(ev){{const w=document.body.classList.contains('touch')||GWQ.matches?214:360;if(w!==GW){GW=w;gDpr=0;}}ev=ev?1:0;const d=Math.min(2,devicePixelRatio||1);if(gDpr===d&&gEv===ev)return;gDpr=d;gEv=ev;gc.width=gBg.width=Math.round(GW*d);gc.height=gBg.height=GH*d;gKey='';
   const g=gBg.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,GW,GH);
   const cx=GW<300?GW/2:104,cy=100,R=92,A0=Math.PI*.75,A1=Math.PI*2.25,MAXR=9000,an=r=>A0+(A1-A0)*Math.min(1,Math.max(0,r)/MAXR);
   g.fillStyle='rgba(10,12,16,.64)';g.beginPath();g.arc(cx,cy,R+6,0,7);g.fill();
+  if(ev){const ap=v=>A0+(A1-A0)*(v+40)/140;g.lineCap='butt';gArc(g,cx,cy,R-4,ap(-40),ap(0),'#3be07a',6);g.textAlign='center';g.textBaseline='middle'; /* β0.216.1 T476 EV の出力計：0〜100%＝最高出力の割合、緑＝回生 */
+    for(let v=-40;v<=100;v+=10){const maj=v%20===0,a=ap(v);gNeedle(g,cx,cy,R-(maj?17:11),R-9,a,v<0?'#3be07a':GWH,maj?2.4:1.2);if(maj&&v>=0){g.fillStyle=GWH;g.font='700 15px '+GF;g.fillText(String(v),cx+Math.cos(a)*(R-29),cy+Math.sin(a)*(R-29));}}
+    g.fillStyle='#3be07a';g.font='700 11px '+GF;g.fillText('CHG',cx+Math.cos(ap(-20))*(R-33),cy+Math.sin(ap(-20))*(R-33));
+    g.fillStyle='rgba(200,206,214,.8)';g.font='700 12px '+GF;g.fillText('km/h',cx,cy+43);return;}
   g.lineCap='butt';gArc(g,cx,cy,R-4,an(7800),an(MAXR),GRD,6);gArc(g,cx,cy,R-4,an(7000),an(7800),GAM,6);
   g.textAlign='center';g.textBaseline='middle';
   for(let i=0;i<=18;i++){const maj=i%2===0,a=an(i*500);gNeedle(g,cx,cy,R-(maj?17:11),R-9,a,i*500>=7800?GRD:GWH,maj?2.4:1.2);
@@ -5656,6 +5675,7 @@ function gaugeFit(){{const w=document.body.classList.contains('touch')||GWQ.matc
   g.fillStyle='rgba(200,206,214,.7)';g.font='700 10px '+GF;g.fillText('x1000rpm',cx,cy-52);
   g.fillStyle='rgba(200,206,214,.8)';g.font='700 12px '+GF;g.fillText('km/h',cx,cy+43);}
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{gDpr=0;}); // 字体が読めたら描き直す
+function evPk(p){return (p.evkW||0)/Math.max(1,(p.ps||300)*.7355);} /* β0.216.1 T476 出力の割合（1＝最高出力。マイナスは回生） */
 function gArc(g,cx,cy,r,a,b,col,w){g.beginPath();g.arc(cx,cy,r,a,b);g.strokeStyle=col;g.lineWidth=w;g.stroke();}
 function gNeedle(g,cx,cy,r0,r1,a,col,w){g.beginPath();g.moveTo(cx+Math.cos(a)*r0,cy+Math.sin(a)*r0);g.lineTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);g.strokeStyle=col;g.lineWidth=w;g.lineCap='round';g.stroke();}
 // 小さな丸メーター：lo〜hi を 252° に、warn 以上は黄、crit 以上は赤。右に名前と数値
@@ -5665,28 +5685,30 @@ function gMini(g,cx,cy,r,v,lo,hi,warn,crit,label,txt,cold){const a0=Math.PI*.8,a
   for(let i=0;i<=4;i++){const a=a0+(a1-a0)*i/4;gNeedle(g,cx,cy,r-9,r-4,a,GWH,1.5);}
   const hot=v>=crit?GRD:v>=warn?GAM:cold==null?GWH:v<cold?'#4fb4ff':'#3be07a';gNeedle(g,cx,cy,0,r-5,an(v),hot,2.4);g.beginPath();g.arc(cx,cy,3.2,0,7);g.fillStyle=GWH;g.fill();
   g.textAlign='left';g.fillStyle='rgba(200,206,214,.85)';g.font='700 11px '+GF;g.fillText(label,cx+r+9,cy-4);g.fillStyle=hot;g.font='italic 800 19px '+GF;g.fillText(txt,cx+r+9,cy+15);}
-function drawGauge(p){if(!p)return;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}gaugeFit();
+function drawGauge(p){if(!p)return;if(p.tw==null){p.tw=78;p.to=64;p.bst=-.85;}const ev=!!p.ev;gaugeFit(ev);
   const cx=GW<300?GW/2:104,cy=100,R=92,A0=Math.PI*.75,A1=Math.PI*2.25,MAXR=9000,an=r=>A0+(A1-A0)*Math.min(1,Math.max(0,r)/MAXR);
-  const rpm=rpmOf(p),shiftF=rpm>SHIFT_UP-300&&p.gear<TOPG,spd=Math.max(0,Math.round(p.u*3.6)),gt=p.u<-.5?'R':p.ev?'D':String(p.gear+1);
+  const rpm=rpmOf(p),shiftF=!ev&&rpm>SHIFT_UP-300&&p.gear<TOPG,pk=ev?evPk(p):0,spd=Math.max(0,Math.round(p.u*3.6)),gt=p.u<-.5?'R':p.ev?'D':String(p.gear+1);
   // 表示が変わらない時は描き直さない
   // β0.67.0 T204 レブリミットの光（実車のシフトライト・レース用メーターと、GT・Forza などの回転計を参考）：シフトの回転の 700 手前から回転計のふちが黄→赤に光り始め、シフトの回転を超える・レッドゾーン（7800〜）に入ると赤く点滅
-  const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP,rl=Math.max(0,Math.min(1,(rpm-(sp-700))/700)),lim=rpm>=sp-60||rpm>=7800,rlF=lim&&!RM?(Math.floor(clockT*14)%2):lim?1:0; // 動きを減らす設定では点滅しない
-  const key=spd+'|'+gt+'|'+Math.round(rpm/40)+'|'+shiftF+'|'+!!p.manual+'|'+Math.round(rl*10)+rlF+(isTouch?'|'+((p.bfK||1)<.97):document.body.classList.contains('ez')?'|ez':'|'+Math.round(p.tw)+'|'+Math.round(p.to)+'|'+Math.round(p.bst*50)+'|'+Math.round((p.tb||0)/5));if(key===gKey)return;gKey=key;
+  const sp=p.manual&&p.gear<TOPG?k_opt(p)[p.gear]-120:SHIFT_UP,rl=ev?0:Math.max(0,Math.min(1,(rpm-(sp-700))/700)),lim=!ev&&(rpm>=sp-60||rpm>=7800),rlF=lim&&!RM?(Math.floor(clockT*14)%2):lim?1:0; // 動きを減らす設定では点滅しない
+  const key=spd+'|'+gt+'|'+(ev?'e'+Math.round(pk*200)+'|'+Math.round(p.evkW||0)+'|'+Math.round(p.btT||0):Math.round(rpm/40))+'|'+shiftF+'|'+!!p.manual+'|'+Math.round(rl*10)+rlF+(isTouch?'|'+((p.bfK||1)<.97):document.body.classList.contains('ez')?'|ez':'|'+Math.round(p.tw)+'|'+Math.round(p.to)+'|'+Math.round(p.bst*50)+'|'+Math.round((p.tb||0)/5));if(key===gKey)return;gKey=key;
   const g=gx;g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,gc.width,gc.height);g.drawImage(gBg,0,0);g.setTransform(gDpr,0,0,gDpr,0,0);
   g.textAlign='center';g.textBaseline='middle';
   if(rl>0&&!RM||lim){const a=lim?(rlF?1:.45):rl*.85,col=lim?'255,40,30':`255,${Math.round(190-150*rl)},${Math.round(40*(1-rl))}`;g.save();g.lineCap='round';g.shadowColor=`rgba(${col},${a})`;g.shadowBlur=lim?20:14*rl;
     g.beginPath();g.arc(cx,cy,R+2,0,Math.PI*2);g.strokeStyle=`rgba(${col},${a})`;g.lineWidth=lim?5:3.5;g.stroke();
     if(lim){g.shadowBlur=0;const gr=g.createRadialGradient(cx,cy,R*.55,cx,cy,R+2);gr.addColorStop(0,'rgba(255,30,20,0)');gr.addColorStop(1,`rgba(255,30,20,${rlF?.32:.14})`);g.fillStyle=gr;g.beginPath();g.arc(cx,cy,R+2,0,Math.PI*2);g.fill();}g.restore();}
   // 針（シフトの瞬間は青く）
-  gNeedle(g,cx,cy,-14,R-12,an(rpm),shiftF?'#4fb4ff':'#ff4a3d',3.4);g.beginPath();g.arc(cx,cy,6,0,7);g.fillStyle='#1b1f26';g.fill();
+  gNeedle(g,cx,cy,-14,R-12,ev?A0+(A1-A0)*Math.max(0,Math.min(1,(pk*100+40)/140)):an(rpm),ev&&pk<0?'#3be07a':shiftF?'#4fb4ff':'#ff4a3d',3.4);g.beginPath();g.arc(cx,cy,6,0,7);g.fillStyle='#1b1f26';g.fill();
   // 速度（大）とギア
   g.fillStyle='#fff';g.font='italic 800 52px '+GF;g.fillText(String(spd),cx,cy+20);
   g.fillStyle=shiftF?'#4fb4ff':GWH;g.beginPath();g.roundRect?g.roundRect(cx-17,cy+52,34,30,5):g.rect(cx-17,cy+52,34,30);g.fill();
   g.fillStyle='#111';g.font='italic 800 24px '+GF;g.fillText(gt,cx,cy+68);
   if(p.manual){g.fillStyle=GAM;g.font='italic 800 14px '+GF;g.fillText('MT',cx+32,cy+68);}
+  if(ev&&!(isTouch&&(p.bfK||1)<.97)){const w=Math.round(p.evkW||0);g.fillStyle=w<0?'#3be07a':GWH;g.font='italic 800 14px '+GF;g.fillText((w<0?'−':'')+Math.abs(w)+' kW',cx,cy-34);}
   if(isTouch){if((p.bfK||1)<.97){g.fillStyle=GRD;g.font='800 13px '+GF;g.fillText('ブレーキ過熱',cx,cy-34);}return;} // T189 スマホはききが落ちた時だけ
   if(document.body.classList.contains('ez'))return; // β0.142.1 T315 かんたんは水温・油温などを出さない（速度計は出す）
   if(GW<300)return; /* β0.177.0 */
+  if(ev){gMini(g,242,27,21,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMini(g,242,76,21,p.tb||0,0,900,BFT-150,BFT,'BRAKE',Math.round(p.tb||0)+'°C',150);return;} /* β0.216.1 T476 EV は電池の温度とブレーキだけ */
   gMini(g,242,27,21,p.tw,50,130,105,115,'WATER',Math.round(p.tw)+'°C');
   gMini(g,242,76,21,p.to,60,150,125,138,'OIL',Math.round(p.to)+'°C');
   if(p.tq&&p.tq.tb)gMini(g,242,125,21,p.bst,-1,1.6,1.15,1.4,'BOOST',(Math.round(p.bst*100)<0?'−':'+')+Math.abs(p.bst).toFixed(2)+'bar');
@@ -5726,8 +5748,9 @@ function gMiniV(g,cx,cy,r,v,lo,hi,warn,crit,label,txt,na){const a0=Math.PI*.8,a1
   g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(200,206,214,.9)';g.font='700 9px '+GF;g.fillText(label,cx,cy+r-4);g.fillStyle=hot;g.font='italic 800 14px '+GF;g.fillText(txt,cx,cy+r+11);g.globalAlpha=1;}
 let mtrCv=null;function mtrUi(p){const el=$('mtr');if(!el)return;const on=!isTouch&&!!p&&sess!=='drag'&&state!=='title';if(el.hidden===on)el.hidden=!on;if(!on)return;
   if(!mtrCv){el.innerHTML='<canvas width="152" height="416"></canvas>';mtrCv=el.firstChild;}
-  const tw=p.tw??90,to=p.to??100,tb=!!(p.tq&&p.tq.tb),bs=tb?(p.bst??0):0,k=Math.round(tw)+'|'+Math.round(to)+'|'+(tb?Math.round(bs*50):'-');if(k===mtrK)return;mtrK=k;
+  const tw=p.tw??90,to=p.to??100,tb=!!(p.tq&&p.tq.tb),bs=tb?(p.bst??0):0,ew=Math.round(p.evkW||0),mx=Math.max(1,(p.ps||300)*.7355),k=p.ev?'ev|'+Math.round(p.btT||0)+'|'+ew:Math.round(tw)+'|'+Math.round(to)+'|'+(tb?Math.round(bs*50):'-');if(k===mtrK)return;mtrK=k;
   const g=mtrCv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,152,416);g.setTransform(2,0,0,2,0,0);
+  if(p.ev){gMiniV(g,38,27,23,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMiniV(g,38,96,23,Math.max(0,ew),0,mx,mx*9,mx*9,'POWER',Math.max(0,ew)+'kW');gMiniV(g,38,165,23,Math.max(0,-ew),0,mx*.6,mx,mx,'REGEN',Math.max(0,-ew)+'kW');return;} /* β0.216.1 T476 EV は電池の温度・出力・回生 */
   gMiniV(g,38,27,23,tw,50,130,105,115,'WATER',Math.round(tw)+'°C');
   gMiniV(g,38,96,23,to,60,150,125,138,'OIL',Math.round(to)+'°C');
   gMiniV(g,38,165,23,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);}
@@ -5735,7 +5758,7 @@ function carSt(p){const lv=(v,a,b)=>v>=b?'#ff4a3d':v>=a?'#f5b400':'';const dm=dm
   const ty=sess==='quali'?['Q','#ff5ad2']:TYB[p.ty??(p.rain?1:0)]||TYB[0];
   const wing=dm&&lv(p.dmW||0,.15,.5)||'rgba(240,242,245,.55)',sv=Math.max(Math.abs(p.dmA||0),p.dmS||0),susC=dm&&lv(sv,.12,.4),sus=susC||'rgba(240,242,245,.8)';
   const body=dmgMode&&lv(p.dmg||0,.2,.5)||'rgba(240,242,245,.45)';
-  const tw=p.tw??90,to=p.to??100,eh=tw>=OHT||to>=OIT||(p.dmE||0)>=.4?'#ff4a3d':tw>=OHT-8||to>=OIT-10||(p.dmE||0)>=.12?'#f5b400':tw<60?'#9fd4ff':'#e8eaee';
+  const tw=p.tw??90,to=p.to??100,bt=p.btT||0,eh=p.ev?(bt>=BTL||(p.dmE||0)>=.4?'#ff4a3d':bt>=BTL-5||(p.dmE||0)>=.12?'#f5b400':'#e8eaee'):tw>=OHT||to>=OIT||(p.dmE||0)>=.4?'#ff4a3d':tw>=OHT-8||to>=OIT-10||(p.dmE||0)>=.12?'#f5b400':tw<60?'#9fd4ff':'#e8eaee'; /* β0.216.1 T476 EV は電池の温度 */
   const tb=p.tb??150,brk=BRC?brkCol(tb):tb>=BFT?'#ff4a3d':tb>=BFT-150?'#f5b400':'';
   const fw=Math.max(-.6,Math.min(.6,-(p.delta||0)*1.6));
   return{ty,wing,sus,susBad:!!susC,body,eng:eh,brk,fw,key:[ty[0],wing,sus,body,eh,brk,fw.toFixed(2)].join()};}
