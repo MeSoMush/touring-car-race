@@ -1102,7 +1102,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.220.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.221.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1211,7 +1211,7 @@ body.touch #todSeg,body.touch #wxSeg{flex-wrap:wrap}body.touch #todSeg button,bo
         <div><div class="label">RALLY SS の本数<span class="hint">3本にすると、ステージの間にサービスパーク（持ち時間 30分の中で、足回り・エンジンの修理、タイヤ交換、サスペンション・車高を選ぶ。遅れると1分ごとに10秒のペナルティ）。タイヤの減りとダメージは次のステージへ持ち越す。3本の合計で競う</span></div><div class="seg" id="rlSeg"><button type="button" data-v="3">3本＋サービス</button><button type="button" data-v="1">1本</button></div></div>
         <div class="adv"><div class="label">路面<span class="hint">SANDBOX で走る時の路面（ON ROAD はいつも舗装、OFF ROAD はタイトルの SURFACE で選んだ路面で走る）。砂利道・雪＝車を横に向けたまま滑らせて走れる。氷＝とても滑り、滑り出すと戻りにくい（ラリーの SS・タイムアタック・課題だけ。レースで氷を選んでいると雪で走る）。0-400m はいつも舗装</span></div><div class="seg" id="rsSeg"><button type="button" data-v="0">舗装</button><button type="button" data-v="1">砂利道</button><button type="button" data-v="2">雪</button><button type="button" data-v="3">氷</button></div></div>
         <div class="adv"><div class="label">凍結<span class="hint">日陰に氷＝コースの日陰の何か所か（各 60〜80m）だけが凍る（舗装・砂利道・雪の時。路面が氷の時は全部氷）。舗装のスリックタイヤは氷でほとんど滑るので、凍った所はかなり速さを落とす。凍った所は道が白く光る。手前で無線か画面で知らせる。CPU も凍った所では慎重に走る</span></div><div class="seg" id="icySeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">日陰に氷</button></div></div>
-        <div><div class="label">コース<span class="hint">HIGASHI RACEWAY＝広いサーキット（全長 3.15km）。AOGIRI PASS＝山を越える峠（全長 3.75km、高さの差 66m・いちばん急な所 約13%。道幅 10m で、すぐ横がガードレール。上りと下りにヘアピンが2つずつ）。切り替えるとコースを作り直すため、読み込み直す。記録と戦績はコースごと。峠は順回りだけで、運転の課題・今日の課題・0-400m は HIGASHI だけ</span></div><div class="seg" id="crsSeg"><button type="button" data-v="0">HIGASHI</button><button type="button" data-v="2">AOGIRI 峠</button></div></div>
+        <div><div class="label">コース<span class="hint">HIGASHI RACEWAY＝広いサーキット（全長 3.15km）。AOGIRI PASS＝山を越える峠（全長 3.75km、高さの差 80m・いちばん急な所 約12%。道幅 10m で、すぐ横がガードレール。上りと下りにヘアピンが2つずつ）。切り替えるとコースを作り直すため、読み込み直す。記録と戦績はコースごと。峠は順回りだけで、運転の課題・今日の課題・0-400m は HIGASHI だけ</span></div><div class="seg" id="crsSeg"><button type="button" data-v="0">HIGASHI</button><button type="button" data-v="2">AOGIRI 峠</button></div></div>
         <div><div class="label">コースの向き<span class="hint">逆回り＝同じコースを反対の向きに走る（コーナーの並びと上り下りが逆になる。ピットとスタートの線は正面の直線のまま）。切り替えるとコースを作り直すため、読み込み直す。記録（タイムアタック・ラリー）と戦績は向きごと。途中のレースの「続きから」は、保存した時と同じ向きの時だけ出る（向きを戻せば続けられる）。運転の課題・今日の課題・0-400m は順回りだけ</span></div><div class="seg" id="laySeg"><button type="button" data-v="0">順回り</button><button type="button" data-v="1">逆回り</button></div></div>
         <div><div class="label">タイヤ摩耗<span class="hint">走るとタイヤが減ってグリップが落ちる。ピットで交換。あり＝長いレースほどゆっくり減る（30周で交換2回くらい、フォーミュラカーのレース風）／速い＝耐久風（30周で7〜8回）</span></div><div class="seg" id="wearSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">あり</button><button type="button" data-v="2">速い</button></div></div>
         <div class="adv"><div class="label">スタートの燃料<span class="hint">作戦どおり＝次のピットまでの分だけ積む（軽くて速い。ピットで給油）／満タン＝ゴールまでの分（タンクに入るだけ。重いがピットを減らせる）。燃料モードはレース中に <span data-kg="fuel"></span>・燃料のボタン</span></div><div class="seg" id="fuelSeg"><button type="button" data-v="0">作戦どおり</button><button type="button" data-v="1">満タン</button></div></div>
@@ -1639,11 +1639,11 @@ const COURSES=[{id:'higashi',name:'HIGASHI RACEWAY',
  rev:{plw:[-400,-520,180]}}];
 /* β0.217.0 T479 試しの一本道（今のコースの形を使い、線から 2550m 先がゴール。最終コーナーのあたり〔ゴールの 220m 先〜スタートの 60m 手前〕は見えない・走れない区間）。画面には出さず ?crs=1 だけで選べる */
 COURSES.push({...COURSES[0],id:'tstage',name:'TEST STAGE',p2p:{b:2550,ro:220,pre:60},rev:null});
-/* β0.220.0 T485 峠のコース（正面の直線・ピット・グリッドは HIGASHI のまま。第1コーナーの先から山を上り〔つづら折りのヘアピン2つ〕、頂上 66m を越えて北側を下る〔ヘアピン2つ〕。
-   地形は道に沿った高さの目標〔線から 650m で上り始め、2000m で頂上、3300m で下りきる。つづら折りは隣の道が近いので上り下りを少なく、1本道の区間で多く〕に合わせた小さな丘の並び〔テスト/t485fit.js で作る〕。いちばん急な所 約13%。道幅 10m・ガードレールは道の端から 1.5m。逆回りなし */
+/* β0.220.0 T485 峠のコース（正面の直線・ピット・グリッドは HIGASHI のまま。第1コーナーの先から山を上り〔つづら折りのヘアピン2つ〕、頂上 80m を越えて北側を下る〔ヘアピン2つ〕。
+   地形は道に沿った高さの目標〔線から 650m で上り始め、2000m で頂上、3300m で下りきる〕。β0.221.0 から地形は高さの絵に焼き込み、道の近くは道の高さに均す〔t486patch.js〕に合わせた小さな丘の並び〔テスト/t485fit.js で作る〕。いちばん急な所 約12%。道幅 10m・ガードレールは道の端から 1.5m。逆回りなし */
 COURSES.push({...COURSES[0],id:'aogiri',name:'AOGIRI PASS',ctrl:[[0,110],[0,60],[0,-60],[0,-160],[0,-245],[10,-290],[50,-315],[100,-310],[160,-302],[215,-300],[240,-293],[250,-278],[238,-266],[200,-258],[150,-248],[122,-240],[110,-226],[120,-212],[150,-205],[200,-190],[240,-170],[270,-140],[288,-100],[282,-55],[255,-22],[226,-4],[196,14],[166,8],[146,22],[122,28],[115,48],[132,62],[180,72],[230,85],[255,100],[258,122],[238,134],[208,152],[200,190],[180,228],[140,240],[85,220],[40,190],[10,150]],
- terr:[[-11,-642,120,-1.31],[-11,-532,120,-1.55],[99,-752,120,2.45],[99,-532,120,1.94],[99,-422,120,6.9],[99,-312,120,1.34],[99,-92,120,0.62],[99,18,120,2.94],[99,128,120,3.75],[99,238,120,0.87],[99,348,120,-0.8],[99,458,120,0.52],[99,568,120,0.45],[209,-752,120,2.2],[209,-642,120,-2.6],[209,-532,120,8.09],[209,-422,120,11.08],[209,-92,120,3.4],[209,18,120,13.11],[209,128,120,11.14],[209,238,120,3.67],[209,458,120,-0.71],[319,-752,120,1.57],[319,-642,120,0.95],[319,-532,120,5.34],[319,-422,120,8.26],[319,-312,120,6.01],[319,-92,120,3.01],[319,18,120,11.53],[319,128,120,5.22],[319,238,120,3.83],[319,348,120,1.79],[429,-752,120,1.74],[429,-642,120,5.21],[429,-532,120,-0.55],[429,-422,120,12.85],[429,-312,120,17.12],[429,-202,120,5.48],[429,-92,120,8.78],[429,18,120,15.82],[429,128,120,2.81],[429,238,120,1.03],[429,348,120,2],[429,458,120,1.79],[429,568,120,0.41],[539,-752,120,1.03],[539,-642,120,5.92],[539,-532,120,1.89],[539,-422,120,7.53],[539,-312,120,21.21],[539,-202,120,23.41],[539,-92,120,21.97],[539,18,120,14.85],[539,128,120,1.63],[539,238,120,3.35],[539,348,120,1.76],[539,458,120,0.57],[649,-642,120,2.35],[649,-532,120,2.31],[649,-422,120,3.22],[649,-312,120,11.92],[649,-202,120,20.65],[649,-92,120,16.43],[649,18,120,5.67],[649,128,120,1.27],[649,238,120,2.74],[649,348,120,1.12]],
- wsec:[[700,3080,5,1.5]],icy:[[1010,1070],[1960,2020],[3080,3140]],norev:1,grl:1,ref:{cref0:{lap:[99.076,92.916,85.087,90.389,84.293,114.101],L:3753.3,pit:11.18,fc:627},qref:[97.9,95.55,89.96,92.53,81.48,117.04],fpl:3.17,fplc:[2.81,3.13,3.75,3.19,4.01,2.09]} /* β0.220.0 t485ref.js で測った（HIGASHI の値×峠と HIGASHI の実測の比。燃料は6%の余裕を足した） */,rev:null});
+ terr:[[-11,-752,120,1.06],[-11,-642,120,-1.05],[-11,-532,120,-2.63],[99,-752,120,4.5],[99,-642,120,-1.6],[99,-532,120,2.11],[99,-422,120,11.9],[99,-312,120,2.37],[99,-92,120,1.2],[99,18,120,6.6],[99,128,120,8.48],[99,238,120,1.96],[99,348,120,-1.46],[99,458,120,0.52],[99,568,120,0.64],[209,-752,120,4.44],[209,-642,120,-7.39],[209,-532,120,14.77],[209,-422,120,26.65],[209,-312,120,4.44],[209,-92,120,4.93],[209,18,120,18.84],[209,128,120,19.36],[209,238,120,7.78],[209,458,120,-0.88],[319,-752,120,3.17],[319,-642,120,-4.59],[319,-532,120,9.15],[319,-422,120,22.61],[319,-312,120,14.92],[319,-92,120,10],[319,18,120,23.81],[319,128,120,7.92],[319,238,120,6.28],[319,348,120,2.08],[429,-752,120,3.05],[429,-642,120,6.25],[429,-532,120,4.89],[429,-422,120,22.86],[429,-312,120,26.36],[429,-202,120,6.63],[429,-92,120,14.79],[429,18,120,29],[429,128,120,8.48],[429,238,120,2.26],[429,348,120,0.72],[429,458,120,2.54],[539,-752,120,2.55],[539,-642,120,11.71],[539,-532,120,6.59],[539,-422,120,11.86],[539,-312,120,28.18],[539,-202,120,25.44],[539,-92,120,28.35],[539,18,120,20.63],[539,128,120,5.24],[539,238,120,9.67],[539,348,120,3.74],[539,458,120,1.26],[649,-642,120,3.57],[649,-532,120,3.25],[649,-422,120,4.38],[649,-312,120,15.72],[649,-202,120,23.8],[649,-92,120,20.52],[649,18,120,9],[649,128,120,2.43],[649,238,120,5.02],[649,348,120,2.24]],
+ wsec:[[700,3080,5,1.5]],icy:[[760,820],[1960,2020],[3080,3140]],norev:1,grl:1,hm:{cs:4,fl:20},ref:{cref0:{lap:[99.164,93.117,85.481,90.64,84.753,114.078],L:3753.3,pit:11.17,fc:627},qref:[98.96,93.29,88.42,91.46,81.83,117.72],fpl:3.11,fplc:[2.76,3.07,3.68,3.24,3.99,2.11]} /* β0.220.0 t485ref.js で測った（HIGASHI の値×峠と HIGASHI の実測の比。燃料は6%の余裕を足した） */,rev:null});
 const CRSP=[0,2]; /* GARAGE で選べるコース（TEST STAGE は ?crs=1 だけ） */
 const CRSI=(()=>{try{const m=typeof location!=='undefined'&&/[?&]crs=(\d+)/.exec(location.search||'');const v=m?+m[1]:+(JSON.parse(localStorage.getItem('popkart')||'{}').crs||0);return COURSES[v]?v:0;}catch(_){return 0;}})(); /* β0.217.0 逆回りより先に決める（一本道は逆回りにしない） */
 const REV=(()=>{try{if(COURSES[CRSI].p2p||COURSES[CRSI].norev)return 0;if(typeof location!=='undefined'&&/[?&]rev(=1)?(&|$)/.test(location.search||''))return 1;return JSON.parse(localStorage.getItem('popkart')||'{}').lay===1?1:0;}catch(_){return 0;}})(); /* β0.187.0 T361 逆回り（β0.212.0 でコースの設定より前へ移した） */
@@ -1852,7 +1852,13 @@ let TNMIN=.25,TNMAX=1.8; // 峠・くぼみの荷重の倍率の範囲
 // コーナーの軽いバンク（ご本人の案）：曲がりの中心から半径より遠い側（外側）ほど高い。頂点のまわりだけ効く。TBNK＝傾き（.04＝約2.3°、0 でなし）。
 // TBANK の1つ＝[中心x,中心z,半径,頂点x,頂点z,広がり²,傾き]（コーナーの判定の後で terrBank() が作る）
 let TBNK=.04;const TBANK=[];
-function TH(x,z){if(!TERK)return 0;let f=0;for(const b of TERR){const dx=x-b[0],dz=z-b[1];f+=b[3]*Math.exp(-(dx*dx+dz*dz)/(b[2]*b[2]));}
+/* β0.221.0 T486 高さの絵 HM（コースの設定 hm のあるコースだけ。丘の数が多いと頂点ごと・車ごとの計算が重いので、1回だけ格子に焼き込み、道の近くは道の中心の高さに均す＝道が横に傾かない）。
+   HM＝{x0,z0,cs,w,h,f:Float32Array}。値は 1cm に丸める（描画の絵と同じ値）。バンク（TBANK）は今までどおり上に足す。頂点で絵を読めない端末では作らない（今までの計算） */
+let HM=null,HMT=null;const HMV=(()=>{try{const c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl');return !(g&&g.getParameter&&g.getParameter(g.MAX_VERTEX_TEXTURE_IMAGE_UNITS)===0);}catch(_){return true;}})();
+function hmAt(x,z){const q=HM,u=Math.max(0,Math.min(q.w-1.001,(x-q.x0)/q.cs)),v=Math.max(0,Math.min(q.h-1.001,(z-q.z0)/q.cs)),i=Math.floor(u),j=Math.floor(v),fu=u-i,fv=v-j,k=j*q.w+i,F=q.f;return (F[k]*(1-fu)+F[k+1]*fu)*(1-fv)+(F[k+q.w]*(1-fu)+F[k+q.w+1]*fu)*fv;}
+function THraw(x,z){let f=0;for(const b of TERR){const dx=x-b[0],dz=z-b[1];f+=b[3]*Math.exp(-(dx*dx+dz*dz)/(b[2]*b[2]));}const cz=Math.max(TERM[0],Math.min(TERM[1],z)),d=Math.hypot(x,z-cz);const t=Math.max(0,Math.min(1,(d-TERM[2])/(TERM[3]-TERM[2])));return f*t*t*(3-2*t);}
+function TH(x,z){if(!TERK)return 0;if(HM){let f=0;for(const c of TBANK){const ax=x-c[3],az=z-c[4],w=Math.exp(-(ax*ax+az*az)/c[5]);if(w<1e-4)continue;const u=(Math.hypot(x-c[0],z-c[1])-c[2])/12;f+=c[6]*12*u/Math.sqrt(1+u*u)*w;}const cz=Math.max(TERM[0],Math.min(TERM[1],z)),d=Math.hypot(x,z-cz);const t=Math.max(0,Math.min(1,(d-TERM[2])/(TERM[3]-TERM[2])));return hmAt(x,z)+f*t*t*(3-2*t);}
+ let f=0;for(const b of TERR){const dx=x-b[0],dz=z-b[1];f+=b[3]*Math.exp(-(dx*dx+dz*dz)/(b[2]*b[2]));}
  for(const c of TBANK){const ax=x-c[3],az=z-c[4],w=Math.exp(-(ax*ax+az*az)/c[5]);if(w<1e-4)continue;const u=(Math.hypot(x-c[0],z-c[1])-c[2])/12;f+=c[6]*12*u/Math.sqrt(1+u*u)*w;}
  const cz=Math.max(TERM[0],Math.min(TERM[1],z)),d=Math.hypot(x,z-cz);const t=Math.max(0,Math.min(1,(d-TERM[2])/(TERM[3]-TERM[2])));return f*t*t*(3-2*t);}
 // 車の位置の坂：gs＝進む向きの勾配（上りが正）、gl＝横（vl の向き）の勾配、kv＝進む向きの縦の曲がり（くぼみが正・峠が負、1/m）
@@ -1860,9 +1866,10 @@ function terrAt(x,z,h){const fx=Math.sin(h),fz=Math.cos(h),gx=(TH(x+1,z)-TH(x-1,
  return {gs:gx*fx+gz*fz,gl:gx*fz-gz*fx,kv:(TH(x+2*fx,z+2*fz)-2*h0+TH(x-2*fx,z-2*fz))/4};}
 // 頂点の段階で使う同じ式（GLSL）。バンクが決まった後（最初の描画より前）に1回だけ呼ぶ
 function terrGLSL(){const f=n=>(+n).toFixed(3);let g='float terrH(vec2 p){float f=0.0;vec2 q;float u;';
- for(const b of TERR)g+=`q=p-vec2(${f(b[0])},${f(b[1])});f+=${f(b[3])}*exp(-dot(q,q)/${f(b[2]*b[2])});`;
+ if(HM&&HMT){g=`uniform sampler2D terrHM;float hmT(vec2 c){vec4 t=texture2D(terrHM,(c+0.5)/vec2(${HM.w}.0,${HM.h}.0));return (t.r*65280.0+t.g*255.0)/100.0-100.0;}float terrH(vec2 p){vec2 q=clamp((p-vec2(${f(HM.x0)},${f(HM.z0)}))/${f(HM.cs)},vec2(0.0),vec2(${f(HM.w-1.001)},${f(HM.h-1.001)}));vec2 i=floor(q),e=q-i;float hm=mix(mix(hmT(i),hmT(i+vec2(1.0,0.0)),e.x),mix(hmT(i+vec2(0.0,1.0)),hmT(i+vec2(1.0,1.0)),e.x),e.y);float f=0.0;float u;`;}
+ else for(const b of TERR)g+=`q=p-vec2(${f(b[0])},${f(b[1])});f+=${f(b[3])}*exp(-dot(q,q)/${f(b[2]*b[2])});`;
  for(const c of TBANK)g+=`q=p-vec2(${f(c[3])},${f(c[4])});u=(length(p-vec2(${f(c[0])},${f(c[1])}))-${f(c[2])})/12.0;f+=${(c[6]*12).toFixed(4)}*u*inversesqrt(1.0+u*u)*exp(-dot(q,q)/${f(c[5])});`;
- g+=`float cz=clamp(p.y,${f(TERM[0])},${f(TERM[1])});float d=length(vec2(p.x,p.y-cz));return f*smoothstep(${f(TERM[2])},${f(TERM[3])},d);}`;
+ g+=`float cz=clamp(p.y,${f(TERM[0])},${f(TERM[1])});float d=length(vec2(p.x,p.y-cz));return ${HM&&HMT?'hm+':''}f*smoothstep(${f(TERM[2])},${f(TERM[3])},d);}`;
  THREE.ShaderChunk.common+='\n'+(TERK?g:'float terrH(vec2 p){return 0.0;}')+'\n';}
 {const C=THREE.ShaderChunk;
  C.project_vertex=C.project_vertex.replace('mvPosition = modelViewMatrix * mvPosition;','#ifndef NO_TERR\nmvPosition = modelMatrix * mvPosition;mvPosition.y += terrH(mvPosition.xz);mvPosition = viewMatrix * mvPosition;\n#else\nmvPosition = modelViewMatrix * mvPosition;\n#endif');
@@ -1926,7 +1933,16 @@ function terrBank(){TBANK.length=0;if(!TBNK)return;const runs=[],KL0=1/190;let s
    // 丘の横の傾きで外側が低くなる（逆バンク）所は、その分だけ強くして、差し引きで軽いバンクにする（最大 .08）
    runs.push([cx,cz,R,TX[m],TZ[m],ra*ra,Math.min(.08,TBNK+Math.max(0,-bs))]);}}
  TBANK.push(...runs);}
-terrBank();terrGLSL();
+function hmBuild(){const o=CRS.hm;if(!o||!TERK||!HMV)return;const cs=o.cs||4,fl=o.fl||20,mg=o.mg||600;let x0=1e9,x1=-1e9,z0=1e9,z1=-1e9;for(let i=0;i<N;i++){x0=Math.min(x0,TX[i]);x1=Math.max(x1,TX[i]);z0=Math.min(z0,TZ[i]);z1=Math.max(z1,TZ[i]);}
+ x0=Math.floor((x0-mg)/cs)*cs;z0=Math.floor((z0-mg)/cs)*cs;const w=Math.ceil((x1+mg-x0)/cs)+1,h=Math.ceil((z1+mg-z0)/cs)+1,f=new Float32Array(w*h),wt=new Float32Array(w*h),tg=new Float32Array(w*h),dm=new Float32Array(w*h).fill(1e9);
+ for(let j=0;j<h;j++)for(let i=0;i<w;i++)f[j*w+i]=THraw(x0+i*cs,z0+j*cs);
+ // 道のそば：いちばん近い道の点の中心の高さ（道の向きの位置で勾配を足す＝点の間で階段にならない）へ（壁の外 2m までは全部、その先 fl m でなめらかに元の地形へ）
+ for(let p=0;p<N;p++){const r=WAL[p]+2+fl,hc=THraw(TX[p],TZ[p]),hg=(THraw(TX[wrap(p+1)],TZ[wrap(p+1)])-THraw(TX[wrap(p-1)],TZ[wrap(p-1)]))/(2*SP),ci=Math.round((TX[p]-x0)/cs),cj=Math.round((TZ[p]-z0)/cs),n=Math.ceil(r/cs)+1;
+  for(let dj=-n;dj<=n;dj++)for(let di=-n;di<=n;di++){const i=ci+di,j=cj+dj;if(i<0||j<0||i>=w||j>=h)continue;const k=j*w+i,d=Math.hypot(x0+i*cs-TX[p],z0+j*cs-TZ[p]);if(d<dm[k]){dm[k]=d;tg[k]=hc+hg*((x0+i*cs-TX[p])*FX[p]+(z0+j*cs-TZ[p])*FZ[p]);const t=Math.max(0,Math.min(1,(d-WAL[p]-2)/fl));wt[k]=1-t*t*(3-2*t);}}}
+ for(let k=0;k<w*h;k++){const v=wt[k]?f[k]+(tg[k]-f[k])*wt[k]:f[k];f[k]=Math.round(v*100)/100;}
+ HM={x0,z0,cs,w,h,f};try{if(typeof THREE!=='undefined'&&THREE.DataTexture){const d=new Uint8Array(w*h*4);for(let k=0;k<w*h;k++){const v=Math.max(0,Math.min(65535,Math.round((f[k]+100)*100)));d[k*4]=v>>8;d[k*4+1]=v&255;d[k*4+3]=255;}
+  HMT=new THREE.DataTexture(d,w,h,THREE.RGBAFormat);HMT.magFilter=HMT.minFilter=THREE.NearestFilter;HMT.generateMipmaps=false;HMT.flipY=false;HMT.needsUpdate=true;THREE.Material.prototype.onBeforeCompile=function(sh){sh.uniforms.terrHM={value:HMT};};}}catch(_){}}
+hmBuild();terrBank();terrGLSL();
 const SAUS=new Uint8Array(N);let SAUK=1,SAUG=.55,SAUW0=.75,SAUW1=2.4,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
 // T206 ピットレーン（線からの距離 m。負＝線の手前）：実際のサーキットのように最終コーナーの内側（PIT_A）で分かれ、PIT_B（80km/h の線）から先はピットウォールの内側。
 // ボックスは線をまたいで並び（PIT_BX から PBS m おき。β0.92.0 T244 で 6.5→7.5、のち 13、β0.124.0 T289 で 17）、PIT_C（80km/h の線）を過ぎて PIT_D で本線に合流。PIT_LF＝ピットレーンの通り道、PIT_LB＝ボックス、PIT_EL＝分かれる・合流する時の本線側の位置、PWL＝ピットウォールの中心
@@ -4198,7 +4214,7 @@ let ALT=1,ALR=42,ALD=95,ALH=.35,ALPO=.25,ALPI=.15,PSO=1,PSOT=1.0,ATB=1,ATBK=.6,A
 // T120③ 周回遅れを使う：狙う前の車のすぐ前（LBD m 以内）に周回遅れの遅い車がいる時は、その前の車の出口が鈍るので、全力で仕掛け、差す距離を LBM 倍に。0 で無効
 let CXO=.6,CXD=200,CXR=25,LBK=1,LBD=60,LBM=1.4;
 function lapBlock(o){const me=((progress(o)%L)+L)%L;for(const q of karts){if(q===o||q.dnf||q.gone||q.pit>0||q.finished||q.lap>=o.lap)continue;const d=(((progress(q)%L)+L)%L-me+L)%L;if(d>2&&d<LBD&&q.u<o.u+2)return true;}return false;}
-let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=110,YLD_V=.88,AIMUP=.6,FFK=.97,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPU のコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
+let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=170,YLD_V=.82,YLN=.9,LPY=1,AIMUP=.6,FFK=.97,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPU のコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 let aiPgS=0; /* β0.175.0 T343④ */
 /* β0.185.0 T375 見通し（CPU とオートの慎重さ）。visOf()＝0〜1（晴れの昼＝1）＝(1−VSF×霧)×(1−VSR×雨)×(1−VSN×暗さ)。暗さは時間帯の表の太陽の強さ si から（昼 3.4・朝焼け 2.4・夕方 2.7＝0、夜 .5＝1。T357 の時間が進むレースでは混ぜた表 ENV.P の si でなめらかに変わる。照明塔と車のライトがあるので夜でも VSN だけ）。
    aiControl は vcw＝VSK×(1−見通し) を使う：ブレーキを踏み始める所を VBL m×vcw 早め、見込む減速を (1−VBD×vcw) 倍（慎重さ）。前の車との車間を (1+VGP×vcw) 倍、急ブレーキ（hard）を決める止まる余裕を VBM m×vcw 足す。
@@ -4300,12 +4316,12 @@ function aiControl(k,dt){const W=WK(k);let pKv;const pK=()=>pKv??(pKv=progress(k
     const rcx=RCX>0&&(CORNER[k.idx]||CORNER[wrap(k.idx+14)])?RCX:0; // T256 コーナーでは横の間隔を広げる
     if(fwd<=5.5&&Math.abs(side)<tr.room+.6+rcx&&o.pit!==2){ // 横に並んだ：間隔をあける。壁際で離れられない時や譲る時は少し引く
       // 並走の権利（T117）：半車身以上前に出ている方が権利を持ち（ラインを守る）、後ろ側が下がる（コーナーの中・手前は必ず譲る）
-      const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH;const py=k.wav&&!o.wav?0:o.wav&&!k.wav?1:u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
+      const lead=PRT>0&&fwd<-PRH,trail=PRT>0&&fwd>PRH,lpd=LPY>0&&sess==='race'?pgO(o)-pK():0,lpB=lpd>L/2,lpA=-lpd>L/2;const py=lpB?1:lpA?0:k.wav&&!o.wav?0:o.wav&&!k.wav?1:u<LOWV*2?0:trail?(CORNER[k.idx]||CORNER[wrap(k.idx+14)]?1:tr.yld):lead?0:tr.yld;
       const ek=o.id+(trail?'t':lead?'l':'n'); // 前後の関係（後ろ側・前側・中立）が変わるたびに、もう一度譲るかを決める
       if(!(k.enc[ek]>raceTime-1.5)&&Math.random()<py){k.yT=1.2+Math.random()*.8;k.yTo=o.id;}k.enc[ek]=raceTime;
       const dir=o.lat>k.lat?-1:1,nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+dir*(tr.room+.2+rcx)));
       if(!lead||RRL>0&&fwd>-RRL){if(dir<0?nt<k.laneT:nt>k.laneT)k.laneT=nt;k.laneTimer=.8;}
-      if(fwd>(u<LOWV&&Math.abs(o.u)<LOWV?0:-3)&&!(k.wav&&!o.wav)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id)){follow=true;if(FPY>0&&!(u<LOWV&&raceTime-raceT0>LWS))folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+FPY);}} /* β0.129.0 遅い時は前の車が先に行く（お互いに待って止まらない） */ /* β0.216.0 T475 スタートから LWS 秒の後は、遅い時も前の車の速さ＋FPY までは踏む（並んだまま2台とも 0km/h まで止まっていた） */
+      if(fwd>(u<LOWV&&Math.abs(o.u)<LOWV?0:-3)&&!(k.wav&&!o.wav)&&!(lpA&&fwd<1)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id)){follow=true;if(FPY>0&&!(u<LOWV&&raceTime-raceT0>LWS))folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+FPY);}} /* β0.129.0 遅い時は前の車が先に行く（お互いに待って止まらない） */ /* β0.216.0 T475 スタートから LWS 秒の後は、遅い時も前の車の速さ＋FPY までは踏む（並んだまま2台とも 0km/h まで止まっていた） */
     let sdm=Math.abs(side);if(SDP>0&&sdm>=2.3&&fwd>0){const cl=k.u-(o.vx*fx+o.vz*fz);if(cl>SDC){const ch=Math.cos(k.h),sh=Math.sin(k.h),t=Math.min(SDT,fwd/cl),sp=side+((o.vx-k.vx)*ch-(o.vz-k.vz)*sh)*t;sdm=sp*side<=0?0:Math.min(sdm,Math.abs(sp));}} // T256 横から入ってくる遅い車を先読み（横の位置を届くまで進めて、真ん中をまたぐなら 0）
     if(fwd<=0||sdm>=2.3)continue;
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1); // T73（β0.82.0）横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大クラッシュの最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
@@ -4375,7 +4391,7 @@ function aiControl(k,dt){const W=WK(k);let pKv;const pK=()=>pKv??(pKv=progress(k
   // T186 A4 タックイン：FF はコーナーに入る瞬間に一瞬アクセルを抜き、前へ荷重を移して向きを変える
   if(TKI>0&&k.fs>.8&&sess==='race'){if(CORNER[k.idx]&&!k.tkC&&u>15)k.tkT=TKT;k.tkC=CORNER[k.idx];if(k.tkT>0)k.tkT-=dt;}
   const folP=FPT>0&&follow&&!hard&&!folB&&!(k.atkT>0)&&sess!=='drag'&&(u>=LOWV||raceTime-raceT0>LWS)&&fV<1e8,fVl=folP?Math.max(0,fV):1e9; // T390
-  const accel=(!follow||folP)&&!hard&&!(k.tkT>0)&&u<Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V:1)-.5+(FTH>0?1:0);let brake=u>vAllow+2.5||hard;
+  const accel=(!follow||folP)&&!hard&&!(k.tkT>0)&&u<Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V*(W<6.5?YLN:1):1)-.5+(FTH>0?1:0);let brake=u>vAllow+2.5||hard;
   if(vcw>0){if(!brake)k.vrT=-1;else{if(!(k.vrT>=0))k.vrT=VRT*vcw*(hard?VRH:1);if(k.vrT>0){k.vrT-=dt;if(k.vrT>0)brake=false;else k.vrT=0;}}}else k.vrT=-1; /* β0.185.0 T375 見通しが悪いとブレーキの踏み始めが少し遅れる */
   k.aiBrake=brake;
   // T186 A3 曲がりながらのブレーキは、舵を切るほど抜く（タイヤの力をブレーキと曲がるのに分け合う）
@@ -4407,7 +4423,7 @@ function aiControl(k,dt){const W=WK(k);let pKv;const pK=()=>pKv??(pKv=progress(k
   const xth=XTH>0&&sess!=='drag'&&!lowv&&!k.pwr&&!(SBX>0&&k.lostT>0)?Math.max(XTM,Math.min(1,1-XTH*(Math.abs(steer)-XT0)/(1-XT0))):1;
   let pA=accel||tbe||lfb,pB=brake||trail||lfb||tdb,brk=trail?AITB:lfb?LFB:tdb?tdv:atb,thr=lfb?LFQ:tbe?.25:xth*fth*Math.min(k.pwr?Math.max(k.aiThr,.9):k.aiThr,Math.max(.1,1-(Math.abs(beta)-BLF*RSF[RSI[k.idx]].sk)*BLK));
   // β0.167.0 T365 ペダルをジワッと：目標の速さの近くは「踏む・離す」を刻まず途中まで踏んで保ち、ブレーキは超えた分に応じて踏む。踏む・離す速さにも上限（人の足と同じ）
-  if(PDP>0&&sess!=='drag'&&(!lowv||PDQ>0)){const lim=Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V:1);const hold=HDK>0&&!lowv&&k.fdF>0&&k.drE!=null?Math.max(0,Math.min(1,k.drE/k.fdF)):0,pdh=hold>0?Math.max(PDH,hold/HKP):PDH; // T390 hold＝今の速さを保つ踏む量、pdh＝目標をこれだけ超えるまでは踏んでおく
+  if(PDP>0&&sess!=='drag'&&(!lowv||PDQ>0)){const lim=Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V*(W<6.5?YLN:1):1);const hold=HDK>0&&!lowv&&k.fdF>0&&k.drE!=null?Math.max(0,Math.min(1,k.drE/k.fdF)):0,pdh=hold>0?Math.max(PDH,hold/HKP):PDH; // T390 hold＝今の速さを保つ踏む量、pdh＝目標をこれだけ超えるまでは踏んでおく
     if(!pA&&!pB&&(!follow||folP)&&!hard&&!(k.tkT>0)&&u<lim+pdh)pA=true;
     if(pA&&!lfb&&!tbe){if(hold>0){const fr=Math.min(1,hold+(lim-u)*HKP);if(fr<.03)pA=false;else thr*=fr;}else thr*=Math.max(PDM,Math.min(1,(lim+PDH-u)/PDW));}
     if(brake&&!hard)k.aiBk=1;else if(hard||u<vAllow+PDBL||trail||lfb||tdb)k.aiBk=0;
