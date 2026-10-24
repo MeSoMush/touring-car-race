@@ -1149,7 +1149,7 @@ body.touch #tmRun:has(#fqNew:not([hidden])) .mi{min-height:31px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.256.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.257.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2955,8 +2955,13 @@ skidMesh.count=0;skidMesh.frustumCulled=false;scene.add(skidMesh);let skidI=0;co
 function addSkid(x,z,px,pz){const dx=x-px,dz=z-pz;const d=Math.hypot(dx,dz);if(d<.05||d>3)return;SD.position.set((x+px)/2,.07,(z+pz)/2);SD.rotation.set(-Math.PI/2,Math.atan2(dx,dz),0);SD.scale.set(1,d+.05,1);SD.updateMatrix();
   skidMesh.setMatrixAt(skidI,SD.matrix);skidI=(skidI+1)%SKID_MAX;skidMesh.count=Math.max(skidMesh.count,Math.min(SKID_MAX,skidI||SKID_MAX));skidMesh.instanceMatrix.needsUpdate=true;}
 const smokeTex=canvasTex(64,64,(g)=>{const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(235,235,235,.8)');gr.addColorStop(1,'rgba(235,235,235,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);});
-const SMN=isTouch?40:140; /* β0.175.0 T343③ スマホは40個 */
-const smokes=[];for(let i=0;i<SMN;i++)smokes.push({on:false,x:0,y:0,z:0,sc:0,op:0,r:1,g:1,b:1,life:0,max:1,vx:0,vz:0,dust:false});
+const SMN=isTouch?40:260; /* β0.175.0 T343③ スマホは40個。β0.257.0 T523⑤ PC はドリフトの煙の分 140→260 */
+const smokes=[];for(let i=0;i<SMN;i++)smokes.push({on:false,x:0,y:0,z:0,sc:0,op:0,r:1,g:1,b:1,life:0,max:1,vx:0,vz:0,dust:false,gr:3.5,o0:.55,ry:1.2});
+/* β0.257.0 T523⑤ ドリフトの煙：滑りの深さ driftS（0〜1.3）に合わせて1秒あたり n 個（両方の後輪から交互に）、深いほど長く残り大きく広がり、地面を這う。
+   DSMP＝案（0＝前の版のまま）。乱数は見た目用の vrnd（Math.random を使うとテストのレースの乱数の並びが変わるため） */
+const DSMP=[{n:0},{n:22,life:1.4,grow:4,op:.1,col:0xeeeeee},{n:40,life:2.2,grow:6,op:.15,col:0xf2f2f2},{n:30,life:1.8,grow:5,op:.15,col:0xb4b6ba}];let DSM=1; /* ご本人が案1（白・控えめ）を選んだ 2026-10-25 */
+let vS=12345;const vrnd=()=>(vS=vS*16807%2147483647)/2147483647;
+const driftS=k=>Math.min(1.3,Math.max(0,(k.slipR-.14)/.3)+(k.wheelspin?.35:0));
 /* β0.238.0 T425④ 粒は四角を4頂点ずつ並べた1つの形（描画1回）。頂点の側でカメラへ向ける（Sprite と同じ大きさ・色・霧）。色は smokeTex と同じ丸いぼかしを式で */
 const smokeG=(()=>{const P=new Float32Array(SMN*12),Q=new Float32Array(SMN*12),C=new Float32Array(SMN*16),I=[],cn=[[-.5,-.5],[.5,-.5],[.5,.5],[-.5,.5]];
   for(let i=0;i<SMN;i++){for(let j=0;j<4;j++){Q[i*12+j*3]=cn[j][0];Q[i*12+j*3+1]=cn[j][1];}I.push(i*4,i*4+1,i*4+2,i*4,i*4+2,i*4+3);}
@@ -2983,8 +2988,9 @@ function stepSparks(dt){if(!spkLive)return;let any=0;
   spkGeo.attributes.position.needsUpdate=true;spkLive=any;}
 let DGL0=300,DGL1=680,FINCAM=1; // T178：ディスクが光り始める・いちばん明るい温度（℃）、FINCAM＝自分がゴールしたら中継カメラへ
 let scrLv=0; // T174 自車がこすれている強さ（0〜1）。擦れる音の大きさに使い、毎フレーム減らす
-function puff(x,z,vx,vz,dust,col){const p=smokes[smokeI];smokeI=(smokeI+1)%SMN;p.on=true;p.life=0;p.max=dust?1.1:.9;p.vx=vx*.3;p.vz=vz*.3;p.dust=dust;const h=col||(dust?0xb89f72:0xe8e8e8);p.r=(h>>16&255)/255;p.g=(h>>8&255)/255;p.b=(h&255)/255;p.x=x;p.y=.5;p.z=z;p.sc=1;p.op=.55;}
-function stepSmoke(dt){let n=0,cx=0,cy=0,cz=0;for(const p of smokes){if(!p.on)continue;p.life+=dt;const t=p.life/p.max;if(t>=1){p.on=false;continue;}p.x+=p.vx*dt;p.z+=p.vz*dt;p.y+=dt*1.2;p.sc=1+t*3.5;p.op=(1-t)*.55;n++;cx+=p.x;cy+=p.y;cz+=p.z;}
+function puff(x,z,vx,vz,dust,col,s){const p=smokes[smokeI];smokeI=(smokeI+1)%SMN;p.on=true;p.life=0;p.max=dust?1.1:.9;p.vx=vx*.3;p.vz=vz*.3;p.dust=dust;const h=col||(dust?0xb89f72:0xe8e8e8);p.r=(h>>16&255)/255;p.g=(h>>8&255)/255;p.b=(h&255)/255;p.x=x;p.y=.5;p.z=z;p.sc=1;p.op=.55;p.gr=3.5;p.o0=.55;p.ry=1.2;
+  if(s){const P=DSMP[DSM];p.max+=s*P.life;p.gr+=s*P.grow;p.o0=Math.min(.7,.55+s*P.op);p.ry=1.2-s*.5;p.vx=vx*.15;p.vz=vz*.15;p.y=.35;}} /* β0.257.0 T523⑤ s＝ドリフトの深さ */
+function stepSmoke(dt){let n=0,cx=0,cy=0,cz=0;for(const p of smokes){if(!p.on)continue;p.life+=dt;const t=p.life/p.max;if(t>=1){p.on=false;continue;}p.x+=p.vx*dt;p.z+=p.vz*dt;p.y+=dt*p.ry;p.sc=1+t*p.gr;p.op=(1-t)*p.o0;n++;cx+=p.x;cy+=p.y;cz+=p.z;}
  const S=smokeG;S.ms.visible=n>0;if(!n)return;cx/=n;cy/=n;cz/=n;S.ms.position.set(cx,cy,cz); /* 透明な物の描く順は形の位置で決まるので、粒の真ん中に置く */
  for(let i=0;i<SMN;i++){const p=smokes[i],o=i*12,oc=i*16,sc=p.on?p.sc:0,x=p.x-cx,y=p.y-cy,z=p.z-cz;for(let j=0;j<4;j++){const q=o+j*3,c=oc+j*4;S.P[q]=x;S.P[q+1]=y;S.P[q+2]=z;S.Q[q+2]=sc;S.C[c]=p.r;S.C[c+1]=p.g;S.C[c+2]=p.b;S.C[c+3]=p.op;}}
  S.aP.needsUpdate=true;S.aQ.needsUpdate=true;S.aC.needsUpdate=true;}
@@ -4435,17 +4441,17 @@ function ghostStep(dt){const p=player();const gm=ghostMesh;ghDelta=null;tgDelta=
   if(!G){if(gm)gm.root.visible=false;return;}
   const g=ghMesh();const q=ghAt(t,G);g.root.visible=!!q;if(q){g.root.position.set(q[0],0,q[1]);g.root.rotation.y=q[2];}}
 /* リプレイ：0.1秒ごとに全車の位置などを記録して、レース後に中継カメラで再生 */
-const RP_N=14;let rpBuf=[],rpT=0,rpI=0,rpTime=0,rpSpeed=1,rpFocus=0,rpSavedCam=0;
+const RP_N=15; /* β0.257.0 T523⑤ 15番目＝後輪の滑りの角度（煙と鳴きをリプレイでも同じ強さに） */let rpBuf=[],rpT=0,rpI=0,rpTime=0,rpSpeed=1,rpFocus=0,rpSavedCam=0;
 function recordReplay(dt){rpT+=dt;if(rpT<.1&&rpBuf.length)return;rpT=0;const a=new Float32Array(karts.length*RP_N);
   karts.forEach((k,j)=>{const o=j*RP_N;a[o]=k.x;a[o+1]=k.z;a[o+2]=k.h;a[o+3]=k.u;a[o+4]=k.delta;a[o+5]=k.ay;a[o+6]=k.ax;a[o+7]=k.rpm;
-    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0)|(k.prk?64:0);a[o+9]=k.lap;a[o+10]=k.vl;const c=k.dnf&&k.cr;if(c){a[o+11]=c.y;a[o+12]=c.px;a[o+13]=c.pz;}});
+    a[o+8]=((k.slipR>.16||k.slipF>.22||k.wheelspin||k.locked)&&Math.abs(k.u)>4?1:0)|(k.spin>0?2:0)|(k.shiftT>.06?4:0)|((k.aiDriven?k.aiBrake:(lastPc&&lastPc.brake))?8:0)|(k.dnf?16:0)|(k.gone?32:0)|(k.prk?64:0)|(k.wheelspin?128:0)|(k.locked?256:0);a[o+14]=Math.min(1.5,k.slipR||0);a[o+9]=k.lap;a[o+10]=k.vl;const c=k.dnf&&k.cr;if(c){a[o+11]=c.y;a[o+12]=c.px;a[o+13]=c.pz;}});
   let tr=null;if(TRF.length){tr=new Float32Array(TRF.length*4);TRF.forEach((t,j)=>{tr[j*4]=t.x;tr[j*4+1]=t.z;tr[j*4+2]=t.h;tr[j*4+3]=(t.on?1:0)|(t.brk?2:0)|(t.hit?4:0);});} /* β0.247.0 T515② 一般車もリプレイに */rpBuf.push({t:raceTime,a,tr});if(rpBuf.length>(sess==='ta'?6000:RPMAX))rpBuf.shift();} /* β0.175.0 T343⑦ */
 const RPMAX=12000;
 const camTarget=()=>state==='replay'?karts[rpFocus]:state==='title'?(titleMode==='garage'?karts[0]:(karts.length?(tvFoc&&karts.includes(tvFoc)&&!tvFoc.gone?tvFoc:ranking()[0]):null)):player();
 function applyReplay(){const f0=rpBuf[rpI],f1=rpBuf[Math.min(rpBuf.length-1,rpI+1)];const w=f1.t>f0.t?Math.max(0,Math.min(1,(rpTime-f0.t)/(f1.t-f0.t))):0;
   karts.forEach((k,j)=>{const o=j*RP_N,A=f0.a,B=f1.a;const L2=(q)=>A[o+q]+(B[o+q]-A[o+q])*w;
     k.x=L2(0);k.z=L2(1);k.h=A[o+2]+angDiff(B[o+2],A[o+2])*w;k.u=L2(3);k.delta=L2(4);k.ay=L2(5);k.ax=L2(6);k.rpm=L2(7);k.erpm=k.rpm;k.blip=0;k.vl=L2(10);k.lap=A[o+9];
-    const fl=A[o+8];k.slipR=fl&1?.3:0;k.slipF=0;k.wheelspin=0;k.locked=false;k.spin=fl&2?1:0;k.shiftT=fl&4?.1:0;k.aiBrake=!!(fl&8);k.rv=!!(fl&16);k.gone=!!(fl&32);k.prk=!!(fl&64);
+    const fl=A[o+8];k.slipR=fl&1?Math.max(.17,A[o+14]):0;k.slipF=0;k.wheelspin=fl&128?1:0;k.locked=!!(fl&256);k.spin=fl&2?1:0;k.shiftT=fl&4?.1:0;k.aiBrake=!!(fl&8);k.rv=!!(fl&16);k.gone=!!(fl&32);k.prk=!!(fl&64);
     if(k.rv){const m=k.rcr||(k.rcr={});m.y=L2(11);m.px=L2(12);m.pz=L2(13);} // T73 リプレイでも跳ねて転がる様子を再生する（最終の姿勢で止まって見えないように）
     k.idx=nearest(k.x,k.z,k.idx,24);k.lat=lateralAt(k.idx,k.x,k.z);k.surf=surfaceAt(k.idx,k.lat);syncWorld(k);});
   if(f0.tr&&f1.tr)TRF.forEach((t,j)=>{const A=f0.tr,B=f1.tr,o=j*4;t.x=A[o]+(B[o]-A[o])*w;t.z=A[o+1]+(B[o+1]-A[o+1])*w;t.h=A[o+2]+angDiff(B[o+2],A[o+2])*w;const fl=A[o+3];t.on=fl&1;t.brk=!!(fl&2);t.hit=fl&4?1:0;});} /* β0.247.0 T515② */
@@ -5668,7 +5674,10 @@ function syncVisuals(dt){
     sprayStep(k,g,near&&(surf==='road'||surf==='curb'),fx,fz,dt); // β0.186.0 T375 後半
     if(near&&ENV.wet>.25&&Math.abs(k.u)>14&&(surf==='road'||surf==='curb')&&Math.random()<ENV.wet*14*dt){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,false);}
     if(near&&sliding&&(surf==='road'||surf==='curb')){if(k.prevWheel){addSkid(rw[0][0],rw[0][1],k.prevWheel[0][0],k.prevWheel[0][1]);addSkid(rw[1][0],rw[1][1],k.prevWheel[1][0],k.prevWheel[1][1]);}
-      if(Math.random()<.35){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;}
+      if(Math.random()<.35){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;
+      const P=DSMP[DSM],ds=P.n&&!RSv.dust&&ENV.wet<.25?driftS(k):0; /* β0.257.0 T523⑤ ドリフトの煙（濡れた路面・ゆるい路面は出さない） */
+      if(ds>0){k.smA=(k.smA||0)+P.n*ds*dt;let c=P.col;if(TOD[ENV.tod]&&TOD[ENV.tod].night)c=(((c>>16&255)*.42|0)<<16)|(((c>>8&255)*.44|0)<<8)|((c&255)*.48|0);
+        while(k.smA>=1){k.smA-=1;const q=rw[(k.smI=(k.smI|0)+1)&1];puff(q[0]+(vrnd()-.5)*.6,q[1]+(vrnd()-.5)*.6,k.vx,k.vz,false,c,ds);}}}
     else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&Math.random()<.25){const q=rw[Math.random()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass')&&Math.abs(k.u)>8&&Math.random()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
   }
   if(TRF.length)trfSync();if(SIG.length)sigSync(); /* β0.249.0 */
@@ -6542,7 +6551,7 @@ let EWK=1,EWI=.5,EWN=2,ewT0=0,ewFix=0,ewLast='';const ewBuf=new Float32Array(256
 function ewTap(v){if(!v||v.an)return v;try{const a=ac.createAnalyser();a.fftSize=256;v.f.connect(a);v.an=a;v.bad=0;}catch(_){}return v;}
 function ewBad(v){if(!v||!v.an)return false;v.an.getFloatTimeDomainData(ewBuf);let m=0;for(let i=0;i<ewBuf.length;i++){const x=ewBuf[i];if(!Number.isFinite(x))return true;const a=x<0?-x:x;if(a>m)m=a;}return m<1e-7;}
 function ewKill(v){try{v.o.stop();v.o2.stop();v.o3.stop();v.lfo.stop();if(v.o4)v.o4.stop();}catch(_){}try{v.g.disconnect();}catch(_){}try{v.f.disconnect();}catch(_){}}
-function ewRe(v,dst,who){ewKill(v);const n=engVoice(dst);n.pn=v.pn;n.k=v.k;n.fresh=1;n.g.gain._v=0;ewFix++;ewLast=who+'（'+(typeof raceTime==='number'?raceTime.toFixed(0):'?')+'秒）';return ewTap(n);}
+function ewRe(v,dst,who){ewKill(v);const n=engVoice(dst);n.pn=v.pn;n.sq=v.sq;n.k=v.k;n.fresh=1;n.g.gain._v=0;ewFix++;ewLast=who+'（'+(typeof raceTime==='number'?raceTime.toFixed(0):'?')+'秒）';return ewTap(n);}
 function engWatch(){if(!EWK||!ac||ac.state!=='running'||!eng)return;const now=performance.now();if(now-ewT0<EWI*1000)return;ewT0=now;
   try{if(ewBad(ewTap(eng))){if(++eng.bad>=EWN)eng=ewRe(eng,master,'自分');}else eng.bad=0;
    if(npcV)npcV.forEach((v,i)=>{if(ewBad(ewTap(v))){if(++v.bad>=EWN)npcV[i]=ewRe(v,v.pn||master,'ほかの車');}else v.bad=0;});}catch(_){}}
@@ -6599,7 +6608,9 @@ function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webki
   // T174 擦れる音（壁・車）：同じ雑音を高めの帯域で
   {const s2=ac.createBufferSource();s2.buffer=b;s2.loop=true;s2.loopStart=.37;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=2600;f2.Q.value=1.4;const g2=ac.createGain();g2.gain.value=0;s2.connect(f2);f2.connect(g2);g2.connect(master);s2.start(0,.37);scrape={g:g2,f:f2};}
   // T174 ほかの車のエンジン音（カメラに近い2台。左右の位置とドップラー）
-  npcV=[0,1].map(()=>{let pn=null,dst=master;if(ac.createStereoPanner){pn=ac.createStereoPanner();pn.connect(master);dst=pn;}const v=engVoice(dst);v.pn=pn;v.k=null;return v;});
+  npcV=[0,1].map((_,vi)=>{let pn=null,dst=master;if(ac.createStereoPanner){pn=ac.createStereoPanner();pn.connect(master);dst=pn;}const v=engVoice(dst);v.pn=pn;v.k=null;
+    {const s2=ac.createBufferSource();s2.buffer=b;s2.loop=true;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=1500;f2.Q.value=5;const g2=ac.createGain();g2.gain.value=0;s2.connect(f2);f2.connect(g2);g2.connect(dst);s2.start(0,.3+vi*.27);v.sq={g:g2,bp:f2};} /* β0.257.0 T523⑤ */
+    return v;});
   bgmInit();}catch(e){ac=null;}}
 function tone(freq,dur,type='square',vol=.25,slide=0,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,freq+slide),t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.004);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol=.3){if(!ac||muted)return;const b=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate);const d=b.getChannelData(0);const fi=ac.sampleRate*.004;for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)*Math.min(1,i/fi);/* T174 出だしを4msで立ち上げる（プチ音を防ぐ） */const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=vol;s.connect(g);g.connect(master);s.start();}
@@ -6713,8 +6724,8 @@ function updateEngine(){if(!eng)return;engWatch();if(sndChk){sndAud();return;}co
   const quiet=spdMul>1&&autoPlay,onq=on&&!quiet; // 倍速の間は効果音と同じく止める（β0.79.0：エンジン・タイヤの鳴き・ターボも。以前は止めていなかった）
   const cv=p&&isTV(camMode)&&DIR.sub!=='onboard'?Math.max(.12,Math.min(1,18/(Math.hypot(p.x-camera.position.x,p.z-camera.position.z)+8))):1;
   eng.g.gain.setTargetAtTime(onq?(.05+.05*thr)*ev*(p&&p.shiftT>0?.4:1)*cv:0,ac.currentTime,ERQ?.025:.04);turboStep(p,onq,thr,cv);
-  const sq=p&&onq&&(p.surf==='road'||p.surf==='curb')&&!RSI[p.idx]&&Math.abs(p.u)>5?Math.max(0,Math.min(1,(Math.max(p.slipR-.12,p.slipF-.18)*4)))+(p.wheelspin?.3:0):0;
-  stv(squeal.g.gain,Math.min(.16,sq*.14)*cv*(p&&p.ev?1.3:1),ac.currentTime,.05);stv(squeal.bp.frequency,1300+sq*500,ac.currentTime,.1);
+  const sq=p&&onq?sqOf(p):0,dd=p&&sq?sqDeep(p):0;
+  stv(squeal.g.gain,Math.min(.16+dd*.05,sq*.14*(1+dd*.35))*cv*(p&&p.ev?1.3:1),ac.currentTime,.05);stv(squeal.bp.frequency,1300+sq*500-dd*380,ac.currentTime,.1);stv(squeal.bp.Q,6-dd*3,ac.currentTime,.1);
   if(scrape){stv(scrape.g.gain,on&&!quiet&&state!=='replay'?Math.min(.2,scrLv*.2)*cv:0,ac.currentTime,.03);stv(scrape.f.frequency,2000+scrLv*1600,ac.currentTime,.05);scrLv*=.55;}
   if(envS){const t=ac.currentTime,sp=p?Math.abs(p.u):0,ok=on&&!quiet,ck=isCk(camMode)||camEff()===3&&DIR.sub==='onboard';
    stv(envS.wind.g.gain,ok&&p?.075*Math.pow(Math.min(1.1,sp/60),2)*(ck?.6:1)*cv*(p.ev?1.6:1):0,t,.15);stv(envS.wind.f.frequency,400+sp*14,t,.2);
@@ -6724,6 +6735,9 @@ function updateEngine(){if(!eng)return;engWatch();if(sndChk){sndAud();return;}co
    stv(envS.rain.g.gain,on&&!quiet?.045*ENV.rain*(ck?1.5:1):0,t,.3);} /* β0.163.1 T331 雨の音もエンジンと同じ時だけ（結果画面・ポーズでシャーだけ残っていた） */
   npcAudio(on&&!quiet,p);}
 // T174 ほかの車のエンジン音：カメラ（聞く位置）に近い2台を、距離の音量・左右の位置・ドップラー（近づくと高く、離れると低く）で鳴らす
+/* β0.257.0 T523⑤ タイヤの鳴きの強さ（0〜1.3）と、深いドリフトの度合い sqDeep（0〜1。深いほど低く太い音＝帯域を広く）。自分の車と近くの車で同じ式 */
+const sqOf=k=>(k.surf==='road'||k.surf==='curb')&&!RSI[k.idx]&&Math.abs(k.u)>5?Math.max(0,Math.min(1,(Math.max(k.slipR-.12,k.slipF-.18)*4)))+(k.wheelspin?.3:0):0;
+const sqDeep=k=>Math.max(0,Math.min(1,(k.slipR-.3)/.4));
 let npcT=0;function npcAudio(on,p){if(!npcV.length)return;const t=ac.currentTime;if(t-npcT<.033&&t>=npcT)return;npcT=t; // 1秒に約30回（軽量化 β0.54.2）
   const lx=camera.position.x,lz=camera.position.z;
   const dta=t-AUD.t;if(dta>.004&&dta<.5){AUD.vx+=((lx-AUD.x)/dta-AUD.vx)*.35;AUD.vz+=((lz-AUD.z)/dta-AUD.vz)*.35;}else if(dta>=.5){AUD.vx=AUD.vz=0;}
@@ -6733,13 +6747,14 @@ let npcT=0;function npcAudio(on,p){if(!npcV.length)return;const t=ac.currentTime
   for(const v of npcV)if(v.k&&!top.includes(v.k))v.k=null; // 4番目より遠くなったら外す（入れ替わりの揺れを防ぐ）
   for(const e of c.slice(0,2)){const k=e[1];if(npcV.some(v=>v.k===k))continue;const v=npcV.find(v=>!v.k);if(v){v.k=k;v.g.gain.setValueAtTime(0,t);v.g.gain._v=0;v.fresh=1;}}
   camera.getWorldDirection(audDir);const rl=Math.hypot(audDir.x,audDir.z)||1;
-  for(const v of npcV){const k=v.k;if(!k){stv(v.g.gain,0,t,.05);continue;}
+  for(const v of npcV){const k=v.k;if(!k){stv(v.g.gain,0,t,.05);if(v.sq)stv(v.sq.g.gain,0,t,.05);continue;}
     const dx=k.x-lx,dz=k.z-lz,d=Math.max(1,Math.hypot(dx,dz)),ux=dx/d,uz=dz/d;
     const vs=-(k.vx*ux+k.vz*uz),vl=AUD.vx*ux+AUD.vz*uz; // 音源が近づく速さ・聞く側が近づく速さ
     const dop=Math.max(.7,Math.min(1.45,(343+vl)/(343-vs)));
     const fr=!!v.fresh;v.fresh=0;engSet(v,k);const att=Math.pow(1-d/R,2),acc=k.liftT>0?0:1; // アクセルを離している間は小さく・こもった音
     const ev=engDrive(v,k,rpmOf(k),.5+.5*acc,.03,dop,fr); // T166 その車の車種の音
     stv(v.g.gain,.075*att*(.55+.45*acc)*ev,t,.04);
+    if(v.sq){const q=sqOf(k),dq=q?sqDeep(k):0;stv(v.sq.g.gain,Math.min(.13,q*.11*(1+dq*.35))*att,t,.05);stv(v.sq.bp.frequency,(1300+q*500-dq*380)*dop,t,.1);} /* β0.257.0 T523⑤ 近くの車のタイヤの鳴き */
     if(v.pn)stv(v.pn.pan,Math.max(-.8,Math.min(.8,(ux*-audDir.z+uz*audDir.x)/rl)),t,.05);}}
 
 /* ================= 入力 ================= */
@@ -8047,7 +8062,7 @@ function sndAud(){const S=sndChk,t=ac.currentTime,m=muted,L=S.loops;
     stv(envS.rumb.g.gain,on('rumb')?.09:0,t,.03);stv(envS.rumb.o.frequency,40,t,.05);
     stv(envS.grav.g.gain,on('grav')?.13:0,t,.05);stv(envS.rain.g.gain,on('rain')?.045:0,t,.3);
     stv(envS.roar.g.gain,on('crowd')?.06:0,t,.25);stv(envS.clap.g.gain,on('crowd')?.08:0,t,.15);}
-  turboStep(null,false,0,1);for(const v of npcV)v.g.gain.setTargetAtTime(0,t,.05);}
+  turboStep(null,false,0,1);for(const v of npcV){v.g.gain.setTargetAtTime(0,t,.05);if(v.sq)v.sq.g.gain.setTargetAtTime(0,t,.05);}}
 function sndSe(k){initAudio();if(ac&&ac.state==='suspended')ac.resume().catch(()=>{});sndChk.bgm=null;sndChk.eng=-1;sndChk.rev=false;sndChk.loops.clear();sndRender();
   setTimeout(()=>{if(!sndChk||!ac||muted)return;
     if(k==='radio'){tone(1320,.05,'square',.06);tone(1760,.05,'square',.06,0,.07);}
