@@ -1149,7 +1149,7 @@ body.touch #tmRun:has(#fqNew:not([hidden])) .mi{min-height:31px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.259.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.260.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2390,10 +2390,37 @@ if(CRS.pol&&P2P)TRF.push({pol:1,s0:0,dir:1,ty:'car',T:TRK.car,vm:0,m:1500,hx:.95
 const IL=new Float32Array(N),VC=new Float32Array(N),VP=new Float32Array(N);
 // レーシングライン（T79）：コースの幅いっぱいを使って曲がりの強さ（曲率）が最小になる線を、反復で求める。アウト→イン→アウトになり、半径が大きいぶん速く曲がれる。
 // 点 P(i)=中心線＋横位置 IL[i]。隣り合う点の2階差分（曲がり）の二乗和を小さくするよう、横位置を少しずつ動かして幅（RLW）の中に収める。
-let RLW=6,RLIT=1500,RLM=.2; /* T83（β0.118.0）道幅をいっぱいに使う：RLW 4.6→6（車の外側が道の端から約 0.5m）、RLM .5→.2（曲がりを小さくする方を重く。最短距離に引っ張られて内側に残っていた） */ // RLM：0＝曲率だけ（中心線から動かない）〜1＝最短距離（内側にべったり）。.5＝両方のバランス
+let RLW=6,RLIT=1500,RLM=.2,PRLD=40,PRLR=60,PRLM=1,PRLN=6,PRLG=.3,PRLX=1.5,PRLT=4,PRLV=2; /* β0.260.0 T527 公道の直角の角の線（pubRL。PRLD=0 で前のまま） */ /* T83（β0.118.0）道幅をいっぱいに使う：RLW 4.6→6（車の外側が道の端から約 0.5m）、RLM .5→.2（曲がりを小さくする方を重く。最短距離に引っ張られて内側に残っていた） */ // RLM：0＝曲率だけ（中心線から動かない）〜1＝最短距離（内側にべったり）。.5＝両方のバランス
 // （曲率だけを最小にすると、なめらかな中心線がそのまま答えになって動かない。最短距離を混ぜて、幅を使うアウト・イン・アウトにする）
 let RLG=80,RLS=2,RLD=1,RLE=1.5,RLC=1,RLINFO=[]; // 遅めのアペックスのずらし量（点の数。1点＝SP m。0で従来、4以上は曲がり込みが遅すぎてスピンが増える）。RLD＝コーナーの種類による増減、RLE＝出口の直線の長さによる増減、RLC＝連続コーナー（次まで RLG m 以内）の手前を早める量（T98・T100。すべて0で一律 RLS）
 const RADL=new Float32Array(N); // ラインの半径（曲がれる速さの計算に使う）
+/* β0.260.0 T527 公道の直角の角の線：碁盤の目のように角が右・左と交互に並ぶと、曲がりの少ない線が前の角の頂点から次の角の頂点へ斜めにつながり、入口で内側にいた（外から入らない。線の半径が道の中心と同じ 19m）。
+   前後 PRLD m に別の急な角（半径 PRLR m 未満）が無い角は、入口と出口の直線の外の端（使える幅から PRLM m 残す）に接し、内側の端を越えない、いちばん大きな円（外→内→外）を線にする。円の手前・先は外の端に沿い、その PRLD m 手前・先で元の線へ戻す。最後に PRLN 回なめらかにする */
+function pubRL(){const segs=[];for(let i=0;i<N;i++){if(RAD[i]<PRLR&&RAD[wrap(i-1)]>=PRLR){let j=i,m=i;while(RAD[wrap(j)]<PRLR&&j-i<N){if(RAD[wrap(j)]<RAD[wrap(m)])m=j;j++;}segs.push({a:i,b:j,m:wrap(m)});}}
+ if(!segs.length)return;const nD=Math.round(PRLD/SP),T=Float32Array.from(IL),hit=new Uint8Array(N);
+ const ew=i=>Math.max(.5,RLW-(W-WL[i])-PRLM);
+ for(const g of segs){if(segs.some(o=>o!==g&&(((o.a-g.b+N)%N)<nD*3||((g.a-o.b+N)%N)<nD*3)))continue;
+  const sg=Math.sign(IL[g.m])||1;let k1=g.a,k2=g.b; /* 入口・出口の直線の点（曲がりがゆるくなる所まで戻る） */
+  while(g.a-k1<nD*2&&RAD[wrap(k1)]<PRLR*8)k1--;while(k2-g.b<nD*2&&RAD[wrap(k2)]<PRLR*8)k2++;
+  const P=x=>{const i=wrap(x);return [TX[i],TZ[i],NX[i]*sg,NZ[i]*sg];}; /* 内向きの法線 */
+  const [x1,z1,n1x,n1z]=P(k1),[x2,z2,n2x,n2z]=P(k2),e1=ew(wrap(k1)),e2=ew(wrap(k2));
+  const det=n1x*n2z-n1z*n2x;if(Math.abs(det)<.3)continue; /* ほぼ平行（ヘアピンなど）は前のまま */
+  const cen=r=>{const b1=x1*n1x+z1*n1z-e1+r,b2=x2*n2x+z2*n2z-e2+r;return [(b1*n2z-b2*n1z)/det,(n1x*b2-n2x*b1)/det];}; /* 外の端の直線から内へ r の点＝2本の直線に接する円の中心 */
+  const cr=(ax,az,bx,bz)=>ax*bz-az*bx;
+  const ok=r=>{const [cx,cz]=cen(r),ax=-n1x,az=-n1z,bx=-n2x,bz=-n2z,sa=Math.sign(cr(ax,az,bx,bz));for(let x=k1-nD;x<=k2+nD;x++){const i=wrap(x),ei=ew(i),dx=TX[i]+NX[i]*sg*ei-cx,dz=TZ[i]+NZ[i]*sg*ei-cz;if(Math.sign(cr(ax,az,dx,dz))===sa&&Math.sign(cr(dx,dz,bx,bz))===sa&&Math.hypot(dx,dz)>r)return false;}return true;}; /* 2つの接点の間（円の弧の向き）にある内側の端が円の内に収まる（弧が内側の端を越えない） */
+  let lo=0;for(let q=2;q<300;q+=.5){if(!ok(q))break;lo=q;}if(lo<2)continue; /* 小さい円から広げ、内側の端に触れる手前まで */
+  const r=lo;if(r<RAD[g.m]*1.15)continue;const [cx,cz]=cen(r);const t1x=cx-n1x*r,t1z=cz-n1z*r,t2x=cx-n2x*r,t2z=cz-n2z*r;
+  const s12=Math.sign(cr(t1x-cx,t1z-cz,t2x-cx,t2z-cz));
+  const L=new Float32Array(k2-k1+2*nD+1),i0=k1-nD;let first=-1,last=-1;
+  for(let x=i0;x<=k2+nD;x++){const i=wrap(x),dx=TX[i]-cx,dz=TZ[i]-cz,ei=ew(i);let l=-sg*ei;
+   if(x>=k1&&x<=k2&&Math.sign(cr(t1x-cx,t1z-cz,dx,dz))===s12&&Math.sign(cr(dx,dz,t2x-cx,t2z-cz))===s12){const nd=NX[i]*dx+NZ[i]*dz,dd=nd*nd-(dx*dx+dz*dz)+r*r;if(dd>=0){const r1=-nd+Math.sqrt(dd),r2=-nd-Math.sqrt(dd);l=Math.abs(r1)<Math.abs(r2)?r1:r2;}if(first<0)first=x;last=x;}
+   L[x-i0]=Math.max(-ei,Math.min(ei,l));}
+  if(first<0)continue;g.r=r;
+  for(let x=i0;x<=k2+nD;x++){const i=wrap(x);let w=1;if(x<first)w=Math.max(0,1-(first-x)/nD);else if(x>last)w=Math.max(0,1-(x-last)/nD);w=.5-.5*Math.cos(Math.PI*w);T[i]=IL[i]+(L[x-i0]-IL[i])*w;if(PARK.length)T[i]=Math.max(PKL[i],Math.min(PKR[i],T[i])); /* 路駐をよける */if(w>0)hit[i]=1;}}
+ PRLINFO=segs;PRLH=hit;for(let i=0;i<N;i++)IL[i]=T[i];const px=new Float32Array(N),pz=new Float32Array(N);
+ for(let it=0;it<PRLN;it++){for(let i=0;i<N;i++){px[i]=TX[i]+NX[i]*IL[i];pz[i]=TZ[i]+NZ[i]*IL[i];}
+  for(let i=0;i<N;i++){if(!hit[i])continue;const a=wrap(i-1),b=wrap(i+1);let l=((px[a]+px[b])/2-TX[i])*NX[i]+((pz[a]+pz[b])/2-TZ[i])*NZ[i];const rw=RLW-(W-WL[i]);l=Math.max(-rw,Math.min(rw,l));if(PARK.length)l=Math.max(PKL[i],Math.min(PKR[i],l));IL[i]+=(l-IL[i])*.5;}}}
+let PRLINFO=null,PRLH=null,RDL0=null,IL0=null; /* PRLH＝角の線を置いた点、RDL0＝置く前の線の半径 */
 function buildRL(){const px=new Float32Array(N),pz=new Float32Array(N);
  for(let i=0;i<N;i++)IL[i]=0;
  for(let it=0;it<RLIT;it++){
@@ -2415,10 +2442,12 @@ function buildRL(){const px=new Float32Array(N),pz=new Float32Array(N);
   for(let i=0;i<N;i++){const x=i-sh[i],f=Math.floor(x),t=x-f;IL[i]=o[wrap(f)]*(1-t)+o[wrap(f+1)]*t;}
   RLINFO=cs;}
  // ラインの半径：ライン上の点の向きの変わり方（KAP と同じ求め方）
+ const rad=()=>{
  const hx=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));}
  const ka=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);const arc=Math.hypot((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));ka[i]=angDiff(hx[b],hx[a])/Math.max(1,arc);}
- for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];RADL[i]=Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000));RADL[i]=Math.max(RADL[i],RAD[i]*.9);}
- altRad();
+ for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];RADL[i]=Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000));RADL[i]=Math.max(RADL[i],RAD[i]*.9);}};
+ RDL0=null;IL0=null;if(PUBR&&PRLD>0){rad();RDL0=Float32Array.from(RADL);IL0=Float32Array.from(IL);pubRL();if(!PRLH)RDL0=IL0=null;} /* β0.260.0 T527 遅めのアペックスのずらしの後に置く（ずらすと円がゆがむ）。RDL0＝角の線を置く前の線の半径 */
+ rad();altRad();
 }
 // T170 代替ライン（ベストから右 ALW m・左 ALW m に平行にずらし、道の端で止めた線）の半径。RADA[0]＝右、RADA[1]＝左
 const RADA=[new Float32Array(N),new Float32Array(N)];let ALW=3.2; // T170 代替ラインのずらし量 m
@@ -4727,7 +4756,8 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
   {let wt=0;if(WVK&&TTK&&(cau()&&k.scV!=null||WRK&&rollF())&&!k.wav&&!k.pit&&sess==='race'&&u>12&&k.tt!=null&&k.tt<ttWin(k)[0]-WVM){let st=!CORNER[k.idx];for(let j=4;st&&j<=Math.round(WVL/SP);j+=4)if(CORNER[wrap(k.idx+j)])st=false; // T83 タイヤを左右に振って温める
     if(st){k.wph=(k.wph??Math.random()*6.28)+dt*6.283/WVP;wt=(rollF()?WRA:WVA)*Math.sin(k.wph);}}k.wvo=(k.wvo||0)+(wt-(k.wvo||0))*Math.min(1,dt*2);}
   {let tg=0,cap=1e9;if(PDK&&ENV.pl>.05&&sess!=='drag'&&!k.pit&&u>8&&!k.pxm){const r=pudAvoid(k,u);tg=r.d;if(r.v!=null)cap=r.v;}k.pdo=(k.pdo||0)+(tg-(k.pdo||0))*Math.min(1,dt*2.2);k.pdCap=cap;} // T248 水たまりをよける
-  let lane=Math.max(-W+1.4,Math.min(W-1.4,IL[t]+k.lane+(k.wo||0)+(k.wvo||0)+(k.pdo||0)));if(PARK.length)lane=pkClamp(k.idx,t,lane); /* β0.246.0 T515① 路駐の方へは狙わない */if(TRF.length&&sess!=='drag'){const r=trfAvoid(k,u,lane,W);lane=r.l;if(PARK.length)lane=pkClamp(k.idx,t,lane);if(r.c<k.pdCap)k.pdCap=r.c;} /* β0.247.0 T515② 一般車をよける・抜けない時は後ろに付く */if(PARK.length&&sess!=='drag'){const c=parkCap(k);if(c<k.pdCap)k.pdCap=c;} /* β0.250.0 路駐にかかったままなら落とす */if(SIG.length&&sess!=='drag'){const c=sigCap(trfS(k),1,2.4,u,4.5,1);if(c<k.pdCap)k.pdCap=c;} /* β0.249.0 T515③ 信号（CPU は横道の車が来る時だけ止まる） */
+  if(IL0&&PRLH){let on=false;if(PRLH[t]||PRLH[k.idx]){const sK=trfS(k);for(const o of TRF){if(!o.on||o.xs||o.dir>0)continue;const ds=trfD(o.s-sK);if(ds>-10&&ds<(Math.max(u,8)+o.v)*PRLT){on=true;break;}}}k.prlB=Math.max(0,Math.min(1,(k.prlB||0)+(on?1:-1)*dt*PRLV));} /* β0.260.0 T527 角の線は出口・入口で対向車線も使うので、対向車がこの先 PRLT 秒で出会う所にいる間は元の線（自分の車線寄り）へ移る */
+  const ilT=k.prlB>0?IL[t]+(IL0[t]-IL[t])*k.prlB:IL[t];let lane=Math.max(-W+1.4,Math.min(W-1.4,ilT+k.lane+(k.wo||0)+(k.wvo||0)+(k.pdo||0)));if(PARK.length)lane=pkClamp(k.idx,t,lane); /* β0.246.0 T515① 路駐の方へは狙わない */if(TRF.length&&sess!=='drag'){const r=trfAvoid(k,u,lane,W);lane=r.l;if(PARK.length)lane=pkClamp(k.idx,t,lane);if(r.c<k.pdCap)k.pdCap=r.c;} /* β0.247.0 T515② 一般車をよける・抜けない時は後ろに付く */if(PARK.length&&sess!=='drag'){const c=parkCap(k);if(c<k.pdCap)k.pdCap=c;} /* β0.250.0 路駐にかかったままなら落とす */if(SIG.length&&sess!=='drag'){const c=sigCap(trfS(k),1,2.4,u,4.5,1);if(c<k.pdCap)k.pdCap=c;} /* β0.249.0 T515③ 信号（CPU は横道の車が来る時だけ止まる） */
   let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h);
   const dist=Math.max(4,Math.hypot(tx-k.x,tz-k.z));
@@ -4744,7 +4774,7 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
   const pk=pubK(ENV.wet),rsF=rsCur||ICYS.length||PUBN?(k._rsF&&k._rsT===(k.ty||0)&&k._rsW===wgm&&k._rsR===RSF&&k._rsA===AIMUS?k._rsF:(k._rsT=k.ty||0,k._rsW=wgm,k._rsR=RSF,k._rsA=AIMUS,k._rsF=RSF.map((r,i)=>r.mu*TYR[k.ty||0].ms[i]*Math.pow(r.mu,AIMUS)*(1-(1-wgm)*r.wk)/wgm))):null; // T283 路面の種類（舗装は 1）。β0.128.0 T297⑥ 変わった時だけ作り直す
   const sgK=suG(k,RSF[RSI[k.idx]]); /* T286 */
   let vLift=1e9;const eca=ECA>0;const jM=aiLook(k,u,rsF,wgm); /* β0.128.0 T297⑥ vLift も同じループで */
-  let hcL=0,fSm=0,fNn=0,fF0=-1,fMx=false;for(let j=0;j<=jM;j+=2){const i=wrap(k.idx+j);if(HCK&&TERK&&sess!=='drag'){const f=1+u*u*TVK[i]/G;if(f<1)hcL+=(1-Math.max(TNMIN,f))*2*SP*HCK;}if(eca){const fR=rsF?rsF[RSI[i]]*(RPG[i]?pk:1):1,lA=latA*fR;const den=1-lA/G*(aeK+TVK[i])*RADL[i];const vc=den>.15?Math.sqrt((lA+G*TBK[i])*RADL[i]/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*ECA*wgm*fR*Math.max(0,j*SP-AIBL)+2*G*(TE[i]-TE[k.idx])));if(v<vLift&&!(ECV>0&&ENV.wet<ECW&&vc<u-ECV))vLift=v;}const fR=(rsF?rsF[RSI[i]]*(RPG[i]?pk:1):1)*sgK,lA=latA*fR;if(fF0<0)fF0=fR;else if(fR!==fF0)fMx=true;fSm+=fR;fNn++;const fB=fMx?fSm/fNn:fR; /* β0.219.0 T482 fB＝ブレーキを踏む道のりのグリップ（凍った所の手前の舗装でも減速できる） */const R=Math.min(RADL[i],RA[i])+(k.altS&&k.altO?Math.max(0,RA[i]-RADL[i])*ALRB:0);const den=1-lA/G*(aeK+TVK[i])*R;const vc=den>.15?Math.sqrt((lA+G*TBK[i])*R/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*G*AIBG*(1-VBD*vcw)*wgm*fB*(k.bfK||1)*(k.bkS||1)*(1+AGB*ag)*Math.max(0,j*SP-hcL-AIBL*(k.blS??1)-VBL*vcw-(BMK&&(!k.isPlayer||autoPlay)&&sess!=='drag'&&CORNER[i]?Math.max(k.bmo?.[CID[i]]??BME,bmA?bmA[CID[i]]??BME:-1e9):0))+2*G*(TE[i]-TE[k.idx])));if(v<vAllow)vAllow=v;} // T81 峠・バンク・上り下りの分も見込む
+  const offL=!!(RDL0&&PRLH&&(k.prlB>.2||Math.abs(k.lat-IL[k.idx])>(RAD[k.idx]>=PRLR?PRLX:PRLX*2))); /* β0.260.0 T527 角の手前で線から PRLX m（角の中は2倍）以上ずれている（対向車をよけて車線に残った・相手を抜いている等）時は、角の線を使えないので前の小さな線の半径で速さを見込む */let hcL=0,fSm=0,fNn=0,fF0=-1,fMx=false;for(let j=0;j<=jM;j+=2){const i=wrap(k.idx+j);if(HCK&&TERK&&sess!=='drag'){const f=1+u*u*TVK[i]/G;if(f<1)hcL+=(1-Math.max(TNMIN,f))*2*SP*HCK;}if(eca){const fR=rsF?rsF[RSI[i]]*(RPG[i]?pk:1):1,lA=latA*fR;const den=1-lA/G*(aeK+TVK[i])*RADL[i];const vc=den>.15?Math.sqrt((lA+G*TBK[i])*RADL[i]/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*ECA*wgm*fR*Math.max(0,j*SP-AIBL)+2*G*(TE[i]-TE[k.idx])));if(v<vLift&&!(ECV>0&&ENV.wet<ECW&&vc<u-ECV))vLift=v;}const fR=(rsF?rsF[RSI[i]]*(RPG[i]?pk:1):1)*sgK,lA=latA*fR;if(fF0<0)fF0=fR;else if(fR!==fF0)fMx=true;fSm+=fR;fNn++;const fB=fMx?fSm/fNn:fR; /* β0.219.0 T482 fB＝ブレーキを踏む道のりのグリップ（凍った所の手前の舗装でも減速できる） */const R=Math.min(RADL[i],RA[i],offL?RDL0[i]:1e9)+(k.altS&&k.altO?Math.max(0,RA[i]-RADL[i])*ALRB:0);const den=1-lA/G*(aeK+TVK[i])*R;const vc=den>.15?Math.sqrt((lA+G*TBK[i])*R/den):200;const v=Math.sqrt(Math.max(0,vc*vc+2*G*AIBG*(1-VBD*vcw)*wgm*fB*(k.bfK||1)*(k.bkS||1)*(1+AGB*ag)*Math.max(0,j*SP-hcL-AIBL*(k.blS??1)-VBL*vcw-(BMK&&(!k.isPlayer||autoPlay)&&sess!=='drag'&&CORNER[i]?Math.max(k.bmo?.[CID[i]]??BME,bmA?bmA[CID[i]]??BME:-1e9):0))+2*G*(TE[i]-TE[k.idx])));if(v<vAllow)vAllow=v;} // T81 峠・バンク・上り下りの分も見込む
   if(cau()&&k.scV!=null&&sess==='race')vAllow=Math.min(vAllow,k.scV); // T157 セーフティカー中
   if(k.pdCap<vAllow)vAllow=k.pdCap; // T248 よけられない水たまりの手前
   if(k.npz&&!cau()&&sess==='race'){const o=npzAhead(k);if(o)vAllow=Math.min(vAllow,Math.max(0,o.k.u)+Math.max(0,o.g-NPG)*.6);} // T232 線を越えるまでは、すぐ前の車を抜かない（前の車の速さ＋車間の分まで）
@@ -4853,7 +4883,7 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
   const folP=FPT>0&&follow&&!hard&&!folB&&!(k.atkT>0)&&sess!=='drag'&&(u>=LOWV||raceTime-raceT0>LWS)&&fV<1e8,fVl=folP?Math.max(0,fV):1e9; // T390
   const accel=(!follow||folP)&&!hard&&!(k.tkT>0)&&u<Math.min(vAllow,vLift,fVl)*(k.yieldF?YLD_V*(W<6.5?YLN:1):1)-.5+(FTH>0?1:0);if(OGD>0&&PUBR&&sess!=='drag'&&!k.pit&&CORNER[k.idx]&&u>OGU){const o=OUTS[k.idx],vo=(k.lat-(k.ogL??k.lat))/Math.max(dt,1e-3)*o;const pr=k.lat*o+vo*OGT;if(vo>OGV&&WL[k.idx]-pr<OGD&&pr>lane*o+OGM){vAllow=Math.min(vAllow,u-OGB);k.ogN=(k.ogN||0)+(k.ogP?0:1);k.ogP=1;}else k.ogP=0;}
   /* β0.258.0 T526 街（CRS.free）：交差点を全開で立ち上がって外へふくらみ、先で狭くなる道の端（建物）に当たっていた（公道用のタイヤで前輪が負けやすい）。角の中に限らず時速 OGU2 m/s より速い間、0.8秒後の見込みの位置が この先 OGS 秒の道の端まで OGD を切る向きに動いていたら、アクセルを戻して軽くブレーキ */
-  if(OGD>0&&PUBR&&CRS.free&&sess!=='drag'&&!k.pit&&u>OGU2&&k.ogL!=null){const vl=(k.lat-k.ogL)/Math.max(dt,1e-3);if(Math.abs(vl)>OGV*.7&&Math.sign(vl)===Math.sign(k.lat)){let e=WL[k.idx];const n=Math.ceil(u*OGS/SP);for(let j=1;j<=n;j++)e=Math.min(e,WL[wrap(k.idx+j)]);const pr=Math.abs(k.lat+vl*OGT);if(e-pr<OGD&&Math.abs(k.lat-lane)>OGM*.6)vAllow=Math.min(vAllow,u-OGB);}}
+  if(OGD>0&&PUBR&&CRS.free&&sess!=='drag'&&!k.pit&&u>OGU2&&k.ogL!=null){const vl=(k.lat-k.ogL)/Math.max(dt,1e-3);if(Math.abs(vl)>OGV*.7&&Math.sign(vl)===Math.sign(k.lat)){let e=WL[k.idx];const n=Math.ceil(u*OGS/SP);for(let j=1;j<=n;j++)e=Math.min(e,WL[wrap(k.idx+j)]);const pr=Math.abs(k.lat+vl*OGT);if(e-pr<OGD&&(PRLH&&PRLH[k.idx]?Math.sign(lane)===Math.sign(k.lat)&&Math.abs(k.lat)>Math.abs(lane)+PRLG:Math.abs(k.lat-lane)>OGM*.6))vAllow=Math.min(vAllow,u-OGB);}} /* β0.260.0 T527 公道の角の線（pubRL）の所は、もう線より PRLG m 外にいて端へ向かっている時だけ（頂点へ切り込む速い動きを先まで伸ばして「内側の端を越える」と見たり、出口で線から少し外へ出るたびにブレーキしていた） */
   /* β0.259.0 T526 公道：対向車がこの先 OCT 秒で出会う所にいる間に、0.8秒後の見込みの位置が自分の車線の内側の端（中央線から OCM m）を越えて反対の車線へ向かっていたら、アクセルを戻して軽くブレーキ（峠の見通しの悪い角で、ふくらんだまま対向車と正面から当たっていた。OGD は時速 90km より速い時だけ） */
   if(OCK&&PUBR&&TRF.length&&sess!=='drag'&&!k.pit&&u>OGU2&&k.ogL!=null){const vl=(k.lat-k.ogL)/Math.max(dt,1e-3),pr=(k.lat+vl*OGT)*KPS;if(vl*KPS<-.5&&pr<OCM){const sK=trfS(k);for(const t of TRF){if(!t.on||t.xs||t.dir>0)continue;const ds=trfD(t.s-sK);if(ds>0&&ds<(u+t.v)*OCT){vAllow=Math.min(vAllow,u-OGB);k.ocN=(k.ocN||0)+1;break;}}}}
   k.ogL=k.lat;k.vA=vAllow;if(dS>0&&hard&&k.emgF&&u>EMV&&!(k.hbT>0)&&!(k.hbCool>0)){k.hbT=EMT;k.hbCool=HBC;k.drW='emg';}let brake=u>vAllow+2.5||hard||PUBR&&follow&&!folB&&fV<1e8&&u>fV+1.5; /* β0.254.0 T519 */
