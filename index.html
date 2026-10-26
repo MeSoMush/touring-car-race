@@ -1177,7 +1177,7 @@ body.touch #tmRun:has(#fqNew:not([hidden])) .mi{min-height:31px}
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.286.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.287.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1867,11 +1867,11 @@ const DRV={FF:{ms:.97,fs:1,ka:1.05,kb:1.65,ftx:1.25,rgm:1.05,d:'前輪駆動。�
 // T304（β0.131.0）LSQ＝タイヤの荷重感度（荷重が増えるほどグリップの伸びが鈍る。軸ごとのグリップ係数に（その軸の荷重÷前後の平均）^−LSQ を掛ける。0 で従来）。
 // 荷重感度があると前が重い車は前が先に限界（アンダー）、後ろが重い車は後ろが先に限界になるので、駆動方式ごとの決め打ちの倍率（rgm・ftx）は LSQ>0 の時は使わず、後輪のグリップは LSRG、前輪の駆動の踏ん張りは LSFX。
 // D4W＝4WD の駆動の目減り（前後へ分ける仕組みの損）。TQS＝FF のトルクステア（前輪の駆動力 1G あたりの切れ角のずれ rad。向きは車ごと）
-let CST=.03,FCK=1,LSQ=.2,LSDY=0,LSRG=1.2 /* β0.286.0 T591 1.3→1.2（試しの版。1.3 では後輪が食いすぎて駆動力で滑らず、舗装のドリフトを保てなかった） */,LSFX=1.31,D4W=.97,TQS=.005,LSAK=1,FFL=1,FFS=[1,1,.9,1];
+let CST=.03,FCK=1,LSQ=.2,LSDY=0,CSQ=.5,REVV=45 /* β0.287.0 T587 CSQ＝加速・ブレーキで移った荷重へのタイヤの硬さの効き（硬さ∝荷重^(1−CSQ)。実際のタイヤは荷重に比例せず頭打ち）・T593 REVV＝バックの最高速（km/h） */,LSRG=1.2 /* β0.286.0 T591 1.3→1.2（試しの版。1.3 では後輪が食いすぎて駆動力で滑らず、舗装のドリフトを保てなかった） */,LSFX=1.31,D4W=.97,TQS=.005,LSAK=1,FFL=1,FFS=[1,1,.9,1];
 const DRV_KEYS=['FF','FR','4WD'],CPU_DRV=[1,0,1,0,2,0,1,2]; let DSHUF=1,evDrv=null,evCar=null,CPC=1,CPR=1,RRA=1,BDT=.4;let CPO=0;const CPOD=[21,22]; /* β0.231.0 T459 CPU の車の選び方・くじに入れない変わり種（商用バン・霊柩車風ワゴン） */let carOnly=0;try{carOnly=+localStorage.getItem('popkart_co')||0;}catch(_){} /* β0.231.0 T460 ② 出られる車だけ */ /* β0.136.0 T310 */ // T126 DSHUF＝1：レースごとに CPU の駆動方式を席の間でシャッフル（FF の席だけ損をしない）
 const SETG=[{n:'加速寄り',gf:.93},{n:'標準',gf:1},{n:'最高速寄り',gf:1.06}];
 const SETW=[{n:'少なめ',dfm:.8,cdm:.87},{n:'標準',dfm:1,cdm:1},{n:'多め',dfm:1.2,cdm:1.14}]; // β0.61.0：多めが1.6秒速すぎたので、ダウンフォースの差を小さく・空気抵抗の差を大きく（少なめ＝直線、多め＝コーナー）
-const SETB=[{n:'前寄り',bb:.67,rbm:.8},{n:'標準',bb:.6,rbm:1},{n:'後ろ寄り',bb:.53,rbm:1.2}];
+const SETB=[{n:'前寄り',bb:.76,rbm:.8},{n:'標準',bb:.7,rbm:1},{n:'後ろ寄り',bb:.64,rbm:1.2}]; /* β0.287.0 T587 .67/.6/.53→.76/.7/.64（前は減速 0.45G から後輪に掛け過ぎ＝後ろから滑る配分だった。重心の高さから見た理想は減速 1G で前 約0.70、実車は 65〜75%） */
 const SETC=[{n:'小さめ',hf:1.3,cdm:.97},{n:'標準',hf:1,cdm:1},{n:'大きめ',hf:.7,cdm:1.04}]; // ラジエーター・ダクト（T106）：hf＝熱の上がり方の倍率（大きいほど熱くなりやすい）、cdm＝空気抵抗の倍率
 const TYRE=['自動','スリック','レイン','ラジアル','スタッドレス','スパイク','グラベル'];
 /* T285 タイヤの種類（k.ty＝番号。設定 setT は 0＝自動、1〜＝k.ty+1）。k.rain は k.ty===1 と同じ（前からの書き方のため残す）
@@ -3384,7 +3384,7 @@ let TTK=1,TTS=45,TTQ=72,TTP=55,TTH=1.9,TTSL=.4,TTB=.8,TC0=.004,TC1=.0006,TKC=.08
 let LCV=25,LSS=1500,LCQ=.5,TLN=2;
 // T83（β0.115.0）燃料タンクの位置：FTK＝1 で有効、FTZ＝タンクが重心の何 m 後ろか（後輪の少し前）。燃料が減ると重心が前へ寄る（FREF kg の時が元の前後の重さ）。
 // レース中のブレーキバランス（[ ] キー・パッドの右スティック左右）：BAQ＝1回の量、BBN・BBX＝下限・上限。BBR＝重心がこれだけ(m)前へ寄ったら無線で知らせる。練習表示：ブレーキ中に曲がりながら、後輪の滑り角が BBO 以上＝後ろが流れた、前輪が後輪より BBU 以上多く滑った＝前が逃げた
-let FTK=1,FTZ=1.2,BAQ=.01,BBN=.5,BBX=.72,BBR=.012,BBO=.16,BBU=.07;
+let FTK=1,FTZ=1.2,BAQ=.01,BBN=.5,BBX=.8 /* β0.287.0 T587 .72→.8（前寄り .76 が入るように） */,BBR=.012,BBO=.16,BBU=.07;
 // T83（β0.116.0）CPU（とオート運転の自分の車）は周の初めにブレーキバランスを動かす：燃料が減って重心が前へ寄った分だけ前へ、濡れた路面（グリップが落ちて減速が弱く、前に荷重が乗りにくい）では後ろへ。
 // BBC＝0 で無効、BBW＝グリップの落ちた割合（乾いた時との比）あたりの後ろへの量、BBQ＝自分の車へ「後ろへ」の無線を出す差
 let BBC=1,BBW=.13,BBQ=.02;
@@ -3936,7 +3936,7 @@ function stepKart(k,dt,ctl){
       k.drifting=false;k.driftCharge=0;}}
   // エンジンと変速
   const top=k.top*(k.aiDriven?(k.power||1):1);
-  const K=SHIFT_UP/(k.top*(k.gf||1)*RATIO[TOPG]);const ka=k.ka||KA,kb=k.kb||KB,kl=k.kl||KL,fs=k.fs||0,bb=(k.bb||.6)-(k.ev&&ctl.brake?RGN[k.rgi??1].bb*(k.rgK??0):0);
+  const K=SHIFT_UP/(k.top*(k.gf||1)*RATIO[TOPG]);const ka=k.ka||KA,kb=k.kb||KB,kl=k.kl||KL,fs=k.fs||0,bb=(k.bb||.7) /* β0.287.0 T587 決め打ちも標準 .7 に */-(k.ev&&ctl.brake?RGN[k.rgi??1].bb*(k.rgK??0):0);
   k.rpm=Math.max(1400,Math.abs(k.u)*RATIO[k.gear]*K);
   if(k.shiftT>0)k.shiftT-=dt;
   k.upTm=(k.upTm??9)+dt;if(k.dkT>0)k.dkT-=dt; // T382 上げてからの秒・落としてからの残り秒
@@ -3988,7 +3988,7 @@ function stepKart(k,dt,ctl){
     const reT=!k.ev&&ERQ&&(Math.abs(k.u)<ERC||k.rvh)?Math.max(k.rpm,k.erpm):k.rpm; // 発進でクラッチが滑っている間は、上がったエンジン回転のトルクを使う
     const drv=()=>{const lim=k.rpm>REDLINE&&(k.gear===TOPG||k.manual||k.lmT>0||k.upH)||k.ev&&k.u>k.vmx?0:1; /* β0.210.0 T457 何でもありの EV はモーターの回転の上限 vmx で頭打ち */return k.Fp/(k.gf||1)*(k.lchS&&ctl.accel?k.lchM:1)*(k.fs>.3&&k.fs<.9?D4W:1)*(k.powK||1)*(k.heatK||1)*(k.icK||1)*(k.fpw??1)*tbF*k.st.acc/(k.fm||1)*RATIO[k.gear]*torque(reT,k.tq)*lim*(ctl.thr??1)*(k.aiDriven?(k.power||1):1)*(k.nosT>0?1+NOSF:1);};
     if(ctl.brake&&k.u>.8){Fb=G*BRKG*(ctl.brk??1)*Math.pow((k.mm||1)*(k.fm||1),-MGB)*(k.bfK||1);if(ctl.accel&&k.shiftT<=0)Fd=drv();} // アクセルを開けたままブレーキ（トレイルブレーキ）
-    else if(ctl.brake&&k.u<=.8)Fd=-5;
+    else if(ctl.brake&&k.u<=.8)Fd=-5*Math.max(0,Math.min(1,(REVV/3.6+k.u)/2)); /* β0.287.0 T593 バックは REVV km/h で頭打ち（前は上限なし。15秒で時速214km） */
     else if(ctl.accel&&k.shiftT<=0)Fd=drv();
     else if(!ctl.accel&&k.ev)Fd=-(EBR*.5+RGN[k.rgi??1].f*(k.rgK??1))*Math.sign(k.u); /* β0.210.0 T457 回生 */
     else if(!ctl.accel)Fd=EBF>0?-(EBR+EBF*(k.eb??1)*(RATIO[k.gear]/RATIO[0])*Math.max(.3,Math.min(1.1,k.rpm/8000)))*Math.sign(k.u):-(.6+k.gc*.05)*Math.sign(k.u)*(1+ (5-k.gc)*.12);
@@ -4019,7 +4019,7 @@ function stepKart(k,dt,ctl){
     const lof=LOK>0&&fs>.5&&!ctl.accel&&!ctl.brake&&k.u>8?1+LOK:1;const hcm=k.hcm||1,dN=Math.max(-LTX*lof,Math.min(LTX*lof,k.ax*HCG*1.8*lof*hcm));const df=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0))*(1-DWK*(k.dmW||0))*k.u*k.u*.5; // T139：FF のアクセルオフ（リフトオフ）は後輪の荷重が抜けて巻き込む
     const Nf=Math.max(1,G*kb/kl*tnf-dN+df*.9),Nr=Math.max(1,G*ka/kl*tnf+dN+df*1.1);
     const lsN=(Nf+Nr)/2,lsd=(1-LSDY)*dN,mF=LSQ?muF*Math.pow((Nf+lsd)/lsN,-LSQ):muF,mR=LSQ?muR*Math.pow((Nr-lsd)/lsN,-LSQ):muR; // T304 荷重感度
-    const rg=(LSQ?LSRG:RG*(k.rgm||1))*(k.rgc||1);const cyF=k.cyF==null||k.cyF===1&&!(k.cbF>0)?1:cbFy(k,af),cyR=k.cyR||1,cxR=k.cxR||1,cxF=k.cxF||1;let Fyf=-mF*Nf*tF(af)*cyF,Fyr=-mR*rg*Nr*tR(ar)*cyR;
+    const rg=(LSQ?LSRG:RG*(k.rgm||1))*(k.rgc||1);const cyF=k.cyF==null||k.cyF===1&&!(k.cbF>0)?1:cbFy(k,af),cyR=k.cyR||1,cxR=k.cxR||1,cxF=k.cxF||1;const csF=CSQ?Math.pow(Math.max(.2,Nf/Math.max(1,Nf+dN)),-CSQ):1,csR=CSQ?Math.pow(Math.max(.2,Nr/Math.max(1,Nr-dN)),-CSQ):1;let Fyf=-mF*Nf*tF(af*csF)*cyF,Fyr=-mR*rg*Nr*tR(ar*csR)*cyR; /* β0.287.0 T587 移った荷重の分だけ滑り角を伸び縮み＝硬さを荷重^(1−CSQ) に */
     // 後輪：駆動力と横力の合計はグリップ円の中
     const capR=mR*rg*Nr,cRx=capR*cxR;const noAbs=!k.aiDriven&&!ASSIST[assistLv].abs;let FxR=Fd*(1-fs)-Math.min(Fb*(ctl.fo?0:1-bb),cRx*(noAbs?RBR+.1:RBR)*(k.rbm||1))*sg-(k.drifting?4*sg:0);
     const tc=k.drifting?1:(k.aiDriven?(k.pwr?(k.pso?(k.pso===2?DPTC:PSOT):PWTC):.85):ASSIST[assistLv].tc);
