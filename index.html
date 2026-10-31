@@ -565,6 +565,14 @@ body.hidehint #setup .setrow{gap:6px}
 body:not(.touch) [data-key]::after{content:attr(data-key);display:inline-block;margin-left:6px;padding:0 4px;min-width:.9em;text-align:center;border:1px solid currentColor;border-radius:3px;font:700 10px/1.45 var(--num);letter-spacing:.02em;opacity:.65;vertical-align:1px}
 body:not(.touch) .btn[data-key]::after{font-size:12px;margin-left:8px}
 .kbh{display:block;font-family:var(--dot);font-style:normal;font-size:11px!important;letter-spacing:.04em!important;color:var(--muted);margin:2px 0 0!important}body.touch .kbh{display:none}
+/* T653 最後に使った入力の印。inKb＝キー（今までどおり data-key）／inPad＝パッド（data-pad）／inMs＝マウス（控えめ） */
+body.inPad:not(.touch) [data-key]:not([data-pad])::after{display:none}
+body.inPad:not(.touch) [data-pad]::after{content:attr(data-pad);display:inline-block;margin-left:6px;padding:0 5px;min-width:.9em;text-align:center;border:1px solid currentColor;border-radius:8px;font:700 10px/1.45 var(--num);letter-spacing:.02em;opacity:.75;vertical-align:1px}
+body.inPad:not(.touch) .btn[data-pad]::after{font-size:12px;margin-left:8px}
+body.inMs:not(.touch) [data-key]::after{opacity:.3}
+.kbh.kbhP{display:none}body.inPad:not(.touch) .kbh.kbhP{display:block}body.inPad:not(.touch) .kbh.kbhK{display:none}
+body.inKb:not(.touch) #carSeg button:focus .cpF::after,body.inPad:not(.touch) #carSeg button:focus .cpF::after{content:'F';margin-left:2px;padding:0 3px;border:1px solid currentColor;border-radius:3px;font:700 9px/1.4 var(--num);vertical-align:2px}
+body.inPad:not(.touch) #carSeg button:focus .cpF::after{content:'X';border-radius:8px}
 #garTabs{grid-template-columns:repeat(auto-fit,minmax(min(100%,62px),1fr))}#garTabs button{font-size:13px;padding:9px 0;letter-spacing:-.03em} /* T241 タブが6つになったので1段に収める */
 .recLine{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;background:rgba(232,52,42,.12);border-left:3px solid var(--gold);padding:6px 10px;font-size:13px;line-height:1.5}.recLine b{color:var(--gold)}.recLine .recB{margin-left:auto;display:flex;gap:6px}
 .recT{font-size:13px}.recT td{padding:4px 6px}.recT td:first-child{font-family:var(--dot);font-style:normal;font-weight:700;font-size:13px;width:auto;white-space:nowrap}.recT tr.df td{background:rgba(232,52,42,.14)}.recT tr.on td{background:rgba(232,52,42,.14)}.recT tr.hd td{color:var(--muted);font-size:12px}.recT b{color:#fff}
@@ -672,7 +680,7 @@ body.touch.ckv #tyreCv,body.touch.ckv #wx{display:none!important}
 #gsBox .mvSec{font-weight:700;font-size:15px;border-left:3px solid var(--gold);padding-left:8px;margin-top:6px}
 #gsBox .mvBtns,#gsBox .gsR{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 #gsBox .mvBtns .btn,#gsBox .gsR .btn{font-size:16px;padding:10px 16px;min-height:44px}#gsBox .btn:disabled{opacity:.45}
-#gsBox .gsR span{flex:1 1 16em;font-size:14px;line-height:1.5}
+#gsBox .gsR .gsV{display:block;font-size:.85em;color:#c9ced6;font-weight:400} /* T645 */.gsR span{flex:1 1 16em;font-size:14px;line-height:1.5}
 #gsName{font-size:16px;min-height:40px;width:12em;max-width:60vw;box-sizing:border-box;background:rgba(0,0,0,.35);color:#fff;border:1px solid var(--line);border-radius:3px;padding:6px 8px}
 #gsTx{width:100%;box-sizing:border-box;min-height:64px;font:12px/1.4 ui-monospace,Consolas,monospace;background:rgba(0,0,0,.35);color:#fff;border:1px solid var(--line);border-radius:3px;padding:8px;resize:vertical;word-break:break-all}
 #gsAsk b{flex:1 1 100%;color:#ffb3ad;font-size:14px}
@@ -1061,7 +1069,7 @@ body.kbnav .gfold>summary:focus{outline:2px solid var(--gold);outline-offset:-2p
 /* β0.176.0 T352 ベスト比の帯 */#dlt{font-size:.6em;min-width:12.5em;max-width:15em;background:rgba(12,14,18,.55);padding:3px 8px 4px;border-radius:3px}#dlt[hidden]{display:none}
 #dlt .dn{display:flex;align-items:baseline;justify-content:space-between;gap:.6em}#dlt .dn span{font-size:.92em;color:#c9ced6;font-weight:700}#dlt .dn b{font-family:var(--num);font-size:1.75em;font-weight:800;line-height:1.05}#dlt b.f{color:#5fe08f}#dlt b.s{color:#ff8a80}
 #dlt .db{position:relative;height:6px;background:rgba(255,255,255,.14);margin:2px 0 3px;border-radius:2px}#dlt .db:after{content:'';position:absolute;left:50%;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:#fff}#dlt .db i{position:absolute;top:0;bottom:0;border-radius:2px}#dlt .db i.f{background:#3ccf73}#dlt .db i.s{background:#ff5a4f}
-#dlt .dt{font-size:.88em;color:#e8eaee;font-weight:700;font-family:var(--num);white-space:nowrap}
+#dlt .dr{border-top:1px solid rgba(255,255,255,.18);margin-top:3px;padding-top:2px}#dlt .dr span{max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#dlt .dr b{font-size:1.3em} /* T645 */#dlt .dt{font-size:.88em;color:#e8eaee;font-weight:700;font-family:var(--num);white-space:nowrap}
 
 /* ===== β0.190.0 見た目の版 ===== */
 /* T403 GARAGE「表示・操作・音」：狭い時（スマホ横など）は1列（2列だと中身が縮まず横にはみ出していた） */
@@ -1302,7 +1310,7 @@ body.touch .tsBot{height:auto;padding-block:1px} /* ④ スマホ横：下の帯
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.331.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.332.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1344,10 +1352,10 @@ body.touch .tsBot{height:auto;padding-block:1px} /* ④ スマホ横：下の帯
       <button class="mi" id="helpBtn" type="button"><b>HOW TO</b><span>操作方法・用語</span></button>
       <button class="mi" id="aboutBtn" type="button"><b>ABOUT</b><span>このゲームについて</span></button>
     </div></nav>
-    <p class="kbh tsk">↑↓ ←→ で選んで Enter　Esc 戻る</p>
+    <p class="kbh kbhK tsk">↑↓ ←→ で選んで Enter　Esc 戻る</p><p class="kbh kbhP tsk">十字キーで選んで A　B 戻る　START 次へ</p>
   </div>
   <section id="setup" class="panel" hidden>
-    <h2>GARAGE<small>車・設定</small><small class="kbh">↑↓ 項目　←→ 選ぶ　Q E タブ　H 説明　F ☆　Esc <span id="kbhEsc">決定</span></small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
+    <h2>GARAGE<small>車・設定</small><small class="kbh kbhK">↑↓ 項目　←→ 選ぶ　Q E タブ　H 説明　F ☆　Esc <span id="kbhEsc">決定</span></small><small class="kbh kbhP">十字 項目・選ぶ　LB RB タブ　Y 説明　X ☆　B 戻る・閉じる　START 決定・次へ</small><button class="tsB" id="hintBtn" type="button" aria-pressed="false">説明を隠す</button></h2>
     <div id="qsAdv" hidden></div>
     <div id="specBox"></div>
     <div id="garTop"><div class="label">遊びやすさ<span class="hint">かんたん＝<b>審判なし（接触しても IP は付かない）</b>・摩耗なし・ダメージは見た目だけ・大クラッシュなし・アシスト強・CPU やさしい・中団スタート・おすすめのセッティング／ほんかく＝審判あり・摩耗とダメージあり・大クラッシュあり・アシスト標準・CPU ふつう・最後尾</span></div><div class="seg" id="presetSeg"><button type="button" data-v="0">かんたん</button><button type="button" data-v="1">ほんかく</button></div><button type="button" class="mini" id="advBtn" aria-expanded="false">くわしい設定</button></div>
@@ -5167,7 +5175,7 @@ function showQuali(){$('resPrac').hidden=true;$('raceBtn').textContent='決勝�
 /* ゴースト（タイムアタックのベストラップ。エンジンごとに保存） */
 let ghRec=[],ghT=0,ghost=null,ghostMesh=null,ghostFor=-1;
 /* T419② 相手のゴースト（受け取った物。popkart_rv_＋自分のゴーストの鍵の popkart_ の後ろ）：rival＝{t,s,p,car,n}・rvMeshG＝その車 */
-var rival=null,rvMeshG=null,rvFor='',GSRV='popkart_rv_'; /* var＝先に読まれても困らないように */
+var rival=null,rvDelta=null,rvWhy='',rvMeshG=null,rvFor='',GSRV='popkart_rv_'; /* T645 rvDelta＝相手のゴーストとの差 */ /* var＝先に読まれても困らないように */
 /* β0.176.0 T354 ghSel＝ゴースト（0 目標のメダル・1 自己ベスト・2 出さない。保存キー gs）、taMed＝タイムアタックの金・銀・銅の時間（セッションの初めに決める）、tgGhost＝目標のメダルの速さのゴースト {t,s,m}、tgDelta＝それとの差。
    T352 dlMode＝ベスト比の帯（保存キー dl）、rcRef・rcRec・rcDelta＝レース中の自分のベストの周の走り。T355 dyOn＝今日の課題の日付 */
 let ghSel=0,dlMode=1,taMed=null,tgGhost=null,tgDelta=null,rcRef=null,rcRec=[],rcT=0,rcDelta=null,dyOn=null;
@@ -5175,7 +5183,7 @@ let ghSel=0,dlMode=1,taMed=null,tgGhost=null,tgDelta=null,rcRef=null,rcRec=[],rc
 const PUBK=PUBR?'_p2'+(CRS.trf&&CRS.trf.hw?'_t'+TRD:''):'',PUBK3=PUBR?'_p3':''; /* β0.298.0 T571②③ 道を閉じた SS・ラリーは _p3（一般車が出ないので一般車の量 _t は付けない） */
 const ghKey=(ss=isSS(),old)=>(dyOn&&!ss?'popkart_dy_'+dyOn+'_'+myCar:(ss?'popkart_ss1_':'popkart_ta2_')+(isForm()?'f':'')+ccChoice+(freeOn()?'_x'+myCar:'')+(roadSurf?'_s'+roadSurf:'')+(REV?'_r':''))+CRK+(ss&&PUBR?(old?PUBK:PUBK3):old?'':PUBK); /* β0.267.0 T554 道を閉じた公道の SS は _p3（前の _p2 は「前の決まりの記録」） */ /* β0.187.0 T361 逆回りは別の記録 */ /* T283 ラリーの SS は別の記録 */ /* T293 路面ごと */ // T207 コースが変わったので記録を分けた（旧：popkart_ta）
 function ghLoad(ss){ghost=null;try{const o=JSON.parse(localStorage.getItem(ghKey(ss))||'null');if(o&&o.g&&o.g.length>=8&&typeof o.t==='number'&&isFinite(o.t)){const a=new Float32Array(o.g.length);for(let i=0;i<a.length;i+=4){a[i]=o.g[i]/10;a[i+1]=o.g[i+1]/10;a[i+2]=o.g[i+2]/1000;a[i+3]=o.g[i+3]/10;}ghost={t:o.t,s:a,p:o.p,sp:Array.isArray(o.sp)?o.sp:null,m:o.m|0};}}catch(_){}}
-function ghSave(){try{const g=[];const a=ghost.s;for(let i=0;i<a.length;i+=4)g.push(Math.round(a[i]*10),Math.round(a[i+1]*10),Math.round(a[i+2]*1000),Math.round(a[i+3]*10));localStorage.setItem(ghKey(),JSON.stringify({t:ghost.t,p:ghost.p,sp:ghost.sp||undefined,m:ghost.m||undefined,g,cs:gsCs()}));}catch(_){}}
+function ghSave(){try{const g=[];const a=ghost.s;for(let i=0;i<a.length;i+=4)g.push(Math.round(a[i]*10),Math.round(a[i+1]*10),Math.round(a[i+2]*1000),Math.round(a[i+3]*10));localStorage.setItem(ghKey(),JSON.stringify({t:ghost.t,p:ghost.p,sp:ghost.sp||undefined,m:ghost.m||undefined,g,cs:gsCs(),wx:gsWet()}));}catch(_){}} /* T645 wx＝路面の濡れ */
 function lapDist(k){let d=k.idx*SP+alongAt(k.idx,k.x,k.z);if(d>L*.9&&k.idx<N*.1)d-=L;return d;}
 function ghStart(){ghRec=[];ghT=0;}
 /* T283（β0.127.0）ラリーの SS：1台で1本。信号から計時し、1周（線を2回目に越えた所）でゴール。区間は 1/3 周ごと。
@@ -5334,7 +5342,7 @@ function ssSplit(p,quiet){const a=p.ssSp||(p.ssSp=[]);if(p.lap!==1||p.finished)r
   const n=a.length;if(n<2&&d>=SLEN*(n+1)/3&&d<SLEN*.97){a.push(raceTime);if(quiet)return;
     if(isBat()){const rv=karts.find(k=>!k.isPlayer),r=rv&&rv.ssSp&&rv.ssSp[n];telop('SPLIT '+(n+1),r!=null?'相手に '+(raceTime-r<=0?'−':'+')+Math.abs(raceTime-r).toFixed(2)+' 秒':'リード中',r!=null&&raceTime-r>0?'yellow':'green');return;} /* β0.250.0 公道バトルは相手との差 */
     const r=ghost&&ghost.sp&&ghost.sp[n],dl=r!=null?raceTime-r:null;
-    telop('SPLIT '+(n+1),fmt(raceTime)+(dl!=null?'　自己ベスト比 '+(dl<=0?'−':'+')+Math.abs(dl).toFixed(2):''),dl==null?'':dl<=0?'green':'yellow');}}
+    telop('SPLIT '+(n+1),fmt(raceTime)+(dl!=null?'　自己ベスト比 '+(dl<=0?'−':'+')+Math.abs(dl).toFixed(2):'')+rvSplit(n) /* T645 */,dl==null?'':dl<=0?'green':'yellow');}}
 function batStep(){const p=player(),rv=karts.find(k=>!k.isPlayer);if(!p||!rv)return;ssSplit(rv,1);if(rv.finished&&!rv.dnf&&!p.finished&&!rv._bf){rv._bf=1;telop('GOAL',rv.name+' が先にゴール　'+fmt(rv.finishTime),'yellow');}if(state!=='race'||raceTime<2||p.finished||rv.finished)return;
   if(rv.finished&&!rv._bf){rv._bf=1;}
   if(isFc()){const L0=FC.h===1?p:rv,C0=FC.h===1?rv:p,d=progress(C0)-progress(L0);FC.gp=-d;if(!FC.pass){if(d>2){if(FC.pt==null)FC.pt=raceTime;else if(raceTime-FC.pt>FCP){FC.pass=C0.isPlayer?'me':'rv';telop('OVERTAKE',C0.isPlayer?'抜いた！　勝負あり（あなたの勝ち）':'抜かれた…　勝負あり',C0.isPlayer?'green':'red');}}else FC.pt=null;}return;} /* β0.252.0 後追いが前に出て FCP 秒 */
@@ -5414,7 +5422,7 @@ function dlUi(p){const el=$('dlt');if(!el)return;let h='';
   if(dlMode&&p&&p.lap>=1&&!p.finished&&state==='race'&&!isCh()&&(sess==='race'||sess==='ta')){let d=null,ref=null,lb='ベスト比';
     if(sess==='race'){d=rcDelta;ref=rcRef;}else if(ghost){d=ghDelta;ref=ghost;}else if(tgGhost&&tgDelta!=null&&ghSel===0){d=tgDelta;ref=tgGhost;lb='対 '+CHM[tgGhost.m];}
     if(d!=null&&ref){const c=d<=0?'f':'s',w=Math.min(50,Math.abs(d)*50),th=isSS()?null:dlTheo(p);
-      h=`<div class="dn"><span>${lb}</span><b class="${c}">${d<=0?'−':'+'}${Math.abs(d).toFixed(2)}</b></div><div class="db"><i class="${c}" style="${d<=0?'right':'left'}:50%;width:${w.toFixed(1)}%"></i></div><div class="dt">予想 ${fmt(ref.t+d)}${th?'　理論 '+fmt(th):''}</div>`;}}
+      h=`<div class="dn"><span>${lb}</span><b class="${c}">${d<=0?'−':'+'}${Math.abs(d).toFixed(2)}</b></div><div class="db"><i class="${c}" style="${d<=0?'right':'left'}:50%;width:${w.toFixed(1)}%"></i></div><div class="dt">予想 ${fmt(ref.t+d)}${th?'　理論 '+fmt(th):''}</div>`;}if(rvDelta!=null&&rival)h+=rvBand(); /* T645 */}
   if(el._h!==h){el._h=h;el.innerHTML=h;el.hidden=!h;}}
 /* β0.141.0 T264 区間タイム。secBest＝このセッションの区間ごとの全体のベスト（有効な周だけ）。k.secN＝今の区間、k.secT0＝今の区間に入った時刻、k.secX＝各区間に入った時刻、k.secC＝今の周の区間 {t,col,d}、k.secL＝前の周、k.secB＝自分のベスト */
 let secBest=[null,null,null],secShow=null;
@@ -5433,13 +5441,13 @@ function secHtml(p){if(sess==='drag'||isSS()||p.lap<1||p.secT0==null)return'';co
   for(let n=0;n<3;n++){const c=src[n];h+=c?`<i class="${c.col}">${c.t.toFixed(1)}</i>`:`<i>S${n+1}</i>`;}
   if(secShow&&secShow.T>0){const c=src[secShow.n];if(c&&c.d!=null)h+=`<em class="${c.d<=0?'f':'s'}">S${secShow.n+1} ${c.d<=0?'−':'+'}${Math.abs(c.d).toFixed(2)}</em>`;}
   return h;}
-function ghostStep(dt){rvStep(); /* T419② */const p=player();const gm=ghostMesh;ghDelta=null;tgDelta=null;if(p&&isSS())ssSplit(p);if(isBat())batStep(); /* β0.250.0 */
+function ghostStep(dt){rvStep(); /* T419② */const p=player();const gm=ghostMesh;ghDelta=null;tgDelta=null;rvDelta=null; /* T645 */if(p&&isSS())ssSplit(p);if(isBat())batStep(); /* β0.250.0 */
   if(!p||p.lap<1||p.finished){if(gm)gm.root.visible=false;return;}
   const t=raceTime-p.lapStart;
   const out1=sess==='ta'&&!isSS()&&!dyOn&&p.lap===1; /* β0.293.0 T597 タイムアタックの1周目は止まった所からなので、ゴースト（線を速さを持って越えた周）は出さず、差も出さない（ご本人 2026-10-27「1週目から出てもスタートでおいて行かれるので1週目は意味無いかも」）。走りの記録は取る */
   if(holdT<=0){ghT+=dt;while(ghT>=.05){ghT-=.05;ghRec.push(p.x,p.z,p.h,lapDist(p));}}
   if(out1){if(gm)gm.root.visible=false;return;}
-  const d=lapDist(p),tgG=tgNeed();if(ghost){const tg=ghTimeAt(d);if(tg!=null&&t>1)ghDelta=t-tg;}if(tgG){const tg=ghTimeAt(d,tgG);if(tg!=null&&t>1)tgDelta=t-tg;} /* β0.176.0 T354 */
+  const d=lapDist(p),tgG=tgNeed();if(ghost){const tg=ghTimeAt(d);if(tg!=null&&t>1)ghDelta=t-tg;}if(tgG){const tg=ghTimeAt(d,tgG);if(tg!=null&&t>1)tgDelta=t-tg;} /* β0.176.0 T354 */if(rival&&ghSel!==2){const tr=ghTimeAt(d,rival);if(tr!=null&&t>1)rvDelta=t-tr;} /* T645 相手のゴーストとの差（ゴーストを出さない時は出さない） */
   const G=ghSel===2?null:ghSel===0&&tgG?tgG:ghost;
   if(!G){if(gm)gm.root.visible=false;return;}
   const g=ghMesh();const q=ghAt(t,G);g.root.visible=!!q;if(q){g.root.position.set(q[0],0,q[1]);g.root.rotation.y=q[2];}}
@@ -5687,7 +5695,7 @@ let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=170,YLD_V=.82,YL
 // サイド＝頂点の半径 HBR m 未満の角を HBL m 先まで見て、曲がり始めた所（今の半径が頂点の HBI 倍より小さい・頂点まで HBA m 以上）で HBT 秒（横滑り HBB rad で離す・次まで HBC 秒）。流す＝半径 DPR m 未満の角の出口で横滑り DPB rad まで・1つの角で DPT 秒まで（後輪のグリップ DPG 倍・空転の抑え DPTC）。出口の先 DPK m に路駐がある時は使わない
 /* β0.259.0 T526② 慣性ドリフト（IDK＝1）：公道で速い角（頂点の半径 IDR0〜IDR1 m）の入口の手前 IDT 秒で、IDD 秒だけ後輪のグリップを IDG 倍に抜いて向きを早く変える（アクセルは戻す）。CPU のドリフトの気持ち dS の IDP 倍の確率 */
 let IDA=0 /* 0＝公道バトル・先行後追いの時だけ（速くならないので見せ場として。ご本人の決定 2026-10-25）、1＝いつも */,IDK=0 /* β0.277.0 慣性ドリフトは後輪のグリップを IDG 倍に抜く作りだったので止めた（角の手前の向き作り EZ に置きかえ） */,IDR0=50,IDR1=220,IDT=.5,IDD=.6,IDG=1,IDV=18,IDP=1;
-let RJK=1,RJE=1,RJV=4,RJT=3,RJO=1,OGL=1,TDC=1,AWK=1,AWL=6,AWW=2.4,AWS=10,UAK=3,WTC=3,ORA=.5,ORV=15,FWE=1.2,AWT=1,AWR=2.5,DRS=1,DR4=.7,DRF=.5,HBR=30,HBL=25,HBI=2.5,HBA=4,HBT=.6,HBB=.5,HBC=4,DPR=90,DPB=.35,DPT=1.6,DPG=1,DPTC=.98,DPK=150,DBK=18,PSD=14,RVK=.8,USK=.12,UNA=2,UNL=80,DBR=60,RCB=1,OGD=1,OGV=1.5,OGT=.8,OGB=4,OGM=1.5,OGU=25,OGU2=12,OGS=1.2,OCK=1,OCT=3,OCM=.8,W2T=2,W2V=.6,W2M=1.5,W2B=.2,W2K=0,W2G=.5,W2W=.3, /* β0.322.0 T647 W2：W2T＝道の端まで何秒で先に緩めるか（0 で切る）・W2V＝見る横の速さの下限 m/s・W2M＝狙いの車線から何 m 外から・W2B＝その間のブレーキの上限・W2K＝1 でアクセルを抜くだけでなく軽く減速（狙いの速さを今より OGB 下げる）・W2G・W2W＝路面のグリップ（舗装 1・砂利 .68・雪 .4・氷 .24）が W2G より低いか、濡れ ENV.wet が W2W より多い時だけ（雪・氷・雨。砂利はタイヤの倍率で掛け算が低く出るので分けた。舗装の晴れの首都高で効かせるとリタイアが 0→4台に増えた） */DBL=40,DBV=4,DBG=1,DBT=1.2,EMV=14,EMT=.5,EMA=11,RVH=.35;
+let RJK=1,RJE=1,RJV=4,RJT=3,RJO=1,RJF=1.6,OGL=1,TDC=1,AWK=1,AWL=6,AWW=2.4,AWS=10,UAK=3,WTC=3,ORA=.5,ORV=15,FWE=1.2,AWT=1,AWR=2.5,DRS=1,DR4=.7,DRF=.5,HBR=30,HBL=25,HBI=2.5,HBA=4,HBT=.6,HBB=.5,HBC=4,DPR=90,DPB=.35,DPT=1.6,DPG=1,DPTC=.98,DPK=150,DBK=18,PSD=14,RVK=.8,USK=.12,UNA=2,UNL=80,DBR=60,RCB=1,OGD=1,OGV=1.5,OGT=.8,OGB=4,OGM=1.5,OGU=25,OGU2=12,OGS=1.2,OCK=1,OCT=3,OCM=.8,W2T=2,W2V=.6,W2M=1.5,W2B=.2,W2K=0,W2G=.5,W2W=.3, /* β0.322.0 T647 W2：W2T＝道の端まで何秒で先に緩めるか（0 で切る）・W2V＝見る横の速さの下限 m/s・W2M＝狙いの車線から何 m 外から・W2B＝その間のブレーキの上限・W2K＝1 でアクセルを抜くだけでなく軽く減速（狙いの速さを今より OGB 下げる）・W2G・W2W＝路面のグリップ（舗装 1・砂利 .68・雪 .4・氷 .24）が W2G より低いか、濡れ ENV.wet が W2W より多い時だけ（雪・氷・雨。砂利はタイヤの倍率で掛け算が低く出るので分けた。舗装の晴れの首都高で効かせるとリタイアが 0→4台に増えた） */DBL=40,DBV=4,DBG=1,DBT=1.2,EMV=14,EMT=.5,EMA=11,RVH=.35;
 function parkAhead(k,m){for(const p of PARK){const d=((p.i-k.idx)%N+N)%N*SP;if(d<m)return true;}return false;}
 function driftAI(k,u,beta,dS,dt){k.hbCool=(k.hbCool||0)-dt;let blk=false,atk=false;const fx=Math.sin(k.h),fz=Math.cos(k.h),ch=Math.cos(k.h),sh=Math.sin(k.h);
   for(const o of karts){if(o===k||o.gone||o.dnf||o.finished)continue;const dx=o.x-k.x,dz=o.z-k.z,f=dx*fx+dz*fz,sd=Math.abs(dx*ch-dz*sh);if(f<-2&&f>-DBK&&sd<3.5&&o.u>u-2)blk=true;if(f>-1&&f<PSD&&sd>1.2&&sd<4.5&&(k.lat-o.lat)*OUTS[k.idx]>1||k.altO&&k.altS&&f>0&&f<20)atk=true;}
@@ -5786,7 +5794,7 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
   if(IL0&&PRLH){let on=false;if(PRLH[t]||PRLH[k.idx]){const sK=trfS(k);for(const o of TRF){if(!o.on||o.xs||o.dir>0)continue;const ds=trfD(o.s-sK);if(ds>-10&&ds<(Math.max(u,8)+o.v)*PRLT){on=true;break;}}}k.prlB=Math.max(0,Math.min(1,(k.prlB||0)+(on?1:-1)*dt*PRLV));} /* β0.260.0 T527 角の線は出口・入口で対向車線も使うので、対向車がこの先 PRLT 秒で出会う所にいる間は元の線（自分の車線寄り）へ移る */
   const ilT=k.prlB>0?IL[t]+(IL0[t]-IL[t])*k.prlB:IL[t];let lane=Math.max(-W+1.4,Math.min(W-1.4,ilT+k.lane+(k.wo||0)+(k.wvo||0)+(k.pdo||0)));if(PARK.length)lane=pkClamp(k.idx,t,lane); /* β0.246.0 T515① 路駐の方へは狙わない */if(TRF.length&&sess!=='drag'){const r=trfAvoid(k,u,lane,W);lane=r.l;if(PARK.length)lane=pkClamp(k.idx,t,lane);if(r.c<k.pdCap)k.pdCap=r.c;} /* β0.247.0 T515② 一般車をよける・抜けない時は後ろに付く */if(PARK.length&&sess!=='drag'){const c=parkCap(k);if(c<k.pdCap)k.pdCap=c;} /* β0.250.0 路駐にかかったままなら落とす */if(SIG.length&&!RCL&&sess!=='drag'){const c=sigCap(trfS(k),1,2.4,u,4.5,1);if(c<k.pdCap)k.pdCap=c;} /* β0.249.0 T515③ 信号（CPU は横道の車が来る時だけ止まる） */
   if(AWK>0&&PUBR&&sess!=='drag'&&!k.pit&&raceTime-raceT0<AWS){for(const o of karts){if(o===k||o.dnf||o.gone||o.pit)continue;if(Math.abs(pgO(o)-pK())<AWL){const sd=Math.sign(k.lat-o.lat)||1,lim=(k.lat+o.lat)/2+sd*AWW/2;lane=sd>0?Math.max(lane,lim):Math.min(lane,lim);}}lane=Math.max(-W+1.2,Math.min(W-1.2,lane));} /* β0.283.0 T578 公道のスタートから AWS 秒の間、相手と前後 AWL m 以内に並んでいる間は、2台の真ん中から AWW/2 m ずつ＝相手の横に AWW m（1台分と余裕）を残す（スタート直後に2台とも線へ寄って幅寄せしていた） */
-  if(RJK>0&&rcs&&!k.pit&&!k.finished&&Math.abs(k.lat)>W-RJE){for(const o of karts){if(o===k||o.dnf||o.gone||o.pit||o.finished)continue;const d=pK()-pgO(o),vc=o.u-k.u;if(d>0&&vc>RJV&&d<vc*RJT){lane=Math.sign(k.lat)*Math.max(Math.abs(lane)*Math.sign(lane)*Math.sign(k.lat),Math.min(Math.abs(k.lat),W+RJO));k.rjT=(k.rjT||0)+dt;break;}}} /* β0.290.0 T595 コースへ戻る時は後ろを見る：道の外（端から RJE m 内側より外）にいる間、後ろから RJV m/s 以上速く近づく車が RJT 秒以内に追いつくなら、道の外のすぐそば（端から外へ RJO m まで）を走って待ち、過ぎてから戻る（砂利のレースで、草から斜めに戻る遅い車に時速180km の車が当たる大クラッシュがあった。実際のレースの「安全にコースへ戻る」と同じ） */
+  if(RJK>0&&rcs&&!k.pit&&!k.finished&&Math.abs(k.lat)>W-RJE){for(const o of karts){if(o===k||o.dnf||o.gone||o.pit||o.finished)continue;const d=pK()-pgO(o),vc=o.u-k.u;if(d>0&&vc>RJV&&d<vc*RJT){lane=Math.sign(k.lat)*Math.max(Math.abs(lane)*Math.sign(lane)*Math.sign(k.lat),Math.min(Math.abs(k.lat),W+RJO,RJF>0?wFace(t,Math.sign(k.lat))-RJF:1e9)); /* β0.332.0 T621 待つ所は壁の面より RJF m 内側まで（首都高は端のすぐ外が壁） */k.rjT=(k.rjT||0)+dt;break;}}} /* β0.290.0 T595 コースへ戻る時は後ろを見る：道の外（端から RJE m 内側より外）にいる間、後ろから RJV m/s 以上速く近づく車が RJT 秒以内に追いつくなら、道の外のすぐそば（端から外へ RJO m まで）を走って待ち、過ぎてから戻る（砂利のレースで、草から斜めに戻る遅い車に時速180km の車が当たる大クラッシュがあった。実際のレースの「安全にコースへ戻る」と同じ） */
   k._ln=lane;k._lnD=lane-ilT;let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h);
   const dist=Math.max(4,Math.hypot(tx-k.x,tz-k.z));
@@ -7511,7 +7519,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
     const me=rk.indexOf(p),a=rk[me-1],b=rk[me+1];const g=(x,y)=>Math.max(0,(progress(x)-progress(y))/pace).toFixed(1);
     if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);H('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動')+'　タイヤ '+Math.round(30+60*(p.dT||0))+'℃'+(p.dsp?'（ドラッグ用）':'')+(drag&&drag.dp?'　申告 '+drag.dp.toFixed(2)+(p.dm&&p.dm.launch!=null&&!p.dFin&&p.u>5?'　見込み '+(raceTime-p.dm.launch+(DRAG_D-(p.dd||0))/p.u).toFixed(2):''):'')+(dragNos?'　N2O '+(p.nosT>0?'<b>噴射中</b>':p.nos?(isTouch?'あり':'あり（N）'):'—'):'');
       H('gaps').innerHTML=(dragRec?`<div><span>自己ベスト</span><b>${dragRec.et.toFixed(3)}</b></div>`:'')+(c&&state!=='countdown'?`<div><span>${c.name}</span><b class="dlt ${d>=0?'f':'s'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}m</b></div>`:'');}
-    else if(solo())H('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${tn(fmt(ghost.t))}</b></div>`:'')+(ghDelta!=null&&!dlMode?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${tn(Math.abs(ghDelta).toFixed(2))}</b></div>`:'');else
+    else if(solo())H('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${tn(fmt(ghost.t))}</b></div>`:'')+(ghDelta!=null&&!dlMode?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${tn(Math.abs(ghDelta).toFixed(2))}</b></div>`:'')+rvGap() /* T645 */;else
     H('gaps').innerHTML=p.dnf?'':(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${tn(g(a,p))}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>後 ${b.name}</span><b>${tn(g(p,b))}秒</b></div>`:'');}
   if(sess==='drag'){const m=p.dm||{};H('lap').innerHTML=(dragDist?'1/8マイル':'0-400m')+'　<b>'+Math.min(DRAG_D,Math.max(0,p.dd||0)).toFixed(0)+'</b>m';TM.textContent=m.foul&&m.launch==null?'FOUL':((m.t400??raceTime)-(m.launch??raceTime)).toFixed(3);if(drag&&drag.green>=0&&raceTime>2.5)$('tree').hidden=true;}
   else if(isCh()){H('lap').innerHTML='課題 '+(chOn+1)+'　<b>'+CH[chOn].n+'</b>';TM.textContent=fmt(chRes&&chRes.ok?chRes.t:raceTime);}
@@ -8094,7 +8102,7 @@ function pollPad(){const gs=typeof navigator!=='undefined'&&navigator.getGamepad
   gp.thr=bv(7)>.04?bv(7):0;gp.brk=bv(6)>.04?bv(6):0;gp.hb=bp(0);
   if(whl){const pv=(m)=>{const p=m&&whlPad(gs,m.id);if(!p)return null;const r=whlRaw(p,m.src),v=(r-m.z)/((m.f-m.z)||1);return Math.max(0,Math.min(1,v));};const t=pv(whl.th),b=pv(whl.br);if(t!=null)gp.thr=t>.04?t:0;if(b!=null)gp.brk=b>.04?b:0;}
   if(bp(12))gp.thr=Math.max(gp.thr,1);if(bp(13))gp.brk=Math.max(gp.brk,1);if(bp(14))gp.steer=-1;if(bp(15))gp.steer=1;
-  const edge=i=>bp(i)&&!gp.prev[i];
+  const edge=i=>bp(i)&&!gp.prev[i];if(inMode.m!=='pad'){let h=[0,1,2,3].some(i=>Math.abs(g.axes[i]||0)>.5);for(let i=0;!h&&i<g.buttons.length;i++)h=edge(i);if(h)inMode('pad');} /* T653 */
   {const ry=g.axes[3]||0,rx0=g.axes[2]||0,sd=(ry>.6||ry<-.6)&&(!lkRs||Math.abs(ry)>Math.abs(rx0))?(ry>0?1:-1):0; /* T445 横を見る時は、斜めに倒しても左右が大きければ変速しない */if(sd&&sd!==gp.rs)shiftReq(sd);gp.rs=sd;const rx=g.axes[2]||0;if(lkRs){gp.lk=Math.abs(rx)<.15?0:Math.sign(rx)*(Math.abs(rx)-.15)/.85;gp.rb=0;}else{gp.lk=0;const sb=rx>.7?1:rx<-.7?-1:0;if(sb&&sb!==gp.rb&&(state==='race'||state==='countdown'))bbAdj(sb);gp.rb=sb;}} /* T445 lkRs＝1 で右スティックの左右は横を見る */ // T83（β0.115.0）右スティックの左右＝ブレーキバランス（右＝前へ） // 右スティック：手前に引く＝アップ、奥に倒す＝ダウン
   if(optOn()&&(!$('keyScreen').hidden||!$('helpScreen').hidden)){if(!$('keyScreen').hidden)keyPad(edge);else helpPad(edge);for(let i=0;i<g.buttons.length;i++)gp.prev[i]=bp(i);return;} /* β0.325.0 T660③ 重ねの上のキーの割り当て・HOW TO を先に */
   if(optOn()){const os=$('setup');if(edge(12))navMove(os,-1);else if(edge(13))navMove(os,1);else if(edge(14)||edge(15)){const a=document.activeElement,sg=a&&a.closest&&a.closest('.seg');if(sg){const b=[...sg.querySelectorAll('button')].filter(x=>!x.disabled&&!x.hidden),i=b.indexOf(a)+(edge(14)?-1:1);if(b[i]){b[i].focus();b[i].click();}}}else if(edge(0)){const a=document.activeElement;if(os.contains(a)&&a.tagName==='BUTTON')a.click();}else if(edge(1)||edge(9))optClose();for(let i=0;i<g.buttons.length;i++)gp.prev[i]=bp(i);return;}
@@ -8714,7 +8722,7 @@ function photoOpen(){if(state!=='results'||!resCar)return;photoOn=true;const k=r
 const LPC={list:[],a:0,b:-1,cur:null,grid:null};
 function lapList(){const L2=[],p=player();if(!p)return L2;const fm=t=>fmt(t);
   const best=p.tlBest;(p.tlLaps||[]).forEach(l=>L2.push({k:p,l,n:(l===best?'★ベスト ':'')+(l.lap)+'周目 '+fm(l.t)+(l.pit?'（ピット）':l.ok?'':'（無効）'),me:1}));
-  if(sess==='race')karts.filter(k=>!k.isPlayer&&k.tlBest).sort((a,b)=>a.tlBest.t-b.tlBest.t).forEach(k=>L2.push({k,l:k.tlBest,n:k.name+' ベスト（'+k.tlBest.lap+'周目）'+fm(k.tlBest.t),me:0}));
+  if(rival&&sess==='ta'){const r=rvTel();if(r)L2.push(r);} /* T645 */if(sess==='race')karts.filter(k=>!k.isPlayer&&k.tlBest).sort((a,b)=>a.tlBest.t-b.tlBest.t).forEach(k=>L2.push({k,l:k.tlBest,n:k.name+' ベスト（'+k.tlBest.lap+'周目）'+fm(k.tlBest.t),me:0}));
   return L2;}
 function lapOpen(){const L2=lapList();if(!L2.length)return;LPC.list=L2;const mine=L2.filter(x=>x.me),p=player();
   const ia=Math.max(0,L2.findIndex(x=>x.l===p.tlBest)),fast=L2.findIndex(x=>!x.me);
@@ -8737,7 +8745,7 @@ function lapPrep(){const A=LPC.list[LPC.a],B=LPC.list[LPC.b];LPC.ta=A?lapTimeAt(
   const lose=cs.filter(c=>c.d>.03).sort((a,b)=>b.d-a.d).slice(0,3),gain=cs.filter(c=>c.d<-.03).sort((a,b)=>a.d-b.d).slice(0,2);
   const tot=A.l.t-B.l.t,f=c=>'第'+(c.cid+1)+'コーナー '+(c.d>0?'+':'−')+Math.abs(c.d).toFixed(2)+'秒'+(c.dv!=null?'（最低速度 '+(Math.round(c.dv)>0?'+':Math.round(c.dv)<0?'−':'±')+Math.abs(Math.round(c.dv))+'km/h）':'');
   sum.innerHTML='ラップの差 <b class="'+(tot>0?'lose':'gain')+'">'+(tot>0?'+':'−')+Math.abs(tot).toFixed(3)+'秒</b>（赤が'+(tot>0?'遅い':'速い')+'）'
-   +(lose.length?'　時間を失っている所：'+lose.map(c=>'<b class="lose">'+f(c)+'</b>').join('、'):'')+(gain.length?'　稼いでいる所：'+gain.map(c=>'<b class="gain">'+f(c)+'</b>').join('、'):'');}
+   +(lose.length?'　時間を失っている所：'+lose.map(c=>'<b class="lose">'+f(c)+'</b>').join('、'):'')+(gain.length?'　稼いでいる所：'+gain.map(c=>'<b class="gain">'+f(c)+'</b>').join('、'):'')+(A.l.nt||B.l.nt?'　（相手のゴーストの速さは位置の記録から出した物。アクセル・ブレーキは記録なし）':'');}
 function lapDraw(){const cv=$('lapCv');if(!cv||$('lapScreen').hidden)return;const dpr=Math.min(2,devicePixelRatio||1),W2=cv.clientWidth,H2=cv.clientHeight;if(!W2||!H2)return;
   if(cv.width!==Math.round(W2*dpr)||cv.height!==Math.round(H2*dpr)){cv.width=Math.round(W2*dpr);cv.height=Math.round(H2*dpr);}
   const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W2,H2);
@@ -8755,8 +8763,8 @@ function lapDraw(){const cv=$('lapCv');if(!cv||$('lapScreen').hidden)return;cons
   let vmax=0;for(const o of[A,B])if(o)for(let i=1;i<o.l.s.length;i+=5)vmax=Math.max(vmax,o.l.s[i]*3.6);vmax=Math.ceil((vmax+10)/50)*50;
   {const b=B2[0];g.textAlign='right';for(let v=0;v<=vmax;v+=50){const yy=b.y+b.h-(b.h-4)*v/vmax-2;g.fillStyle='rgba(200,206,214,.55)';g.fillText(String(v),ml-4,yy);g.strokeStyle='rgba(255,255,255,.05)';g.beginPath();g.moveTo(ml,yy);g.lineTo(W2-mr,yy);g.stroke();}}
   const sp=(s,i)=>s[i+1]*3.6,th=(s,i)=>s[i+2],bk=(s,i)=>s[i+3];
-  if(B){ln(B.l.s,0,sp,0,vmax,'#4fb4ff',1.6);ln(B.l.s,2,th,0,1,'rgba(79,180,255,.9)',1.3);ln(B.l.s,3,bk,0,1,'rgba(79,180,255,.9)',1.3);}
-  if(A){ln(A.l.s,0,sp,0,vmax,'#ff5a4f',2);ln(A.l.s,2,th,0,1,'rgba(255,90,79,.95)',1.6);ln(A.l.s,3,bk,0,1,'rgba(255,90,79,.95)',1.6);}
+  if(B){ln(B.l.s,0,sp,0,vmax,'#4fb4ff',1.6);if(!B.l.nt){ln(B.l.s,2,th,0,1,'rgba(79,180,255,.9)',1.3);ln(B.l.s,3,bk,0,1,'rgba(79,180,255,.9)',1.3);}}
+  if(A){ln(A.l.s,0,sp,0,vmax,'#ff5a4f',2);if(!A.l.nt){ln(A.l.s,2,th,0,1,'rgba(255,90,79,.95)',1.6);ln(A.l.s,3,bk,0,1,'rgba(255,90,79,.95)',1.6);}}if(A&&A.l.nt||B&&B.l.nt){g.textAlign='right';g.fillStyle='rgba(200,206,214,.7)';for(const k of[2,3]){const b=B2[k];g.fillText((B&&B.l.nt?'青':'赤')+'（ゴースト）は記録なし',W2-mr-4,b.y+b.h/2);}} /* T645 */
   // タイム差（赤−青。上＝赤が遅い）
   if(A&&B&&LPC.ta&&LPC.tb){const b=B2[1],n=Math.min(LPC.ta.length,LPC.tb.length);let m=.2;for(let i=0;i<n;i++)m=Math.max(m,Math.abs(LPC.ta[i]-LPC.tb[i]));m=Math.ceil(m*10)/10;
     const yv=v=>b.y+b.h/2-(b.h/2-3)*v/m;g.strokeStyle='rgba(255,255,255,.25)';g.lineWidth=1;g.beginPath();g.moveTo(ml,yv(0));g.lineTo(W2-mr,yv(0));g.stroke();
@@ -8997,7 +9005,7 @@ function gsCondTx(ss){return [COURSES[CRSI].name+(REV?'（逆回り）':''),ss?'
 function gsGet(k){try{const o=JSON.parse(localStorage.getItem(k)||'null');if(o&&Array.isArray(o.g)&&o.g.length>=8&&o.g.length%4===0&&typeof o.t==='number'&&isFinite(o.t))return o;}catch(_){}return null;}
 function gsOwn(ss){return dyOn?null:gsGet(ghKey(ss));}
 function gsRv(ss){return dyOn?null:gsGet(gsRvKey(ghKey(ss)));}
-function gsRvTx(ss){const r=gsRv(ss);return r?'　相手 '+String(r.n||'')+' '+fmt(r.t):'';}
+function gsRvTx(ss){const r=gsRv(ss);return r?'　相手 '+String(r.n||'')+' '+fmt(r.t)+((r.wx===0||r.wx===1)&&gsWxNow()>=0&&gsWxNow()!==r.wx?'（'+(r.wx?'雨':'乾いた路面')+'の記録・今の天気では出ません）':''):'';} /* T645 */
 function gsB64(u){let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
 function gsUnB64(t){const s=atob(t.replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((t.length+3)%4)),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}
 const gsZ=()=>typeof CompressionStream==='function'&&typeof DecompressionStream==='function';
@@ -9008,7 +9016,7 @@ async function gsInflate(u){const r=new Blob([u]).stream().pipeThrough(new Decom
 function gsNm(){const e=$('gsName');return e?e.value.replace(/\s+/g,' ').trim().slice(0,12):'';}
 async function gsPack(ss){const o=gsOwn(ss);if(!o)return null;const g=o.g,dl=new Array(g.length);for(let i=0;i<g.length;i++)dl[i]=i<4?g[i]:g[i]-g[i-4]; /* 0.05秒ごとの差にすると縮みやすい */
  const cs=o.cs&&o.cs.s&&typeof o.cs.s==='object'?o.cs:undefined;
- const P={a:'tcr',v:1,ver:mvVer(),k:ghKey(ss),ss:ss?1:0,c:COURSES[CRSI].id,ct:gsCondTx(ss),n:gsNm(),t:o.t,p:o.p|0,m:o.m|0,sp:Array.isArray(o.sp)?o.sp:undefined,car:cs&&Number.isInteger(cs.cr)?cs.cr:curCar(),cs,dl};
+ const P={a:'tcr',v:1,ver:mvVer(),k:ghKey(ss),ss:ss?1:0,c:COURSES[CRSI].id,ct:gsCondTx(ss),n:gsNm(),t:o.t,p:o.p|0,m:o.m|0,sp:Array.isArray(o.sp)?o.sp:undefined,car:cs&&Number.isInteger(cs.cr)?cs.cr:curCar(),cs,wx:o.wx===0||o.wx===1?o.wx:undefined,dl}; /* T645 */
  const u=new TextEncoder().encode(JSON.stringify(P));let z=null;if(gsZ()){try{z=await gsDeflate(u);}catch(_){z=null;}}
  return {s:GSH+(z?'z':'j')+'.'+gsB64(z||u),o,z:!!z,cs:!!cs};}
 async function gsParse(t){t=String(t||'');const m=t.replace(/\s+/g,'').match(/TCRg(\d+)([a-z])\.([A-Za-z0-9_-]*)/);
@@ -9029,28 +9037,43 @@ async function gsParse(t){t=String(t||'');const m=t.replace(/\s+/g,'').match(/TC
  if(dyOn)return {err:'今日の課題の間は受け取れません。タイトルに戻ってから受け取ってください。何も書き込んでいません。'};
  const cur=ghKey(ss);
  if(P.k!==cur)return {err:'条件が違うので受け取れません。ゴースト：'+(ct||'（不明）')+'／今の条件：'+gsCondTx(ss)+'。①車でクラス（何でもありなら車も）、③コースでコース・向き・路面を合わせてから受け取ってください。何も書き込んでいません。'};
- const g=new Array(dl.length);for(let i=0;i<dl.length;i++)g[i]=i<4?dl[i]:g[i-4]+dl[i];
+ {const e=gsWxNg(P.wx);if(e)return {err:e};} /* T645 走る条件が同じ物だけ受け取る */const g=new Array(dl.length);for(let i=0;i<dl.length;i++)g[i]=i<4?dl[i]:g[i-4]+dl[i];
  const c=P.cs,cs=c&&typeof c==='object'&&c.s&&typeof c.s==='object'&&!Array.isArray(c.s)?{s:c.s,tn:Array.isArray(c.tn)?c.tn:null,car:String(c.car||'').slice(0,8),cr:c.cr|0}:null;
  const R={n:String(P.n||'').replace(/\s+/g,' ').trim().slice(0,12)||'相手',t:P.t,p:Number.isInteger(P.p)&&DRIVERS[P.p]?P.p:0,m:P.m|0,sp:Array.isArray(P.sp)&&P.sp.length===2&&P.sp.every(v=>typeof v==='number'&&isFinite(v))?P.sp:undefined,
-  car:Number.isInteger(P.car)&&(CARS[P.car]||P.car===FCI)?P.car:curCar(),cs:cs||undefined,ver:String(P.ver||'').slice(0,20),ct,at:Date.now(),g};
+  car:Number.isInteger(P.car)&&(CARS[P.car]||P.car===FCI)?P.car:curCar(),cs:cs||undefined,ver:String(P.ver||'').slice(0,20),ct,wx:P.wx===0||P.wx===1?P.wx:undefined,at:Date.now(),g}; /* T645 */
  return {P,R,ss,key:gsRvKey(cur)};}
 /* 走る間 */
-function rvLoad(){rival=null;if(rvMeshG)rvMeshG.root.visible=false;if(sess!=='ta'||dyOn||isBat()||isCh())return;const o=gsRv(isSS());if(!o)return;
+function rvLoad(){rival=null;rvDelta=null;rvWhy='';if(rvMeshG)rvMeshG.root.visible=false;if(sess!=='ta'||dyOn||isBat()||isCh())return;const o=gsRv(isSS());if(!o)return;if((o.wx===0||o.wx===1)&&o.wx!==gsWet()){rvWhy='相手のゴースト（'+String(o.n||'相手')+'）は'+gsWxN(o.wx)+'の記録なので、今の路面（'+(gsWet()?'濡れた路面':'乾いた路面')+'）では一緒に走りません';toast(rvWhy);return;} /* T645 走る条件が同じ時だけ */
  const a=new Float32Array(o.g.length);for(let i=0;i<a.length;i+=4){a[i]=o.g[i]/10;a[i+1]=o.g[i+1]/10;a[i+2]=o.g[i+2]/1000;a[i+3]=o.g[i+3]/10;}
- rival={t:o.t,s:a,p:Number.isInteger(o.p)&&DRIVERS[o.p]?o.p:0,car:Number.isInteger(o.car)&&(CARS[o.car]||o.car===FCI)&&(isForm()===(o.car===FCI))?o.car:curCar(),n:String(o.n||'相手')};}
+ rival={t:o.t,s:a,p:Number.isInteger(o.p)&&DRIVERS[o.p]?o.p:0,car:Number.isInteger(o.car)&&(CARS[o.car]||o.car===FCI)&&(isForm()===(o.car===FCI))?o.car:curCar(),n:String(o.n||'相手'),sp:Array.isArray(o.sp)?o.sp:null,ver:String(o.ver||''),wx:o.wx};} /* T645 */
 function rvMesh(){const gk=rival.p+':'+rival.car;if(rvMeshG&&rvFor===gk)return rvMeshG;if(rvMeshG){scene.remove(rvMeshG.root);disposeKart(rvMeshG);}
  const g=makeCar(DRIVERS[rival.p],rival.p+1,rival.car);g.root.traverse(o=>{o.castShadow=false;if(o.material){const f=m=>{const c=m.clone();c.userData.shared=0;c.transparent=true;c.opacity=.4;c.depthWrite=false;return c;};o.material=Array.isArray(o.material)?o.material.map(f):f(o.material);}});
  rvMeshG=g;rvFor=gk;return g;}
 function rvStep(){const p=player();if(!rival||!p||sess!=='ta'||ghSel===2||isBat()||p.lap<1||p.finished||(!isSS()&&!dyOn&&p.lap===1)){if(rvMeshG)rvMeshG.root.visible=false;return;} /* 自分のゴーストと同じく、タイムアタックの1周目は出さない */
  const q=ghAt(raceTime-p.lapStart,rival),g=rvMesh();g.root.visible=!!q;if(q){g.root.position.set(q[0],0,q[1]);g.root.rotation.y=q[2];}}
 /* 欄 */
+/* T645 相手のゴーストとの差・ラップ比較・送った版・走る条件（路面の濡れ：0 乾き・1 濡れ。天気の「雨」が濡れ、晴れ・くもり・霧が乾き、変わりやすい・おまかせは走るまで決まらない） */
+function gsWet(){return typeof ENV!=='undefined'&&ENV&&ENV.wet>.2?1:0;}
+function gsWxNow(){return wxSel===2?1:wxSel===4||wxSel===5?-1:0;}
+const gsWxN=w=>w?'雨（濡れた路面）':'乾いた路面';
+function gsWxNg(w){if(w!==0&&w!==1)return '';const c=gsWxNow();if(c<0||c===w)return '';
+ return '走る条件（路面の濡れ）が違うので受け取れません。ゴースト：'+gsWxN(w)+'／今の天気：'+(WXN[wxSel]||WXN[0]).n+'（'+(c?'濡れた路面':'乾いた路面')+'）。④出走前の天気を'+(w?'「雨」':'「晴れ」「くもり」「霧」のどれか')+'にしてから受け取ってください。何も書き込んでいません。';}
+function gsVerTx(r){const v=String(r&&r.ver||''),c=mvVer();return v?(v===c?v+' で走った記録（今と同じ版）':v+' で走った記録。今は '+c+'。物理が今と違う版の記録かもしれません'):'送った版の記録なし';}
+function rvBand(){const d=rvDelta,c=d<=0?'f':'s';return '<div class="dn dr"><span>相手 '+mvEsc(rival.n)+'</span><b class="'+c+'">'+(d<=0?'−':'+')+Math.abs(d).toFixed(2)+'</b></div>';}
+function rvGap(){return rvDelta!=null&&rival&&!dlMode?'<div><span>相手比</span><b class="dlt '+(rvDelta<=0?'f':'s')+'">'+(rvDelta<=0?'−':'+')+tn(Math.abs(rvDelta).toFixed(2))+'</b></div>':'';}
+function rvSplit(n){const r=rival&&ghSel!==2&&rival.sp?rival.sp[n]:null;if(typeof r!=='number'||!isFinite(r))return '';const e=raceTime-r;return '　相手に '+(e<=0?'−':'+')+Math.abs(e).toFixed(2);}
+// ラップ比較の形 [距離, 速さ, アクセル, ブレーキ, 秒]×n に直す（0.1秒おき。速さは前後 0.1秒の距離の差から。アクセル・ブレーキは無いので nt）
+function rvTel(){if(!rival||!rival.s)return null;if(!rival.tl){const a=rival.s,n=a.length/4,o=[];
+  for(let i=0;i<n;i+=2){const j0=Math.max(0,i-2),j1=Math.min(n-1,i+2),dt=(j1-j0)*.05,u=dt>0?Math.max(0,(a[j1*4+3]-a[j0*4+3])/dt):0;o.push(Math.max(0,Math.min(L,a[i*4+3])),u,0,0,(i+1)*.05);}
+  if(o.length<50)return null;rival.tl={lap:0,t:rival.t,ok:true,nt:1,s:Float32Array.from(o)};}
+ return {k:null,l:rival.tl,n:'相手 '+rival.n+' '+fmt(rival.t)+'（ゴースト'+(rival.ver?'・'+rival.ver:'')+'）',me:0,rv:1};}
 function gsMsg(t,c){const m=$('gsMsg');m.textContent=t||'';m.className='note'+(c?' '+c:'');}
 function gsAskOff(){gsPendSs=-1;$('gsAsk').hidden=true;}
 function gsUi(){$('gsCond').textContent='今の条件：'+gsCondTx(false)+(dyOn?'（今日の課題の間は送れません）':'')+'。ほかの条件のゴーストは、①車（クラス・車）と③コース（コース・向き・路面）で条件を変えてからここを開きます。';
  const a=gsOwn(false),b=gsOwn(true);$('gsExpT').disabled=!a;$('gsExpT').textContent=a?'タイムアタックのゴーストを送る（'+fmt(a.t)+'）':'タイムアタックのゴースト：記録なし';
  $('gsExpS').hidden=!b;if(b)$('gsExpS').textContent='RALLY SS のゴーストを送る（'+fmt(b.t)+'）';
  let h='';for(const ss of [0,1]){const r=gsRv(!!ss);if(!r)continue;const ok=!!(r.cs&&r.cs.car===tslCar());
-  h+='<div class="gsR"><span><b>'+(ss?'RALLY SS':'タイムアタック')+'</b>　相手 '+mvEsc(r.n||'相手')+'　'+fmt(r.t)+'　'+mvEsc(gsCarName(r.car))+(r.cs?(ok?'':'（車が違うのでセッティングは使えません）'):'（セッティングなし）')+'</span>'+
+  h+='<div class="gsR"><span><b>'+(ss?'RALLY SS':'タイムアタック')+'</b>　相手 '+mvEsc(r.n||'相手')+'　'+fmt(r.t)+'　'+mvEsc(gsCarName(r.car))+'<small class="gsV">'+mvEsc(gsVerTx(r))+(r.wx===0||r.wx===1?'・'+gsWxN(r.wx):'')+'</small>' /* T645 */+(r.cs?(ok?'':'（車が違うのでセッティングは使えません）'):'（セッティングなし）')+'</span>'+
    (r.cs?'<button class="btn alt" type="button" data-gs="use" data-ss="'+ss+'"'+(ok?'':' disabled')+'>相手のセッティングを使う</button>':'')+'<button class="btn alt" type="button" data-gs="del" data-ss="'+ss+'">消す</button></div>';}
  $('gsRv').innerHTML=h?'<div class="mvSec">受け取った相手のゴースト（今の条件）</div>'+h:'';}
 function gsHide(){$('gsBox').hidden=true;$('gsOpen').hidden=true;gsAskOff();}
@@ -9069,7 +9092,7 @@ $('gsBox').addEventListener('keydown',e=>{if(e.key!=='Escape'&&e.key!=='ArrowUp'
 $('gsIn').addEventListener('click',async()=>{gsAskOff();let r;try{r=await gsParse($('gsTx').value);}catch(_){r={err:GSBAD};}if(r.err){gsMsg(r.err,'ng');return;}
  const old=gsGet(r.key);try{localStorage.setItem(r.key,JSON.stringify(r.R));}catch(_){gsMsg('保存できませんでした（端末の空きが足りないなど）。何も変えていません。','ng');return;}
  gsUi();if(state==='title')try{showRec();}catch(_){}const nm=r.ss?'RALLY SS':'タイムアタック';
- gsMsg('受け取りました：相手 '+r.R.n+'　'+fmt(r.R.t)+'（'+nm+'）。'+(old?'前の相手（'+String(old.n||'相手')+' '+fmt(old.t)+'）と入れ替えました。':'')+'この条件の'+nm+'で、相手のゴーストが一緒に走ります。自分の記録はそのままです。'+(r.R.car!==curCar()?'相手の車は '+gsCarName(r.R.car)+'（あなたは '+gsCarName(curCar())+'）。':''),'ok');});
+ gsMsg('受け取りました：相手 '+r.R.n+'　'+fmt(r.R.t)+'（'+nm+'）。'+(old?'前の相手（'+String(old.n||'相手')+' '+fmt(old.t)+'）と入れ替えました。':'')+gsVerTx(r.R)+'。'+(r.R.wx===0||r.R.wx===1?(gsWxNow()<0?'このゴーストは'+gsWxN(r.R.wx)+'の記録なので、天気が変わりやすい・おまかせの時は、その路面になった時だけ一緒に走ります。':''):'このゴーストには路面の濡れの記録がありません（前の版で作った記録）。')+'この条件の'+nm+'で、相手のゴーストが一緒に走ります。自分の記録はそのままです。'+(r.R.car!==curCar()?'相手の車は '+gsCarName(r.R.car)+'（あなたは '+gsCarName(curCar())+'）。':''),'ok');});
 $('gsRv').addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('button[data-gs]');if(!b||b.disabled)return;const ss=b.dataset.ss==='1',r=gsRv(ss);if(!r){gsUi();return;}
  if(b.dataset.gs==='del'){gsAskOff();try{localStorage.removeItem(gsRvKey(ghKey(ss)));}catch(_){}gsUi();if(state==='title')try{showRec();}catch(_){}gsMsg('相手のゴースト（'+String(r.n||'相手')+'）を消しました。自分の記録はそのままです。');return;}
  if(chSnap){gsMsg('課題の間は決まった車の設定なので使えません。','ng');return;}
@@ -9462,6 +9485,11 @@ const menuItems=()=>[...document.querySelectorAll('#tmenu .mi,#tsAny .tsB')].fil
 // 画面の中のボタン（と折りたたみの見出し）を順に選ぶ。キーボード・パッドで操作した時だけ枠を出す（kbnav）
 function navMove(root,d){const it=[...root.querySelectorAll('button,summary')].filter(el=>{if(!el.getClientRects().length||el.disabled)return false;const d=el.closest('details');return !d||d.open||el.parentElement===d;}); /* 閉じた見出しの中は飛ばす */if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?(d>0?0:it.length-1):(i+d+it.length)%it.length;document.body.classList.add('kbnav');it[i].focus();try{it[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true);
+/* T653 最後に使った入力に合わせてボタンの隅の印を替える（body に inKb／inPad／inMs）。パッドの印は data-pad：PADB の表と、data-key が Esc のボタンは B */
+const PADB={rpPrev:'←',rpNext:'→',rpCam:'Y',rpSpd:'X',rpEnd:'B',cpBtn:'START',pauseBtn:'START',rwBtn:'B',rwBtn2:'B',pitBtn:'RB',fuelBtn:'L3',lineBtn:'X',camBtn:'Y',mirBtn:'LB',autoBtn:'BACK',setupClose:'START',garBack:'B',flBack:'B',flNext:'START',photoBtn:'X',resPreBtn:'B'};
+function padSync(){document.querySelectorAll('[data-key="Esc"]').forEach(el=>{if(!PADB[el.id])el.dataset.pad='B';});for(const id in PADB){const el=$(id);if(el)el.dataset.pad=PADB[id];}}
+function inMode(m){if(inMode.m===m)return;inMode.m=m;const c=document.body.classList;c.toggle('inKb',m==='kb');c.toggle('inPad',m==='pad');c.toggle('inMs',m==='ms');}
+padSync();addEventListener('keydown',()=>inMode('kb'),true);addEventListener('pointerdown',()=>inMode('ms'),true);
 function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?0:(i+d+it.length)%it.length;it[i].focus();tone(880,.03,'square',.06);}
 /* β0.155.0 T323 メニューは2列。←→ で隣の列の同じ高さの項目へ */
 function menuSide(d){const a=document.activeElement;const cols=[...document.querySelectorAll('#tmenu .tmc')].map(c=>[...c.querySelectorAll('.mi')].filter(e=>!e.hidden&&!e.disabled&&e.getClientRects().length));let ci=cols.findIndex(c=>c.includes(a));if(ci<0){menuMove(1);return;}const nc=cols[ci+d];if(!nc||!nc.length)return;
