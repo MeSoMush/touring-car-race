@@ -1322,7 +1322,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.343.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.344.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6939,11 +6939,12 @@ function camSee(ax,ay,az,bx,by,bz,ia,ib){const n=Math.max(1,Math.ceil(Math.hypot
   if(fw&&y<3.5){const q=nearest(x,z,wrap(ia+Math.round(dI*t)),10),l=lateralAt(q,x,z),sd=l>0?1:-1;if(Math.abs(l)>wFace(q,sd)-.1&&CWS[q*2+(sd>0?1:0)])return false;}}return true;}
 /* 正面望遠の置き場所：先の道の脇（前と同じ 85〜170m 先から、近め・遠め・反対側・道に近い所の順に）。金網のある所は高さ 5.8m（金網の上から撮る。100m 先の車への線が金網を越えるのに約 4.8m 要る）。
    カメラが建物・木の中でなく、今の車と、車がこれから通る道（途中の 40%・75%）が見える所。どこもだめなら null（別のカットを選ぶ）。force の時はいちばんましな所 */
-function headAt(p,force){const D0=Math.min(170,85+Math.max(0,p.u)*1.6);let best=null,bs=-1;
- for(const dd of [D0,D0-30,D0+20,D0-55]){if(dd<55)continue;const hi=wrap(p.idx+Math.round(dd/SP));if(HID[hi])continue;const pf=CORNER[hi]?-OUTS[hi]:(__VR()<.5?1:-1);
-  for(const sd of [pf,-pf])for(const lo of [4.5,2]){const lat=(WAL[hi]+lo)*sd,y=CWS&&CWS[hi*2+(sd>0?1:0)]?5.8:2.5,x=TX[hi]+NX[hi]*lat,z=TZ[hi]+NZ[hi]*lat;if(camIn(x,y,z))continue;
+function headAt(p,force,fix){const D0=fix?Math.min(250,85+Math.max(0,p.u)*2.4):Math.min(170,85+Math.max(0,p.u)*1.6);let best=null,bs=-1; /* β0.344.0 T666 fix＝正面望遠に固定（速いほど遠くに置き、1つのカットを長く） */
+ for(const dd of fix?[D0,D0-30,D0+20,D0-55,D0+45,D0-85,40]:[D0,D0-30,D0+20,D0-55]){if(dd<(fix?40:55))continue;const hi=wrap(p.idx+Math.round(dd/SP));if(HID[hi])continue;const pf=CORNER[hi]?-OUTS[hi]:(__VR()<.5?1:-1);
+  for(const sd of fix?[pf,-pf,0]:[pf,-pf])for(const lo of sd?[4.5,2]:[0]){const lat=(WAL[hi]+lo)*sd,y=!sd?8:CWS&&CWS[hi*2+(sd>0?1:0)]?5.8:2.5 /* β0.344.0 T666 固定の時は道の真上 8m も（裏通りで両脇が建物の時） */,x=TX[hi]+NX[hi]*lat,z=TZ[hi]+NZ[hi]*lat;if(camIn(x,y,z))continue;
    let sc=0;for(const f of [0,.4,.75]){const j=wrap(p.idx+Math.round(dd*f/SP));if(f?camSee(x,y,z,TX[j],.8,TZ[j],hi,j):camSee(x,y,z,p.x,.8,p.z,hi,p.idx))sc+=f?1:2;}
    const a={x,y,z,i:hi};if(sc===4)return a;if(sc>bs){bs=sc;best=a;}}}
+ if(fix)return bs>=3?best:null; /* β0.344.0 T666 車と先の道の片方が見えれば使う。無ければ null＝一時的にドローンへ */
  if(force&&!best){const hi=wrap(p.idx+Math.round(D0/SP)),lat=(WAL[hi]+4.5)*(CORNER[hi]?-OUTS[hi]:1);best={x:TX[hi]+NX[hi]*lat,y:2.5,z:TZ[hi]+NZ[hi]*lat,i:hi};}
  return force?best:null;}
 /* やぐら：前にあるやぐら（25〜200m 先）を近い順に、今の車と途中の道が見えるもの。無ければ null（force の時はいちばん近いもの） */
@@ -6957,7 +6958,7 @@ function dirPick(p,ex){const cor=CORNER[wrap(p.idx+Math.round(20/SP))];const pr=
   if(Math.abs(p.u)<8){w.heli+=3;w.head=0;w.onboard=0;}
   if(DIR.last)w[DIR.last]=0;if(ex)for(const k of ex)w[k]=0; /* β0.328.0 T662 */
   let tot=0;for(const k in w)tot+=Math.max(0,w[k]);let x=__VR()*tot,r='drone';for(const k in w){x-=Math.max(0,w[k]);if(x<=0){r=k;break;}}return r;}
-function dirStart(p,s,force){let A=null;if(s==='tower'||s==='head'){A=s==='head'?headAt(p,force):towerAt(p,force);if(!A)return false;} /* β0.328.0 T662 */
+function dirStart(p,s,force,fix){let A=null;if(s==='tower'||s==='head'){A=s==='head'?headAt(p,force,fix):towerAt(p,force);if(!A)return false;} /* β0.328.0 T662 */
   DIR.sub=s;DIR.last=s;DIR.snap=true;DIR.bk=0;DIR.bt=0;
   const dur={tower:[4,7],heli:[5,8],onboard:[5,8],drone:[4,7],head:[4,6],pit:[6,9]}[s];DIR.t=dur[0]+__VR()*(dur[1]-dur[0]);
   if(A)DIR.anc=A;
@@ -7418,11 +7419,12 @@ function tvPickFoc(){const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit);if(!r
   return __VR()<.5?rk[0]:rk[__VR()*Math.min(rk.length,5)|0];}
 function directorCam(p,dt){
   if(tvI<0){DIR.t=0;DIR.sub='';tvI=0;}
-  DIR.t-=dt;let s=DIR.sub;const fc=camMode===4?'head':camMode===6?'drone':''; /* β0.324.0 T659 */if(fc&&s!==fc)DIR.t=0;
+  DIR.t-=dt;let s=DIR.sub;const fc=camMode===4?'head':camMode===6?'drone':''; /* β0.324.0 T659 */DIR.fb=(DIR.fb||0)-dt;if(fc&&s!==fc&&!(fc==='head'&&DIR.fb>0))DIR.t=0; /* β0.344.0 T666 逃げのドローンの間は待つ */
   if(s==='tower'||s==='pit'||s==='head'){const a=DIR.anc;const rel=relIdx(p.idx,a.i),d=Math.hypot(p.x-a.x,p.z-a.z);
     if((s==='tower'&&rel>35)||(s==='pit'&&rel>60)||(s==='head'&&(d<16||rel>22)))DIR.t=0;
     if((DIR.bt-=dt)<=0){DIR.bt=.3;DIR.bk=camSee(a.x,a.y,a.z,p.x,.8,p.z,a.i,p.idx)?0:DIR.bk+.3;if(DIR.bk>=1)DIR.t=0;}} /* β0.328.0 T662 車が1秒続けて建物・木・角の金網に隠れたら次のカットへ */
-  if(DIR.t<=0||!s){if(state==='title'){const f=tvPickFoc();if(f){tvFoc=f;p=f;}}const ex=[];for(let k=0;k<4;k++){s=fc||dirPick(p,ex);if(dirStart(p,s,!!fc||k===3)!==false)break;ex.push(s);}if(DIR.sub!==s){s='heli';dirStart(p,s);} /* β0.328.0 T662 置き場所が無いカットは外して選び直す */if(fc)DIR.t=99;}
+  if(DIR.t<=0||!s){if(state==='title'){const f=tvPickFoc();if(f){tvFoc=f;p=f;}}if(fc==='head'){if(dirStart(p,'head',false,true)===false){if(DIR.sub!=='drone')dirStart(p,'drone');s='drone';DIR.fb=DIR.t=1.5;}else{s='head';DIR.t=99;DIR.fb=0;}} /* β0.344.0 T666 正面望遠に固定：置ける所が無ければ一時的にドローン、1.5秒ごとに置き直しを試す */
+  else{const ex=[];for(let k=0;k<4;k++){s=fc||dirPick(p,ex);if(dirStart(p,s,!!fc||k===3)!==false)break;ex.push(s);}if(DIR.sub!==s){s='heli';dirStart(p,s);} /* β0.328.0 T662 置き場所が無いカットは外して選び直す */if(fc)DIR.t=99;}}
   const snap=DIR.snap;DIR.snap=false;const sp=Math.hypot(p.vx,p.vz);
   p.g.headParts.forEach(m=>m.visible=s!=='onboard');
   const setFov=f=>{if(snap)camera.fov=f;else camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();};
