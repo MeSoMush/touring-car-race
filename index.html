@@ -1322,7 +1322,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.341.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.342.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -10180,9 +10180,7 @@ const HLP={pc:[['inpCv','入力の表示',0,0,440,160],['whlBtns','走りのボ�
   ['mirFrame','ミラー',45,240,300,80],['cstack','知らせの列',14,180,362,50],['corner','巻き戻し・メニュー',24,8,154,44],['sysBar','上のボタン',184,8,194,44],
   ['pad_left','',12,746,86,86,1],['pad_right','',108,746,86,86,1],['pad_brake','',212,762,70,70,1],['pad_accel','',292,746,86,86,1],['pad_drift','',318,676,60,60,1],['shDn','',150,690,48,48,1],['shUp','',150,638,48,48,1]]};
 for(const m of ['spl','spv'])for(const p of HLP[m])if(p[6])p[1]=HLPAD.find(q=>q[0]===p[0])[1];
-const HLD={spl:{rank:{x:.6825,y:.0718,s:1.19},topleft:{x:.763,y:.0718,s:.9},gaps:{x:.763,y:.2359,s:.75,bw:128},wx:{x:0,ax:'r',y:.3077,s:1.15},minimap:{x:0,ax:'r',y:.0718,s:.99},tach:{x:0,y:0,s:.93},fuelCv:{x:.1801,y:0,s:1},tyreCv:{x:0,y:.359,s:.84},
-  cstack:{x:.346,y:0,ay:'b',s:1},corner:{x:.5403,y:0,s:.64},sysBar:{x:0,ax:'r',y:0,s:.64},pad_left:{x:0,y:0,ay:'b',s:1},pad_right:{x:.1327,y:0,ay:'b',s:1},pad_brake:{x:.7488,y:0,ay:'b',s:1},pad_accel:{x:0,ax:'r',y:0,ay:'b',s:1},pad_drift:{x:0,ax:'r',y:.2923,ay:'b',s:1},
-  shDn:{x:.6825,y:0,ay:'b',s:1},shUp:{x:.6825,y:.1333,ay:'b',s:1},inpCv:{x:.2725,y:.1333,ay:'b',s:1}}};
+const HLD={spl:{rank:{x:0,y:0,s:1.19},topleft:{x:.0806,y:0,s:.72},gaps:{bw:281,x:0,y:.1744,s:.711},wx:{x:0,ax:"r",y:.3077,s:1.15},minimap:{x:0,ax:"r",y:.0718,s:.99},tach:{x:0,ax:"r",y:.3692,s:.93},inpCv:{x:.3839,y:0,ay:"b",s:1},fuelCv:{x:.7962,y:.3692,s:1},tyreCv:{x:.7346,y:.3692,s:.84},mirFrame:{x:.3318,y:0,s:1},cstack:{bw:228,x:0,y:.2872,s:1},corner:{x:.6967,y:0,s:.64},sysBar:{x:0,ax:"r",y:0,s:.64},pad_left:{x:0,y:0,ay:"b",s:1},pad_right:{x:.1327,y:0,ay:"b",s:1},pad_brake:{x:.6777,y:0,ay:"b",s:.93},pad_accel:{x:0,ax:"r",y:0,ay:"b",s:.93},pad_drift:{x:.5877,y:0,ay:"b",s:1},shDn:{x:.8104,y:0,ay:"b",s:1},shUp:{x:.8104,y:.7282,s:1}}}; /* β0.342.0 T684 スマホ横はご本人が配置図で決めた（2026-11-01。前は 2026-10-27 の並び） */
 let HLAY={};try{const o=JSON.parse(localStorage.getItem(HLK)||'{}')||{};for(const m in HLR)HLAY[m]=o[m]||{};}catch(_){for(const m in HLR)HLAY[m]={};}
 const hlMode=()=>document.body.classList.contains('touch')?(innerWidth>=innerHeight?'spl':'spv'):GWQ.matches?'pc':null,hlOk=()=>!!hlMode();
 const hlEl=id=>{const p=HLPAD.find(q=>q[0]===id);return p?(document.querySelector?document.querySelector(p[2]):null):$(id);},hlIsPad=id=>id.startsWith('pad_')||id==='shDn'||id==='shUp',HLDRV=['inpCv','fuelCv','tyreCv'],hlGrp=id=>hlIsPad(id)?1:HLDRV.includes(id)?2:0; /* スマホでは 1＝操作ボタン・2＝下の帯（#drv）の中の部品。並びの中にあるので、まとめて画面に固定する */
