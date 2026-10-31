@@ -1322,7 +1322,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.339.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.341.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2034,12 +2034,17 @@ function paintMat(col,vc=true){return new THREE.MeshPhysicalMaterial({color:col,
 
 /* ---------- 車を作る ---------- */
 // s：寸法と形（fr＝全長に対する比）。build は THREE.Group を返す
+/* T686 オーバーフェンダー：車種番号 → [種類, 張り出し m, 帯の幅 m]。b＝車体色のブリスター（スポーツ・GT）、r＝ボルトオン風の黒い樹脂（ラリー・グループA・ホットハッチ・軽スポーツ）。
+   商用車（バン・軽トラ・バス・トラック）とふつうの市販車（セダン・ハッチバック・ワゴン・軽ハッチ・軽トール・霊柩車・2スト軽・EV）には付けない。opt.ofen の時だけ（一般車・路駐には付けない） */
+const OFEN={1:['b',.04,.12],3:['b',.07,.16],6:['b',.035,.11],8:['b',.045,.13],9:['b',.045,.13],10:['b',.05,.13],11:['b',.045,.13],13:['b',.035,.11],15:['b',.05,.14],19:['b',.04,.12],
+ 4:['r',.05,.08],7:['r',.05,.08],14:['r',.045,.075],16:['r',.035,.065],20:['r',.05,.08]};
 function buildCar(s,opt={}){mats();
  const L=s.L,W=s.W,H=s.H,WB=s.WB,fo=s.fo,wr=s.wr,tw=s.tw||.24;
  // タイヤの上のすき間（タイヤの直径に対する比）：実車の写真の目安（スポーツ・レース 6%前後、乗用車 9%前後、商用・大型 12%）
  const gapR=s.gapR??(s.cat==='sports'||s.cat==='race'?.06:s.cat==='heavy'||s.cat==='van'?.12:.09),Ra=s.archGap!=null?wr+s.archGap:(wr+gapR*2*wr)/.97;
  const z0=L/2,dz=d=>z0-d; // 前端からの距離 d → z
  const axD=s.axles||[fo,fo+WB];
+ const OF=opt.ofen?OFEN[s.id]:null,ofX=OF?OF[1]:0; /* T686 オーバーフェンダーの張り出し（タイヤもその分外へ。見た目だけ） */
  const flare=Math.min(s.flare||0,(s.cat==='race'||s.cat==='sports'||s.id===20||s.id===7)?.12:.02),base=W/2-flare,rf=s.rf??({sedan:.42,sports:.45,race:.4,kei:.3,tall:.2,van:.15,heavy:.12}[s.cat]??.4),rr=s.rr??({sedan:.32,sports:.36,race:.32,kei:.2,tall:.12,van:.06,heavy:.1}[s.cat]??.3),
   noseN=s.noseN??({sedan:.04,sports:.05,race:.04}[s.cat]??0),tailN=s.tailN??({sedan:.03,sports:.04,race:.03}[s.cat]??0); // 上から見た角の丸みと、鼻先・お尻のすぼまり（実車の目安）
  const top0=curve(s.top.map(p=>[p[0]*L,p[1]]));
@@ -2174,12 +2179,12 @@ function buildCar(s,opt={}){mats();
  }
  // ---- 下回り・タイヤの穴の奥
  box(W-.25,.08,L-.5,MAT.black,0,(s.gc??.13)+.05,0);
- for(const a of axD){const ww=new THREE.CylinderGeometry(Ra-.01,Ra-.01,base*2-tw*2-.08,24,1,false);add(ww,MAT.well,0,wr,dz(a),0,0,Math.PI/2);}
+ for(const a of axD){const ww=new THREE.CylinderGeometry(Ra-.01,Ra-.01,base*2-tw*2-.08+ofX*2,24,1,false); /* T686 タイヤを外へ出した分、奥の黒い筒も伸ばす */add(ww,MAT.well,0,wr,dz(a),0,0,Math.PI/2);}
  // サイドスカート（黒い帯）
  if(s.skirt!==0){const a=axD[0]+Ra+.02,b=axD[axD.length-1]-Ra-.02;if(b>a){const d=(a+b)/2,y=yb(d)+.04;two(sg=>box(.03,.06,b-a,MAT.trim,sg*(sideX(d,y)+.004),y,dz(d)));}}
  // ---- タイヤとホイール
  const wheels=[];
- const mkW=(d,sg,front)=>{const p=new THREE.Group();p.position.set(sg*(W/2-tw/2-(s.tuck??(s.cat==='sports'||s.cat==='race'?.05:.08))),wr,dz(d));g.add(p);
+ const mkW=(d,sg,front)=>{const p=new THREE.Group();p.position.set(sg*(W/2-tw/2-(s.tuck??(s.cat==='sports'||s.cat==='race'?.05:.08))+ofX),wr,dz(d)); /* T686 +ofX */g.add(p);
   const tg=new THREE.CylinderGeometry(wr,wr,tw,32,1);add(tg,MAT.rubber,0,0,0,0,0,Math.PI/2,p);
   const sw=new THREE.TorusGeometry(wr-.035,.032,8,32);add(sw,MAT.tread,sg*(tw/2-.01),0,0,0,Math.PI/2,0,p);
   const rr2=wr*(s.rimR||.7),rm=MAT[s.rim||'rim'];
@@ -2190,6 +2195,24 @@ function buildCar(s,opt={}){mats();
   if(s.caliper!==0){add(new THREE.CylinderGeometry(rr2*.85,rr2*.85,.02,24),MAT.brake,sg*(tw/2-.07),0,0,0,0,Math.PI/2,p);box(.05,.12,.09,s.caliper===2?MAT.rimDark:MAT.caliper,sg*(tw/2-.06),rr2*.55,front?-.12:.12,0,0,0,p);}
   wheels.push(p);};
  for(const a of axD)two(sg=>mkW(a,sg,a===axD[0]));
+ // ---- T686 オーバーフェンダー：タイヤの穴の縁（半径 Ra）から外へ帯を作る。断面は 内側の返し→縁の外端（張り出し ex）→…→外の縁（車体の面へ戻る）。
+ //      上は車体の肩（yS）より下に収め、前後の端（穴の下）では張り出しを 0 へ細らせる。左右で面の向きがそろうよう、左は u を逆に回す
+ if(OF){const [ty,ex,bw]=OF,bl=ty==='b',fm=bl?paintV:MAT.black;
+  const RV=bl?[0,0,.06,.22,.45,.72,1]:[0,0,.12,.88,1,1],EV=bl?[0,1,1,.88,.55,.2,0]:[0,1,1,.85,.8,0],NJ=RV.length-1,NU=24;
+  for(const a of axD)two(sg=>{const yLo=d=>bot(d)+.012,pf=Math.asin(cl((yLo(a-Ra)-wr)/(Ra*.97),-.3,.7)),pr=Math.asin(cl((yLo(a+Ra)-wr)/(Ra*.97),-.3,.7));
+   const PH=u=>lerp(pf,Math.PI-pr,u),yA=(R,ph)=>wr+R*Math.sin(ph)*.97,dA=(R,ph)=>a-R*Math.cos(ph),over=(R,ph)=>{const d=dA(R,ph),y=yA(R,ph),b=yb(d),ts=Math.max(yS(d),b+.06);return y>Math.min(yS(d)-.02,b+(ts-b)*.75);}; /* 横の面がほぼ縦の所まで（肩の丸みに掛けると車体が帯を突き抜ける） */
+    // 帯の外の半径の上限（車体の横の面の下から 75% まで）：二分法で求め、隣と比べて小さい方→なめらかに（段やこぶが出ないように）
+   const RM=[];for(let i=0;i<=NU;i++){const ph=PH(i/NU);let lo=Ra+.015,hi=Ra+bw;if(over(hi,ph)){for(let k=0;k<18;k++){const m=(lo+hi)/2;if(over(m,ph))hi=m;else lo=m;}hi=lo;}RM.push(hi);}
+   {let E=RM.map((v,i)=>Math.min(v,RM[Math.max(0,i-1)],RM[Math.min(NU,i+1)]));for(let p=0;p<2;p++)E=E.map((v,i)=>.25*E[Math.max(0,i-1)]+.5*v+.25*E[Math.min(NU,i+1)]);RM.splice(0,RM.length,...E);}
+   const SX=(d,y)=>Math.max(sideX(d-.03,y),sideX(d,y),sideX(d+.03,y)); // 車体の横の面（穴の前後の端で式の面が飛ぶので前後3cmの大きい方）
+   const TW=bl?.16:.07; // 前後の端（穴の下）で張り出しを細らせる長さ（u の割合）
+   const at=(u,q)=>{const ph=PH(u),x=u*NU,i=Math.min(NU-1,Math.floor(x)),Rm=RM[i]+(RM[i+1]-RM[i])*(x-i);
+    /* 帯が肩で細くなる所（sq）は張り出しも控えめに（こぶにしない） */const R=Ra+(Rm-Ra)*q,d=dA(R,ph),k=Math.min(1,u/TW,(1-u)/TW),sq=Math.min(1,(Rm-Ra)/(bw*.55)),tp=k*k*(3-2*k)*sq*sq*(3-2*sq);return {R,d,y:yA(R,ph),h:hw(d),tp};};
+   const f=(u0,v)=>{const u=sg>0?u0:1-u0,j=Math.round(v*NJ),P=at(u,RV[j]);
+    const S=Math.max(P.h*.4,Math.min(P.h,SX(P.d,P.y))),x=j===0?P.h*.88:j===NJ?S-.004:lerp(P.h,S,RV[j])+ex*EV[j]*P.tp; /* 帯の外ほど車体の面（肩の丸み）に沿わせる */return new V(sg*x,P.y,dz(P.d));};
+   add(colorize(sheet(NU,NJ,f)),fm);
+   if(!bl)for(let i=0;i<6;i++){const P=at((i+.5)/6,.5);box(.012,.018,.018,MAT.trim,sg*(lerp(P.h,Math.max(P.h*.4,Math.min(P.h,SX(P.d,P.y))),.5)+ex*.86*P.tp+.006),P.y,dz(P.d));} // リベット
+  });}
  if(s.dual)two(sg=>{const p=new THREE.Group();p.position.set(sg*(W/2-tw*1.5-.06),wr,dz(axD[axD.length-1]));g.add(p);add(new THREE.CylinderGeometry(wr,wr,tw,28),MAT.rubber,0,0,0,0,0,Math.PI/2,p);});
 
  /* ---- 前と後ろの部品の置き場所：平面の角の丸みにそって置く ---- */
@@ -2429,7 +2452,7 @@ function people(occ){const g=new THREE.Group();const sk=new THREE.MeshStandardMa
   const ky=o.hp+.06,kz=zh+.45,hy2=Math.max(.17,ky-.4),ang=Math.asin(Math.min(1,(ky-hy2)/.42)),hz=kz+.42*Math.cos(ang);
   const sl=new THREE.Mesh(new THREE.BoxGeometry(.3,.42,.12),m);sl.position.set(o.x,(ky+hy2)/2,(kz+hz)/2);sl.rotation.x=ang-Math.PI/2;g.add(sl);}
  return g;}
-window.CarModel={buildBus,fitCabin,people,merge,resolve,buildCar,buildTruck,buildFormula,makeVehicle,paintMat,mats,MAT};
+window.CarModel={OFEN,buildBus,fitCabin,people,merge,resolve,buildCar,buildTruck,buildFormula,makeVehicle,paintMat,mats,MAT};
 })();
 })();
 /* ================= 不具合報告用の記録（T66）：起きたエラーと無線・テロップの履歴 ================= */
@@ -4277,7 +4300,7 @@ const nbOn=ci=>!!nbMode&&ci!==FCI&&NBD[ci]!=null;
 const nbCM=()=>typeof window!=='undefined'&&window.CarModel&&window.CAR_SPECS&&typeof THREE.Mesh==='function'&&!!THREE.Mesh.prototype;
 /* 車種（と色）ごとに1回作って、まとめた形を作り置き（_nbT）。車ごとに変える材質（塗装・テール・ライト・ブレーキの円板・ガラス・パトカーの灯り）は makeKartN で差し替える */
 const _nbT=new Map();
-function nbTpl(id,col){const sp=CAR_SPECS.find(x=>x.id===id),key=sp&&sp.band?id+':'+col:''+id; /* β0.318.2 T639 鍵は車種だけ（色は塗装の材質で付けるので。帯の塗り分けの車種だけ頂点の色に塗装の色が入る）。色ごとに作り置きが増え続けていた */let T=_nbT.get(key);if(T)return T;const raw=CarModel.makeVehicle(sp,{color:col});const ud=raw.userData,ws=(ud.wheels||[]).slice();
+function nbTpl(id,col,pl){const sp=CAR_SPECS.find(x=>x.id===id),of=!pl&&!!(CarModel.OFEN&&CarModel.OFEN[id]),key=(sp&&sp.band?id+':'+col:''+id)+(of?':f':''); /* T686 pl＝一般車・路駐（オーバーフェンダーを付けない）。付ける形は鍵に :f を足して分ける */ /* β0.318.2 T639 鍵は車種だけ（色は塗装の材質で付けるので。帯の塗り分けの車種だけ頂点の色に塗装の色が入る）。色ごとに作り置きが増え続けていた */let T=_nbT.get(key);if(T)return T;const raw=CarModel.makeVehicle(sp,{color:col,ofen:of});const ud=raw.userData,ws=(ud.wheels||[]).slice();
   for(const w of ws)if(w.parent)w.parent.remove(w);const MT=CarModel.MAT;let paint=null,paintN=null;raw.traverse(o=>{if(o.isMesh&&!paint&&o.material&&o.material.vertexColors&&o.material.clearcoat)paint=o.material;if(o.isMesh&&!paintN&&o.material&&!o.material.vertexColors&&o.material.clearcoat&&o.material.roughness===.36&&o.material.clearcoatRoughness===.06)paintN=o.material;});
   const flat=g=>{const out=[];for(const m of g.children)if(m.isMesh){m.geometry.userData.shared=1;out.push({geo:m.geometry,mat:m.material});}return out;};
   const body=flat(CarModel.merge(raw));for(const k in MT)if(MT[k]&&MT[k].userData)MT[k].userData.shared=1;const wheels=ws.map(w=>{const pos=w.position.clone();w.position.set(0,0,0);w.updateMatrixWorld(true);const ms=flat(CarModel.merge(w));ms.sort((a,b)=>(b.mat===MT.rubber)-(a.mat===MT.rubber));for(const q of ms)q.mat.userData.shared=1;return {pos,ms};});for(const q of body)if(q.mat!==paint&&q.mat!==paintN)q.mat.userData.shared=1;
@@ -4287,7 +4310,7 @@ function makeKart(dr,num,ci){ci=ci||0;if(nbOn(ci)&&nbCM())try{return makeKartN(d
 /* T650② 新しい車体の塗装の作り置きを写す。スマホは T130 の PHY と同じくクリアコートなしの標準の材質に */
 const nbPaint=m=>isTouch?new THREE.MeshStandardMaterial().copy(m):m.clone();
 function makeKartN(dr,num,ci,id){
-  const c=CARS[ci]||CARS[0],col=c.col!=null&&!dr.myc?c.col:dr.color,T=nbTpl(id,col),MT=CarModel.MAT;
+  const c=CARS[ci]||CARS[0],col=c.col!=null&&!dr.myc?c.col:dr.color,T=nbTpl(id,col,dr.plain),MT=CarModel.MAT;
   const root=new THREE.Group(),body=new THREE.Group();root.add(body);
   const paint=T.paint?nbPaint(T.paint):PHY({color:col,metalness:.15,roughness:.38});paint.userData={};if(T.paint&&!T.sp.band&&!T.sp.two)paint.color.set(col); /* β0.318.2 T639 作り置きは車種ごとなので、この車の色へ */
   const tl=new THREE.MeshStandardMaterial({color:0x5a0606,emissive:0xff1a10,emissiveIntensity:.35,roughness:.15}),hl=new THREE.MeshStandardMaterial({color:0xe8eef6,emissive:0xcfe0ff,emissiveIntensity:.5,roughness:.08,metalness:.3});
@@ -5701,7 +5724,7 @@ let ALT=1,ALR=42,ALD=95,ALH=.35,ALPO=.25,ALPI=.15,PSO=1,PSOT=1.0,ATB=1,ATBK=.6,A
 let CXO=.6,CXD=200,CXR=25,LBK=1,LBD=60,LBM=1.4;
 function lapBlock(o){const me=((progress(o)%L)+L)%L;for(const q of karts){if(q===o||q.dnf||q.gone||q.pit>0||q.finished||q.lap>=o.lap)continue;const d=(((progress(q)%L)+L)%L-me+L)%L;if(d>2&&d<LBD&&q.u<o.u+2)return true;}return false;}
 let UFK=1,UFU=8,UFR=.0006,UFA=.5,UFM=.004,UFT=.6; /* β0.310.0 T622 CPU・オートのハンドルのアンダーステアの足し：効き・覚える速さの下限 m/s・覚える曲がりの下限 1/m・前輪の滑り÷山の上限・強さの上限 s²/m・覚える時の時定数 秒 */
-let AFM=7,AFT=.15,AFD=6,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=170,YLD_V=.82,YLN=.9,LPY=1,AIMUP=.6,FFK=.97,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPU のコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
+let AFM=7,AFT=.15,AFD=6,AFDW=1,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=170,YLD_V=.82,YLN=.9,LPY=1,AIMUP=.6,FFK=.97,SLG=1.25,BLF=.15,BLK=5,SLV=0,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPU のコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 // β0.255.0 T521 公道のドリフト（理由がある時だけ使う。ご本人 2026-10-25「ドリフトする意味があるかどうか…後方の車ブロックするとか、アウトから抜き去るとか、レブった状態を維持してコーナー抜けた後に急加速するとか、追突しそうな時に急制動かけるとか」）。DRS＝使う強さ（0 で無効）、駆動ごとの倍率 DR4（4WD）・DRF（FF。サイドだけ）。
 // 理由：blk＝すぐ後ろ DBK m 以内に相手が詰めている（入口でサイド＝向きを早く変えてインを塞ぐ）／atk＝前の車の外側に並んだ（出口で後ろを流して早く向きを変え、立ち上がりで前へ）／rev＝出口で回転がトルクの山の RVK 倍より下（後ろを流して回転を保つ。後輪が空転する分エンジンが回る＝stepKart の RVH）／und＝FF がヘアピン（手前 40m〜UNL m 先で向きが UNA rad＝115° 以上変わる角。直角では遅くなった）で前が先に滑る（アンダーステア。前の滑り−後ろの滑りが USK 超え。FF の峠のヘアピンでは使った方が約1秒速い。FR は街の直角で約2秒、4WD は峠で約1秒遅くなるので使わない）／emg＝追突しそう（hard）でブレーキだけでは足りない（サイドで横を向けて速さを殺す）
 // サイド＝頂点の半径 HBR m 未満の角を HBL m 先まで見て、曲がり始めた所（今の半径が頂点の HBI 倍より小さい・頂点まで HBA m 以上）で HBT 秒（横滑り HBB rad で離す・次まで HBC 秒）。流す＝半径 DPR m 未満の角の出口で横滑り DPB rad まで・1つの角で DPT 秒まで（後輪のグリップ DPG 倍・空転の抑え DPTC）。出口の先 DPK m に路駐がある時は使わない
@@ -5757,6 +5780,9 @@ function visOf(){const e=ENV,P=e.P||TOD[e.tod]||TOD[1],c=x=>Math.max(0,Math.min(
 /* β0.216.0 T475 CPU のブレーキの先読みの点の数：舗装は 80 点のまま。舗装以外は今の速さから見込みのブレーキで止まる距離＋AILA m まで（上限 AILM 点） */
 let AILA=40,AILM=240;function aiLook(k,u,rsF,wgm){if(!rsF||!RSI[k.idx])return 80;const f=rsF[RSI[k.idx]]*wgm;return Math.min(AILM,Math.max(80,Math.ceil((u*u/(2*G*AIBG*Math.max(.1,f))+AILA)/SP)));}
 let ABK=1,ABD=4,ABV=2; /* β0.319.0 T647 R3 */
+/* β0.340.0 T621 濡れた路面では前の車の手前で止まれる減速も落ちる（同じタイヤの乾いた時との比。雨の首都高で前の車に速さの差 55〜60km/h のまま追いついて2台とも大クラッシュしていた） */
+let RVV=3,RVB=45,RVL=3.2;function revWait(k){const hh=heading(k.idx),fx=Math.sin(hh),fz=Math.cos(hh);for(const o of karts){if(o===k||o.dnf||o.gone||o.finished)continue;const dx=o.x-k.x,dz=o.z-k.z,f=dx*fx+dz*fz;if(f>0||f<-RVB)continue;const sd=dx*Math.cos(hh)-dz*Math.sin(hh);if(Math.abs(sd)>RVL)continue;if((o.vx*fx+o.vz*fz)>4)return true;}return false;}
+function afdWet(k){const w=k._w!=null?k._w:ENV.wet;if(!(w>0))return 1;return Math.min(1,wetMul('road',k)/Math.max(.05,wetMul('road',{ty:k.ty,rain:k.rain,tww:k.tww,_w:0})));}
 function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='drag',W=WK(k),AFTk=AFT*AFN; /* β0.226.0 T493 コースごとの車間の倍率 */let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++aiPgS,pgO=o=>o._pgS===aS?o._pgV:(o._pgS=aS,o._pgV=progress(o)); /* β0.128.0 T297⑥ */
   const p=player();
   // 走り方（T79）：基本はレーシングライン IL（アウト・イン・アウト）。弱い CPU ほど線のぶれが大きい。並走・よけで laneT が決まった間（ovr）はその横位置
@@ -5868,7 +5894,7 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1); // T73（β0.82.0）横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大クラッシュの最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
     // 前の車との車間（T102）：速さに応じた最小の車間 AFM＋u×AFTk（中心間 m、性格の gap 倍）を割ったら、近づいていなくてもアクセルを抜く。近づいている時の減速の見積りは AFD（以前は9 m/s²。コーナー中はタイヤに余裕がないので AFC 倍）
     if(AFTk>0&&fwd<(u<LOWV?Math.min(AFM+u*AFTk,LGAP):AFM+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)&&(AFV<0||u<LOWV||AFVC&&CORNER[k.idx]||afvNo||k.u-(o.vx*fx+o.vz*fz)>-AFV)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX)){follow=true;fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-(u<LOWV?Math.min(AFM+u*AFTk,LGAP):AFM+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)*FGM)*FGK);} /* T390 ついて行く速さ */ /* T254①：前の車が離れていく間（コーナーの出口など）は抜かない（以前はいつでも抜いて、直線で離されていた） */ // 発進（低速）は最小車間を短く（グリッドは同じ列で10m おき。7m×性格の倍率だと全員が前の車の発進を待ち、待ちが後ろへ連鎖して止まる）
-    if(close>0){if(!(slw>0)&&!(k.slT>0&&k.slO===o.id)&&!(ATH>0&&k.atkT>0&&k.atkO===o.id)&&Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=avoidLat(k,o,tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX)){follow=true;if(FPC>0&&close>FPC)folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-(9+close*.7+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)*FGM)*FGK);}const dec=CORNER[k.idx]?AFD*AFC:AFD;if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm)){hard=true;if(close*close/(2*Math.max(.5,fwd-5.5))>EMA)k.emgF=1;}}}
+    if(close>0){if(!(slw>0)&&!(k.slT>0&&k.slO===o.id)&&!(ATH>0&&k.atkT>0&&k.atkO===o.id)&&Math.abs(k.laneT-o.lat)<tr.room+.8){k.laneT=avoidLat(k,o,tr.room+.5);k.laneTimer=1.5;}if(fwd<(9+close*.7+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)&&!(PBW>0&&k.atkT>0&&k.atkO===o.id&&Math.abs(side)>=ATKX)){follow=true;if(FPC>0&&close>FPC)folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-(9+close*.7+u*AFTk)*tr.gap*PGP*(k.slT>0&&k.slO===o.id?SGF:1)*FGM)*FGK);}const dec=(CORNER[k.idx]?AFD*AFC:AFD)*(AFDW>0?afdWet(k):1);if(close*close>2*dec*Math.max(.5,fwd-5.5+tr.bm)){hard=true;if(close*close/(2*Math.max(.5,fwd-5.5))>EMA)k.emgF=1;}}}
   // スリップストリームから抜く（T83⑥）：直線で前の車の真後ろの空気に入ったら、早めに横へ出て（ブレーキで詰めずに）そのまま並びかけて抜く
   if(PSL>0&&rcs&&!k.finished&&!k.yieldF&&(k.draft||0)>.15&&u>25){let st=true;for(let j=4;j<=PSL_L;j+=6)if(Math.abs(KAP[wrap(k.idx+j)])>1/450){st=false;break;}
     if(st)for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z;const fwd=dx*fx+dz*fz;if(fwd<5||fwd>PSL_D)continue;const side=dx*Math.cos(k.h)-dz*Math.sin(k.h);if(Math.abs(side)>2.2)continue;
@@ -5956,7 +5982,7 @@ function aiControl(k,dt){const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='
   if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;if(FWE>0){if(Math.abs(k.u)<1){if((k.fwE=(k.fwE||0)+dt)>FWE)k.fwdT=0;}else k.fwE=0;}if(k.fwdT<=0)k.fwE=0;} /* β0.282.0 T565 バックの後の前進で FWE 秒続けて動けなければ、前進をやめて立ち往生の数えへ */else if(k.spin<=0&&(Math.abs(k.u)<3&&!(follow&&raceTime<12)&&!startWait&&!(gain&&k.u>0)&&!qWait()||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
   if(AWT>0&&!k.revT&&Math.abs(k.lat)>W+2&&k.u>.5&&k.awL!=null&&(Math.abs(k.lat)-k.awL)/Math.max(dt,1e-3)>.5){if((k.awT=(k.awT||0)+dt)>AWT){k.revT=AWR;k.awT=0;k.fwdT=0;}}else k.awT=0;k.awL=Math.abs(k.lat); /* β0.282.0 T565 道の外で前へ進むほど道から離れる（横道・路地へ頭から入った）時は、長めにバックして出る */
   if(k.stuckT>1.2&&!k.revT){k.revT=1.3;k.stuckT=0;}
-  if(k.revT>0){k.revT-=dt;if(k.revT<=0){k.revT=0;k.fwdT=3;}const need=angDiff(heading(k.idx),k.h);return {steer:Math.sign(need)||1,accel:false,brake:true,drift:false};}
+  if(k.revT>0){if(RVB>0&&revWait(k))return {steer:0,accel:false,brake:k.u>.3,drift:false}; /* β0.340.0 T621 後ろから車が来る間はバックしない */k.revT-=dt;if(k.revT<=0){k.revT=0;k.fwdT=3;}const need=angDiff(heading(k.idx),k.h);return {steer:Math.sign(need)||1,accel:false,brake:!(RVV>0&&k.u<-RVV),drift:false};}
   // 立ち上がりのアクセル加減：前輪が滑って外へふくらみ始めたら踏み込みを弱める（FF車で特に効く）
   const sl=k.slipF||0,th=(k.fs>.3?AITH:AITH+.03)*RSF[RSI[k.idx]].sk;const outw=Math.sign(k.lat)===-Math.sign(steer)&&Math.abs(k.lat)>W-2.5?.25:0;
   const lowv=u<LOWV; // 発進（低速）では、ハンドルを切っていても前輪の滑りや舵角でアクセルを絞らない（絞ると動き出せず、止まったまま「立ち往生」と判定されてバックする）
@@ -8818,7 +8844,7 @@ function specRows(p){if(!p)return [];const ci=p.ci??carOf(playerChoice),dk=p.drv
 // β0.150.0 T318 今の決まり（レースの時だけ）。3つ目＝ほんかくより易しくしている所（印）
 function rulesRows(){if(sess!=='race')return [];return [['審判',judgeOn?'あり':'なし',!judgeOn],['タイヤ摩耗',['なし','あり','速い'][wearMode]||'あり',wearMode===0],['ダメージ',['なし','見た目だけ','性能にも'][dmgMode]||'性能にも',dmgMode<2],['アシスト',['強','標準','なし'][assistLv]||'標準',assistLv===0],['大クラッシュ',crashMode?'あり':'なし',!crashMode],['コース外ペナルティ',tlOn?'あり':'なし',!tlOn]];}
 const ruleNote=()=>sess==='race'&&!judgeOn?'審判なし：接触しても IP（違反の点数）は付きません。④出走前の「審判」で変えられます':'';
-function ruleText(){if(document.body.classList.contains('touch'))return judgeOn?'審判あり（危険な接触に IP）':'審判なし（接触しても IP は付きません）'; /* スマホは短く（ほかはメニューの一覧で） */const a=[judgeOn?'審判あり（危険な接触に IP）':'審判なし（接触しても IP は付きません）',wearMode?'タイヤ摩耗'+(wearMode===2?' 速い':'あり'):'摩耗なし',['ダメージなし','ダメージは見た目だけ','ダメージは性能にも'][dmgMode]||'',assistLv===0?'アシスト 強':assistLv===2?'アシストなし':''];return a.filter(Boolean).join('・');}
+function ruleText(){if(document.body.classList.contains('touch'))return judgeOn?'審判あり（危険な接触に違反の点数〈IP〉）':'審判なし（接触しても違反の点数〈IP〉は付きません）'; /* スマホは短く（ほかはメニューの一覧で） */const a=[judgeOn?'審判あり（危険な接触に違反の点数〈IP〉）':'審判なし（接触しても違反の点数〈IP〉は付きません）',wearMode?'タイヤ摩耗'+(wearMode===2?' 速い':'あり'):'摩耗なし',['ダメージなし','ダメージは見た目だけ','ダメージは性能にも'][dmgMode]||'',assistLv===0?'アシスト 強':assistLv===2?'アシストなし':''];return a.filter(Boolean).join('・');}
 const rulesHtml=()=>rulesRows().map(([a,b,c])=>'<div><i>'+a+'</i><em'+(c?' class="chg"':'')+'>'+b+(c?' ●':'')+'</em></div>').join('');
 const specHtml=p=>specRows(p).map(([a,b,c])=>'<div><i>'+a+'</i><em'+(c?' class="chg"':'')+'>'+b+'</em></div>').join('');
 let slOn=false;function setListUpd(){const el=$('setList'),tm=document.body.classList.contains('tmenu'),run=state==='race'||state==='countdown'||state==='finished',on=slOn&&!tm&&run;const rbf=()=>sess==='race'?'<b>今の決まり<small><span class="rdot">●</span> ほんかくより易しい</small></b><div class="pspec">'+rulesHtml()+'</div>'+(ruleNote()?'<p class="rnote">'+ruleNote()+'</p>':''):'';if(tm&&run)H2($('tmSpec')).innerHTML=rbf()+'<b>今の車とセッティング</b><div class="pspec">'+specHtml(player())+'</div>';if(el.hidden===!on&&!on)return;el.hidden=!on;if(on)H2(el).innerHTML=rbf()+'<b>今の車とセッティング<small>Tab を離すと消える</small></b><div class="pspec">'+specHtml(player())+'</div>';}
@@ -10036,7 +10062,7 @@ function drawTq(){const cv=$('tqCv');if(!cv)return;const g=cv.getContext('2d'),W
   g.strokeStyle='rgba(79,180,255,.75)';g.setLineDash([3,3]);g.beginPath();g.moveTo(X(SHIFT_UP),20);g.lineTo(X(SHIFT_UP),H2-16);g.stroke();g.setLineDash([]);}
 function updSpec(){const d=myDr(playerChoice),c={top:carTop(curCar())};const v=Math.round(c.top*3.6*(isForm()?1.15*Math.sqrt(1.12):1)); /* フォーミュラは最高速も高い（CLS の top と acc） */const hex=d.color.toString(16).padStart(6,'0');
   $('specBox').innerHTML=`<div class="spHead"><i style="background:#${hex}"></i><div><b>${d.name}</b><span>No.${myNo(playerChoice)}　${ccName()}${!isForm()&&ENG[myCar]?'　'+ENG[myCar].n:''}</span></div></div>
-<div class="bar"><label>最高速</label><u><s style="width:${Math.min(100,c.top/84*100).toFixed(0)}%"></s></u><em>${v} km/h</em></div>
+<div class="bar"><label title="馬力と空気抵抗から計算した最高速。車のカードの「約〇km/h」は試験場で走って測った目安なので少し違う">最高速<small style="opacity:.7;font-size:.75em">（計算）</small></label><u><s style="width:${Math.min(100,c.top/84*100).toFixed(0)}%"></s></u><em>${v} km/h</em></div>
 <div class="bar"><label>加速</label><u><s style="width:${Math.min(100,c.top/84*100-6).toFixed(0)}%"></s></u><em>${['★★★','★★★★','★★★★★','★★★★','★★★★★','★★'][freeOn()?clsAt(carTop(curCar())):ccChoice]}</em></div>
 <div class="bar"><label>扱いやすさ</label><u><s style="width:${[92,76,58,66,52][freeOn()?clsAt(carTop(curCar())):ccChoice]}%"></s></u><em>${['やさしい','ふつう','じゃじゃ馬','ふつう','じゃじゃ馬'][freeOn()?clsAt(carTop(curCar())):ccChoice]}</em></div>
 <p>車種 ${carName(carOf(playerChoice))}（車重 約${Math.round(1250*carMass(carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])/10)*10}kg・前後の重さ ${frontPct(isForm()?FCI:carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])}:${100-frontPct(isForm()?FCI:carOf(playerChoice),isForm()?'FR':DRV_KEYS[setDrv])}・${aeroTxt(carOf(playerChoice))}・音 ${engOf(carOf(playerChoice)).n}）　駆動 ${isForm()?'後輪（エンジンは運転席の後ろ）':drvLabel(myCar,setDrv)}　6速${manualMode?'手動':'自動'}変速　ギア ${SETG[setG].n}　ウイング ${SETW[setW].n}　ブレーキ ${SETB[setB].n}　タイヤ ${TYRE[setT]}（幅 ${SETTW[setTW].n}）　デフ ${SETD[setDf].n}　エンジン ${SETE[setE].n}　スタビ ${SETS[setS].n}　サス ${SETSU[setSU].n}　車高 ${SETRH[setRH].n}　空気圧 ${SETTP[setTP].n}　キャンバー 前 ${SETCB[setCF].n}・後ろ ${SETCB[setCR].n}</p>`;
