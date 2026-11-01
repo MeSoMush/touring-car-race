@@ -1189,6 +1189,11 @@ body.touch .tsBot{height:auto;padding-block:1px} /* ④ スマホ横：下の帯
 body:not(.touch) .btn[data-key],body:not(.touch) .btn[data-pad]{position:relative}
 body:not(.touch) .btn[data-key]::after,body.inPad:not(.touch) .btn[data-pad]::after{position:absolute;top:3px;right:4px;margin:0;font-size:10px;line-height:1.35;padding:0 3px;vertical-align:0} /* ④ 大きなボタンの入力の印は右上の隅に（レース中の上のボタンと同じ）。字の横に足すと、キー・パッド・マウスでボタンの幅が変わり「次へ」が 35px 動いた */
 @media (max-height:520px){#flSbm{gap:4px}#flSbm label{width:auto}#flSbm .flI{white-space:nowrap;font-size:11px;letter-spacing:0;padding:4px 2px}} /* ⑤ スマホ横の SANDBOX の種目を1行に（TIME ATTACK・RALLY SS だけ2行に折れて段違いだった） */
+@media (min-height:521px){body:not(.touch) #resultScreen .panel>.row .btn{padding:18px 6px 6px}} /* β0.359.0 T701① PC の結果（2段・116px 幅）は字を右上の印の下へ。前は「もう一度」に Enter が 19px・「④出走前へ」に Esc が 14px 重なった。入力を替えてもボタンの大きさは変えない */
+#tchD{margin:0 0 4px}#tchD>summary{cursor:pointer;font-weight:700;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:3px;background:var(--night-2)}#tchD>summary b{color:var(--gold)}#tchD[open]>summary{margin-bottom:6px}#tchD>.label{margin-top:0} /* β0.359.0 T701② 課題の手帳は1行に畳む（開くと前と同じ中身） */
+@media (max-height:560px){#recScreen .panel{padding-bottom:0}#recScreen #recBody,#recScreen #gsBox,#recScreen #mvBox{flex:none;min-height:0;overflow:visible}#recRow{padding-bottom:10px}} /* β0.359.0 T701② スマホ横は送るのをパネル1つに（前は中身の箱も送れて二重）。ボタンの段をパネルの下の端に付けて、下の余白に中身が透けないように */
+#setup #ccSeg button{flex:1 1 auto;min-width:max-content} /* β0.359.0 T701④ クラスの名前は字の幅を下限に（スマホ横で「入門ワンメイク」「ツーリングカー」が 72px の箱に 97px の字で切れていた）。入らなければ折り返す */
+#flPre .flRow .flI[data-ps="mixSeg"]{flex:1 1 auto} /* β0.359.0 T701④ ④出走前の混走クラスは字の長さに合わせる（同じ幅だと「ツーリング」が PC で 63px の箱に 65px の字） */
 body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!important} /* ⑥ OPTIONS の間は右上の帯を出さない（▶ を押しても何も起きなかった） */
 .d{width:1ch} /* ⑦ 数字の枠は使っている字体の「0」の幅に（.52em だと、細い字体が読めない時に数字どうしが重なった） */
 #pzMore{margin-top:-18px;padding:8px 0 3px;bottom:calc(-1*clamp(16px,3vw,28px) + 2px)}@media (max-height:520px){#pzMore{bottom:-10px}} /* ⑧ ポーズの「▼ 下に…」は窓の下の余白に（OPTIONS のボタンの下半分に重なっていた） */
@@ -1327,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.358.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.359.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -9136,9 +9141,10 @@ const tchNext=o=>TCH.find(t=>!(o||tchGet()).a[t.id]);
 function tchHit(id){if(autoPlay||autoUsed)return '';const o=tchGet();if(o.a[id])return '';const t=TCH.find(x=>x.id===id);if(!t)return '';o.a[id]=Date.now();try{localStorage.setItem('popkart_tch',JSON.stringify(o));}catch(_){}
   const nx=tchNext(o),m='「'+t.n+'」を済ませた'+(nx?'　次は「'+nx.n+'」：'+nx.d:'　全部済ませた！');try{telop('NOTEBOOK','課題の手帳　'+m);}catch(_){}
   return '<span class="gd">課題の手帳：'+m+'</span>';}
-function tchHtml(){const o=tchGet(),k=TCH.filter(t=>o.a[t.id]).length,nx=tchNext(o);
-  return '<div class="label">課題の手帳 '+k+'／'+TCH.length+'（次に何をするかの案内。遊びは全部はじめから選べます。オート運転を使った走りは数えない）</div>'+(nx?'<p class="tchNx">次は <b>'+nx.n+'</b>：'+nx.d+'（'+nx.go+'）</p>':'<p class="tchNx">全部済ませました。</p>')+
-   '<table class="tch">'+TCH.map(t=>{const d=o.a[t.id];return '<tr'+(d?'':' style="opacity:.6"')+'><td>'+(d?'✔ ':'□ ')+t.n+'</td><td>'+t.d+(d?'<br><small>'+t.tx+'</small>':'')+'</td></tr>';}).join('')+'</table>';}
+function tchHtml(){const o=tchGet(),k=TCH.filter(t=>o.a[t.id]).length,nx=tchNext(o);let op=false;try{op=localStorage.getItem('popkart_tchO')==='1';}catch(_){}
+  return '<details id="tchD"'+(op?' open':'')+' ontoggle="try{localStorage.setItem(\'popkart_tchO\',this.open?\'1\':\'0\')}catch(e){}"><summary>課題の手帳 '+k+'／'+TCH.length+'　'+(nx?'次は <b>'+nx.n+'</b>':'全部済ませた')+'</summary>'+ /* β0.359.0 T701② 畳んだ時は1行（開け閉めは popkart_tchO に覚える。summary なのでキー・パッドの順送りにも入る） */
+   '<div class="label">次に何をするかの案内。遊びは全部はじめから選べます。オート運転を使った走りは数えない</div>'+(nx?'<p class="tchNx">次は <b>'+nx.n+'</b>：'+nx.d+'（'+nx.go+'）</p>':'<p class="tchNx">全部済ませました。</p>')+
+   '<table class="tch">'+TCH.map(t=>{const d=o.a[t.id];return '<tr'+(d?'':' style="opacity:.6"')+'><td>'+(d?'✔ ':'□ ')+t.n+'</td><td>'+t.d+(d?'<br><small>'+t.tx+'</small>':'')+'</td></tr>';}).join('')+'</table></details>';}
 /* β0.348.0 T682 K1 車ごとのなじみ：自分で運転して走り切った周（タイムアタック・決勝・RALLY SS など）を車ごとに数え、段（1〜10）を車の説明に出す。段で開く物は無い（見せるだけ）。
    点＝走った km＋きれいな周（はみ出し・接触なし）。保存 popkart_naj＝{車の番号:{m 走った m,l 周,c きれいな周}} */
 function NJT(){return [0,5,15,30,50,80,120,170,230,300];} /* 段の点。function＝起動の途中の車の説明（carDesc）から先に読まれても困らないように */
@@ -9205,7 +9211,7 @@ function closeRec(){if($('recScreen').hidden)return;$('recScreen').hidden=true;i
 /* T642① RECORDS のキー・パッド：ボタン・文字の枠を順に。引っ越し・ゴーストの欄の中では Esc・B で戦績へ戻る。文字の枠の中の Backspace・←→ は文字の操作のまま（前は Backspace で RECORDS が閉じた） */
 const recSub=()=>!$('mvBack').hidden;
 function recBack(){if(recSub())$('mvBack').click();else closeRec();}
-function recScroll(d){const w=$('recBody').hidden?null:($('recScreen').querySelector('.rw')||$('recBody'));if(w)w.scrollTop+=d*80;}
+function recScroll(d){const b=$('recBody').hidden?[]:[$('recScreen').querySelector('.rw'),$('recBody')];const w=[...b,$('recScreen').querySelector('.panel')].find(e=>e&&e.scrollHeight>e.clientHeight+1);if(w)w.scrollTop+=d*80;} /* β0.359.0 T701② 送れる箱から（スマホ横はパネル） */
 function recNav(d){const it=[...$('recScreen').querySelectorAll('button,summary,textarea,input')].filter(el=>el.type!=='file'&&(el=>{if(!el.getClientRects().length||el.disabled)return false;const q=el.closest('details');return !q||q.open||el.parentElement===q;})(el));if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?(d>0?0:it.length-1):(i+d+it.length)%it.length;document.body.classList.add('kbnav');it[i].focus({preventScroll:true});try{it[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 function recKb(e){const a=document.activeElement,tx=!!a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)&&$('recScreen').contains(a);if(e.isComposing||e.keyCode===229)return;
  if(e.code==='Escape'){recBack();e.preventDefault();return;}if(e.code==='Backspace'){if(!tx){recBack();e.preventDefault();}return;}
@@ -9363,7 +9369,7 @@ function gsUi(){$('gsCond').textContent='今の条件：'+gsCondTx(false)+(dyOn?
 function gsHide(){$('gsBox').hidden=true;$('gsOpen').hidden=true;gsAskOff();}
 function gsReset(){$('gsBox').hidden=true;$('gsOpen').hidden=false;gsAskOff();gsMsg('');}
 function gsShow(){mvReset();recHead(2);$('gsBox').hidden=false;$('recSr').hidden=true;$('recBody').hidden=true;$('recNote').hidden=true;$('mvOpen').hidden=true;$('gsOpen').hidden=true;$('mvBack').hidden=false;
- try{const n=localStorage.getItem('popkart_gsn');if(n!=null&&!$('gsName').value)$('gsName').value=n;}catch(_){}gsUi();try{$('gsExpT').focus({preventScroll:true});}catch(_){}}
+ try{const n=localStorage.getItem('popkart_gsn');if(n!=null&&!$('gsName').value)$('gsName').value=n;}catch(_){}gsUi();try{const e=$('gsExpT'),P=$('recScreen').querySelector('.panel').getBoundingClientRect(),q=$('gsBox').getBoundingClientRect(),rw=$('recRow').getBoundingClientRect();let ok=!e.disabled;if(ok){e.focus({preventScroll:true});const a=e.getBoundingClientRect();ok=document.activeElement===e&&a.top>=Math.max(q.top,P.top,0)&&a.bottom<=Math.min(q.bottom,rw.top,innerHeight);}if(!ok)$('mvBack').focus({preventScroll:true});}catch(_){}} /* β0.359.0 T701③ 送るボタンが見えない所（スマホ横）・押せない時は、下の段の「戦績に戻る」に焦点（説明は上から読める） */
 async function gsCopy(t){try{if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(t);return true;}}catch(_){}try{const a=$('gsTx');a.focus();a.select();return document.execCommand('copy');}catch(_){return false;}}
 async function gsExp(ss){gsAskOff();if(dyOn){gsMsg('今日の課題の間は送れません。','ng');return;}{const o=gsOwn(ss);if(o&&String(o.phy||'')!==PHYV){gsMsg('この記録は'+(o.ver?o.ver:'前の版')+'で走った物で、走りの計算（物理）が今（物理の版 '+PHYV+'）と違うので、相手は受け取れません。今の版で'+(ss?'RALLY SS':'タイムアタック')+'を走り直してから送ってください。','ng');return;}} /* β0.335.0 T677① */{const o=gsOwn(ss);if(o&&o.cg){gsMsg('この記録は β0.345.0 までに走った物で、天気（晴れ・くもり・霧の区別）とアシストの記録がありません。同じ条件の記録だけを送るので、今の版で'+(ss?'RALLY SS':'タイムアタック')+'を走り直してから送ってください。','ng');return;}} /* β0.346.0 T688 */let r=null;try{r=await gsPack(ss);}catch(_){r=null;}
  if(!r){gsMsg('送れるゴーストがありません（今の条件で'+(ss?'RALLY SS':'タイムアタック')+'を走って記録を作ってください）。','ng');return;}
