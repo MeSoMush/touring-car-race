@@ -1323,7 +1323,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.350.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.351.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2950,7 +2950,7 @@ const sunSprite=new THREE.Sprite(new THREE.SpriteMaterial({map:canvasTex(128,128
 sunSprite.scale.set(260,260,1);scene.add(sunSprite);
 /* ================= 時間帯と天気（β0.11.0） ================= */
 // 設定：時間帯 0朝焼け 1昼 2夕方 3夜 4おまかせ／天気 0晴れ 1くもり 2雨 3霧 4変わりやすい 5おまかせ
-let todSel=1,wxSel=0,roadMat=null;const TOWERS=[],CLOUDS=[];
+let todSel=1,wxSel=0,roadMat=null,stripM=null; /* β0.351.0 T692 stripM＝街の横の道の材質（コースの道と色・つやをそろえる） */const TOWERS=[],CLOUDS=[];
 const TOD=[
  {n:'朝焼け',en:'DAWN',ic:'🌅',el:7,az:-.5,sc:0xffb07a,si:2.4,hs:0xa8b8d8,hg:0x4a4436,hi:.66,hz:0xf2c3a0,zn:0x4d6fae,gl:0xffb27a,gr:0xb3a8a6,cl:0xffd6c0,ex:1.05,et:[.3,.38,.62],eh:[.85,.62,.48],eg:[.22,.2,.16],night:0},
  {n:'昼',en:'DAY',ic:'☀',el:26,az:0,sc:0xffe8c8,si:3.4,hs:0xbcd3f2,hg:0x4a4f33,hi:.75,hz:0xd6e1e8,zn:0x2e6cc0,gl:0xfff2d8,gr:0xb4bac0,cl:0xffffff,ex:1,et:[.32,.52,.85],eh:[.67,.82,.95],eg:[.28,.32,.22],night:0},
@@ -3055,7 +3055,7 @@ function envApply(force){const P=ENV.P||TOD[ENV.tod];
  for(const c of CLOUDS){c.material.color.set(P.cl).multiplyScalar(1-.45*rn).convertSRGBToLinear();c.material.opacity=Math.min(1,.85+cl*.3);}
  sunShadow(cl<.85&&!P.night); /* β0.166.0 T339 */
  const key=envQ(''+(ENV.pk??ENV.tod))+'_'+Math.round(cl*5);if(force||key!==ENV.key){ENV.key=key;buildEnv(P,cl);}
- if(roadMat){const RS=RSF[rsCur],w=ENV.wet*RS.wk,c=RS.col;roadMat.roughness=.92-.5*w;roadMat.color.setRGB((1-.58*w)*c[0],(1-.58*w)*c[1],(1-.55*w)*c[2]);roadMat.envMapIntensity=1+.35*w;}
+ if(roadMat){const RS=RSF[rsCur],w=ENV.wet*RS.wk,c=RS.col;roadMat.roughness=.92-.5*w;roadMat.color.setRGB((1-.58*w)*c[0],(1-.58*w)*c[1],(1-.55*w)*c[2]);if(stripM){stripM.color.copy(roadMat.color);stripM.roughness=roadMat.roughness;} /* β0.351.0 T692 */roadMat.envMapIntensity=1+.35*w;}
  if(P.night)nightSetup();nightFx.forEach(o=>o.visible=!!P.night);
  carLights(!!P.night,fg>.5||rn>.4);
  rainMesh.visible=rn>.02;rainMesh.material.opacity=Math.min(.7,rn*.8)*(P.night?.6:1);
@@ -3181,10 +3181,13 @@ if(CRS.free&&CRS.grid&&SWK){const t=canvasTex(64,64,(g,w,h)=>{g.fillStyle='#8d8f
    周期 SGC 秒＝道の青 22・黄 3・全部赤 1.5・横道の青 6・黄 2・全部赤 1.5（SGP。道の方を長く）。時計は raceTime（リプレイは rpTime）なので巻き戻しにもそろう。乱数なし。
    横道の柵は 88m 先（ほかは 40m）。横道の車は TRF に xs（その信号）付きで入れ、横道を ±84m の間で通行の側の車線を走る（端まで行ったら反対の端から入り直す） */
 const SIG=[],SGC=36,SGP=[22,3,1.5,6,2,1.5],SGE=CRS.grid?CRS.grid.sw/2+2.5:8;
+let CBXK=1,CBXA=3,CBXD=26; /* β0.351.0 T692 街の塞ぎ方：CBXK＝1 で T字路・工事中・細い路地を混ぜる（0 で前の版）、CBXA＝路地の幅 m、CBXD＝T字路・路地の建物の奥行き m */
 const CBAR=[],CTURN=[];if(CRS.free&&CRS.grid){const G=CRS.grid,dV=(x,z)=>{let m=1e9;for(let i=0;i<N;i++){if(HID[i])continue;const d=Math.hypot(x-TX[i],z-TZ[i]);if(d<m)m=d;}return m;},e=G.sw/2+2.5;
  for(const gx of G.x)for(const gz of G.z){if(dV(gx,gz)>10)continue;const D=[[1,0],[-1,0],[0,1],[0,-1]],on=D.map(([dx,dz])=>dV(gx+dx*30,gz+dz*30)<6);
   const n2=on.filter(Boolean).length,i0=nearest(gx,gz,0,N),sg=!!(CRS.sig&&n2===2&&((on[0]&&on[1])||(on[2]&&on[3]))&&CRS.sig.s.some(v=>Math.abs(v-i0*SP)<25));
-  D.forEach(([dx,dz],q)=>{const r=sg?88:40;if(!on[q])CBAR.push(dx?[gx+dx*r,gz,1.2,2*e]:[gx,gz+dz*r,2*e,1.2]);});
+  D.forEach(([dx,dz],q)=>{if(on[q])return;const hh=((Math.round(gx)*73856093)^(Math.round(gz)*19349663)^(q*83492791))>>>0,ty=sg||!CBXK?'w':['t','t','t','t','w','w','w','a','a','a'][hh%10],r=ty==='w'?(sg?88:40):ty==='t'?e+1.6:e+2; /* β0.351.0 T692 塞ぐ形：t＝T字路・w＝工事中・a＝細い路地（CBXK＝0 で前の版＝ぜんぶ柵） */
+   if(ty==='a'){CBAR.push(dx?[gx+dx*r,gz,.5,CBXA+.6,ty,[dx,dz],[gx,gz]]:[gx,gz+dz*r,CBXA+.6,.5,ty,[dx,dz],[gx,gz]]);return;} /* 路地の入口の車止めの線（両側は建物） */
+   CBAR.push(dx?[gx+dx*r,gz,1.2,2*e,ty,[dx,dz],[gx,gz]]:[gx,gz+dz*r,2*e,1.2,ty,[dx,dz],[gx,gz]]);});
   if(sg){const cx=Math.round(FX[i0]),cz=Math.round(FZ[i0]);SIG.push({x:gx,z:gz,i:i0,s:i0*SP,cx,cz,ax:-cz,az:cx,off:0,hd:null});}
   if(n2===2&&!(on[0]&&on[1])&&!(on[2]&&on[3])){const a=D.filter((_,q)=>on[q]);let ii=null,oo=null;for(const [dx,dz] of a){const j=nearest(gx+dx*30,gz+dz*30,i0,40);if(((j-i0+N)%N)<N/2)oo=[dx,dz];else ii=[-dx,-dz];}if(ii&&oo)CTURN.push({x:gx,z:gz,ix:ii[0],iz:ii[1],ox:oo[0],oz:oo[1]});}}}
 SIG.sort((a,b)=>a.s-b.s);SIG.forEach((g,j)=>g.off=(j*11.3)%SGC);
@@ -3723,9 +3726,11 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   const pos=[],uv=[],col=[],idx=[],rp=[],ri=[],B=[];let vc=0,rc=0;const cl=new THREE.Color();const PAL=[0xc9c2b4,0xa3a8ae,0xd8d4cb,0x8d939a,0x8399ad,0xb3a28c,0xe2ded6,0x75808c,0xb98f78,0x9aa58f];
   const G=CRS.grid,LOTS=[];if(G){const gx=[...G.x].sort((a,b)=>a-b),gz=[...G.z].sort((a,b)=>a-b),e=G.sw/2+2.5; /* β0.245.0 T514 通りの間のブロックに、通りに面して建物を並べる（深いブロックは前と後ろの2列） */
    for(let u=0;u+1<gx.length;u++)for(let v=0;v+1<gz.length;v++){const xa=gx[u]+e,xb=gx[u+1]-e,za=gz[v]+e,zb=gz[v+1]-e;if(xb-xa<8||zb-za<8)continue;const rows=zb-za>48?[[za,za+Math.min(24,(zb-za)/2-1)],[zb-Math.min(24,(zb-za)/2-1),zb]]:[[za,zb]];
-    for(const [z0,z1] of rows){let x=xa;while(x<xb-6){const w=Math.min(xb-x,12+r()*18);if(xb-x-w<8&&xb-x<40){LOTS.push([x+(xb-x)/2,(z0+z1)/2,xb-x-1.5,z1-z0-r()*4]);break;}LOTS.push([x+w/2,(z0+z1)/2,w-1.5,z1-z0-r()*4]);x+=w;}}}}
+    for(const [z0,z1] of rows){let x=xa;while(x<xb-6){const w=Math.min(xb-x,12+r()*18);if(xb-x-w<8&&xb-x<40){LOTS.push([x+(xb-x)/2,(z0+z1)/2,xb-x-1.5,z1-z0-r()*4]);break;}LOTS.push([x+w/2,(z0+z1)/2,w-1.5,z1-z0-r()*4]);x+=w;}}}
+   if(CRS.free)for(const b of CBAR){const ty=b[4];if(ty!=='t'&&ty!=='a')continue;const [dx,dz]=b[5],[gx0,gz0]=b[6],f=e+.5,c=f+CBXD/2; /* β0.351.0 T692 T字路＝横の道の口いっぱいの建物、路地＝両側から CBXA m を残して建物 */
+    const put=(o,wd)=>LOTS.push(dx?[gx0+dx*c,gz0+o,CBXD,wd,1]:[gx0+o,gz0+dz*c,wd,CBXD,1]);if(ty==='t')put(0,2*e);else{const wd=e-CBXA/2;put(-(CBXA/2+wd/2),wd);put(CBXA/2+wd/2,wd);}}}
   for(let t=0;t<(G?LOTS.length:6000)&&B.length<(G?(CRS.free?1600:900):420);t++){const lt=G?LOTS[t]:null,x=G?lt[0]:minX-180+r()*(maxX-minX+360),z=G?lt[1]:minZ-180+r()*(maxZ-minZ+360),w=G?lt[2]:12+r()*24,d=G?lt[3]:12+r()*22,rr=G?Math.min(w,d)/2:Math.hypot(w,d)/2;
-   if(!ok(x,z,rr))continue;if(CRS.free&&!cityLotOk(x,z,w,d))continue; /* β0.248.0 道の中心から 7m 以内にかかる建物は置かない（曲がり角の内側を空き地に＝隅切り） */if(!G&&B.some(b=>Math.abs(b[0]-x)<(b[2]+w)/2+3&&Math.abs(b[1]-z)<(b[3]+d)/2+4))continue;
+   if(!ok(x,z,rr))continue;if(CRS.free&&!(lt&&lt[4])&&!cityLotOk(x,z,w,d))continue; /* β0.248.0 道の中心から 7m 以内にかかる建物は置かない（曲がり角の内側を空き地に＝隅切り） */if(!G&&B.some(b=>Math.abs(b[0]-x)<(b[2]+w)/2+3&&Math.abs(b[1]-z)<(b[3]+d)/2+4))continue;
    const e=dT(x,z),h=(e<60?6+r()*18:10+r()*(e<160?34:52));B.push([x,z,w,d,h]) /* β0.328.0 T662 5つ目＝高さ */;cl.setHex(PAL[r()*PAL.length|0]).convertSRGBToLinear();
    const x0=x-w/2,x1=x+w/2,z0=z-d/2,z1=z+d/2;
    const face=(a,b,len)=>{pos.push(a[0],0,a[1],b[0],0,b[1],a[0],h,a[1],b[0],h,b[1]);const u=Math.max(1,Math.round(len/4)),v=Math.max(1,Math.round(h/3.6));uv.push(0,0,u,0,0,v,u,v);for(let k=0;k<4;k++)col.push(cl.r,cl.g,cl.b);idx.push(vc,vc+1,vc+2,vc+1,vc+3,vc+2);vc+=4;};
@@ -3742,15 +3747,28 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
    const X0=gx[0]-60,X1=gx[gx.length-1]+60,Z0=gz[0]-60,Z1=gz[gz.length-1]+60;for(const x of gx)strip(x,Z0,x,Z1);for(const z of gz)strip(X0,z,X1,z);
    const t=canvasTex(64,128,(g,w,h)=>{noiseFill(g,w,h,'#55575c',.08,1500,1.6);g.fillStyle='rgba(235,235,230,.85)';g.fillRect(w/2-2,0,4,h*.5);g.fillStyle='rgba(235,235,230,.7)';g.fillRect(1,0,2,h);g.fillRect(w-3,0,2,h);},true);
    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(P,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));sg.setIndex(I);sg.computeVertexNormals();
-   const sm=new THREE.Mesh(sg,new THREE.MeshLambertMaterial({map:t,polygonOffset:true,polygonOffsetFactor:-1}));sm.receiveShadow=true;scene.add(sm);STATIC.push(sm);}}
+   stripM=new THREE.MeshStandardMaterial({map:t,roughness:roadMat?roadMat.roughness:.92,metalness:0,polygonOffset:true,polygonOffsetFactor:-1});if(roadMat)stripM.color.copy(roadMat.color);const sm=new THREE.Mesh(sg,stripM); /* β0.351.0 T692 前は MeshLambertMaterial で、コースの道（MeshStandardMaterial）と光り方・濡れた時の色が違った */sm.receiveShadow=true;scene.add(sm);STATIC.push(sm);}}
  /* β0.248.0 T510① 工事の柵（黄色と黒の斜めのしま・高さ 1.1m）と、曲がる角の向こうの黄色の矢印板（柱の上・高さ 2〜3.4m、曲がる向きの > の並び） */
  if(CBAR.length){const bt=canvasTex(128,32,(g,w,h)=>{g.fillStyle='#f2c12e';g.fillRect(0,0,w,h);g.fillStyle='#1d1d1f';for(let x=-h;x<w;x+=24){g.beginPath();g.moveTo(x,h);g.lineTo(x+12,h);g.lineTo(x+12+h,0);g.lineTo(x+h,0);g.fill();}},true);
   const rwTex=canvasTex(64,32,(g,w,h)=>{g.fillStyle='#d8312b';g.fillRect(0,0,w/2,h);g.fillStyle='#f2f2ee';g.fillRect(w/2,0,w/2,h);g.fillStyle='rgba(0,0,0,.18)';g.fillRect(0,h-3,w,3);g.fillRect(w/2-1,0,2,h);g.fillRect(w-1,0,1,h);},true); /* β0.350.0 T690 赤白の樹脂の柵（1.2m ずつ） */
-  for(const b of CBAR){const g=new THREE.Group();const L=Math.max(b[2],b[3]),t=bt.clone();t.needsUpdate=true;t.repeat.set(L/4,1);const m=new THREE.Mesh(new THREE.BoxGeometry(b[2],.55,b[3]),new THREE.MeshLambertMaterial({map:t}));m.position.y=1.0;m.scale.y=.5;m.castShadow=true;g.add(m); /* β0.350.0 T690 しまの板は上に細く */
+  /* β0.351.0 T692 工事中（w）：三角コーンの列＋上に渡した黄黒の棒、奥 9m に工事の車（荷台の付いたダンプ・回る灯り）と「工事中」の看板。路地（a）：車止めのポール。T字路（t）は建物だけ */
+  {const cm=new THREE.MeshLambertMaterial({color:0xf26a1b}),wm=new THREE.MeshLambertMaterial({color:0xf4f4f0}),pm2=new THREE.MeshLambertMaterial({color:0x6e7378}),ym=new THREE.MeshLambertMaterial({color:0xe9b72a}),dk=new THREE.MeshLambertMaterial({color:0x2a2c30}),gl=new THREE.MeshLambertMaterial({color:0x36485a}),bm=new THREE.MeshLambertMaterial({color:0xff8a1a,emissive:0xff6a00,emissiveIntensity:.8});
+   const cg=new THREE.ConeGeometry(.2,.72,10),bg2=new THREE.CylinderGeometry(.205,.205,.1,10),ft=new THREE.BoxGeometry(.44,.04,.44),pg=new THREE.CylinderGeometry(.07,.07,.9,8),wg=new THREE.CylinderGeometry(.48,.48,.36,12);wg.rotateZ(Math.PI/2);
+   const sgT=canvasTex(128,96,(g,w,h)=>{g.fillStyle='#f2c12e';g.fillRect(0,0,w,h);g.fillStyle='#1d1d1f';g.fillRect(0,0,w,6);g.fillRect(0,h-6,w,6);g.font='bold 34px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('工事中',w/2,h/2+2);});
+   for(const b of CBAR){const ty=b[4];if(!ty)continue;const [dx,dz]=b[5],ax=!!dx,L=ax?b[3]:b[2],g=new THREE.Group();g.position.set(b[0],0,b[1]);g.rotation.y=ax?0:Math.PI/2; /* g の中は x＝道の奥・z＝道を横切る向き */const sd=ax?dx:dz,rz=ax?1:-1;
+    if(ty==='a'){for(const o of[-1,0,1]){const p=new THREE.Mesh(pg,ym);p.position.set(0,.45,o*1.05);p.castShadow=true;g.add(p);const k=new THREE.Mesh(bg2,dk);k.scale.set(.36,.6,.36);k.position.set(0,.78,o*1.05);g.add(k);}scene.add(g);STATIC.push(g);continue;}
+    if(ty!=='w')continue;const n=Math.max(2,Math.round(L/1.6)),sp=L/(n-1);for(let q=0;q<n;q++){const z=-L/2+q*sp,c=new THREE.Mesh(cg,cm);c.position.set(0,.4,z);c.castShadow=true;g.add(c);const bd=new THREE.Mesh(bg2,wm);bd.scale.set(.62,1,.62);bd.position.set(0,.5,z);g.add(bd);const f=new THREE.Mesh(ft,dk);f.position.set(0,.02,z);g.add(f);}
+    const t=bt.clone();t.needsUpdate=true;t.repeat.set(L/4,1);const bar=new THREE.Mesh(new THREE.BoxGeometry(.07,.09,L),new THREE.MeshLambertMaterial({map:t}));bar.position.set(0,.74,0);g.add(bar); /* コーンの上に渡した棒 */
+    const tk=new THREE.Group();tk.position.set(sd*9,0,-L/4);tk.rotation.y=sd>0?0:Math.PI; /* 工事の車：運転台・荷台・車輪6つ・回る灯り */
+    const bx=(w,h,d,x,y,z,m)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;tk.add(o);return o;};bx(2.1,1.9,2.3,-2.2,1.55,0,wm);bx(.05,.8,1.9,-3.36,1.9,0,gl);bx(4.2,1.1,2.4,.9,1.75,0,ym);bx(4.6,.3,2.2,.2,.75,0,dk);bx(.3,.18,.5,-2.2,2.6,0,bm);
+    for(const wx of[-2.4,.6,2.0])for(const wz of[-1.05,1.05]){const w=new THREE.Mesh(wg,dk);w.rotation.y=Math.PI/2;w.position.set(wx,.48,wz);tk.add(w);}g.add(tk);
+    const sb=new THREE.Mesh(new THREE.PlaneGeometry(1.2,.9),new THREE.MeshLambertMaterial({map:sgT,side:THREE.DoubleSide}));sb.position.set(-sd*.6,1.2,L/2-1.2);sb.rotation.y=sd*Math.PI/2;g.add(sb);for(const o of[-.5,.5]){const p=new THREE.Mesh(new THREE.BoxGeometry(.05,.75,.05),pm2);p.position.set(-sd*.6,.38,L/2-1.2+o);g.add(p);}
+    void rz;scene.add(g);STATIC.push(g);}}
+  for(const b of CBAR){if(b[4])continue; /* β0.351.0 T692 形のある物は上で描いた（CBXK＝0 の時だけ前の柵） */const g=new THREE.Group();const L=Math.max(b[2],b[3]),t=bt.clone();t.needsUpdate=true;t.repeat.set(L/4,1);const m=new THREE.Mesh(new THREE.BoxGeometry(b[2],.55,b[3]),new THREE.MeshLambertMaterial({map:t}));m.position.y=1.0;m.scale.y=.5;m.castShadow=true;g.add(m); /* β0.350.0 T690 しまの板は上に細く */
    const rt=rwTex.clone();rt.needsUpdate=true;rt.repeat.set(Math.max(1,Math.round(L/2.4)),1);const base=new THREE.Mesh(new THREE.BoxGeometry(b[2],.8,b[3]),new THREE.MeshLambertMaterial({map:rt}));base.position.y=.4;base.castShadow=true;g.add(base); /* β0.350.0 T690 台はコンクリートから赤白の樹脂の柵（水を入れる形。ご本人「一般道にコンクリートブロックは厳ついですね」） */g.position.set(b[0],0,b[1]);scene.add(g);STATIC.push(g);}
   const at=dir=>canvasTex(256,64,(g,w,h)=>{g.fillStyle='#f2c12e';g.fillRect(0,0,w,h);g.fillStyle='#1d1d1f';g.fillRect(0,0,w,4);g.fillRect(0,h-4,w,4);for(let k=0;k<4;k++){const x=28+k*56;g.beginPath();if(dir>0){g.moveTo(x,10);g.lineTo(x+26,h/2);g.lineTo(x,h-10);g.lineTo(x+14,h-10);g.lineTo(x+40,h/2);g.lineTo(x+14,10);}else{g.moveTo(x+40,10);g.lineTo(x+14,h/2);g.lineTo(x+40,h-10);g.lineTo(x+26,h-10);g.lineTo(x,h/2);g.lineTo(x+26,10);}g.fill();}});
   const AT=[at(1),at(-1)],pm=new THREE.MeshLambertMaterial({color:0x8a8f96}),e=CRS.grid.sw/2+2.5;
-  for(const c of CTURN){const cr=c.ix*c.oz-c.iz*c.ox; /* 入る向き×出る向き：右へ曲がるか左か */const x=c.x+c.ix*(e+.6),z=c.z+c.iz*(e+.6),g=new THREE.Group();
+  for(const c of CTURN){const cr=c.ix*c.oz-c.iz*c.ox; /* 入る向き×出る向き：右へ曲がるか左か */const x=c.x+c.ix*(e+.1),z=c.z+c.iz*(e+.1),g=new THREE.Group();
    const bd=new THREE.Mesh(new THREE.PlaneGeometry(6,1.5),new THREE.MeshLambertMaterial({map:AT[cr>0?0:1] /* β0.349.0 cr>0＝右へ曲がる角で「＞」（前は逆） */,side:THREE.DoubleSide}));bd.position.y=2.8;g.add(bd);
    for(const o of[-2.4,2.4]){const p=new THREE.Mesh(new THREE.BoxGeometry(.12,2.1,.12),pm);p.position.set(o,1.05,.05);g.add(p);}
    g.position.set(x,0,z);g.rotation.y=Math.atan2(-c.ix,-c.iz);scene.add(g);STATIC.push(g);}
