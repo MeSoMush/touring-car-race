@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.362.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.363.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5052,7 +5052,7 @@ function stepKart(k,dt,ctl){
     k.h+=k.r*h;syncWorld(k);k.x+=k.vx*h;k.z+=k.vz*h;
     sF=Math.max(sF,Math.abs(af));sR=Math.max(sR,Math.abs(ar));
   }
-  if(k.lchS){k.lchM=lchMul(k);if(ctl.accel){k.lchT+=dt;if(k.lchR>k.lchB+500){ws=1;k.lws+=dt;}}if(k.lchT>=SRCT||raceTime>8){k.lchS=0;k.lchR=0;if(k.isPlayer&&!autoPlay)lchDone(k);}}k.wheelspin=ws;k.slipF=sF;k.slipR=sR;k.speed=k.u;if(QDB&&k.isPlayer&&!autoPlay)qdbStep(k,dt,ctl); /* β0.329.0 T664 */
+  if(k.lchS){k.lchM=lchMul(k);if(ctl.accel){k.lchT+=dt;if(k.lchR>k.lchB+500){ws=1;k.lws+=dt;}}if(k.lchT>=SRCT||raceTime>8){k.lchS=0;k.lchR=0;if(k.isPlayer&&!autoPlay)lchDone(k);}}k.wheelspin=ws;k.slipF=sF;k.slipR=sR;k.speed=k.u;if(QDB&&k.isPlayer&&!autoPlay)qdbStep(k,dt,ctl);if(fdRun&&k.isPlayer&&!autoPlay&&sess==='ta')fdSpStep(k,ctl); /* β0.363.0 T699 */ /* β0.329.0 T664 */
   // 計器の値（表示用。走りには影響しない）：水温・油温は負荷（アクセル×回転）と走行風で上下、ブースト圧は吸気管圧力（bar。ターボは過給、NAは負圧）
   {if(k.tw==null){k.tw=78;k.to=64;k.bst=-.85;}
    const thr=k.spin>0?0:(ctl.accel?(ctl.thr??1):0),rn=Math.min(1.1,k.rpm/8000),ld=thr*(.35+.65*rn),air=Math.min(1,Math.abs(k.u)/50);
@@ -5241,15 +5241,15 @@ function makeGrid(){const o=[];for(let i=0;i<8;i++)if(i!==playerChoice)o.push(i)
   if(gridMode===3)o.splice(4,0,playerChoice);else if(gridMode!==1)o.push(playerChoice); /* β0.139.0 T264 中団＝5番手 */
   if(mixSel&&evCls){const sp=d=>CC[dCls(d)].top;return o.slice().sort((x,y)=>sp(y)-sp(x));} // T164 混走は速いクラスが前（クラスの中の並びはそのまま。β0.145.0 クラスの組み合わせ）
   return o;}
-function startSession(s){sess=s;try{tslRun={ck:tslCar(),sig:tslSig()};}catch(_){tslRun=null;} /* T418 走り出した時の設定 */if(s!=='race')PRAC=0;QDB=s==='quali'&&!autoPlay?{T:0,cT:0,uE:0,uB:0,oX:0,oB:0,lk:0,lim:0,st:0,ws:0}:null;$('qsSetBtn').hidden=true;$('resAdv').hidden=true; /* β0.329.0 T664 */{const ez=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn;document.body.classList.toggle('ez',ez);document.body.classList.toggle('ezs',ez&&(s!=='race'||lapsEff()<8));} /* β0.140.0 T264③ かんたん */document.body.classList.toggle('mix',s==='race'&&!!mixSel);LAPS=s==='race'?(PRAC?pracSel:lapsEff()):s==='quali'?2:s==='ta'&&(ssOn||fdRun&&chOn==null&&!dyOn)?1:999 /* β0.189.1 T402 FIRST DRIVE も1周 */;document.body.classList.toggle('solo',solo());document.body.classList.toggle('drag',s==='drag');if(s==='race'&&PRAC){PRM=[];}startRace();}
+function startSession(s){sess=s;fdSpH=[];fdSpT=-99;fdSpLast=''; /* β0.363.0 T699 */try{tslRun={ck:tslCar(),sig:tslSig()};}catch(_){tslRun=null;} /* T418 走り出した時の設定 */if(s!=='race')PRAC=0;QDB=s==='quali'&&!autoPlay?{T:0,cT:0,uE:0,uB:0,oX:0,oB:0,lk:0,lim:0,st:0,ws:0,hl:0}:null;$('qsSetBtn').hidden=true;$('resAdv').hidden=true; /* β0.329.0 T664 */{const ez=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn;document.body.classList.toggle('ez',ez);document.body.classList.toggle('ezs',ez&&(s!=='race'||lapsEff()<8));} /* β0.140.0 T264③ かんたん */document.body.classList.toggle('mix',s==='race'&&!!mixSel);LAPS=s==='race'?(PRAC?pracSel:lapsEff()):s==='quali'?2:s==='ta'&&(ssOn||fdRun&&chOn==null&&!dyOn)?1:999 /* β0.189.1 T402 FIRST DRIVE も1周 */;document.body.classList.toggle('solo',solo());document.body.classList.toggle('drag',s==='drag');if(s==='race'&&PRAC){PRM=[];}startRace();}
 /* β0.329.0 T664 予選の後のセッティングとアドバイス（ご本人 2026-10-31「予選後に結果見てセッティングを変える機会が欲しいかもですね、更にソコでアドバイスも有ると尚良いかもです」）。
    予選の間、自分の車の走りを数える（QDB）：角の中（CORNER・時速 43km 超）で前が先に滑った秒（アンダー。ブレーキ中 uB・それ以外 uE）、後ろが先に滑った秒（アクセル中 oX・ブレーキ中 oB）、
    ブレーキで前輪がロックした秒 lk、最後のギアで回転の上限に当たった秒 lim。滑ったとみるのは 滑り角÷山の角 0.8 超・前後の差 0.15 超（オートの丁寧な走りは山の 3〜5 割なので、ほぼ出ない）。
    結果の画面に、実車のエンジニアのデブリーフのような短い3つまで（今の設定の端にもう届いている時は次の手。同じ設定を2つの項目で逆に動かさない）と「セッティングを変える」。
    押すと GARAGE をセッティングのタブだけで開き（車・決まり・表示は隠す）、閉じるとそのまま決勝（予選の続きは EVH の仕組み） */
-let QDB=null,qsFlow=0;
+let QDB=null,qsFlow=0,LLHT=1.15,LLHX=.85; /* β0.363.0 T699 LLHT＝背の高い車とみる重心の高さ÷トレッドの倍率（基準の車との比）・LLHX＝内側の荷重がほとんど抜けたとみる左右の荷重移動の割合 */
 function qdbStep(k,dt,ctl){const q=QDB;q.T+=dt;if(k.gear===TOPG&&k.rpm>REDLINE-150&&ctl.accel)q.lim+=dt;if(k.u>12&&!CORNER[k.idx])q.st+=dt;if(k.locked&&ctl.brake)q.lk+=dt;
- if(!CORNER[k.idx]||k.u<12)return;q.cT+=dt;if(k.wheelspin&&ctl.accel)q.ws+=dt; /* β0.360.0 T699 角の中で踏んで駆動輪が空転した秒（オープンデフの内側のタイヤの空転も入る） */const f=(k.slipF||0)/(Math.tan(Math.PI/2/TFC)/TFB),r=(k.slipR||0)/(Math.tan(Math.PI/2/TRC)/TRB); /* slipF・slipR は滑り角（rad）。タイヤの山の角（約 0.155）で割る */
+ if(!CORNER[k.idx]||k.u<12)return;q.cT+=dt;if(k.wheelspin&&ctl.accel)q.ws+=dt;{const h=(k.llh||LLH0)+LLRH*(k.rh||0),t=k.llt||LLT0;if(h/t>LLH0/LLT0*LLHT&&2*Math.abs(k.ay||0)*h/(G*t)>=LLHX)q.hl+=dt;} /* β0.363.0 T699 背の高い車で内側のタイヤの荷重がほとんど抜けた秒 */ /* β0.360.0 T699 角の中で踏んで駆動輪が空転した秒（オープンデフの内側のタイヤの空転も入る） */const f=(k.slipF||0)/(Math.tan(Math.PI/2/TFC)/TFB),r=(k.slipR||0)/(Math.tan(Math.PI/2/TRC)/TRB); /* slipF・slipR は滑り角（rad）。タイヤの山の角（約 0.155）で割る */
  if(f>.8&&f-r>.15){if(ctl.brake)q.uB+=dt;else q.uE+=dt;}else if(r>.8&&r-f>.15){if(ctl.brake)q.oB+=dt;else if(ctl.accel)q.oX+=dt;}}
 function qdbAdvice(){const q=QDB;if(!q||q.T<20||q.cT<5)return'';const segL=(id,v)=>{const b=$(id)&&$(id).querySelectorAll('button')[v];return b&&!b.disabled?b.textContent:null;};
  const L=[],pc=x=>Math.round(x/q.cT*100),add=(w,h,o)=>L.push([w,h,o]); /* o＝[設定の鍵, 勧める文] の候補（前から。上位の項目で使った鍵は使わない） */
@@ -5261,6 +5261,7 @@ function qdbAdvice(){const q=QDB;if(!q||q.T<20||q.cT<5)return'';const segL=(id,v
   ok([q.uB>q.uE?bb(1):null,sb(1,'後ろの傾きを抑えて向きを変えやすく'),wg(1,'前を地面へ押さえる'),setDf===2?['df','デフを「'+segL('difSeg',1)+'」へ（入口で曲がりやすく）']:null,['','ブレーキを少し早めに終え、向きが変わってから踏む']]));
  if(pc(q.oX)>=5)add(q.oX/q.cT,'立ち上がりでアクセルを踏むと後ろが流れた（オーバーステア。角の時間の '+pc(q.oX)+'%）。→ ',ok([sb(-1,'後ろの粘りを残す'),wg(1,'後ろを地面へ押さえる'),['','出口のアクセルを少しずつ（向きが真っすぐになってから全開）']]));
  if(pc(q.ws)>=8)add(q.ws/q.cT,'角でアクセルを踏むと駆動輪が空転していた（角の時間の '+pc(q.ws)+'%'+(setDf===0?'・内側のタイヤが浮き気味で空回り':'')+'）。→ ',ok([setDf===0&&segL('difSeg',1)?['df','デフを「'+segL('difSeg',1)+'」へ（内側の空転を外側へ回す）']:null,['','出口のアクセルを少しずつ（向きが真っすぐになってから全開）']])); /* β0.360.0 T699 */
+ if(pc(q.hl)>=10)add(q.hl/q.cT*.8,'角で内側のタイヤの荷重がほとんど抜けていた（角の時間の '+pc(q.hl)+'%・背の高い車は外側へ荷重が寄りやすく、横の力が落ちる）。→ ',ok([setRH>0&&segL('rhSeg',setRH-1)?['rh','車高を「'+segL('rhSeg',setRH-1)+'」へ（重心を下げる）']:null,['','角の速さを少し控えめに・ハンドルはじわっと（急に切ると片側へ一気に寄る）']])); /* β0.363.0 T699 */
  if(pc(q.oB)>=4)add(q.oB/q.cT,'ブレーキ中に後ろが流れた（角の時間の '+pc(q.oB)+'%）。→ ',ok([bb(-1),['','ブレーキを強く踏むのは真っすぐな内に']]));
  if(q.lk/q.T>.008&&q.lk>.6)add(q.lk/q.T*4,'ブレーキで前輪がロックしていた（'+q.lk.toFixed(1)+'秒）。→ ',ok([bb(1),['','踏み始めを強く、速さが落ちたら少しずつ戻す']]));
  if(q.lim>1)add(q.lim/Math.max(10,q.st)*2,'直線の終わりで回転が上限に当たっていた（'+q.lim.toFixed(1)+'秒）。→ ',ok([gr(),wg(-1,'直線で伸びる'),['','今の車の最高速です']]));
@@ -5692,8 +5693,17 @@ function blockWatch(k,dt){if(!judgeOn||sess!=='race'||state!=='race'||k.pit>0||k
 let SPNA=.9,SPNV=6,SPNR=.25;
 let CNK=.3,CNI=.6,CNMX=.3,CNMN=.6,CNUP=4,CNDN=1,CN0=2.5,CNU0=3,CNCR=4;
 const SRL=['ルーキー','D','C','B','A'];
+/* β0.363.0 T699 FIRST DRIVE で回った時：fdSpH＝直前の入力 [時刻, アクセル, ブレーキ, |ハンドル|, ハンドル]（FSPW 秒ぶん）。回ったら fdSpWhy で訳と直し方をテロップに（FSPC 秒に1回）。fdSpLast＝結果の画面に出す最後の1つ */
+let fdSpH=[],fdSpT=-99,fdSpLast='',FSPW=1.2,FSPC=6;
+function fdSpStep(k,ctl){const t=raceTime;fdSpH.push([t,ctl.accel?(ctl.thr??1):0,ctl.brake?(ctl.brk??1):0,Math.abs(ctl.steer||0),ctl.steer||0]);while(fdSpH.length&&fdSpH[0][0]<t-FSPW)fdSpH.shift();}
+function fdSpWhy(){const H=fdSpH;if(H.length<5)return null;const n=H.length,m=i=>H.reduce((a,h)=>a+h[i],0)/n,aM=Math.max(...H.map(h=>h[1])),aL=H.slice(-Math.ceil(n/3)).reduce((a,h)=>a+h[1],0)/Math.ceil(n/3),sMx=Math.max(...H.map(h=>h[4])),sMn=Math.min(...H.map(h=>h[4]));
+ if(m(2)>.3&&m(3)>.45)return ['ブレーキを踏んだままハンドルを大きく切った（前に荷重が乗って後ろが軽くなり、回った）','ブレーキは真っすぐな内に。曲がり始めたら少しずつ離す'];
+ if(aM>.6&&aL<.15&&m(3)>.3)return ['カーブの途中でアクセルを急に離した（荷重が前へ移って後ろが滑った）','曲がっている間はアクセルを急に離さず、少し開けたままにする'];
+ if(m(1)>.65&&m(3)>.3)return ['カーブでアクセルを大きく踏んだ（後輪が空回りして横へ流れた）','出口は向きが真っすぐになってから、少しずつ踏み足す'];
+ if(sMx>.5&&sMn<-.5)return ['ハンドルを左右に大きく切り返した（車が振られて回った）','ハンドルはじわっと切り、戻す時もゆっくり'];
+ return ['カーブに入る速さが速すぎた（タイヤが曲がる力を出し切って滑った）','カーブの手前で、もう少し速さを落としてから曲がる'];}
 function spinCount(k){const v=Math.hypot(k.u,k.vl);if(v<2&&!k.spnA)return;const b=Math.atan2(Math.abs(k.vl),k.u);
-  if(!k.spnA){if(v>SPNV&&b>SPNA){k.spnA=1;k.spn=(k.spn||0)+1;}}else if(b<SPNR&&k.u>8)k.spnA=0;}
+  if(!k.spnA){if(v>SPNV&&b>SPNA){k.spnA=1;k.spn=(k.spn||0)+1;if(k.isPlayer&&fdRun&&sess==='ta'&&!autoPlay&&raceTime-fdSpT>FSPC){const w=fdSpWhy();if(w){fdSpT=raceTime;fdSpLast=w[0]+'。→ '+w[1];telop('SPIN',fdSpLast);}}}} /* β0.363.0 T699 */else if(b<SPNR&&k.u>8)k.spnA=0;}
 // 4輪すべてが白線（コーナーは縁石の外端）より外で0.3秒以上走ったら違反
 function trackLimits(k,dt){if(k.dnf||k.finished||state!=='race'||holdT>0||k.pit>0){k.tlT=0;return;}
   spinCount(k);
@@ -9210,7 +9220,7 @@ function showResults(){resMid=0;$('resPrac').hidden=true;$('resCup').hidden=true
   const rows=finishOrder.map((k,i)=>`<tr class="${k.isPlayer?'me':''}"><td>${i+1}</td><td>${mixSel?`<small class="cl ${clFast(k)?'gt':''}">${k.cls} ${crk.get(k)}位</small>`:''}${k.name}${k.isPlayer?'（あなた）':''} <span style="opacity:.65;font-size:max(11px,.78em)">${trFull(TRAITS[k.dr.tr??2])}</span>${setTxt(k)}${fastLap&&fastLap.k===k?' <span style="color:#b77dff;font-size:.8em">最速ラップ</span>':''}</td><td class="t">${k.ret?'<b class="bad">リタイア</b>':fmt(k.finishTime-raceT0+(k.pen||0))+(k.est?'*':'')}${k.pen?`<br><small style="color:var(--gold)">＋${k.pen}秒</small>`:''}</td><td class="t b">${i&&!k.ret&&lt!=null?'+'+(k.finishTime+(k.pen||0)-lt).toFixed(3):''}</td><td class="t b">${k.best?fmt(k.best):'—'}</td><td class="t">${k.cont||0}${k.ipt||k.pen?`<br><small style="color:var(--gold);cursor:help" title="${(k.jh||[]).map(e=>e.lap+'周目 '+e.txt).join('\n').replace(/"/g,'')}">${k.ipt?'IP '+(+k.ipt.toFixed(1)):'違反'} ⓘ</small>`:''}</td></tr>`).join('');
   $('resultTable').innerHTML='<tr class="hd"><td></td><td>ドライバー</td><td class="t">タイム</td><td class="t">差</td><td class="t">ベストラップ</td><td class="t">接触</td></tr>'+rows+((finishOrder.some(k=>k.est&&!k.ret)||karts.some(k=>k.ipt))?'<tr class="ft"><td></td><td colspan="5" style="font-size:11px;color:var(--muted);padding-top:6px">'+(finishOrder.some(k=>k.est&&!k.ret)?'* ＝ゴール前の見込みのタイム　':'')+(karts.some(k=>k.ipt)?'IP＝インシデントポイント（軽い接触は0.5点。2点で警告、4点で＋5秒、6点でドライブスルー）':'')+'</td></tr>':''); /* β0.97.0 */
   fdNextUi();{const ft=$('resultTable').querySelector('tr.ft');$('resNote').textContent=ft?ft.textContent.trim():'';$('resNote').classList.toggle('ftn',!!ft);if(ft)ft.remove();} /* T295② 注は表の外 */
-  fdCupUi();{const p=player();if(!autoPlay&&p&&(p.best>0||p.finished)&&typeof fdDone==='function')fdDone(); /* β0.318.2 T644 記録が残った・走り切った時に済んだ扱い */if(fdRun&&sess==='ta'&&p&&!p.best&&!p.ret&&p.lastLap>0){$('resNote').textContent='この1周は「'+(p.lbW||'コース外走行')+'」で無効になったので、記録とメダルには残らない（タイム '+fmt(p.lastLap)+' は参考）。「もう一度」で、はみ出さず・巻き戻さず・オートを使わずに1周走ると記録になる';$('resNote').classList.add('ftn');}} /* β0.303.0 T577⑦ */
+  fdCupUi();{const p=player();if(!autoPlay&&p&&(p.best>0||p.finished)&&typeof fdDone==='function')fdDone(); /* β0.318.2 T644 記録が残った・走り切った時に済んだ扱い */if(fdRun&&sess==='ta'&&p&&!p.best&&!p.ret&&p.lastLap>0){$('resNote').textContent='この1周は「'+(p.lbW||'コース外走行')+'」で無効になったので、記録とメダルには残らない（タイム '+fmt(p.lastLap)+' は参考）。「もう一度」で、はみ出さず・巻き戻さず・オートを使わずに1周走ると記録になる';$('resNote').classList.add('ftn');}} /* β0.303.0 T577⑦ */if(fdRun&&sess==='ta'&&fdSpLast&&!autoPlay){const e=$('resNote');e.textContent=(e.textContent?e.textContent+'　':'')+'回った訳（最後の1回）：'+fdSpLast;e.classList.add('ftn');} /* β0.363.0 T699 */
   const r=finishOrder.indexOf(player())+1,pcr=crk.get(player());
   $('resultTitle').textContent=sess==='ta'&&karts.length===1?taResTitle():mixSel&&!player().ret?(CC[player().kc??ccChoice].name+'クラス '+(pcr===1?'優勝！':pcr+'位')+'（総合 '+r+'位）')+(rwCount?`（巻き戻し ${rwCount}回）`:''):(player().ret?'リタイア（大クラッシュ）':r===1?'優勝！（'+(isForm()?'フォーミュラ・':'')+clsName()+'クラス）':(r<=3?r+'位 表彰台！':r+'位'))+(rwCount?`（巻き戻し ${rwCount}回）`:'');
   recRace(mixSel&&!player().ret?pcr:r); /* β0.241.1 自動調整の前の強さで戦績・賞金 */
