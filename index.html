@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.360.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.360.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2989,6 +2989,7 @@ function todAt(h,pk){const [i,f0]=todK(TODK,h),f=Math.round(f0*TDQ)/TDQ,ia=TODK[
 const todAir=h=>{const [i,f]=todK(TODA,h);return TODA[i][1]+(TODA[i+1][1]-TODA[i][1])*f;};
 const clkTxt=h=>{const m=Math.round((((h%24)+24)%24)*60)%1440;return (m/60|0)+':'+String(m%60).padStart(2,'0');};
 const WXN=[{n:'晴れ',en:'CLEAR',ic:'☀'},{n:'くもり',en:'CLOUDY',ic:'☁'},{n:'雨',en:'RAIN',ic:'☂'},{n:'霧',en:'FOG',ic:'🌫'},{n:'変わりやすい',en:'CHANGEABLE',ic:'⛅'}];
+let RNSN=.15; /* β0.360.1 T709 天気「変わる」の SS で「降った」とみなす雨の強さ（起動の途中の envStep から読むので ENV の隣に置く） */
 const ENV={tod:1,wx:0,cloud:0,rain:0,fog:0,wet:0,tc:0,tr:0,tf:0,plan:null,key:'',vcWet:-1,t:0,said:0};
 const _c1=new THREE.Color(),_c2=new THREE.Color(),_c3=new THREE.Color();
 function plrSafe(){try{return karts.find(k=>k.isPlayer)||null;}catch(_){return null;}}
@@ -3050,7 +3051,7 @@ function carLights(on,rainy){for(const k of TRF.length?karts.concat(TRF):karts){
 const envPick=()=>({t:todSel===4?[0,1,1,2,3][Math.random()*5|0]:todSel,w:wxSel===5?[0,0,1,2,3,4][Math.random()*6|0]:wxSel}); /* β0.183.2 T341 ランダムの時間帯・天気の抽選（ラリーはサービスパークで次の SS の分を先に決めて rly.nx に持つ） */
 const ENV0={0:[0,0,0,0],1:[.75,0,0,0],2:[.95,.85,0,.9],3:[.7,0,1,.12],4:[.5,0,0,0]}; // 天気ごとの始まりの [雲, 雨, 霧, 路面の濡れ]
 function envStart(){const rr=typeof rly!=="undefined"&&rly?rly:null,nx=rr&&rr.nx||rr&&rr.re&&rr.cur||envPick();if(rr){rr.cur=nx;rr.nx=null;rr.re=0;} /* β0.189.1 T405 */const P0=nx.t;let w=nx.w;
- ENV.tod=P0;ENV.clk=TODH[P0];ENV.pk=''+P0;ENV.P=TOD[P0];ENV.ta=todAir(ENV.clk);ENV.clkOn=false;ENV.hdK=0;ENV.wx=w;ENV.t=0;ENV.said=0;ENV.plan=null;
+ ENV.tod=P0;ENV.clk=TODH[P0];ENV.pk=''+P0;ENV.P=TOD[P0];ENV.ta=todAir(ENV.clk);ENV.clkOn=false;ENV.hdK=0;ENV.wx=w;ENV.t=0;ENV.said=0;ENV.plan=null;ENV.rnSeen=0;
  if(w===4&&!rr&&(sess!=='race'||CRS&&CRS.st)){w=Math.random()<.5?2:1;ENV.wx=w;} /* β0.326.0 予選・タイムアタック・公道（ピットに入れない）は「変わる」でも始めから雨かくもりに決める（途中で降り出すとタイヤを替えられない） */
  const s=ENV0[w];
  ENV.cloud=ENV.tc=s[0];ENV.rain=ENV.tr=s[1];ENV.fog=ENV.tf=s[2];ENV.wet=s[3];ENV.pl=w===2&&PDK?PL0:0;ENV.plSaid=0;if(typeof pudStep==='function')pudStep(0,false); // T248 雨で始まるレースは少し水たまりがある
@@ -3086,7 +3087,7 @@ function fcText(){const e=ENV,f=e.fc;if(!f||!e.plan)return'';if(e.said===0){cons
   if(e.said===1){const r=f.off-e.t;return r>5?'予報 '+fcIn(r)+'にやむ':'予報 まもなくやむ';}return'';}
 function fcSay(text){if(sess==='race')radio(text,'wxf',1);else if(state==='race')telop('FORECAST',text);}
 const ENVI=.2; /* β0.175.0 T343② 天気の変わり目に見た目を当て直す間隔（秒） */
-function envStep(dt,race){const e=ENV;e.t+=dt;
+function envStep(dt,race){const e=ENV;e.t+=dt;if(e.rain>=RNSN)e.rnSeen=1; /* β0.360.1 T709 一度でも降ったか */
  if(race&&state==='race'&&todSpd&&sess==='race'&&lapsEff()>=TDL&&e.clk!=null){e.clkOn=true;e.clk+=dt*TDSP[todSpd]/3600;e.ta=todAir(e.clk);const r=todAt(e.clk,e.pk);if(r.key!==e.pk){const i0=e.tod;e.pk=r.key;e.P=r.P;e.tod=r.idx;envApply(false);
   if(r.idx!==i0){const msg=[['夜が明けてきた。路面はまだ冷たい、タイヤに気をつけて','DAWN'],['日が高くなってきた。路面温度が上がるぞ','DAY'],['日が傾いてきた。路面温度が下がっていく、タイヤの温まりに注意','SUNSET'],['日が沈んだ。路面が冷えるぞ、ブレーキの温まりにも注意','NIGHT']][r.idx];telop('TIME',clkTxt(e.clk)+'　'+TOD[r.idx].n+'になりました');radio(msg[0],'tod',60);}}} /* β0.184.0 T357 */
  if(e.fc&&e.plan&&race&&state==='race'){const r=e.fc.on-e.t;
@@ -5274,9 +5275,10 @@ const ghKey=(ss=isSS(),old)=>(dyOn&&!ss?'popkart_dy_'+dyOn+'_'+myCar:(ss?'popkar
    記録の鍵の最後に _q＋天気（0 晴れ・1 くもり・2 雨・3 霧。走る時に決まった天気。メニューで「変わりやすい」「おまかせ」の間は u＝まだ決まっていない）＋アシスト（0 強・1 標準・2 なし）＋安定の補正（1 あり・0 なし）。
    走っている間は走り出した時の条件（ghCq）で数える。前の版の記録は ghMig で、路面の濡れ（wx）から晴れか雨・今のアシストとみなして移し、推定の印 cg を付ける（送れない） */
 let ghCq=null,ghCqSaid=0;
-function gsCqNow(){const w=state!=='title'&&ENV&&ENV.wx>=0&&ENV.wx<=3?ENV.wx:state==='title'&&wxSel>=0&&wxSel<=3?wxSel:'u';return '_q'+w+assistLv+(stbSel?1:0);}
-function ghQ(){return state!=='title'&&ghCq?ghCq:gsCqNow();}
-function ghCqOk(){if(!ghCq||gsCqNow()===ghCq)return true;if(!ghCqSaid){ghCqSaid=1;{const q=gsCqNow(),a=q[3]!==ghCq[3],b=q[4]!==ghCq[4];toast('走っている途中で'+(a&&b?'アシストと安定の補正':a?'アシスト':b?'安定の補正':'走る条件')+'を変えたので、この走りの記録・ゴーストは残しません');} /* T700⑥ */}return false;}
+function gsCqNow(){const w=state!=='title'&&ENV&&ENV.wx===4?(ENV.rnSeen?2:1):state!=='title'&&ENV&&ENV.wx>=0&&ENV.wx<=3?ENV.wx:state==='title'&&wxSel>=0&&wxSel<=3?wxSel:'u';return '_q'+w+assistLv+(stbSel?1:0);}
+/* β0.360.1 T709（RNSN は ENV の隣）  天気「変わる」のまま走る SS（ラリー。途中で本当に降り出す）は、走り出しは「くもり」、雨が RNSN を越えたら「雨」の条件として数える＝一度でも降れば雨（ご本人の決定 2026-11-02）。前は条件「u」のままで「まとめて送る」に入らなかった */
+function ghQ(){return state!=='title'&&ghCq?(ENV&&ENV.wx===4?ghCq.slice(0,2)+(ENV.rnSeen?2:1)+ghCq.slice(3):ghCq):gsCqNow();}
+function ghCqOk(){if(!ghCq||gsCqNow()===ghQ())return true;if(!ghCqSaid){ghCqSaid=1;{const q=gsCqNow(),a=q[3]!==ghCq[3],b=q[4]!==ghCq[4];toast('走っている途中で'+(a&&b?'アシストと安定の補正':a?'アシスト':b?'安定の補正':'走る条件')+'を変えたので、この走りの記録・ゴーストは残しません');} /* T700⑥ */}return false;}
 const GQX=/_q[0-3u][0-2][01]$/;
 function ghMig(){try{const rx=/^popkart_(rv_)?(ta2|ss1)_/,ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(rx.test(k)&&!GQX.test(k))ks.push(k);}
  for(const k of ks){let o=null;try{o=JSON.parse(localStorage.getItem(k)||'null');}catch(_){}
