@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.369.4</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.369.5</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -7600,7 +7600,16 @@ function ckMirrors(){const p=CK.k;ckMirLog.c=performance.now();if(!mirOn||!CK.mi
    sky.position.copy(cam.position);lodCars(cam,1);const hid=mirHide.call(null,cam),ro=mirRain();renderer.setRenderTarget(rt);renderer.render(scene,cam);ckMirProbe(m.kind,rt,cam);renderer.setRenderTarget(null);rainMesh.material.opacity=ro;for(const g of hid)g.root.visible=true;ckMirLog.t[m.kind]=performance.now();}
   sky.position.copy(sp);p.g.root.visible=own;renderer.shadowMap.autoUpdate=au;if(MFIX===1)renderer.getContext().flush();}
 // 普通の描画（rMain）：運転席視点の時は、そのあと奥行きを消して室内を上から描く。室内の明るさは外の光（空の光・太陽）を少し弱めて写す
-function rMain(){if(ckPnOn())return ckPnRender();rMain0();}
+function rMain(){if(ckPnOn()){ckPnRender();ckScrProbe();return;}rMain0();ckScrProbe();}
+/* β0.369.5 T714 ミラーが止まる件の記録：レース中に1秒に1回、①ルームミラーの描く先（mirRT）の5点 ②画面に写ったルームミラーの所の5点 ③画面の真ん中の5点 を読み、前と変わったか（○）同じか（×）を直前15回ぶん残す */
+const ckMirHist=[],ckHV=new THREE.Vector3(),ckHP=new Uint8Array(4);let ckHT=0,ckHL=['','',''];
+function ckScrProbe(){const n=performance.now();if(n-ckHT<1000||state!=='race'||!CK.g||!CK.g.visible||!CK.mirs||!CK.k)return;ckHT=n;
+  try{const gl=renderer.getContext(),W=gl.drawingBufferWidth,H=gl.drawingBufferHeight,m=CK.mirs.find(q=>q.kind===0);
+    const scr=(cx,cy,dx,dy)=>{let h='';for(const [u,v] of [[0,0],[-1,0],[1,0],[0,-1],[0,1]]){const x=Math.max(0,Math.min(W-1,Math.round(cx+u*dx))),y=Math.max(0,Math.min(H-1,Math.round(cy+v*dy)));gl.readPixels(x,y,1,1,gl.RGBA,gl.UNSIGNED_BYTE,ckHP);h+=ckHP[0]+','+ckHP[1]+','+ckHP[2]+';';}return h;};
+    let a='',b='';if(m&&m.gl){renderer.setRenderTarget(null);m.gl.getWorldPosition(ckHV).project(camera);b=scr((ckHV.x+1)/2*W,(ckHV.y+1)/2*H,W*.02,H*.01);
+      for(const [u,v] of [[.5,.5],[.2,.5],[.8,.5],[.5,.25],[.5,.75]]){renderer.readRenderTargetPixels(mirRT,Math.floor(mirRT.width*u),Math.floor(mirRT.height*v),1,1,ckHP);a+=ckHP[0]+','+ckHP[1]+','+ckHP[2]+';';}renderer.setRenderTarget(null);}
+    const c=scr(W/2,H/2,W*.05,H*.05),p=CK.k;
+    ckMirHist.push({t:raceTime,v:Math.round((p.u||0)*3.6),a:a?(a!==ckHL[0]?'○':'×'):'-',b:b?(b!==ckHL[1]?'○':'×'):'-',c:c!==ckHL[2]?'○':'×',x:Math.round(p.x),z:Math.round(p.z)});if(ckMirHist.length>15)ckMirHist.shift();ckHL=[a,b,c];}catch(_){}}
 function rMain0(){const ck=!!(CK.g&&CK.g.visible&&CK.k&&CK.k.g);if(ck)ckMirrors();
   lodCars(camera);const own=ck&&CK.v?CK.k.g.root:null,ov=own&&own.visible;if(own)own.visible=false; // 運転席（フォーミュラ以外）では自分の車体を描かない（ボンネットとミラーは室内の側で描く）
   renderer.setRenderTarget(ckPnT); /* T668 端を縮める投影の時は、いったん絵に描く */renderer.render(scene,camera);if(own)own.visible=ov;if(!ck)return;
@@ -10177,7 +10186,7 @@ function bugInfo(){
     L.push('画面: '+screen.width+'×'+screen.height+'・窓 '+innerWidth+'×'+innerHeight+'・倍率 '+(devicePixelRatio||1));
     L.push('速さ: 描画の細かさ '+renderer.getPixelRatio()+(SHADOWS?'・影 '+sun.shadow.mapSize.x:'')+'・自動で下げた回数 '+AR_LOG.drops+'・直近3秒の平均 '+(AR_LOG.n?AR_LOG.fps.toFixed(0)+'fps（最低 '+AR_LOG.minFps.toFixed(0)+'fps）':'まだ測っていない（レース中のみ測る）'));
     try{const gl=renderer.getContext(),ex=gl.getExtension('WEBGL_debug_renderer_info');L.push('描画: '+(ex?gl.getParameter(ex.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER))+'・影 '+(SHADOWS?'あり':'なし')+'・直近の描画 '+renderer.info.render.calls+'回/'+renderer.info.render.triangles+'面'+'・リセット '+ckMirLog.lost+'回（戻った '+ckMirLog.rest+'回）');}catch(_){}
-    try{const n=performance.now(),ag=t=>t?((n-t)/1000).toFixed(1)+'秒前':'まだ';L.push('ミラー: 方式 '+CKMQ+(MFIX?'・試し mfix='+MFIX:'')+'・運転席の鏡を最後に描いた ルーム '+ag(ckMirLog.t[0])+'・左 '+ag(ckMirLog.t[1])+'・右 '+ag(ckMirLog.t[2])+'・鏡の処理を最後に通った '+ag(ckMirLog.c)+(ckMirLog.why?'・描かなかった理由 '+ckMirLog.why:'')+'・画面に入っている '+(CK.mirs&&CK.g&&CK.g.visible?CK.mirs.map(m=>['ルーム','左','右'][m.kind]+(ckMirSeen(m)?'○':'×')).join(' '):'運転席でない')+'・画面の上のミラー '+(mirRect?'あり':'なし'));L.push('ミラーの絵: '+['ルーム','左','右'].map((nm,k)=>nm+' '+(ckMirLog.ck[k]?'絵が最後に変わった '+ag(ckMirLog.chg[k])+'・色 '+ckMirLog.h[k].split(';')[0]+'・カメラ '+ckMirLog.pos[k]+(ckMirLog.err[k]?'・描画のエラー '+ckMirLog.err[k]:''):'調べていない')).join('／'));}catch(_){} /* β0.369.2・β0.369.3 */
+    try{const n=performance.now(),ag=t=>t?((n-t)/1000).toFixed(1)+'秒前':'まだ';L.push('ミラー: 方式 '+CKMQ+(MFIX?'・試し mfix='+MFIX:'')+'・運転席の鏡を最後に描いた ルーム '+ag(ckMirLog.t[0])+'・左 '+ag(ckMirLog.t[1])+'・右 '+ag(ckMirLog.t[2])+'・鏡の処理を最後に通った '+ag(ckMirLog.c)+(ckMirLog.why?'・描かなかった理由 '+ckMirLog.why:'')+'・画面に入っている '+(CK.mirs&&CK.g&&CK.g.visible?CK.mirs.map(m=>['ルーム','左','右'][m.kind]+(ckMirSeen(m)?'○':'×')).join(' '):'運転席でない')+'・画面の上のミラー '+(mirRect?'あり':'なし'));L.push('ミラーの記録（1秒ごと・古い順。前と変わった○・同じ×／絵＝ルームミラーの描く先・鏡＝画面のルームミラーの所・前＝画面の真ん中）: '+(ckMirHist.length?ckMirHist.map(h=>Math.floor(h.t)+'秒 '+h.v+'km/h 絵'+h.a+'鏡'+h.b+'前'+h.c).join('／'):'まだ（運転席でレース中に記録）'));L.push('ミラーの絵: '+['ルーム','左','右'].map((nm,k)=>nm+' '+(ckMirLog.ck[k]?'絵が最後に変わった '+ag(ckMirLog.chg[k])+'・色 '+ckMirLog.h[k].split(';')[0]+'・カメラ '+ckMirLog.pos[k]+(ckMirLog.err[k]?'・描画のエラー '+ckMirLog.err[k]:''):'調べていない')).join('／'));}catch(_){} /* β0.369.2・β0.369.3 */
     let host='';try{host=location.hostname||location.protocol;}catch(_){}
     L.push('開いている所: '+(host||'?')+(window.claude?'（Claude の公開ページ）':''));
     L.push('音: '+(ac?'サンプル周波数 '+ac.sampleRate+'Hz（要求 48000Hz）・状態 '+ac.state+'・遅延 '+((ac.baseLatency||0)*1000).toFixed(1)+'ms'+(ac.outputLatency?'／出力 '+(ac.outputLatency*1000).toFixed(1)+'ms':'')+'・BGM '+(bgmOn?'ON':'OFF')+'（曲 '+(bgmTrk||'なし')+'）・音 '+(muted?'OFF':'ON')+(ewFix?'・エンジン音の作り直し '+ewFix+'回（最後 '+ewLast+'）':''):'まだ起動していない（音を鳴らす操作の前）'));
