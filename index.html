@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.370.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.371.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5575,7 +5575,8 @@ let ghDelta=null;
 /* β0.176.0 T354 タイムアタックの金・銀・銅：課題と同じ決め方（オート運転の速さ＝金、銀 +3%、銅 +7%）。オートの速さは予選の見積もり qEst0（QREF＝自分の車をオートで走らせた予選のベスト×路面・車の比）＋乱数の平均 */
 // 予選の見積もりはタイムアタックのオートより速く出る（燃料の重さ・雨を見積もりに入れていない）。測った比：クラス TAC、路面 TAS2、濡れ TAW（tat.js）
 const TAC=[1.022,1.031,1.035,1.035,1.04,1.03],TAS2=[1,1.145,1.161,1.175],TAS4=[1,1,.99,1];let TAW=.114; /* β0.370.0 T713 おすすめの表を測り直した後の確かめ（tat364.js・run370ta.sh、out/t370ta・t370tb）：雪の4WD の掛け算 .893→.99（雪の4WD は表で1.4〜2.6秒遅くなり、金÷オートが 0.89〜0.95 と厳しすぎた）。ほかの路面は中央値 1.00〜1.02 でそのまま。 β0.364.0 T498 オートで25車種のタイムアタックを測り直した（テスト/tat364.js・run364*.sh、out/t364）。金÷オートのベスト（中央値）が 舗装 1.005 に対して 砂利 0.893・雪 0.880（4WD は 0.986）・氷 0.855・雨 0.976 で、砂利・雪・氷の金はオートでも届かなかった。前は 1.017・1.017・1・TAW .082。TAS4＝4WD の路面ごとの掛け算（雪は 4WD が速い） */
-function taMedT(){const k=(isForm()?1.03:TAC[ccChoice]||1.03)*(TAS2[roadSurf|0]||1)*(!isForm()&&setDrv===2?TAS4[roadSurf|0]||1:1)*(1+TAW*Math.min(1,ENV.wet||0)),g=Math.ceil(((qEst0(playerChoice,false)+.25)*k)*10)/10,f=fdRun&&!dyOn?FDM:[1.03,1.07];return [g,Math.ceil(g*f[0]*10)/10,Math.ceil(g*f[1]*10)/10];}
+const TAX=[[1,1,1,1.024,0.972],[1,1,1,1,1],[1,0.991,0.935,0.943,1],[0.992,0.988,0.955,0.967,1],[1,1.016,0.971,0.931,1.016],[1.021,1.046,1.014,0.984,0.959]]; /* β0.371.0 T717 クラス×路面（舗装・砂利・雪・氷・濡れた舗装）の直し。オートで走らせた金÷オートのベスト（中央値、tat364.js・run717.sh、out/t717）を 1.00 にそろえる掛け算。同じクラスの車どうしは揃っていて、ずれはクラス×路面で決まっていた（例 GT3 の雪 1.069・軽耐久の砂利 0.956） */
+function taMedT(){const k=(isForm()?1.03:(TAC[ccChoice]||1.03)*((TAX[ccChoice]||[])[ENV.wet>.5&&!(roadSurf|0)?4:roadSurf|0]||1))*(TAS2[roadSurf|0]||1)*(!isForm()&&setDrv===2?TAS4[roadSurf|0]||1:1)*(1+TAW*Math.min(1,ENV.wet||0)),g=Math.ceil(((qEst0(playerChoice,false)+.25)*k)*10)/10,f=fdRun&&!dyOn?FDM:[1.03,1.07];return [g,Math.ceil(g*f[0]*10)/10,Math.ceil(g*f[1]*10)/10];}
 const FDM=[1.10,1.20]; /* β0.303.0 T577③ FIRST DRIVE（はじめての1周）だけ銀＝金×1.10・銅＝金×1.20（ふだんは ×1.03・×1.07。ほぼ完璧な運転でも銅に届かなかった） */
 const taMedOf=t=>!taMed||!(t>0)?0:t<=taMed[0]+1e-9?3:t<=taMed[1]+1e-9?2:t<=taMed[2]+1e-9?1:0,taLv=()=>ghost?taMedOf(ghost.t):0;
 // 目標のゴーストの走り：レーシングライン（IL）を、曲がれる速さ（VP、ブレーキの手前の減速込み）と加速の上限でなぞった1周を、メダルの時間にそろえて伸び縮み
