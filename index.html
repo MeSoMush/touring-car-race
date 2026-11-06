@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.381.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.382.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5951,9 +5951,9 @@ function rdStep(k,u,beta,dt,want,dMax,lim,dist){
   k.rdA=1;k.rdT=T;if(!k._sim)k.rdN=(k.rdN||0)+dt;return {steer:-dl/dMax,thr:brk>=RZLA&&k.rzLn>0?thr:brk>0?0:thr,brk,b,T};}
 /* β0.381.0 T727 物理で先読みして選ぶ運転（MP。モデル予測制御の考え方。ご本人 2026-11-06「『物理で先読みして選ぶ運転』って正にレースドライバーがやってる事っすね」「やっぱソレしかないかも」）：
    オート（自分の車）が砂利の角に近づいたら、MPI 秒ごとに今の車を写し、RD の強さの候補 MPC ごとに MPH 秒先まで、ゲームの物理（stepKart）とふつうの運転（aiControl）で試し走り（1歩 MPD 秒）する。
-   道の端から MPE m より外へ出る（−1＝1m 内側）・横滑りが MPX° を越える・終わりに狙いの速さを MPV m/s 越えている候補は捨て、ふつうの運転（候補 0）より MPG m 以上遅れない中で、いちばん強く流す候補を選ぶ。候補は1フレームに MPF 本ずつ試す（重さを散らす。選ぶのは全部そろってから）。
+   道の端から MPE m より外へ出る（−1＝1m 内側）・横滑りが MPX° を越える・終わりに狙いの速さを MPV m/s 越えている候補は捨て、ふつうの運転（候補 0）より MPG m 以上遅れない中で（MPG が負なら −MPG m 以上速い中で）、いちばん強く流す候補を選ぶ。候補は1フレームに MPF 本ずつ試す（重さを散らす。選ぶのは全部そろってから）。
    どこまで流せるかは車と路面の物理で決まる（補正は入れない）。試し走りの間は音・知らせ・壁と周回の数えを止め、乱数は別のものを使う（本番の乱数の並びを変えない） */
-let MPB=.07,MPK=0 /* β0.381.0 は既定で切る：標準の車（セダン）が峠・ラリーで 3〜5% 遅れ、CPU の合格表の砂利の壁が × になった。試すには 1 */,MPCP=0,MPF=1,MPC0=.25,RZX=4,MPI=.25,MPH=1.8,MPD=1/20,MPC=[0,.5,1,1.5,2],MPE=-1,MPX=18 /* 大きく流れた時（30〜40°）は先が読めない＝コース4で遅れて壁へ。40→18 */,MPV=2,MPG=.5,MPU=1,MPS=0;
+let MPB=.07,MPK=1 /* β0.382.0 オン（β0.381.0 は切っていた：遅れの許し MPG .5 だと標準の車〈セダン〉が峠・ラリーで 3〜5% 遅れた） */,MPCP=0,MPF=1,MPC0=.25,RZX=4,MPI=.25,MPH=1.8,MPD=1/20,MPC=[0,.5,1,1.5,2],MPE=-1,MPX=18 /* 大きく流れた時（30〜40°）は先が読めない＝コース4で遅れて壁へ。40→18 */,MPV=2,MPG=-.5 /* β0.382.0 .5→−.5＝ふつうの運転より 0.5m 以上速いと見込める時だけ流す（遅れを許すと0.25秒ごとの判断で積み重なった） */,MPU=1,MPS=0;
 function mpCp(v,d){if(!v||typeof v!=='object'||d>3)return v;if(Array.isArray(v))return v.length>64?v.slice():v.map(x=>mpCp(x,d+1));if(Object.getPrototypeOf(v)!==Object.prototype)return v;const o={};for(const n in v)o[n]=mpCp(v[n],d+1);return o;} /* 写しの中の入れ子（k.sc.g など）も写す。three の物・設定の物はそのまま */
 function mpClone(k){const s=Object.assign({},k);for(const n in s){const v=s[n];if(v&&typeof v==='object')s[n]=mpCp(v,1);}s._sim=1;return s;}
 function mpRoll(k,Q,sc){const s=mpClone(Q.S);s.mpT=sc;s.mpW=1e9;const ki=karts.indexOf(k);if(ki>=0)karts[ki]=s;const C=Q.O.map(a=>[a[0].x,a[0].z,a[0].idx,a[0].lat,a[0].prevIdx]);for(const a of Q.O)[a[0].x,a[0].z,a[0].idx,a[0].lat,a[0].prevIdx]=a.slice(1);
