@@ -36,7 +36,7 @@ body.touch #garInfo>div{background:rgba(8,10,13,.8)}
 #wsc{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;display:none}
 /* HUD */
 #hud{position:fixed;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px calc(env(safe-area-inset-bottom,0px) + 10px)}
-#hud[hidden]{display:none}
+#hud[hidden]{display:none}#toast.toastM{position:fixed;left:0;right:0;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 22%);z-index:45;pointer-events:none;font-size:clamp(15px,2.2vw,22px);background:rgba(10,12,16,.86);border:1px solid rgba(255,215,94,.45);padding:6px 16px} /* T786 */
 #rank{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);font-family:var(--num);font-weight:800;font-style:italic;font-size:clamp(48px,9vw,92px);line-height:.9;color:var(--paper)}
 #rank small{font-family:var(--display);font-style:normal;font-weight:700;font-size:.3em;color:var(--muted);margin-left:4px}
 body.touch #rank{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 98px);font-size:clamp(34px,7vw,56px)}
@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.404.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.405.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1851,11 +1851,14 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 <script>/* T261 起動の見張り（読み込めない時・WebGL が使えない時の知らせ、古い記録の掃除、全画面で横向き） */
 (function(){var B=window.__boot={ok:false,failed:''};
  B.fail=function(kind){var e=document.getElementById('bootLoad');if(!e||B.failed||B.ok)return;B.failed=kind;e.className='fail';e.hidden=false;
-  e.innerHTML=(kind==='webgl'?'<b>この端末・ブラウザでは 3D 表示（WebGL）が使えません</b><span>ブラウザの設定で「ハードウェア アクセラレーション（グラフィック アクセラレーション）」を有効にするか、別のブラウザ・端末でお試しください。</span>':'<b>3D の部品を読み込めませんでした</b><span>通信を確かめて、読み込み直してください。</span>')+'<button type="button" id="bootReload">読み込み直す</button>';
+  if(kind==='script'){var bk='';try{var o={};for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i)||'';if(k.indexOf('popkart')===0)o[k]=localStorage.getItem(k);}bk=JSON.stringify(o);}catch(_){}
+   e.innerHTML='<b>起動できませんでした</b><span>途中でエラーが起きました'+(B.err?'：'+String(B.err).replace(/[<>&]/g,''):'')+'。読み込み直しても同じ時は、保存してある記録や設定が壊れているかもしれません。下の「記録と設定を消して読み込み直す」の前に、念のため枠の中の文字（記録の書き出し）を写しておけます。</span><textarea id="bootBk" readonly style="width:min(560px,90vw);height:72px;font-size:11px"></textarea><button type="button" id="bootReload">読み込み直す</button><button type="button" id="bootWipe">記録と設定を消して読み込み直す</button>';
+   try{document.getElementById('bootBk').value=bk;}catch(_){}var wa=0,w=document.getElementById('bootWipe');w.onclick=function(){if(!wa){wa=1;w.textContent='もう一度押すと消します（元に戻せません）';return;}try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i)||'';if(k.indexOf('popkart')===0)ks.push(k);}for(var j=0;j<ks.length;j++)localStorage.removeItem(ks[j]);}catch(_){}location.reload();};}
+  else e.innerHTML=(kind==='webgl'?'<b>この端末・ブラウザでは 3D 表示（WebGL）が使えません</b><span>ブラウザの設定で「ハードウェア アクセラレーション（グラフィック アクセラレーション）」を有効にするか、別のブラウザ・端末でお試しください。</span>':'<b>3D の部品を読み込めませんでした</b><span>通信を確かめて、読み込み直してください。</span>')+'<button type="button" id="bootReload">読み込み直す</button>';
   var r=document.getElementById('bootReload');r.onclick=function(){location.reload();};try{r.focus();}catch(_){}
   var pv=true;setInterval(function(){try{var gs=navigator.getGamepads?navigator.getGamepads():[];for(var i=0;i<gs.length;i++){var g=gs[i];if(g&&g.connected){var p=(g.buttons[0]&&g.buttons[0].pressed)||(g.buttons[9]&&g.buttons[9].pressed);if(p&&!pv)location.reload();pv=p;return;}}}catch(_){}},100);}; /* パッドは A か START で読み込み直す */
  B.done=function(){if(B.failed)return;B.ok=true;var e=document.getElementById('bootLoad');if(e)e.hidden=true;};
- addEventListener('error',function(ev){if(!B.ok&&/WebGL/i.test(String(ev&&ev.message||'')))B.fail('webgl');});
+ addEventListener('error',function(ev){if(!B.ok&&!B.err)B.err=String(ev&&ev.message||'')+(ev&&ev.lineno?'（'+ev.lineno+'行）':'');if(!B.ok&&/WebGL/i.test(String(ev&&ev.message||'')))B.fail('webgl');}); /* T790 最初のエラーを覚える */
  try{var c=document.createElement('canvas'),g=c.getContext('webgl2')||c.getContext('webgl')||c.getContext('experimental-webgl');if(!g)B.noGL=true;else{var x=g.getExtension('WEBGL_lose_context');if(x)x.loseContext();}}catch(_){B.noGL=true;}
  try{var ks=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i)||'';if((k.indexOf('popkart_ta')===0&&k.indexOf('popkart_ta2_')!==0&&k!=='popkart_tacc')||(k.indexOf('popkart_dr')===0&&k.indexOf('popkart_dr2_')!==0&&k!=='popkart_drcpu'))ks.push(k);}for(var j=0;j<ks.length;j++)localStorage.removeItem(ks[j]);}catch(_){} /* popkart_tacc・popkart_drcpu は消さない（前は毎回消えていた） */ /* 今は使わない古い記録（T207 より前のタイムアタック・0-400m）を掃除 */
  document.addEventListener('fullscreenchange',function(){try{if(document.fullscreenElement&&(('ontouchstart' in window)||matchMedia('(pointer:coarse)').matches)&&screen.orientation&&screen.orientation.lock){var p=screen.orientation.lock('landscape');if(p&&p.catch)p.catch(function(){});}}catch(_){}});
@@ -5256,7 +5259,7 @@ function rdApply(){RCL=rdCl();if(!PARKA)PARKA=PARK.slice();PARK.length=0;if(!RCL
 let FCG=10,FCP=1.5,FC={h:1,g:null,pass:null,pt:null,gp:0,au:0,nx:0};const isFc=()=>isBat()&&ssBat===2,fcNew=()=>({h:1,g:null,pass:null,pt:null,gp:0,au:0,nx:0});
 function batRival(){if(batRv==null||batRv===playerChoice){const o=[];for(let i=0;i<DRIVERS.length;i++)if(i!==playerChoice)o.push(i);batRv=o[Math.random()*o.length|0];batCar=null;}
  if(batCar==null)batCar=carOf(batRv);else if(clsOK(batCar,dCls(batRv))){if(!evCar)evCar=CPU_CAR.slice();evCar[batRv]=batCar;}return batRv;} /* もう一度の時は同じ相手・同じ車 */
-const btKey=()=>CRS.id||String(CRSI);function btLoad(){try{return JSON.parse(localStorage.getItem('popkart_bt')||'{}');}catch(_){return {};}}
+const btKey=()=>CRS.id||String(CRSI);function btLoad(){try{const o=JSON.parse(localStorage.getItem('popkart_bt')||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}; /* T790 null の文字で起動が止まっていた */}catch(_){return {};}}
 function btAdd(win,fc){const a=btLoad(),k=btKey()+(fc?'_fc':''),r=a[k]||{w:0,l:0};if(win)r.w++;else r.l++;a[k]=r;try{localStorage.setItem('popkart_bt',JSON.stringify(a));}catch(_){}return r;}
 function btRecUi(){const e=typeof $==='function'?$('btRec'):null;if(!e)return;const a=btLoad(),r=a[btKey()],f=a[btKey()+'_fc'];e.textContent=r?r.w+'勝'+r.l+'敗':'';const e2=$('fcRec');if(e2)e2.textContent=f?f.w+'勝'+f.l+'敗':'';}
 /* T264 ⑥ 運転の課題（ライセンス試験風）。… */
@@ -5324,7 +5327,7 @@ const CHV={bopMode:1,catSel:0,ccChoice:1,myCar:0,setDrv:1,setG:1,setW:1,setB:1,s
 function isCh(){return chOn!=null&&sess==='ta';}
 function chSwap(o){const old={};for(const k in o){old[k]=eval(k);eval(k+'=o[k]');}return old;}
 function chRestore(){if(chSnap){const o=chSnap;chSnap=null;chSwap(o);}}
-const chBest=()=>{try{return JSON.parse(localStorage.getItem('popkart_ch')||'{}');}catch(_){return {};}};
+const chBest=()=>{try{const o=JSON.parse(localStorage.getItem('popkart_ch')||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}; /* T790 */}catch(_){return {};}};
 const CHM=['なし','銅','銀','金'],chMed=(C,t)=>t<=C.g[0]+1e-9?3:t<=C.g[1]+1e-9?2:t<=C.g[2]+1e-9?1:0;
 function chRecUi(){const b=chBest();let n=[0,0,0,0];CH.forEach((C,i)=>{const r=b[i+CRK];if(r&&r.m)n[r.m]++;});$('chRec').textContent=n[3]+n[2]+n[1]?'金'+n[3]+'・銀'+n[2]+'・銅'+n[1]+' ／ '+CH.length:'';}
 function chOpen(){const b=chBest();$('chList').innerHTML=CH.map((C,i)=>{const r=b[i+CRK];
@@ -7997,7 +8000,7 @@ const tipTx=t=>isTouch?t.replace('（Rキー／スマホは右上のボタン）
 const toastT2=t=>toast(t);
 function clearBanner(){const b=$('banner');b.textContent='';b.classList.remove('chq');} // 不具合報告：文字を消す時はチェッカーフラッグ（chq）も外す（外し忘れて、0-400m のスタートやリプレイで旗だけ出たままだった）
 function showBanner(t){const b=$('banner');b.textContent=t;b.classList.toggle('chq',t==='FINISH');b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');bannerTimer=t==='GO!'?.9:2.2;}
-function toastPos(){const e=$('toast'),c=$('cstack');if(!e||!c||isTouch)return;const r=(state==='race'||state==='countdown'||state==='finished')&&!e.querySelector('.hint1');if(r){if(e.parentNode!==c){c.appendChild(e);msgPT=0;msgPK='';}}else if(e.parentNode===c){const w=$('rwAsk');w.parentNode.insertBefore(e,w);}} /* T607⑦ PC はレースの間だけトーストを知らせの列へ（スマホは前から列の中）。メニュー・初めての操作の案内は前の場所（画面の真ん中） */
+function toastPos(){const e=$('toast'),c=$('cstack');if(!e||!c)return;const hd=$('hud');if(hd&&hd.hidden){if(e.parentNode!==document.body){e._hm=[e.parentNode,e.nextSibling];document.body.appendChild(e);e.classList.add('toastM');}return;}if(e.parentNode===document.body){e.classList.remove('toastM');const m=e._hm;if(m&&m[0].isConnected)m[0].insertBefore(e,m[1]&&m[1].parentNode===m[0]?m[1]:null);else{const w=$('rwAsk');w.parentNode.insertBefore(e,w);}} /* T786 タイトル・GARAGE・結果は #hud ごと隠れるので、その間は body 直下の上の層へ出す */if(isTouch)return;const r=(state==='race'||state==='countdown'||state==='finished')&&!e.querySelector('.hint1');if(r){if(e.parentNode!==c){c.appendChild(e);msgPT=0;msgPK='';}}else if(e.parentNode===c){const w=$('rwAsk');w.parentNode.insertBefore(e,w);}} /* T607⑦ PC はレースの間だけトーストを知らせの列へ（スマホは前から列の中）。メニュー・初めての操作の案内は前の場所（画面の真ん中） */
 let toastLT='',toastLA=-9;function toast(t){$('toast').textContent=t;toastPos();toastTimer=2;if(t&&(state==='race'||state==='countdown'||state==='finished')){const n=performance.now()/1000,q=String(t).replace(/[\d.]+/g,'#');if(q!==toastLT||n-toastLA>3){logAdd('テロップ',t);msgSnd('info');toastLA=n;}toastLT=q;}} /* T607⑤ レース中のトーストも時間と一緒にログへ（メモ3章の知らせの決まり）。… */
 /* T361 コースの向き：タイトル（GARAGE）で選ぶと保存して読み込み直す。… */
 let layNext=(()=>{try{return JSON.parse(localStorage.getItem('popkart')||'{}').lay===1?1:0;}catch(_){return REV;}})();let crsNext=(()=>{try{const v=+(JSON.parse(localStorage.getItem('popkart')||'{}').crs||0);return COURSES[v]?v:0;}catch(_){return CRSI;}})(); /* T485 */ /* T407 ?rev は保存しない */const CRSN=CRS.name+(REV?' REVERSE':'');
@@ -8891,6 +8894,8 @@ $('pauseBtn').addEventListener('click',()=>{if(state==='race'||state==='countdow
 function bgmToggle(){bgmOn=!bgmOn;$('bgmBtn').textContent=bgmOn?'BGM ON':'BGM OFF';$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));try{localStorage.setItem('popkart_bgm',bgmOn?1:0);}catch(_){}initAudio();}
 try{if(localStorage.getItem('popkart_bgm')==='0'){bgmOn=false;$('bgmBtn').textContent='BGM OFF';}}catch(_){}$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));$('muteBtn').setAttribute('aria-pressed','true'); // T175⑦
 $('bgmBtn').addEventListener('click',bgmToggle);
+function rotChk(){try{const b=document.body;if(b.classList.contains('touch')&&!b.classList.contains('rotOk')&&matchMedia('(orientation:portrait)').matches&&(state==='race'||state==='countdown'))pause();}catch(_){}} /* T792 「横向きにしてください」の幕が出る時は止める（横に戻してもポーズのまま。幕をタップして縦のまま続ける時は止めない） */
+addEventListener('resize',rotChk);try{const q=matchMedia('(orientation:portrait)');q.addEventListener?q.addEventListener('change',rotChk):q.addListener(rotChk);}catch(_){}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state==='race'||state==='countdown')pause();rsvSave();if(ac&&ac.state==='running')ac.suspend();}else if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});});['pointerdown','keydown','touchend'].forEach(t=>addEventListener(t,()=>{if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});},true)); /* 音が止まったままにならない */
 $('muteBtn').addEventListener('click',()=>{muted=!muted;if(muted)pnHush();$('muteBtn').textContent=muted?'音 OFF':'音 ON';$('muteBtn').setAttribute('aria-pressed',String(!muted));initAudio();});
 // T199 タイトルの上の帯の「音」「全画面」：レース中のボタンと同じ働き（表示もそろえる。…
@@ -8991,7 +8996,7 @@ function pause(){msgPT=0;lgK='';setTimeout(()=>{try{lgUi();}catch(_){}},0); /* T
   h.addEventListener('pointerdown',e=>{d={x:e.clientX-ox,y:e.clientY-oy};try{h.setPointerCapture(e.pointerId);}catch(_){}});h.addEventListener('pointermove',e=>{if(!d)return;ox=e.clientX-d.x;oy=e.clientY-d.y;pn().style.translate=ox+'px '+oy+'px';});
   h.addEventListener('pointerup',()=>{d=null;});h.addEventListener('dblclick',()=>{ox=oy=0;pn().style.translate='';});}} /* T605 一時停止の窓を動かせる（ご本人の案） */
 function resume(){if(state!=='paused'||optOn()||!$('bugScreen').hidden||!$('helpScreen').hidden)return;state=pausedFrom;$('pauseScreen').hidden=true;}
-function toTitle(){fdEz=0; /* T685④B */if(typeof optClose==='function')optClose(); /* T638 OPTIONS を開いたまま「終了」でタイトルが空になっていた */FC=fcNew();pnHush();iceBack();chQuit();fdRun=0;rlQuit();dtour=null;if($('dtNext'))$('dtNext').hidden=true;$('againBtn').textContent='もう一度';retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('recScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;if(rvMeshG)rvMeshG.root.visible=false;showRec();try{fqShow();}catch(_){} /* T680① やめた後も FIRST DRIVE の入口を出す */state='title';$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){if(flLast&&flMode(flLast)){const m=flMode(flLast);flM=flLast;if(flPreOf(m)&&flCrsOf(m).includes(CRSI)){const c=m.id==='ss'&&fSurf===0?'st':m.cat;catCur=c;$('tmRun').dataset.cat=c;flOpen('pre');return;}catCur='top';$('tmRun').dataset.cat='top';flOpen('crs');return;} /* レースの後は④出走前へ（同じコースでもう一度・天気を変えて） */if(catTop())menuFocus('goBtn');else menuFocus(lastMi);catInfo();}},0);} /* T660① */
+function toTitle(){try{rsvSave();}catch(_){} /* T789 途中でやめた時も「続きから」を今の所で（前は周の変わり目の保存のまま・ボタンは読み込み直すまで出なかった） */fdEz=0; /* T685④B */if(typeof optClose==='function')optClose(); /* T638 OPTIONS を開いたまま「終了」でタイトルが空になっていた */FC=fcNew();pnHush();iceBack();chQuit();fdRun=0;rlQuit();dtour=null;if($('dtNext'))$('dtNext').hidden=true;$('againBtn').textContent='もう一度';retT=0;$('rwAsk').hidden=true;$('aboutScreen').hidden=true;$('recScreen').hidden=true;$('lapScreen').hidden=true;if(watchCam!=null){setCam(watchCam);watchCam=null;}setSpd(1);photoOn=false;document.body.classList.remove('photo');$('photoCap').hidden=true;if(state==='replay')endReplay();titleMode='attract';attNeed=true;setupOpen=false;$('setup').hidden=true;$('helpScreen').hidden=true;tScr.classList.remove('gar');camera.clearViewOffset();setStage(1);document.body.classList.remove('replay');$('rpBar').hidden=true;$('rpInfo').hidden=true;if(ghostMesh)ghostMesh.root.visible=false;if(rvMeshG)rvMeshG.root.visible=false;showRec();try{fqShow();}catch(_){} /* T680① やめた後も FIRST DRIVE の入口を出す */state='title';try{rsvUi();}catch(_){}$('pauseScreen').hidden=true;$('resultScreen').hidden=true;hud.hidden=true;pad.hidden=true;$('titleScreen').hidden=false;setTimeout(()=>{if(state==='title'&&tStage===1&&!setupOpen&&$('helpScreen').hidden){if(flLast&&flMode(flLast)){const m=flMode(flLast);flM=flLast;if(flPreOf(m)&&flCrsOf(m).includes(CRSI)){const c=m.id==='ss'&&fSurf===0?'st':m.cat;catCur=c;$('tmRun').dataset.cat=c;flOpen('pre');return;}catCur='top';$('tmRun').dataset.cat='top';flOpen('crs');return;} /* レースの後は④出走前へ（同じコースでもう一度・天気を変えて） */if(catTop())menuFocus('goBtn');else menuFocus(lastMi);catInfo();}},0);} /* T660① */
 
 // 結果画面の撮影カメラ（T54）：主役の車の周りを低い位置からゆっくり回る
 let resCar=null,resA=0,photoOn=false;
@@ -9085,18 +9090,20 @@ function rsvSave(){if(!rsvOk())return;try{const ks=karts.map(k=>{const o={};for(
   const d={v:1,rev:REV,ver:$('tsVer').textContent,at:Date.now(),set:localStorage.getItem('popkart')||'',LAPS,auto:autoPlay?1:0,watch:watchCam!=null?1:0,
     order:karts.map(k=>{const i=DRIVERS.findIndex(x=>x.name===k.dr.name);return i<0?playerChoice:i;}),evSkill,evSet,evDrv,evCar,evCls,gridInfo,
     raceTime,raceT0,env:ENV,rub:Array.from(RUB,x=>+x.toFixed(3)),pud:PUD.map(q=>+q.a.toFixed(2)),sc,fcy:{...FCY},roll:{...ROLL},
-    fast:fastLap?{t:fastLap.t,id:fastLap.k.id}:null,fin:finishOrder.map(k=>k.id),crash:crashTimes.slice(),rw:rwCount,ks,
+    phv:PHYV,cup:CUP?JSON.parse(JSON.stringify(CUP)):null, /* T789 選手権の中身と物理の版も */fast:fastLap?{t:fastLap.t,id:fastLap.k.id}:null,fin:finishOrder.map(k=>k.id),crash:crashTimes.slice(),rw:rwCount,ks,
     info:{lap:Math.max(1,Math.min(LAPS,p.lap)),pos:rankOf(p)+1}};
   localStorage.setItem(RSV_KEY,JSON.stringify(d));}catch(_){}}
-function rsvLoad(){try{const d=JSON.parse(localStorage.getItem(RSV_KEY)||'null');return d&&d.v===1&&(d.rev|0)===REV&&Array.isArray(d.ks)&&d.ks.length===8?d:null; /* T361 向きが違う保存は使わない */}catch(_){return null;}}
+function rsvLoad(){try{const d=JSON.parse(localStorage.getItem(RSV_KEY)||'null');const ok=d&&d.v===1&&(d.rev|0)===REV&&Array.isArray(d.ks)&&d.ks.length===8&&Array.isArray(d.order)&&d.order.length===8&&d.env&&typeof d.env==='object'&&Array.isArray(d.rub)&&Array.isArray(d.pud)&&d.sc&&typeof d.sc==='object'&&d.info&&d.info.lap>0&&d.info.pos>0&&(!d.phv||d.phv===PHYV);return ok?d:null; /* T789（診断 #6）形が欠けた保存・物理の版が違う保存は使わない */ /* T361 向きが違う保存は使わない */}catch(_){return null;}}
 function rsvClear(){try{localStorage.removeItem(RSV_KEY);}catch(_){}rsvUi();}
 function rsvUi(){const b=$('contBtn');if(!b)return;const d=rsvLoad();b.hidden=!d;if(!d)return;const t=new Date(d.at),z=n=>String(n).padStart(2,'0');
-  $('contInfo').textContent=`${d.LAPS}周の ${d.info.lap}周目・${d.info.pos}位（${t.getMonth()+1}/${t.getDate()} ${z(t.getHours())}:${z(t.getMinutes())}）`;}
-function rsvResume(){const d=rsvLoad();if(!d){rsvUi();return;}
+  $('contInfo').textContent=(d.cup?(d.cup.tour?'カップ戦':'選手権')+' 第'+d.cup.r+'戦・':'')+`${d.LAPS}周の ${d.info.lap}周目・${d.info.pos}位（${t.getMonth()+1}/${t.getDate()} ${z(t.getHours())}:${z(t.getMinutes())}）`+(d.ver&&d.ver!==$('tsVer').textContent?'・前の版（'+d.ver+'）の続き':'');}
+function rsvResume(){const d=rsvLoad();if(!d){rsvUi();return;}try{rsvResume0(d);}catch(e){console.error(e);rsvClear();state==='title'||toTitle();toast('続きから戻せませんでした（保存が壊れていたので消しました）');toastTimer=5;}} /* T789（診断 #6）途中で止まったら消して知らせる */
+function rsvResume0(d){
   let cur='';try{cur=localStorage.getItem('popkart')||'';}catch(_){}
   if(d.set&&cur!==d.set){try{localStorage.setItem('popkart',d.set);sessionStorage.setItem('popkart_rsv','1');}catch(_){}location.reload();return;} // 設定を保存した時のものにして読み込み直す（読み込み後にここへ戻る）
   modeSel=0;setAuto(!!d.auto);if(d.watch&&watchCam==null){watchCam=camMode;camMode=3;$('camBtn').textContent='視点 '+CAMN[3];}
   newEvent();evSkill=d.evSkill;evSet=d.evSet;evDrv=d.evDrv;evCar=d.evCar||CPU_CAR.slice();evCls=d.evCls;gridOrder=d.order.slice();gridInfo=d.gridInfo||null;ssOn=false;
+  if(d.cup&&d.cup.r&&Array.isArray(d.cup.hist)&&(!d.cup.tour||cupHere(d.cup.r)))CUP=d.cup; /* T789 選手権の続き（newEvent が消した後に戻す） */
   rsvNow=true;try{startSession('race');}finally{rsvNow=false;}
   LAPS=d.LAPS;karts.forEach((k,i)=>{const o=d.ks[i];for(const n in o)k[n]=o[n];k.prevWheel=null;if(isForm())k.ci=FCI;}); /* T306 フォーミュラの番号が 10→12 に */
   raceTime=d.raceTime;raceT0=d.raceT0;Object.assign(ENV,d.env);for(let i=0;i<N;i++)RUB[i]=d.rub[i]||0;d.pud.forEach((a,i)=>{if(PUD[i])PUD[i].a=a;});
@@ -10279,6 +10286,7 @@ function autoRes(raw){if(bmk||gfxRes!==0||(state!=='race'&&state!=='countdown')|
 function frame(now){requestAnimationFrame(frame);if(!bmk){frame0(now);return;}const t0=performance.now();bmk.rdF=0;bmk.dcF=0;bmk.trF=0;frame0(now);bmEnd(performance.now()-t0);}
 function frame0(now){
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw);if(bmk)bmRec(raw*1000); // 時刻が戻った時（負の時間）は進めない（ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
+  if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';} /* T786 タイトル・メニュー・ポーズでも消えるように頭で */if(toastTimer>0||$('toast').parentNode===document.body)toastPos();
   if(!bmk)pollPad();bgmTick(dt);msHud();hlSeatT();inpHud(dt);ckAvoid(dt);
   if(state==='title'){titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);resMk();}
@@ -10318,7 +10326,6 @@ function frame0(now){
     if(state==='race'||state==='finished'){syncVisuals(dt);updateCamera(dt);updateHud(dt);drawFx();updateLine(player());}
   }
   if(bannerTimer>0){bannerTimer-=dt;if(bannerTimer<=0)clearBanner();}
-  if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';}
   if(state!=='paused'){stepTelop(dt);stepRadio(dt);pitHud();coachTick(dt);}pnStep(dt);icyWarn();
   updateEngine();
   rMain();mirLayout();renderMirror();
@@ -10610,7 +10617,8 @@ $('bmGo').addEventListener('click',bmStart);
  try{(document.head||document.body).appendChild(st);}catch(_){}}
 window.__bm={start:bmStart,abort:()=>bmk&&bmAbort('テスト'),get:()=>bmk,last:()=>bmLastRes,hz:ms=>{const b={hz:ms};const o=bmk;bmk=b;try{return bmHz();}finally{bmk=o;}},th:bmTh};
 
+try{window.__boot&&(window.__boot.main=1);}catch(_){} /* T790 主のスクリプトが最後まで走った印（テストの作り直しの目印の手前に置く） */
 requestAnimationFrame(frame);
 })();
 </script>
-<script>if(window.__boot&&window.THREE&&!__boot.failed)requestAnimationFrame(function(){requestAnimationFrame(function(){__boot.done();});}); /* T261 */</script>
+<script>if(window.__boot&&window.THREE&&!__boot.failed&&!__boot.main)__boot.fail('script'); /* T790 */if(window.__boot&&window.THREE&&!__boot.failed)requestAnimationFrame(function(){requestAnimationFrame(function(){__boot.done();});}); /* T261 */</script>
