@@ -972,7 +972,7 @@ body:not(.touch) #wx{bottom:auto;right:calc(12px + clamp(110px,18vw,170px) + 8px
  body.touch #setup>.row{padding-top:2px;padding-bottom:0}body.touch #setup>.row .btn{min-height:36px;padding-top:4px;padding-bottom:4px;font-size:15px}
  body.touch #advBtn{min-height:34px}body.touch #garTabs button{padding-top:6px;padding-bottom:6px}}
 .gsec{font-weight:800;font-size:13px;letter-spacing:.12em;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:3px;margin:16px 0 8px}.gsec:first-child{margin-top:2px}
-#garTabs button{white-space:nowrap}#fdNextCh,#fdNextRace,#fdNextCup{font-size:18px;white-space:nowrap}body.touch #fdNextCh,body.touch #fdNextRace,body.touch #fdNextCup{font-size:12px;letter-spacing:0}body:not(.touch) #gtab3 .tch{display:none}body.touch #msRow{display:none}
+#garTabs button{white-space:nowrap}#fdNextCh,#fdNextDr,#fdNextRace,#fdNextCup{font-size:18px;white-space:nowrap}body.touch #fdNextCh,body.touch #fdNextDr,body.touch #fdNextRace,body.touch #fdNextCup{font-size:12px;letter-spacing:0}body:not(.touch) #gtab3 .tch{display:none}body.touch #msRow{display:none}
 #slipCv{display:block;width:11em;height:auto;margin-top:3px}#slipCv[hidden]{display:none}body.touch #slipCv{width:13em}body:not(.touch) #slipCv.fr{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 232px);width:300px}body.touch #autoBadge{white-space:nowrap;letter-spacing:.08em}body.hudmin #slipCv,body.photo #slipCv{display:none}
 #autoBadge .atT{color:#ffd23f;letter-spacing:.04em}#autoBadge.tq{animation:none}
 #chGoal{font-size:.78em;font-weight:800;letter-spacing:.04em;color:#e8eaee}#chGoal[hidden]{display:none}#chGoal b{color:#ffd23f}#chGoal b.m1{color:#d9dde3}#chGoal b.m2{color:#d79a5c}#chGoal b.m3{color:#ff8a7a}
@@ -1336,7 +1336,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.414.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.415.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1836,7 +1836,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
       <button class="btn" id="raceBtn" type="button" hidden>決勝スタート</button>
       <button class="btn alt" id="qsSetBtn" data-key="G" type="button" hidden>セッティングを変える</button>
       <button class="btn" id="fdNextCh" type="button" hidden>次は 課題①「止まる」</button>
-      <button class="btn alt" id="fdNextRace" type="button" hidden>次は かんたんレース</button>
+      <button class="btn alt" id="fdNextDr" type="button" hidden>次は ドリフトの課題</button><button class="btn alt" id="fdNextRace" type="button" hidden>次は かんたんレース</button>
       <button class="btn" id="fdNextCup" type="button" hidden>次は ミニ選手権（3戦）</button>
       <button class="btn" id="dtNext" type="button" hidden>次の対戦へ</button>
       <button class="btn" id="againBtn" type="button">もう一度</button>
@@ -5420,7 +5420,7 @@ function chMarks(C){if(chGrp){scene.remove(chGrp);chGrp.traverse(o=>{if(o.geomet
 function chBegin(){const C=CH[chOn];chRes=null;chRw=0;chCo=[];chD=C.dr?{t:0,mx:0,l:{},pk:{},hb:-9,fe:0,hbOk:0}:null;ghost=null;chMarks(C);$('chListBtn').hidden=false;
   telop('CHALLENGE',(chOn+1)+'「'+C.n+'」'+C.d+(C.dr?'　条件：'+chDrTxt(C):'')+'　金 '+fmt(C.g[0])+'・銀 '+fmt(C.g[1])+'・銅 '+fmt(C.g[2]));}
 function chEnd(r){if(chRes)return;chRes=r;state='finished';afterFinish=2;const p=player();
-  if(r.ok){r.m=chMed(CH[chOn],r.t);r.valid=!chRw&&!autoPlay&&!autoUsed;const b=chBest(),o=b[chOn+CRK];r.old=o||null;
+  if(r.ok){r.m=chMed(CH[chOn],r.t);r.valid=!chRw&&!autoPlay&&!autoUsed;const b=chBest(),o=b[chOn+CRK];r.old=o||null;try{r.pzH=achCh(CH[chOn],r,o?o.m||0:0);}catch(_){r.pzH='';} /* T808 */
     if(r.valid&&(!o||r.t<o.t||r.m>(o.m||0))){b[chOn+CRK]={t:o&&o.t<r.t?o.t:r.t,m:Math.max(r.m,o?o.m||0:0)};r.rec=(!o||r.t<o.t)&&lsPut('popkart_ch',JSON.stringify(b),'課題の記録');}
     showBanner(r.m?CHM[r.m]+'メダル':'GOAL');telop(r.m?CHM[r.m]+'メダル':'GOAL',fmt(r.t),r.m===3?'purple':r.m?'green':'yellow');sfx('finish');}
   else{showBanner('失格');telop('失格',r.why,'yellow');sfx('warn');}
@@ -5450,7 +5450,7 @@ function showCh(){$('resNote').textContent='';$('resNote').classList.remove('ftn
   $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay||autoUsed?'（オート運転は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+r.why;
   const co=[...new Set(chCo)].slice(-4);
   const dn=C.dr&&chD?'<br>ドリフト：'+(C.dr.k?'':'横滑り '+C.dr.b+'° 以上 '+chD.t.toFixed(1)+' 秒／'+C.dr.t+' 秒・')+'いちばん大きい横滑り '+Math.round(chD.mx)+'°'+(C.dr.k==='fe'?'・フェイント '+(chD.fe?'○':'×'):C.dr.k==='hb'?'・サイドで回る '+(chD.hbOk?'○':'×'):''):'';
-  $('resNote').innerHTML='課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・セダン FR・標準'+dn+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
+  $('resNote').innerHTML='課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・セダン FR・標準'+dn+(r.pzH?'<br>'+r.pzH:'')+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
   $('raceBtn').hidden=true;$('againBtn').hidden=false;$('chListBtn').hidden=false;$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=true;
   $('resultScreen').hidden=false;pad.hidden=true;}
 function ssSplit(p,quiet){const a=p.ssSp||(p.ssSp=[]);if(p.lap!==1||p.finished)return;const d=lapDist(p);while(a.length&&d<SLEN*a.length/3-10)a.pop(); /* 巻き戻した時 */
@@ -8857,8 +8857,8 @@ let fdRun=0; /* T348 FIRST DRIVE から走った（結果画面に「次は」�
 let fdEz=0; /* T685④B FIRST DRIVE の後のかんたんレースを走っている（このあいだだけ） */
 function fdCupUi(){const p=player(),on=!!fdEz&&sess==='race'&&!CUP&&!autoPlay&&modeSel===0&&!P2P&&!!p&&p.finished&&!p.dnf;$('fdNextCup').hidden=!on;if(on)$('againBtn').classList.add('alt');}
 $('fdNextCup').addEventListener('click',()=>{fdEz=0;$('fdNextCup').hidden=true;const o=cupSel;cupSel=3;setAuto(false);beginEvent();cupSel=o;}); /* T685④B その時だけ3戦の選手権（OPTIONS の選びは変えない） */
-function fdNextUi(){const on=!!fdRun&&sess==='ta'&&chOn==null&&!isSS();$('fdNextCh').hidden=!on||$('chBtn').disabled; /* T556⑧ */$('fdNextRace').hidden=!on;$('againBtn').classList.toggle('alt',on);$('fdNextCup').hidden=true;}
-$('fdNextCh').addEventListener('click',()=>{fdRun=0;fdNextUi();saveSettings();setAuto(false);chGo(0);});
+function fdNextUi(){const on=!!fdRun&&sess==='ta'&&chOn==null&&!isSS();$('fdNextCh').hidden=!on||$('chBtn').disabled; /* T556⑧ */{const di=CH.findIndex(c=>c.dr);$('fdNextDr').hidden=!on||$('chBtn').disabled||di<0;$('fdNextDr').textContent='次は ドリフトの課題'+(di>=0&&!isTouch?'「'+CH[di].n+'」':'');} /* T808 */$('fdNextRace').hidden=!on;$('againBtn').classList.toggle('alt',on);$('fdNextCup').hidden=true;}
+$('fdNextCh').addEventListener('click',()=>{fdRun=0;fdNextUi();saveSettings();setAuto(false);chGo(0);});$('fdNextDr').addEventListener('click',()=>{const di=CH.findIndex(c=>c.dr);if(di<0)return;fdRun=0;fdNextUi();saveSettings();setAuto(false);chGo(di);}); /* T808 */
 $('fdNextRace').addEventListener('click',()=>{fdRun=0;fdEz=1;fdNextUi();setPreset(false);modeSel=0;saveSettings();setAuto(false);beginEvent();});
 $('firstBtn').addEventListener('click',()=>{fdRun=1;setPreset(false);modeSel=1;saveSettings();setAuto(false);beginEvent();});
 $('dyBtn').addEventListener('click',()=>{saveSettings();setAuto(!!autoStart);dyGo();});$('chBtn').addEventListener('click',chOpen);$('chClose').addEventListener('click',chClose);$('chList').addEventListener('click',e=>{const b=e.target.closest('.chI');if(b){saveSettings();setAuto(!!autoStart);chGo(+b.dataset.i);}});
@@ -9248,11 +9248,15 @@ const ACH=[
   {id:'ace',n:'達人を破る',d:'CPU「達人」で優勝',pz:50000,f:c=>ACHW(c)&&recAi()==='達人'},
   {id:'crs3',n:'3つのサーキット',d:'HIGASHI・AOGIRI・SHINONOME の決勝を完走',pz:30000,f:(c,A)=>!c.ret&&[0,2,3].every(i=>A.crs.includes(i))},
   {id:'cup',n:'チャンピオン',d:'選手権で優勝',pz:30000,cup:1,f:c=>c.me===1},
-  {id:'tour',n:'カップ戦の王者',d:'4コースのカップ戦で優勝',pz:50000,cup:1,f:c=>c.me===1&&!!c.tour}];
-/* T682 F3 課題の手帳：順に並んだ8つの小さな目標（済ませた順は問わない）。… */
+  {id:'tour',n:'カップ戦の王者',d:'4コースのカップ戦で優勝',pz:50000,cup:1,f:c=>c.me===1&&!!c.tour},
+  {id:'chg',n:'課題の金',d:'運転の課題のどれかで金メダル',pz:10000,ch:1,f:c=>!!c.ch&&c.r.ok&&c.r.m===3},
+  {id:'dr1',n:'流しの第一歩',d:'ドリフトの課題を1つ受かる',pz:10000,ch:1,f:c=>!!c.ch&&!!c.C.dr&&c.r.ok},
+  {id:'drg',n:'流しの名人',d:'ドリフトの課題で金メダル',pz:30000,ch:1,f:c=>!!c.ch&&!!c.C.dr&&c.r.ok&&c.r.m===3}]; /* T808 課題の実績（chEnd の achCh で見る） */
+/* T682 F3 課題の手帳：順に並んだ9つの小さな目標（済ませた順は問わない）。… */
 const TCH=[
   {id:'fd',n:'はじめの一歩',d:'FIRST DRIVE を走り切る',go:'タイトルの FIRST DRIVE',tx:'本物のレーサーも、新しいコースでは同じ所を何周も走ってブレーキを踏む場所を体に覚えさせる。看板や縁石の切れ目を目印に決めると、毎周の走りがそろってくる。'},
   {id:'ta',n:'1周の速さ',d:'タイムアタックで、はみ出しなしの1周を記録する',go:'②遊び方の TIME ATTACK',tx:'予選は1周の速さの勝負。4つのタイヤ全部が白線の外へ出るとその周は無効（トラックリミット）。速さより先に、毎周同じ線を通れることが大事。'},
+  {id:'dr',n:'はじめてのドリフト',d:'CHALLENGE のドリフトの課題を1つ受かる（条件を満たして走り切る）',go:'②遊び方の CHALLENGE（「ドリフト」の付いた課題）',tx:'ラリーやジムカーナでは、きつい角の手前で車の向きを先に変えておき、後輪を滑らせたまま出口を向く。滑らせるのが目的ではなく、早く出口を向くための技。角度はアクセルで保ち、ハンドルは滑った分だけ逆へ当てる。'}, /* T808 */
   {id:'fin',n:'はじめての決勝',d:'サーキットの決勝を最後まで走る',go:'②遊び方の RACE',tx:'「完走しなければ勝てない」はレースの古い言葉。1周目の1つ目の角は団子になりやすいので、無理に飛び込まず周りの車の動きを見ると完走に近づく。'},
   {id:'rain',n:'雨の日',d:'濡れた路面の決勝を最後まで走る',go:'④出走前の天気を「雨」に',tx:'雨の日は、乾いた日にみんなが通る線の上がゴムの跡で滑りやすくなり、わざと線を外して走る選手もいる。ブレーキは早めに、ハンドルとアクセルは穏やかに。'},
   {id:'pod',n:'表彰台',d:'決勝で3位以内に入る',go:'②遊び方の RACE（CPU の強さは④出走前で）',tx:'表彰台に上がれるのは上位3人だけ。速さだけでなく、ぶつからない・違反を取られない・タイヤを持たせる、の積み重ねで届く場所。'},
@@ -9279,10 +9283,15 @@ function najTxt(ci){const e=najGet()[ci],p=najPt(e),l=najLv(p);if(!e||!e.l)retur
   return 'なじみ：<b>段'+l+'</b>（走った '+((+e.m||0)/1000).toFixed(1)+'km・'+(+e.l||0)+'周・きれいな周 '+(+e.c||0)+'）' /* T702② 保存が壊れていても「NaNkm」と出さない */+(l<NJT().length?'・次の段まで あと '+Math.max(.1,NJT()[l]-p).toFixed(1)+' 点（1km で1点・きれいな周で1点）':'・いちばん上の段');}
 function achGet(){try{const o=JSON.parse(localStorage.getItem('popkart_ach')||'null');if(o&&o.v===1&&o.a&&typeof o.a==='object'){if(!Array.isArray(o.crs))o.crs=[];return o;}}catch(_){}return {v:1,a:{},crs:[]};}
 function achCheck(c){if(autoUsed||!stOn())return '';const A=achGet();if(!c.cup&&!c.ret&&!A.crs.includes(CRSI))A.crs.push(CRSI);const nw=[];
-  for(const a of ACH){if(A.a[a.id]||!!a.cup!==!!c.cup)continue;let ok=false;try{ok=!!a.f(c,A);}catch(_){}if(ok){A.a[a.id]=Date.now();cashAdd(a.pz);nw.push(a);}}
+  for(const a of ACH){if(A.a[a.id]||!!a.cup!==!!c.cup||a.ch)continue;let ok=false;try{ok=!!a.f(c,A);}catch(_){}if(ok){A.a[a.id]=Date.now();cashAdd(a.pz);nw.push(a);}}
   lsPut('popkart_ach',JSON.stringify(A),'実績');
   const th=c.cup?(c.me===1?tchHit('cup'):''):(!c.ret&&!(CRS&&CRS.st)?tchHit('fin'):'')+(!c.ret&&ENV.wet>=.35?tchHit('rain'):'')+(!c.ret&&c.pos<=3?tchHit('pod'):''); /* T682 F3 */
   return (nw.length?'<span class="gd">実績：'+nw.map(a=>a.n).join('・')+'（＋'+yen(nw.reduce((t,a)=>t+a.pz,0))+'）</span>':'')+th;}
+/* T808 課題の結果の実績・課題の手帳・メダルの賞金（初めて届いた段だけ。銅 ¥2,000・銀 ¥4,000・金 ¥8,000、ドリフトの課題は 1.5倍） */
+const CHPZ=[0,2000,4000,8000];
+function achCh(C,r,old){if(!r||!r.ok||!r.valid)return '';const A=achGet(),nw=[];for(const a of ACH){if(!a.ch||A.a[a.id])continue;let ok=false;try{ok=!!a.f({ch:1,C,r},A);}catch(_){}if(ok){A.a[a.id]=Date.now();cashAdd(a.pz);nw.push(a);}}
+  if(nw.length)lsPut('popkart_ach',JSON.stringify(A),'実績');let pz=0;for(let m=(old|0)+1;m<=r.m;m++)pz+=CHPZ[m]||0;if(C.dr)pz=Math.round(pz*1.5/100)*100;if(pz>0)cashAdd(pz);r.pz=pz;
+  return (pz>0?'<span class="gd">賞金：初めての'+CHM[r.m]+'メダル（＋'+yen(pz)+'）</span>':'')+(nw.length?'<span class="gd">実績：'+nw.map(a=>a.n).join('・')+'（＋'+yen(nw.reduce((t,a)=>t+a.pz,0))+'）</span>':'')+(C.dr?tchHit('dr'):'');}
 function recGet(){try{const o=JSON.parse(localStorage.getItem('popkart_rec')||'null');if(o&&o.v===1)return recSane(o);}catch(_){}return {v:1,g:{},ai:{},sr:{r:CN0,l:0,n:0}};}
 function recPut(o){lsPut('popkart_rec',JSON.stringify(o),'戦績');}
 const stShow=k=>String(k).replace('変わりやすい','変わる').replace('ランダム','おまかせ'); /* T411⑦ 戦績の条件名は GARAGE の天気の名前で出す（保存の鍵は前のまま） */
