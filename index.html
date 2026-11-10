@@ -1332,7 +1332,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.405.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.406.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -10284,6 +10284,9 @@ function autoRes(raw){if(bmk||gfxRes!==0||(state!=='race'&&state!=='countdown')|
     else if(pr>1.01){renderer.setPixelRatio(Math.max(1,pr-.25));AR_LOG.drops++;resize();}return;}
   if(avg>AR_FPS&&pr>1.01){renderer.setPixelRatio(Math.max(1,pr-.25));AR_LOG.drops++;resize();}}
 function frame(now){requestAnimationFrame(frame);if(!bmk){frame0(now);return;}const t0=performance.now();bmk.rdF=0;bmk.dcF=0;bmk.trF=0;frame0(now);bmEnd(performance.now()-t0);}
+const PHH=1/60;let phA=0,phS=null; /* T784 物理の刻みと貯めた時間 */
+function phX(a){if(phS){for(const [k,x,z,h] of phS){k.x=x;k.z=z;k.h=h;}phS=null;} /* 描画の間だけ端数の秒の分を速さで先へ（戻す） */
+  if(Math.abs(a)<1e-4)return;phS=[];for(const k of karts){if(k.gone||k.dnf&&k.cr)continue;phS.push([k,k.x,k.z,k.h]);k.x+=(k.vx||0)*a;k.z+=(k.vz||0)*a;k.h+=(k.r||0)*a;}}
 function frame0(now){
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw);if(bmk)bmRec(raw*1000); // 時刻が戻った時（負の時間）は進めない（ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
   if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';} /* T786 タイトル・メニュー・ポーズでも消えるように頭で */if(toastTimer>0||$('toast').parentNode===document.body)toastPos();
@@ -10311,8 +10314,9 @@ function frame0(now){
   }
   if((state==='race'||state==='finished')&&holdT>0){holdT-=dt;syncVisuals(dt);updateCamera(dt);updateHud(dt);updateLine(player());}
   else if(state==='race'||state==='finished'){
-    const sub=autoPlay&&sess!=='drag'?spdMul:1; // 倍速（T146）：物理・CPU・接触だけ回数分まわし、描画と画面は1回
-    for(let si=0;si<sub&&(state==='race'||state==='finished');si++){
+    phA+=dt;let nS=0;while(phA>=PHH*.75&&nS<4){phA-=PHH;nS++;} /* T784 物理は決まった刻み 1/60 秒で（コマ数で車が変わらない）。端数は描画でずらす */
+    const sub=(autoPlay&&sess!=='drag'?spdMul:1)*nS; // 倍速（T146）：物理・CPU・接触だけ回数分まわし、描画と画面は1回
+    for(let si=0;si<sub&&(state==='race'||state==='finished');si++){const dt=PHH;
     raceTime+=dt;rnHold=si<sub-1;envStep(dt,true);rnHold=false;
     const pc=playerControl(dt);lastPc=pc;computeDraft();rollStep(dt);scStep(dt);npzStep(dt);
     for(const k of karts){pitCheck(k);wearStep(k,dt);k.aiDriven=!k.isPlayer||k.finished||autoPlay||k.pit>0||(ROLL.on&&!ROLL.green&&sess==='race');if(sess!=='drag')k.manual=!!(k.isPlayer&&manualMode&&!autoPlay&&!k.pit&&!k.dnf&&!k.finished);if(k.pxm&&!k.aiDriven&&!k.pit){const r=relLine(k);if(k.dnf||sess!=='race'||r>PXL||r<PIT_C||pxClear(k,Math.max(0,k.u)))k.pxm=0;} // 手動の自分の車は aiControl を通らないので、ここで合流待ちの印を消す
@@ -10323,7 +10327,7 @@ function frame0(now){
     if(state==='finished'){afterFinish+=dt;const rr=retT>0&&!autoPlay;rwAskUpd();if(afterFinish>(sess==='drag'?7:isBat()?20:autoPlay&&sess==='race'&&player().dnf?40:rr?RETW:5)||!rr&&karts.every(k=>k.finished||k.dnf)&&(sess!=='drag'||afterFinish>2))showResults();}
     }
     if(ROLL.fmE)fmEnd(); /* T360 */
-    if(state==='race'||state==='finished'){syncVisuals(dt);updateCamera(dt);updateHud(dt);drawFx();updateLine(player());}
+    if(state==='race'||state==='finished'){phX(phA);syncVisuals(dt);updateCamera(dt);phX(0);updateHud(dt);drawFx();updateLine(player());}
   }
   if(bannerTimer>0){bannerTimer-=dt;if(bannerTimer<=0)clearBanner();}
   if(state!=='paused'){stepTelop(dt);stepRadio(dt);pitHud();coachTick(dt);}pnStep(dt);icyWarn();
