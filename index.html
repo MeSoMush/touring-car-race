@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.426.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.426.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5303,7 +5303,7 @@ let ssOn=false,ssRes=null,fcNote='';const isSS=()=>ssOn&&sess==='ta';
 /* T510③ 公道バトル（ご本人 2026-10-24「どっちが先に着くか的なレースも有っても面白い」。… */
 let ssBat=0,batRv=null,batCar=null,batLead=null;const isBat=()=>isSS()&&!!ssBat;
 /* T554（ご本人の報告「ラリーで一般車両が居るのは不自然」・決定「信号も路駐も消す」）：公道のコースの RALLY SS（1人の SS とラリーの3本）は道を閉じたステージ。… */
-let RCL=false;const rdCl=()=>PUBR&&isSS()&&!ssBat;
+let RCL=false;const rdCl=()=>PUBR&&isSS()&&!ssBat||!!CRS.trf&&(sess==='race'||sess==='quali'); /* 公式レース（予選・決勝）は道を閉じて走る＝一般車なし（ご本人 2026-11-12） */
 function rdApply(){RCL=rdCl();if(!PARKA)PARKA=PARK.slice();PARK.length=0;if(!RCL)PARK.push(...PARKA);for(const p of PARKA)if(p.g)p.g.root.visible=!RCL;}
 /* T499② 先行・後追い（ssBat=2）。… */
 let FCG=10,FCP=1.5,FC={h:1,g:null,pass:null,pt:null,gp:0,au:0,nx:0};const isFc=()=>isBat()&&ssBat===2,fcNew=()=>({h:1,g:null,pass:null,pt:null,gp:0,au:0,nx:0});
