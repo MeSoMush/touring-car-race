@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.423.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.423.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3759,6 +3759,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   for(const b of CBAR){if(b[4])continue; /* T692 形のある物は上で描いた（CBXK＝0 の時だけ前の柵） */const g=new THREE.Group();const L=Math.max(b[2],b[3]),t=bt.clone();t.needsUpdate=true;t.repeat.set(L/4,1);const m=new THREE.Mesh(new THREE.BoxGeometry(b[2],.55,b[3]),new THREE.MeshLambertMaterial({map:t}));m.position.y=1.0;m.scale.y=.5;m.castShadow=true;g.add(m); /* T690 しまの板は上に細く */
    const rt=rwTex.clone();rt.needsUpdate=true;rt.repeat.set(Math.max(1,Math.round(L/2.4)),1);const base=new THREE.Mesh(new THREE.BoxGeometry(b[2],.8,b[3]),new THREE.MeshLambertMaterial({map:rt}));base.position.y=.4;base.castShadow=true;g.add(base); /* T690 台はコンクリートから赤白の樹脂の柵（水を入れる形。… */g.position.set(b[0],0,b[1]);scene.add(g);STATIC.push(g);}
   /* T826 曲がる角の黄色の矢印板は外した（市街地にわざとらしい「＞」の板は置かない。曲がる向きはペースノート、曲がらない道は T692 の自然な物で塞ぐ） */
+  const e=CRS.grid.sw/2+2.5; /* 信号機の柱の位置（区画の道の端から） */
   /* T515③ 信号機と停止線 */
   if(SIG.length){const sp=new THREE.MeshLambertMaterial({color:0x5a5f66}),hm=new THREE.MeshLambertMaterial({color:0x1d1f22}),wm=new THREE.MeshBasicMaterial({color:0xdedcd2,polygonOffset:true,polygonOffsetFactor:-2}),LC=[0xff2a1a,0xffb01a,0x1ee07a],lg=new THREE.CylinderGeometry(.21,.21,.06,14);
    for(const g of SIG){g.hd=[0,1].map(()=>{const a=LC.map(c=>new THREE.MeshStandardMaterial({color:0x202020,emissive:c,emissiveIntensity:.04}));a.st=-1;return a;});
