@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.424.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.425.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6843,7 +6843,7 @@ function trfPose(t,dt){if(t.xs){const g=t.xs,hx=g.ax*t.dir,hz=g.az*t.dir,ln=2.75
  t.lat+=(lat+t.latO+(t.yo||0)-t.lat)*(dt?Math.min(1,dt*(t.hw?HWLV:2.5)):1); /* 首都高の車線変更は 3秒ほどかけて */const lim=WL[i]-t.hx-.1;t.lat=Math.max(-lim,Math.min(lim,t.lat));
  const fx=FX[i]+(FX[j]-FX[i])*f,fz=FZ[i]+(FZ[j]-FZ[i])*f;t.h=Math.atan2(fx,fz)+(t.dir<0?Math.PI:0);
  t.x=TX[i]+(TX[j]-TX[i])*f+NX[i]*t.lat;t.z=TZ[i]+(TZ[j]-TZ[i])*f+NZ[i]*t.lat;t.vx=Math.sin(t.h)*t.v;t.vz=Math.cos(t.h)*t.v;t.i=i;}
-function trfReset(){polPkSet(null);for(const t of TRF)t.pk=0;polH=0;polCD=0;polPS=null;for(const k of karts){k.ph=0;k.phS=null;}for(const t of TRF){t.s=t.s0;t.v=t.vm;t.lat=0;t.latO=0;t.latV=0;t.yo=0;t.on=t.pol||RCL?0:1;t.cg=0;t.lost=0;t.mode=0;t.hit=0;t.hzd=0;t.brk=0;t.nh=0;t.hitN=0;if(t.hw){t.ln=t.lnT=t.ln0;t.blT=0;t.lcd=0;t.rs=0;}trfPose(t,0);}}
+function trfReset(){polPkSet(null);for(const t of TRF)t.pk=0;polH=0;polCD=0;polPS=null;for(const k of karts){k.ph=0;k.phS=null;k._pp=null;k._pg=0;}for(const t of TRF){t.s=t.s0;t.v=t.vm;t.lat=0;t.latO=0;t.latV=0;t.yo=0;t.on=t.pol||RCL?0:1;t.cg=0;t.lost=0;t.mode=0;t.hit=0;t.hzd=0;t.brk=0;t.nh=0;t.hitN=0;if(t.hw){t.ln=t.lnT=t.ln0;t.blT=0;t.lcd=0;t.rs=0;}trfPose(t,0);}}
 /* T515③ 横道の車：信号（横道の黄・赤で停止線に止まる）・同じ車線の前の車・前を横切る車（レースの車と道の一般車）に合わせて速さを決める。… */
 function xsStep(t,dt){const g=t.xs,cs=sigSt(g)[1],hx=g.ax*t.dir,hz=g.az*t.dir;let vT=t.hit?0:t.vm;const fr=t.s+t.hz,line=-(SGE+1.5);
  if(cs!==0&&fr<line){const dl=line-fr;if(cs===2||dl>t.v*t.v/7)vT=Math.min(vT,Math.sqrt(2*3*Math.max(0,dl-.3)));}
@@ -6991,6 +6991,42 @@ function hwPass(k,u,lane,lo,hi,gk){const i=k.idx,n0=laneN(i),lw=(2*WL[i]-2)/n0,c
   return Math.max(lo,Math.min(hi,Math.max(y-m,Math.min(y+m,lane))));}
 let TFK=1.2; /* T670 首都高：横の流れを見込む秒の上限（0 で切る） */
 let FCV=1.5,FCD=10,FCQ=8,FYM=1.6,FYD=15; /* T826 向き合った時：カートの這う速さ m/s・見る近さ m（＋車の半分）・同じ向きの一般車がこの車間 m より近ければ這わない、一般車の寄る幅 m・見る近さ m */
+/* T621 峠（首都高でも街でもない一般車の道）の追い越し：見通し・次の角・抜き終わるまでの道のりを見込んで、出られる時だけ一気に出る。出たら抜き終わるまで続け、出られない間はすぐ後ろで待つ。
+   OTA＝見込みの加速 m/s²（×グリップの比）・OTV＝見えない対向車の見込みの速さ m/s・OTG＝抜いた車の前に空ける m・OTM＋OTH 秒×近づく速さ＝戻った時の対向車とのゆとり・
+   OTC＝この半径 m 未満の角の手前までに戻る・OTE＝見通しで道の端の外に足す m（30＝ゆるい曲がりは見通せる・半径の小さい角で切れる。3 では林の中のゆるい曲がりでも 90m ほどで切れて、ほとんど抜けなかった）・OTL＝見通しを見る長さ m・OTW＝出る車間 m・OTO＝抜く時の横の間 m・OTP＝待つ時に真ん中寄りへ寄せる m・
+   OTY＝抜いている間の狙いを、前の車の横にゆとりを空けた所からさらに外へ出す上限 m（前は上限なしで、走りの線が外にあると道の端の近くを狙い、速い曲がりで外へ流れて道の端を越えた。2026-11-12）・OTF＝待つ時の車間（前の車の速さ×この秒・4m 以上。近すぎたら前の車より遅くして空ける。前の式は 5m より近いと前の車と同じ速さになるだけで、ヘアピンで 0.2m まで詰めて当たっていた）・OTHC＝抜いている間の正面の対向車へのブレーキを見る秒（前は 2.5秒で、抜き終わる手前でブレーキが入っていた）・OTB＝出たあとで、やめる見込みの崩れ m・pk、と止まった車の後ろに並んで止まっている車）の後ろで自分もほぼ止まっている時の見込みの加速 m/s² と、抜いた車の前に空ける m・OTQ＝出ると決めて横へ動いている間の、前の車への速さの上限の傾き（車間 1m ごとに m/s。前の式は .55）・OTK＝出始めに、出る側の前後これ m に相手・自分の車がいたら出ない・
+   霧と雨の見通しの上限＝1.73÷（本体の霧の濃さの式の霧と雨の分）m・戻る点までに日陰の氷（RICE）があれば出ない・待つ時の車間は路面のグリップが低いほど伸ばす */
+let OTY=.5,OTA=3.5,OTV=50/3.6,OTG=6,OTM=5,OTH=.3,OTC=60,OTE=30,OTL=400,OTW=8,OTO=1,OTP=.5,OTHC=1.2,OTB=10,OTF=.45,OTK=9,OTQ=1,OTS=null;
+function sgtAt(i){if(!OTS)OTS=new Float32Array(N).fill(-1);if(OTS[i]>=0)return OTS[i]; /* 道の真ん中から先を見て、道幅（＋OTE）の中だけを通る視線が届く道のり（角で切れる。高さは見ていない）。点ごとに1度だけ数える */
+ const x0=TX[i],z0=TZ[i],fl=Math.hypot(FX[i],FZ[i])||1,fx=FX[i]/fl,fz=FZ[i]/fl;let lo=-9,hi=9,d=0;
+ for(let j=1;j*SP<=OTL;j++){const q=wrap(i+j),dx=TX[q]-x0,dz=TZ[q]-z0,r=Math.hypot(dx,dz);if(r<1){d=j*SP;continue;}const a=Math.atan2(fx*dz-fz*dx,fx*dx+fz*dz);if(a<lo||a>hi)break;d=j*SP;const h=Math.asin(Math.min(1,(WL[q]+OTE)/r));lo=Math.max(lo,a-h);hi=Math.min(hi,a+h);}
+ OTS[i]=d;return d;}
+function trfPassL(k,u,l,iv,sK,gk,lo0,hi0){let nb=null,nd=1e9,cont=false;
+ if(k._pp){const t=k._pp.t,ds=trfD(t.s-sK);if(raceTime<k._pp.t0||raceTime-k._pp.t0>15||!t.on)k._pp=null;else if(ds<-(t.hz+2.4+OTG)){k._pp=null;cont=true;}else{nb=t;nd=ds;}} /* 抜き終わった（cont＝もう横にいる続きの車をそのまま抜き切ってよい印。15秒切れ・巻き戻し・消えた時は立てない） */
+ if(!nb)for(const v of iv){const t=v[2];if(t.dir>0&&!t.hw&&!t.pol&&v[3]>0&&v[3]<nd){nd=v[3];nb=t;}} /* パトカーは抜く相手にしない */
+ k._pc=null;if(!nb){k._pg=0;return l;}
+ const stopped=t=>t.hit||t.pk||t.v<1;let sto=stopped(nb);
+ /* 前の車の速さは、いつもの速さ（vm）より遅い時（角の立ち上がりなど）は vm まで戻る前提で見込む（今の速さで見込むと、ヘアピンの中で出て、前の車も加速して抜き切れず、並びかけた所でやめていた） */
+ let fr=nb.s+nb.hz,vG=Math.max(nb.v,nb.vm||0),lt=nb.lat,ht=nb.hx; /* すぐ続く一般車（抜いた後に入る間が無い）もまとめて抜く */
+ for(let r=0;r<3;r++){let nx=null,ng=1e9;for(const t of TRF){if(!t.on||t.xs||t.dir<=0||t.hw||t.pol&&!t.pk||t===nb)continue;const g=trfD(t.s-t.hz-fr);if(g>-1&&g<ng){ng=g;nx=t;}}if(!nx||ng>4.8+2*OTG)break;if(stopped(nx))sto=true;fr=nx.s+nx.hz;vG=Math.max(vG,nx.v,nx.vm||0);if(KPS*(nx.lat-lt)<0){lt=nx.lat;ht=nx.hx;}}
+ if(sto){k._pg=0;k._pp=null;return l;} /* 前の車の列に止まっている車（当てられた hit・路肩のパトカー pk・速さ 1m/s 未満）がいる時は、前の抜き方（trfAvoid の今の形）に任せる（止まった車の横を抜く判断は別の項目） */
+ const gap=nd-nb.hz-2.4,out=KPS*(k.lat-lt)<-(ht+.95),dv=u-vG,muR=Math.min(1,RSF[RSI[k.idx]].mu),a=OTA*gk*muR; /* 路面のグリップ（雪 0.24 など）も掛ける */
+ let t0=0,s0=0,D=fr+OTG-(sK-2.4);const g0=Math.max(OTW,5+dv/(.55*Math.sqrt(gk))+dv*.4);if(gap>g0&&dv>.5){t0=(gap-g0)/dv;s0=u*t0;D-=gap-g0;} /* 出る所（車間 g0＝前の車へのブレーキの上限が効き始める所＋横へ動く分）まで今の速さで詰める */
+ D=Math.max(0,D);const T1=(-dv+Math.sqrt(dv*dv+2*a*D))/a,Te=t0+T1,Se=s0+u*T1+.5*a*T1*T1,ue=u+a*T1;
+ const S=Math.min(sgtAt(k.idx),1.73/(.0005+(ENV.fog||0)*.0095+(ENV.rain||0)*.0022)); /* 霧・雨で見える距離（本体の霧の濃さの式から） */let dc=1e9,j0=0;while(j0*SP<OTL&&RAD[wrap(k.idx+j0)]<OTC)j0++;for(let j=j0;j*SP<Math.min(OTL,Se+20);j++)if(RAD[wrap(k.idx+j)]<OTC){dc=j*SP;break;} /* 次の角の入口（今回っている角の中なら、その角を抜けた先の次の角） */
+ let mg=Math.min(dc-Se,S-(Se+OTV*Te+OTM+(ue+OTV)*OTH)),pre=0; /* 見込みのゆとり m（負なら出られない） */
+ for(const t of TRF){if(!t.on||t.xs||t.dir>=0)continue;const ds=trfD(t.s-sK);if(ds<-(t.hz+2.4)||ds>S)continue;if(!out&&t0>0&&(ds-t.hz-2.4)/(u+t.v)<t0-.3){pre=1;continue;} /* 出る前にすれ違い終わる */mg=Math.min(mg,ds-t.v*Te-Se-OTM-(ue+t.v)*OTH);} /* 見えている対向車 */
+ for(let j=0;j*SP<Se+10;j++)if(RSI[wrap(k.idx+j)]===RICE){mg=-1e9;break;} /* 戻る点までに日陰の氷 */
+ let blk=0;for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ds=trfD(trfS(o)-sK);if(ds>0&&ds<OTK+5&&o._pg){blk=1;break;} /* 前で出ると決めている車が先（2台が同時に出ていた） */if(ds>OTK||ds<-(OTK+Math.max(0,o.u-u)*1.5))continue;if(ds<0&&o.u<u+2)continue;if(KPS*(o.lat-lt)<-(ht+.95)){blk=1;break;}} /* 出る側（前の車の横の帯より外）の前後に相手・自分の車。後ろの車は速く近づいている時だけ */
+ let go;if(k._pp&&k._pp.t===nb)go=!(mg<-OTB&&gap>0); /* 出たら続ける。まだ後ろにいて見込みが大きく崩れた時だけやめる */
+ else if(out&&gap<2&&cont){go=true;} /* 1台目を抜き終わった瞬間に、もう横にいる続きの一般車は抜き切る（前は印が死んでいて、ふつうの見込みでやめ、横に並んだ車へ切り込んで当たっていた） */
+ else go=!blk&&mg>(k._pg?0:8);
+ if(!go&&k._pp&&k._pp.t===nb)k._pp=null;
+ k._pg=go?1:0;
+ if(go&&!(pre&&!out)){const lim=lt-KPS*(ht+.95+OTO);l=KPS>0?Math.max(lo0,lim-OTY,Math.min(l,lim)):Math.min(hi0,lim+OTY,Math.max(l,lim));if(out&&!k._pp)k._pp={t:nb,t0:raceTime};}
+ else{if(out&&gap<0){const lim=lt-KPS*(ht+.95+OTO);l=KPS>0?Math.max(lo0,lim-OTY,Math.min(l,lim)):Math.min(hi0,lim+OTY,Math.max(l,lim));} /* 車体が横に重なっている間は切り込まない（横の間を保つ） */else if(KPS*(l-lt)<-ht*.5)l=lt-KPS*OTP; /* 待つ：距離に関係なく通行の側（すぐ後ろ、少し真ん中寄り）。横に出ていたら後ろへ戻る */
+  if(!out){const gF=Math.max(4,nb.v*OTF)/Math.max(.3,Math.min(1,gk*muR));if(gap<gF+10)k._pc=Math.max(0,nb.v+(gap-gF)*.5);}} /* 待つ時の車間（滑る路面ほど長く） */
+ return l;}
 function trfAvoid(k,u,lane,W){const sK=trfS(k),lo0=-W+1.4,hi0=W-1.4,iv=[];let same=0;
  {const t0=raceTime;if(k._llt!=null&&t0>k._llt&&t0-k._llt<.5)k._lv=(k._lv||0)*.7+.3*(k.lat-k._ll)/(t0-k._llt);else if(k._llt==null||t0-k._llt>=.5)k._lv=0;k._ll=k.lat;k._llt=t0;} /* T670 横の流れ（m/s、ならした値） */
  /* T526 gk＝今のタイヤのグリップ÷スリックのグリップ（同じ濡れ）。… */
@@ -7011,11 +7047,12 @@ function trfAvoid(k,u,lane,W){const sK=trfS(k),lo0=-W+1.4,hi0=W-1.4,iv=[];let sa
  else{const on=iv.find(v=>v[2].dir<0);if(on)l=KPS>0?Math.min(hi0,Math.max(lane,on[1])):Math.max(lo0,Math.min(lane,on[0]));} /* 通行の側の車線へ（前は左側通行の向きだけ） */
  if(TSH&&free){let nb=null,bd=1e9;for(const v of iv){const t=v[2];if(t.dir>0&&v[3]>-(t.hz+2.5)&&v[3]<TSHR&&v[3]<bd){bd=v[3];nb=t;}} /* T630 いちばん近い同じ向きの一般車に対して、抜く側（k._sv.s）を決めたら、その側に空きがある間は保つ（前は毎回その場でいちばん近い空きを選び直し、左右の空きが同じくらいだと狙いが行き来して、減速・斜め… */
   if(nb){const sn=bd<TSHN&&Math.abs(k.lat-nb.lat)>nb.hx+TSHX?Math.sign(k.lat-nb.lat):0;if(sn)k._sv={t:nb,s:sn}; /* もう横にいるなら今の側（記憶が古いまま一般車の手前で反対側へ横切って当たっていた） */const sv=k._sv,sd=Math.abs(l-nb.lat)>TSHM?Math.sign(l-nb.lat):0;if(sv&&sv.t===nb&&sd&&sd!==sv.s){let bq=null,bdq=1e9;for(const g of gp){if(g[1]-g[0]<.6||(sv.s>0?g[0]<nb.lat:g[1]>nb.lat))continue;const pd=hwM?Math.min(HWGM,(g[1]-g[0])/2):.3,q=Math.max(g[0]+pd,Math.min(g[1]-pd,lane)),d=Math.abs(q-lane)+Math.abs(q-k.lat);if(d<bdq){bdq=d;bq=q;}}if(bq!=null)l=bq;else if(!sn)k._sv={t:nb,s:sd};}else if(sd&&(!sv||sv.t!==nb))k._sv={t:nb,s:sd};}else k._sv=null;}
+ if(!hwM&&!CRS.free&&!CRS.city)l=trfPassL(k,u,l,iv,sK,gk,lo0,hi0); /* T621 峠の追い越し（ご本人 2026-11-11「峠だけ入れる」。街〈free・city〉は前の抜き方のまま。ほかの直しはこの呼び出しで付く k._pg・k._pp・k._pc がある時だけ効く） */
  if(hwH!=null)l=hwH; /* T821 */
  for(const v of iv){const t=v[2],inP=t.hw&&!(t.lnT!==t.ln)?Math.abs(k.lat-t.lat)<t.hx+.95+HWCO:k.lat>v[0]&&k.lat<v[1],lin=l>v[0]&&l<v[1];
   let inF=false;if(TFK>0&&t.hw&&t.dir>0&&!inP&&!lin&&u>t.v+1&&k._lv){const g=v[3]-t.hz-2.4,tc=Math.min(TFK,Math.max(0,g)/(u-t.v)),pl=k.lat+k._lv*tc;inF=Math.sign(t.lat-k.lat)===Math.sign(k._lv)&&Math.abs(pl-t.lat)<t.hx+.95+HWCO;} /* T670 追いつくまでにこのまま流れると一般車の幅に入る */
-  if(inF&&v[3]>t.hz+2.4)c=Math.min(c,Math.sqrt(t.v*t.v+2*HWBR*gk*Math.max(0,v[3]-t.hz-2.4-8))); /* T670 止まれる速さまで早めに落とす（前は 8m 手前で初めて上限が付いて間に合わなかった） */ /* T553 首都高は、今の位置が一般車のゆとりの幅に入っただけでは落とさない（車体が重なりそうな時＝幅＋HWCO m だけ。… */if(t.dir>0){if((inP||lin)&&v[3]>t.hz+2.4)c=Math.min(c,t.v+Math.max(0,v[3]-t.hz-2.4-5)*.55*gs,t.hw&&(lin||!free||v[3]<Math.max(0,u-t.v)*1.2+10)?Math.sqrt(t.v*t.v+2*HWBR*gk*Math.max(0,v[3]-t.hz-2.4-8)):1e9);} /* 首都高は、よける先が無い・よける先も塞がっている・よけるのが間に合わない（追いつくまで 1.2秒未満）時はブレーキで止まれる速さも（時速 240km と 80km の差では、1m ごとに 0.55m/… */else if(!free&&inP)c=Math.min(c,Math.max(0,(v[3]-t.hz-2.4)*.3));else if(Math.abs(k.lat-t.lat)<t.hx+1.25&&v[3]<(u+t.v)*2.5)c=Math.min(c,Math.sqrt(2*7*gk*Math.max(0,v[3]-t.hz-6)));} /* 対向車線にはみ出して対向車と重なる向きなら */
- if(CRS.free)for(const v of iv){const t=v[2];if(t.dir<0&&RAD[t.i]<40&&v[3]<30)c=Math.min(c,8);} /* 街の直角の角で対向車とすれ違う時はゆっくり */if(CRS.free&&c<FCV&&u<FCV+1&&KPS*(l-k.lat)>.3&&iv.some(v=>v[2].dir<0&&v[3]<v[2].hz+FCD)&&!iv.some(v=>v[2].dir>0&&v[3]-v[2].hz-2.4<FCQ&&(k.lat>v[0]&&k.lat<v[1]||l>v[0]&&l<v[1])))c=FCV; /* T826 対向車と向き合って止まったら、通行の側へ這って逃げる（前は両方止まったまま 10〜20秒）。上げるのは対向車の分だけ：前 FCQ m 以内に同じ向きの一般車がいる時は上げない */k.trfP=same&&l*KPS<0?1:0; /* 反対の車線にいる＝追い越し中 */return {l,c};}
+  if(inF&&v[3]>t.hz+2.4)c=Math.min(c,Math.sqrt(t.v*t.v+2*HWBR*gk*Math.max(0,v[3]-t.hz-2.4-8))); /* T670 止まれる速さまで早めに落とす（前は 8m 手前で初めて上限が付いて間に合わなかった） */ /* T553 首都高は、今の位置が一般車のゆとりの幅に入っただけでは落とさない（車体が重なりそうな時＝幅＋HWCO m だけ。… */if(t.dir>0){if((inP||lin)&&v[3]>t.hz+2.4)c=Math.min(c,!hwM&&k._pg&&!lin?(Math.abs(k.lat-t.lat)>t.hx+1.25?1e9:t.v+Math.max(0,v[3]-t.hz-2.4-2)*OTQ):t.v+Math.max(0,v[3]-t.hz-2.4-5)*.55*gs, /* T621 出ると決めて横へ動いている間は上限をゆるく（前の式のままだと減速して見込みが崩れ、出るのをやめて急ブレーキになった。もう車体が重ならない横まで出ていたら上限なし＝ヘアピンの中でゆとりの帯から出きらず、前の車の速さで這っていた） */t.hw&&(lin||!free||v[3]<Math.max(0,u-t.v)*1.2+10)?Math.sqrt(t.v*t.v+2*HWBR*gk*Math.max(0,v[3]-t.hz-2.4-8)):1e9);} /* 首都高は、よける先が無い・よける先も塞がっている・よけるのが間に合わない（追いつくまで 1.2秒未満）時はブレーキで止まれる速さも（時速 240km と 80km の差では、1m ごとに 0.55m/… */else if(!free&&inP&&!(k._pg&&!hwM))c=Math.min(c,Math.max(0,(v[3]-t.hz-2.4)*.3));else if(Math.abs(k.lat-t.lat)<t.hx+1.25&&v[3]<(u+t.v)*(k._pp&&!hwM?OTHC:2.5))c=Math.min(c,Math.sqrt(2*7*gk*Math.max(0,v[3]-t.hz-6)));} /* 対向車線にはみ出して対向車と重なる向きなら */
+ if(CRS.free)for(const v of iv){const t=v[2];if(t.dir<0&&RAD[t.i]<40&&v[3]<30)c=Math.min(c,8);} /* 街の直角の角で対向車とすれ違う時はゆっくり */if(CRS.free&&c<FCV&&u<FCV+1&&KPS*(l-k.lat)>.3&&iv.some(v=>v[2].dir<0&&v[3]<v[2].hz+FCD)&&!iv.some(v=>v[2].dir>0&&v[3]-v[2].hz-2.4<FCQ&&(k.lat>v[0]&&k.lat<v[1]||l>v[0]&&l<v[1])))c=FCV; /* T826 対向車と向き合って止まったら、通行の側へ這って逃げる（前は両方止まったまま 10〜20秒）。上げるのは対向車の分だけ：前 FCQ m 以内に同じ向きの一般車がいる時は上げない */k.trfP=same&&l*KPS<0?1:0; /* 反対の車線にいる＝追い越し中 */return {l,c:!hwM&&k._pc!=null?Math.min(c,k._pc):c};} /* T621 待つ時の車間 */
 /* バス・トラックの見た目（箱を組んだ簡単な形。T83 の方針） */
 /* T617 バス（carmodel の 32）・トラック（31）を新しい形で。… */
 function makeHeavy(T,col){if(nbMode&&nbCM())try{const id=T.hv==='bus'?32:31,P=nbTpl(id,col),MT=CarModel.MAT,root=new THREE.Group(),body=new THREE.Group();root.add(body);
