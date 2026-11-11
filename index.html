@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.423.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.424.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3714,6 +3714,16 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
  // T494 市街地の街のブロック：道の外（壁から 4m 以上）に四角い建物。…
  if(CRS.city){let q=6007;const r=()=>(q=(q*16807)%2147483647)/2147483647;const pz=[];for(let i=0;i<N;i+=3)if(PITZ[i])pz.push(i);
   const dT=(x,z)=>{let m=1e9;for(let i=0;i<N;i+=3){if(HID[i])continue;m=Math.min(m,Math.hypot(x-TX[i],z-TZ[i])-WAL[i]);}return m;};
+  /* T828 公式の市街地（壁で囲む・公道でない）：建物の箱と横道の帯を、壁の当たりの面（wFace）を基に点ごとに確かめる。clr＝壁のブロックの外側（面＋0.6m）からの距離（負＝壁より内） */
+  const OFC=!CRS.free&&!CRS.st,TBG=2,TGH=new Map();if(OFC)for(let i=0;i<N;i++){if(HID[i])continue;const k=Math.floor(TX[i]/16)*4096+Math.floor(TZ[i]/16);let L=TGH.get(k);if(!L)TGH.set(k,L=[]);L.push(i);}
+  const clr=(x,z)=>{let m=1e9,mi=-1;const cx=Math.floor(x/16),cz=Math.floor(z/16);for(let a=-2;a<=2;a++)for(let b=-2;b<=2;b++){const L=TGH.get((cx+a)*4096+cz+b);if(L)for(const i of L){const dx=x-TX[i],dz=z-TZ[i],v=Math.hypot(dx,dz)-wFace(i,dx*NX[i]+dz*NZ[i]>=0?1:-1)-.6;if(v<m){m=v;mi=i;}}}return [m,mi];};
+  const ctrim=(x,z,w,d)=>{if(dT(x,z)-Math.hypot(w,d)/2>TBG+6)return [x,z,w,d];let x0=x-w/2,x1=x+w/2,z0=z-d/2,z1=z+d/2; /* 箱の縁を 1m ごとに見て、歩道 TBG m より近い所の、道に面した辺を削る */
+   for(let it=0;it<24;it++){let wv=1e9,wp=null,wi=-1;const tp=(px,pz)=>{const [v,i]=clr(px,pz);if(v<wv){wv=v;wp=[px,pz];wi=i;}};const nx=Math.max(2,Math.ceil(x1-x0)),nz=Math.max(2,Math.ceil(z1-z0));
+    for(let k=0;k<=nx;k++){const px=x0+(x1-x0)*k/nx;tp(px,z0);tp(px,z1);}for(let k=0;k<=nz;k++){const pz=z0+(z1-z0)*k/nz;tp(x0,pz);tp(x1,pz);}
+    if(wv>=TBG||wi<0)break;const dx=wp[0]-TX[wi],dz=wp[1]-TZ[wi],dl=Math.hypot(dx,dz)||1,need=TBG-wv+.05;
+    if(Math.abs(dx)>=Math.abs(dz)){const m=need*dl/Math.max(.3,Math.abs(dx));if(dx>0)x0+=m;else x1-=m;}else{const m=need*dl/Math.max(.3,Math.abs(dz));if(dz>0)z0+=m;else z1-=m;}
+    if(x1-x0<6||z1-z0<6)return null;}
+   return [(x0+x1)/2,(z0+z1)/2,x1-x0,z1-z0];};
   const ok=(x,z,rr)=>{if(!CRS.free&&!farFromTrack(x,z,WALL+4+rr))return false; /* せき止めない街は通りの間のブロックにそのまま */for(const i of pz){if(Math.hypot(x-TX[i],z-TZ[i])<WALL+30+rr)return false;}return true;};
   const pos=[],uv=[],col=[],idx=[],rp=[],ri=[],B=[];let vc=0,rc=0;const cl=new THREE.Color();const PAL=[0xc9c2b4,0xa3a8ae,0xd8d4cb,0x8d939a,0x8399ad,0xb3a28c,0xe2ded6,0x75808c,0xb98f78,0x9aa58f];
   const G=CRS.grid,LOTS=[];if(G){const gx=[...G.x].sort((a,b)=>a-b),gz=[...G.z].sort((a,b)=>a-b),e=G.sw/2+2.5; /* T514 通りの間のブロックに、通りに面して建物を並べる（深いブロックは前と後ろの2列） */
@@ -3721,9 +3731,9 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
     for(const [z0,z1] of rows){let x=xa;while(x<xb-6){const w=Math.min(xb-x,12+r()*18);if(xb-x-w<8&&xb-x<40){LOTS.push([x+(xb-x)/2,(z0+z1)/2,xb-x-1.5,z1-z0-r()*4]);break;}LOTS.push([x+w/2,(z0+z1)/2,w-1.5,z1-z0-r()*4]);x+=w;}}}
    if(CRS.free)for(const b of CBAR){const ty=b[4];if(ty!=='t'&&ty!=='a')continue;const [dx,dz]=b[5],[gx0,gz0]=b[6],f=e+.5,c=f+CBXD/2; /* T692 T字路＝横の道の口いっぱいの建物、路地＝両側から CBXA m を残して建物 */
     const put=(o,wd)=>LOTS.push(dx?[gx0+dx*c,gz0+o,CBXD,wd,1]:[gx0+o,gz0+dz*c,wd,CBXD,1]);if(ty==='t')put(0,2*e);else{const wd=e-CBXA/2;put(-(CBXA/2+wd/2),wd);put(CBXA/2+wd/2,wd);}}}
-  for(let t=0;t<(G?LOTS.length:6000)&&B.length<(G?(CRS.free?1600:900):420);t++){const lt=G?LOTS[t]:null,x=G?lt[0]:minX-180+r()*(maxX-minX+360),z=G?lt[1]:minZ-180+r()*(maxZ-minZ+360),w=G?lt[2]:12+r()*24,d=G?lt[3]:12+r()*22,rr=G?Math.min(w,d)/2:Math.hypot(w,d)/2;
+  for(let t=0;t<(G?LOTS.length:6000)&&B.length<(G?(CRS.free?1600:900):420);t++){let lt=G?LOTS[t]:null,x=G?lt[0]:minX-180+r()*(maxX-minX+360),z=G?lt[1]:minZ-180+r()*(maxZ-minZ+360),w=G?lt[2]:12+r()*24,d=G?lt[3]:12+r()*22,rr=G?Math.min(w,d)/2:Math.hypot(w,d)/2;
    if(!ok(x,z,rr))continue;if(CRS.free&&!(lt&&lt[4])&&!cityLotOk(x,z,w,d))continue; /* 道の中心から 7m 以内にかかる建物は置かない（曲がり角の内側を空き地に＝隅切り） */if(!G&&B.some(b=>Math.abs(b[0]-x)<(b[2]+w)/2+3&&Math.abs(b[1]-z)<(b[3]+d)/2+4))continue;
-   const e=dT(x,z),h=(e<60?6+r()*18:10+r()*(e<160?34:52));B.push([x,z,w,d,h]) /* T662 5つ目＝高さ */;cl.setHex(PAL[r()*PAL.length|0]).convertSRGBToLinear();
+   const e=dT(x,z),h=(e<60?6+r()*18:10+r()*(e<160?34:52));if(OFC){const q=ctrim(x,z,w,d);if(!q){r();continue;}x=q[0];z=q[1];w=q[2];d=q[3];} /* T828 壁・道に食い込む建物は道に面した辺を削る（細くなったら置かない。色の乱数は同じだけ使う） */B.push([x,z,w,d,h]) /* T662 5つ目＝高さ */;cl.setHex(PAL[r()*PAL.length|0]).convertSRGBToLinear();
    const x0=x-w/2,x1=x+w/2,z0=z-d/2,z1=z+d/2;
    const face=(a,b,len)=>{pos.push(a[0],0,a[1],b[0],0,b[1],a[0],h,a[1],b[0],h,b[1]);const u=Math.max(1,Math.round(len/4)),v=Math.max(1,Math.round(h/3.6));uv.push(0,0,u,0,0,v,u,v);for(let k=0;k<4;k++)col.push(cl.r,cl.g,cl.b);idx.push(vc,vc+1,vc+2,vc+1,vc+3,vc+2);vc+=4;};
    face([x0,z1],[x1,z1],w);face([x1,z1],[x1,z0],d);face([x1,z0],[x0,z0],w);face([x0,z0],[x0,z1],d);
@@ -3735,8 +3745,12 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   const rm=new THREE.Mesh(rg,snwC(new THREE.MeshLambertMaterial({color:0x45474b}),0xe4e9ee));rm.receiveShadow=true;if(CRS.elev)rm.position.y=-CRS.elev;scene.add(rm);STATIC.push(rm);CITYB=B;
   if(CRS.grid){const G=CRS.grid,gx=[...G.x].sort((a,b)=>a-b),gz=[...G.z].sort((a,b)=>a-b),hw=G.sw/2,P=[],U=[],I=[];let n=0; /* T514 横道：通りの線に沿った舗装（白い破線）。… */
    const near=(x,z)=>dT(x,z)<(CRS.free?WL[0]-WALL-.2:1)||pz.some(i=>Math.hypot(x-TX[i],z-TZ[i])<WALL+26); /* 壁の内側（コースの道）とピット・観客席の前には描かない */
+   const VQ=[],stripO=(x0,z0,x1,z1)=>{const L=Math.hypot(x1-x0,z1-z0),ux=(x1-x0)/L,uz=(z1-z0)/L,nx=-uz*hw,nz=ux*hw,hz=Math.abs(uz)<.5; /* T828 公式の市街地の帯：中心と両端が壁の当たりの面より 0.3m 外（clr≥−0.3）、横の帯（hz）は縦の帯の上を除く */
+    const ok=t=>{const x=x0+ux*t,z=z0+uz*t;if(near(x,z)||clr(x,z)[0]<-.3||clr(x+nx,z+nz)[0]<-.3||clr(x-nx,z-nz)[0]<-.3)return false;if(hz)for(const q of VQ)if(Math.abs(x-q[0])<hw&&z-hw>=q[1]&&z+hw<=q[2])return false;return true;};
+    const ref=(lo,hi)=>{const o=ok(lo);for(let k=0;k<7;k++){const m=(lo+hi)/2;if(ok(m)===o)lo=m;else hi=m;}return o?lo:hi;};
+    let a=null;for(let t=0;t<=L;t++){const o=ok(t);if(o&&a==null)a=t===0?0:ref(t-1,t);if(a!=null&&(!o||t+1>L)){const b=o?t:ref(t-1,t);if(b-a>.3){const ax=x0+ux*a,az=z0+uz*a,bx=x0+ux*b,bz=z0+uz*b;P.push(ax+nx,.03,az+nz,ax-nx,.03,az-nz,bx+nx,.03,bz+nz,bx-nx,.03,bz-nz);U.push(0,a/6,1,a/6,0,b/6,1,b/6);I.push(n,n+2,n+1,n+1,n+2,n+3);n+=4;if(!hz)VQ.push([ax,Math.min(az,bz),Math.max(az,bz)]);}a=null;}}};
    const strip=(x0,z0,x1,z1)=>{const L=Math.hypot(x1-x0,z1-z0),ux=(x1-x0)/L,uz=(z1-z0)/L,nx=-uz*hw,nz=ux*hw;let a=null;for(let t=0;t<=L;t+=4){const x=x0+ux*t,z=z0+uz*t,ok=!near(x,z)&&t<L;if(ok&&a==null)a=t;if((!ok||t+4>L)&&a!=null){const b=ok?L:t,ax=x0+ux*a,az=z0+uz*a,bx=x0+ux*b,bz=z0+uz*b;P.push(ax+nx,.03,az+nz,ax-nx,.03,az-nz,bx+nx,.03,bz+nz,bx-nx,.03,bz-nz);U.push(0,a/6,1,a/6,0,b/6,1,b/6);I.push(n,n+2,n+1,n+1,n+2,n+3);n+=4;a=null;}}};
-   const X0=gx[0]-60,X1=gx[gx.length-1]+60,Z0=gz[0]-60,Z1=gz[gz.length-1]+60;for(const x of gx)strip(x,Z0,x,Z1);for(const z of gz)strip(X0,z,X1,z);
+   const X0=gx[0]-60,X1=gx[gx.length-1]+60,Z0=gz[0]-60,Z1=gz[gz.length-1]+60;const SF=OFC?stripO:strip;for(const x of gx)SF(x,Z0,x,Z1);for(const z of gz)SF(X0,z,X1,z); /* T828 */
    const t=canvasTex(64,128,(g,w,h)=>{noiseFill(g,w,h,'#55575c',.08,1500,1.6);g.fillStyle='rgba(235,235,230,.85)';g.fillRect(w/2-2,0,4,h*.5);g.fillStyle='rgba(235,235,230,.7)';g.fillRect(1,0,2,h);g.fillRect(w-3,0,2,h);},true);
    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(P,3));sg.setAttribute('uv',new THREE.Float32BufferAttribute(U,2));sg.setIndex(I);sg.computeVertexNormals();
    stripM=new THREE.MeshStandardMaterial({map:t,roughness:roadMat?roadMat.roughness:.92,metalness:0,polygonOffset:true,polygonOffsetFactor:-1});if(roadMat)stripM.color.copy(roadMat.color);const sm=new THREE.Mesh(sg,stripM); /* T692 前は MeshLambertMaterial で、コースの道（MeshStandardMaterial）と光り方・濡れた時の色が違った */sm.receiveShadow=true;scene.add(sm);STATIC.push(sm);}}
