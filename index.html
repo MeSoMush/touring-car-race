@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.430.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.431.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -7094,7 +7094,7 @@ function trfSync(){const cx=camera.position.x,cz=camera.position.z;for(const t o
   if(g.wk){let d=0;if(t.pol){if(t.mode===2&&!t.pk&&t.pkL!=null){const dl=t.pkL-t.lat;if(Math.abs(dl)>.15)d=Math.sign(dl)*Math.sign(NX[t.i]*Math.cos(t.h)-NZ[t.i]*Math.sin(t.h));}}else if(!t.hit){const dl=KPS*laneY(t.i,t.lnT)-t.lat;if(t.blT>0&&t.lnT!==t.ln||Math.abs(dl)>WKM)d=Math.sign(dl)*Math.sign(NX[t.i]*Math.cos(t.h)-NZ[t.i]*Math.sin(t.h));}const on=d&&Math.floor(clockT*3)%2===0;for(const o of g.wk){const v=!!on&&o.sd===d;if(o.visible!==v)o.visible=v;}}}} /* T651 車線を変える前の待ち（blT）と、横へ動いている間（狙いの車線まで WKM m より遠い）だけ、行き先の側を 1.5回/秒で点滅 */ /* ブレーキで光り、当てられたら点滅（ハザード） */
 // 車同士：四角形どうしの当たり判定（分離軸）と回転をともなう衝突
 function collisions(){
-  for(let i=0;i<karts.length;i++)for(let j=i+1;j<karts.length;j++){const a=karts[i],b=karts[j];if(a.gone||b.gone)continue;const dx0=b.x-a.x,dz0=b.z-a.z;if(dx0*dx0+dz0*dz0>20)continue;
+  for(let i=0;i<karts.length;i++)for(let j=i+1;j<karts.length;j++){const a=karts[i],b=karts[j];if(a.gone||b.gone)continue;const dx0=b.x-a.x,dz0=b.z-a.z,rr=Math.hypot(a.hz||HZ,a.hx||HX)+Math.hypot(b.hz||HZ,b.hx||HX);if(dx0*dx0+dz0*dz0>rr*rr)continue; /* T756② 2台の対角の半分の和まで調べる（前は 4.47m で、前後に並ぶと最初がめり込んだ） */
     const ca=kCorners(a),cb=kCorners(b);let best=1e9,n=null;
     for(const ax of[...kAxes(a),...kAxes(b)]){const pa=proj(ca,ax),pb=proj(cb,ax);const o=Math.min(pa[1],pb[1])-Math.max(pa[0],pb[0]);if(o<=0){best=-1;break;}if(o<best){best=o;n=ax;}}
     if(best<=0||!n)continue;
