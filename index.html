@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.431.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.432.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -7006,7 +7006,7 @@ let FCV=1.5,FCD=10,FCQ=8,FYM=1.6,FYD=15; /* T826 向き合った時：カート�
    OTC＝この半径 m 未満の角の手前までに戻る・OTE＝見通しで道の端の外に足す m（30＝ゆるい曲がりは見通せる・半径の小さい角で切れる。3 では林の中のゆるい曲がりでも 90m ほどで切れて、ほとんど抜けなかった）・OTL＝見通しを見る長さ m・OTW＝出る車間 m・OTO＝抜く時の横の間 m・OTP＝待つ時に真ん中寄りへ寄せる m・
    OTY＝抜いている間の狙いを、前の車の横にゆとりを空けた所からさらに外へ出す上限 m（前は上限なしで、走りの線が外にあると道の端の近くを狙い、速い曲がりで外へ流れて道の端を越えた。2026-11-12）・OTF＝待つ時の車間（前の車の速さ×この秒・4m 以上。近すぎたら前の車より遅くして空ける。前の式は 5m より近いと前の車と同じ速さになるだけで、ヘアピンで 0.2m まで詰めて当たっていた）・OTHC＝抜いている間の正面の対向車へのブレーキを見る秒（前は 2.5秒で、抜き終わる手前でブレーキが入っていた）・OTB＝出たあとで、やめる見込みの崩れ m・pk、と止まった車の後ろに並んで止まっている車）の後ろで自分もほぼ止まっている時の見込みの加速 m/s² と、抜いた車の前に空ける m・OTQ＝出ると決めて横へ動いている間の、前の車への速さの上限の傾き（車間 1m ごとに m/s。前の式は .55）・OTK＝出始めに、出る側の前後これ m に相手・自分の車がいたら出ない・
    霧と雨の見通しの上限＝1.73÷（本体の霧の濃さの式の霧と雨の分）m・戻る点までに日陰の氷（RICE）があれば出ない・待つ時の車間は路面のグリップが低いほど伸ばす */
-let OTY=.5,OTA=3.5,OTV=50/3.6,OTG=6,OTM=5,OTH=.3,OTC=60,OTE=30,OTL=400,OTW=8,OTO=1,OTP=.5,OTHC=1.2,OTB=10,OTF=.45,OTK=9,OTQ=1,OTS=null;
+let OTFR=2,OTY=.5,OTA=3.5,OTV=50/3.6,OTG=6,OTM=5,OTH=.3,OTC=60,OTE=30,OTL=400,OTW=8,OTO=1,OTP=.5,OTHC=1.2,OTB=10,OTF=.45,OTK=9,OTQ=1,OTS=null;
 function sgtAt(i){if(!OTS)OTS=new Float32Array(N).fill(-1);if(OTS[i]>=0)return OTS[i]; /* 道の真ん中から先を見て、道幅（＋OTE）の中だけを通る視線が届く道のり（角で切れる。高さは見ていない）。点ごとに1度だけ数える */
  const x0=TX[i],z0=TZ[i],fl=Math.hypot(FX[i],FZ[i])||1,fx=FX[i]/fl,fz=FZ[i]/fl;let lo=-9,hi=9,d=0;
  for(let j=1;j*SP<=OTL;j++){const q=wrap(i+j),dx=TX[q]-x0,dz=TZ[q]-z0,r=Math.hypot(dx,dz);if(r<1){d=j*SP;continue;}const a=Math.atan2(fx*dz-fz*dx,fx*dx+fz*dz);if(a<lo||a>hi)break;d=j*SP;const h=Math.asin(Math.min(1,(WL[q]+OTE)/r));lo=Math.max(lo,a-h);hi=Math.min(hi,a+h);}
@@ -7057,7 +7057,7 @@ function trfAvoid(k,u,lane,W){const sK=trfS(k),lo0=-W+1.4,hi0=W-1.4,iv=[];let sa
  else{const on=iv.find(v=>v[2].dir<0);if(on)l=KPS>0?Math.min(hi0,Math.max(lane,on[1])):Math.max(lo0,Math.min(lane,on[0]));} /* 通行の側の車線へ（前は左側通行の向きだけ） */
  if(TSH&&free){let nb=null,bd=1e9;for(const v of iv){const t=v[2];if(t.dir>0&&v[3]>-(t.hz+2.5)&&v[3]<TSHR&&v[3]<bd){bd=v[3];nb=t;}} /* T630 いちばん近い同じ向きの一般車に対して、抜く側（k._sv.s）を決めたら、その側に空きがある間は保つ（前は毎回その場でいちばん近い空きを選び直し、左右の空きが同じくらいだと狙いが行き来して、減速・斜め… */
   if(nb){const sn=bd<TSHN&&Math.abs(k.lat-nb.lat)>nb.hx+TSHX?Math.sign(k.lat-nb.lat):0;if(sn)k._sv={t:nb,s:sn}; /* もう横にいるなら今の側（記憶が古いまま一般車の手前で反対側へ横切って当たっていた） */const sv=k._sv,sd=Math.abs(l-nb.lat)>TSHM?Math.sign(l-nb.lat):0;if(sv&&sv.t===nb&&sd&&sd!==sv.s){let bq=null,bdq=1e9;for(const g of gp){if(g[1]-g[0]<.6||(sv.s>0?g[0]<nb.lat:g[1]>nb.lat))continue;const pd=hwM?Math.min(HWGM,(g[1]-g[0])/2):.3,q=Math.max(g[0]+pd,Math.min(g[1]-pd,lane)),d=Math.abs(q-lane)+Math.abs(q-k.lat);if(d<bdq){bdq=d;bq=q;}}if(bq!=null)l=bq;else if(!sn)k._sv={t:nb,s:sd};}else if(sd&&(!sv||sv.t!==nb))k._sv={t:nb,s:sd};}else k._sv=null;}
- if(!hwM&&!CRS.free&&!CRS.city)l=trfPassL(k,u,l,iv,sK,gk,lo0,hi0); /* T621 峠の追い越し（ご本人 2026-11-11「峠だけ入れる」。街〈free・city〉は前の抜き方のまま。ほかの直しはこの呼び出しで付く k._pg・k._pp・k._pc がある時だけ効く） */
+ if(!hwM&&(CRS.free?OTFR:!CRS.city)){const l0=l;l=trfPassL(k,u,l,iv,sK,gk,lo0,hi0);if(CRS.free&&OTFR===2&&!k._pg){l=l0;k._pc=null;}} /* T621 峠の追い越し。T826 狭い街（free。city の印も持つ）は OTFR で（公式の市街地は前の抜き方のまま。ほかの直しはこの呼び出しで付く k._pg・k._pp・k._pc がある時だけ効く） */
  if(hwH!=null)l=hwH; /* T821 */
  for(const v of iv){const t=v[2],inP=t.hw&&!(t.lnT!==t.ln)?Math.abs(k.lat-t.lat)<t.hx+.95+HWCO:k.lat>v[0]&&k.lat<v[1],lin=l>v[0]&&l<v[1];
   let inF=false;if(TFK>0&&t.hw&&t.dir>0&&!inP&&!lin&&u>t.v+1&&k._lv){const g=v[3]-t.hz-2.4,tc=Math.min(TFK,Math.max(0,g)/(u-t.v)),pl=k.lat+k._lv*tc;inF=Math.sign(t.lat-k.lat)===Math.sign(k._lv)&&Math.abs(pl-t.lat)<t.hx+.95+HWCO;} /* T670 追いつくまでにこのまま流れると一般車の幅に入る */
