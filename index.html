@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.427.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.428.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5820,7 +5820,7 @@ function watchPositions(dt){const p=player();if(!p||state!=='race'||raceTime<3)r
   else leadPend=null;}
 
 /* ================= CPU（先読みして減速） ================= */
-let AI_LATK=G*.85,CITYK=.9; /* T818 壁で囲まれた公式の市街地（CRS.city、公道 CRS.st は PUBA があるので除く）は曲がれる速さの見込みに余白（30周で壁が 自分 1/3・CPU 1/2・リタイア半分、速さは同じか少し速い） */ /* T623 摩擦の楕円と一緒に .81→.85（ブレーキを早めた分を角の中で取り戻す） */ /* T254 定数。… */
+let AI_LATK=G*.85,CITYK=.9,FSKC=1; /* T826 狭い街（CRS.free）の CPU の腕前の倍の上限（壁で囲まれた道では腕前で攻めない。壁 0.48→0.10回/本） */ /* T818 壁で囲まれた公式の市街地（CRS.city、公道 CRS.st は PUBA があるので除く）は曲がれる速さの見込みに余白（30周で壁が 自分 1/3・CPU 1/2・リタイア半分、速さは同じか少し速い） */ /* T623 摩擦の楕円と一緒に .81→.85（ブレーキを早めた分を角の中で取り戻す） */ /* T254 定数。… */
 /* T256。… */
 let RCX=.6,SDP=1,SDT=1.5,SDC=3;
 let AFV=.5,AISK=1.7,PBT=1,ATKX=1.4,RRL=4.2,AFVC=1;
@@ -6052,7 +6052,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   k.power=1; // T254②：腕前でエンジンの力は変えない（AIPW＝1 で従来）
   // 速度計画：先のカーブで曲がれる速さ＋ブレーキ距離（T228：攻め方 ag で曲がる速さとブレーキ、疲れで曲がる速さ、乱れた空気でダウンフォースを見込む）
   const ag=agOf(k),stl=!k.isPlayer&&sess==='race'?STL*(1-(k.stam??1)):0;
-  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:k.ty>1?.7:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?(roadSurf?AUSK:1):Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(Math.pow(((k.kb||KB)/((k.ka||KA)+(k.kb||KB)))/.5185,-LSQ*LSAK)*(k.fs>.8?FFL*FFS[RSI[k.idx]]:1))*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*Math.min(k.tgF||1,k.tgR||1)*(CRS.city&&!CRS.st?CITYK:1)*(k.ty===2?k.tgq||1:1)*(SBA?Math.min((k.cyF||1)*llAI(k,0),(k.cyR||1)*llAI(k,1))*(k.tpi?(k.tpK||1):1):1)*(1+AGL*ag-stl)*(spOf(k)==='rain'?1+TSR*ENV.wet:1)*(k.ci!=null&&layOf(k.ci)==='R'?RRA:1)*(PUBR?PUBA:1); /* T526 PUBA */let vAllow=1e9; /* T288 雨に強い */
+  const wgm=wetMul('road',k)*(1-.1*ENV.wet*(k.rain?.4:k.ty>1?.7:1));const aeK=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0));const latA=MU.road*AI_LATK*Math.pow(MU.road/1.5,AIMUP)*wgm*Math.pow(k.gripK||1,1.8)*k.st.grip*(k.isPlayer?(roadSurf?AUSK:1):CRS.free?Math.min(FSKC,Math.pow(k.skill,AISK)):Math.pow(k.skill,AISK))*(k.yellow?YLW:1)*(Math.pow(((k.kb||KB)/((k.ka||KA)+(k.kb||KB)))/.5185,-LSQ*LSAK)*(k.fs>.8?FFL*FFS[RSI[k.idx]]:1))*(sess==='drag'?1:(k.ttK||1))*(k.twG||1)*Math.min(k.tgF||1,k.tgR||1)*(CRS.city&&!CRS.st?CITYK:1)*(k.ty===2?k.tgq||1:1)*(SBA?Math.min((k.cyF||1)*llAI(k,0),(k.cyR||1)*llAI(k,1))*(k.tpi?(k.tpK||1):1):1)*(1+AGL*ag-stl)*(spOf(k)==='rain'?1+TSR*ENV.wet:1)*(k.ci!=null&&layOf(k.ci)==='R'?RRA:1)*(PUBR?PUBA:1); /* T526 PUBA */let vAllow=1e9; /* T288 雨に強い */
   const sbA=k.sbB>.3&&k.sb&&k.sb.o>=0&&!k.sb.at&&HSRA;const RA=sbA?HSRA[k.sb.sd>0?0:1]:k.altS?RADA[k.altS>0?0:1]:RADL;
   let bmA=null; // T83すぐ前の車の目印
   const pk=pubK(ENV.wet),rsF=rsCur||ICYS.length||PUBN?(k._rsF&&k._rsT===(k.ty||0)&&k._rsW===wgm&&k._rsR===RSF&&k._rsA===AIMUS&&k._rsL===AILS?k._rsF:(k._rsT=k.ty||0,k._rsW=wgm,k._rsR=RSF,k._rsA=AIMUS,k._rsL=AILS,k._rsF=RSF.map((r,i)=>r.mu*TYR[k.ty||0].ms[i]*Math.pow(r.mu,AIMUS)*AILS[i]*(1-(1-wgm)*r.wk)/wgm))):null; // T283 路面の種類（舗装は 1）。…（T297）
