@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.445.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.445.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5862,7 +5862,7 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
   if(!early&&b&&!b.finished&&(progress(p)-progress(b))/pace<1.5){const st=tkState(b);const kB=st.length?b.id+st[0][0]:"";if(st.length&&!RDS.tkS[kB]){RDS.tkS[kB]=1;radio('後ろの '+b.name+' は'+{t:'タイヤがきつそうだ。コーナーで粘れば離せる',b:'ブレーキが熱そうだ。ブレーキングで無理には来られない',h:'エンジンが熱そうだ。直線は守れる',s:'競り合いで集中が切れてきている。焦らずラインを守ればミスが出る',p:'さらに後ろからも迫られて焦っている。ラインを守れば崩れるぞ',m:'ゴムかすを拾ってグリップが落ちている。今のうちに離そう',d:'マシンにダメージ。コーナーで離せる',e:'エンジンが弱っている。直線は守れる'}[st[0][0]],'tk',25);}}
   // T228⑥ 前の車の乱れた空気の中でコーナーを回り続けている
   if(DAK>0&&!early){if((p.dirty||0)>.35&&CORNER[p.idx])RDS.dirtyT=(RDS.dirtyT||0)+dt;else RDS.dirtyT=Math.max(0,(RDS.dirtyT||0)-dt*.2);if(RDS.dirtyT>12&&!RDS.dirty){RDS.dirty=1;radio('前の車の乱れた空気で、コーナーでフロントが逃げている。タイヤが熱くなるぞ、少し離れて仕掛け所を作ろう','dirty',60);}if(RDS.dirtyT<1)RDS.dirty=0;}
-  if(wearMode&&!RDS.wear&&p.wear>.55&&!p.pitReq&&p.lap<LAPS){const pl=pitPlan(p);if(pl.left>=1){RDS.wear=1;radio(pl.ok?'タイヤがかなり減っている。ピットを考えて'+PITK():`タイヤがかなり減っているが、残り${pl.left}周。ピットは損だ、このまま行こう`);}}
+  if(wearMode&&!RDS.wear&&p.wear>.55&&!p.pitReq&&p.lap<LAPS){const pl=pitPlan(p);if(pl.left>=1){RDS.wear=1;radio(PUBR?`タイヤがかなり減っている。公道にピットは無い、残り${pl.left}周はブレーキを早めにして滑らせすぎないように`:pl.ok?'タイヤがかなり減っている。ピットを考えて'+PITK():`タイヤがかなり減っているが、残り${pl.left}周。ピットは損だ、このまま行こう`);}}
   if(wearMode&&p.wear<.1)RDS.wear=0;
   if(dmgMode&&!RDS.dmg&&p.dmg>.35){RDS.dmg=1;radio(dmgMode===2?'車にダメージ。ペースが落ちる、ピットで直せる':'ぶつけたな、大丈夫か？ 無理しないで');}
   if(p.dmg<.05)RDS.dmg=0;
@@ -5879,7 +5879,7 @@ function radioLap(k){if(!k.isPlayer||sess!=='race'||k.lap<2||k.lap>LAPS)return;c
   if(!autoPlay){const pl=k.plan;if(pl)while(pl.i<pl.laps.length&&pl.laps[pl.i]<k.lap)pl.i++;const fl=fuelLaps(k),sh=fuelWarn(k); // T47 作戦と燃料（予定の周を過ぎたら次の予定へ）
     if(k.lap===2&&pl&&(pl.n||LAPS>=10||k.ev))radio(k.ev?'電池は1周 約'+Math.round((k.fplB||fplOf(k))/(k.batCap||k.fuel||1)*100)+'%。ピットで充電はできないので、ブレーキの手前で早めに戻して回生で少し稼ごう':pl.n?`作戦：ピット${pl.n}回（${pl.laps.join('・')}周目の終わり）。燃料は1周 約${(k.fplB||fplOf(k)).toFixed(1)}kg、タンクは${FCAP}kg`:`作戦：ピットなしで走り切れる。燃料は1周 約${(k.fplB||fplOf(k)).toFixed(1)}kg`,'plan0',99);
     if(pl&&pl.i<pl.laps.length&&k.lap===pl.laps[pl.i]&&!k.pitReq&&!k.pit)radio('予定どおり、この周の終わりにピットだ'+PITK(),'plan',5);
-    else if(sh>0&&!k.pitReq&&!k.pit){if(k.ev){if((k.fmode??1)!==0)radio('電池が足りない。燃費モードにして、早めにアクセルを戻して回生で稼ごう'+(isTouch?'（燃料のボタン）':'（'+kTx('fuel')+'）'),'fuelm',15);}else if(fl<1.2)radio('燃料がもう持たない！ この周でピットへ'+PITK(),'fuelx',4);else if(fl<2.6)radio(`燃料はあと約${fl.toFixed(1)}周分。足りない。ピットで給油を${PITK()}`,'fuel',8);
+    else if(sh>0&&!k.pitReq&&!k.pit){if(k.ev){if((k.fmode??1)!==0)radio('電池が足りない。燃費モードにして、早めにアクセルを戻して回生で稼ごう'+(isTouch?'（燃料のボタン）':'（'+kTx('fuel')+'）'),'fuelm',15);}else if(PUBR){if(fl<2.6&&(k.fmode??1)!==0)radio('燃料が足りない。公道に給油は無い、燃費モードにして早めにアクセルを戻そう'+(isTouch?'（燃料のボタン）':'（'+kTx('fuel')+'）'),'fuelm',15);}else if(fl<1.2)radio('燃料がもう持たない！ この周でピットへ'+PITK(),'fuelx',4);else if(fl<2.6)radio(`燃料はあと約${fl.toFixed(1)}周分。足りない。ピットで給油を${PITK()}`,'fuel',8); /* 公道はピットが無い */
       else if(sh<.6&&(k.fmode??1)!==0)radio('燃料がぎりぎり足りない。燃費モードで走ろう'+(isTouch?'（燃料のボタン）':'（'+kTx('fuel')+'）'),'fuelm',15);}}
   if(!autoPlay&&k.bb0!=null){const t=bbTarget(k),wq=Math.round(BBW*(1-Math.min(1,wetMul('road',k)/TYR[k.ty||0].d0))*100);if(!k.bbRn&&wq>=BBQ*100&&k.bb>t+.015){k.bbRn=1;radio(`路面が濡れて、ブレーキで前に荷重が乗りにくい。バランスを後ろへ${Math.max(1,Math.round((k.bb-t)*100))}つ（曲がりながらのブレーキで向きが変わる）`+BBK(),'bbr',99);}else if(k.bbRn===1&&wq<1&&k.bb<t-.015){k.bbRn=2;radio('路面が乾いてきた。ブレーキバランスを前へ戻そう'+BBK(),'bbd',99);}} // T83雨のブレーキバランス
   if(FTK&&!autoPlay&&k.cgd0!=null&&k.cgd0-k.cgd>BBR&&!k.bbW&&k.bb<=k.bb0+.004){k.bbW=1;radio(`燃料が${Math.round((k.cgd0-k.cgd)/FTZ*1300)}kgほど減って重さが前へ寄った。ブレーキ中に後ろが軽いなら、バランスを前へ1つ`+BBK(),'bbf',99);} // T83
