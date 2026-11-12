@@ -1338,7 +1338,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.427.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.427.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2896,8 +2896,9 @@ let PTL=60;const PTP=new Float32Array(N);for(let i=0;i<N;i++){if(!PITZ[i])contin
 const NOCB=!!(CRS.trf&&CRS.trf.hw); /* ご本人の不具合報告「高速にゼブラゾーンは不自然」：首都高はコーナーの縁石（赤白）と外の砂利を作らず、路肩の舗装にする */
 /* T690 街（CRS.free）の歩道：道の端 WL から WAL までで、街の格子のどの通りの帯（中心から sw/2）にも入っていない所。… */
 let SWK=1,SWI=1.2,SWR=.6,SWH=.12;const SWE=()=>CRS.free&&SWK?SWI:0;
+function swG(k){return CRS.free&&!HID[k.idx]&&k.surf==='grass';} /* T826 街の歩道の奥（コンクリート）＝区分は走路の外でも砂煙・砂利の音は出さない */
 function swAt(i,lat){if(!CRS.free||!CRS.grid||!SWK)return false;const a=Math.abs(lat);if(a<=WL[i]||a>WAL[i])return false;const G=CRS.grid,hw=G.sw/2,x=TX[i]+NX[i]*lat,z=TZ[i]+NZ[i]*lat;for(const g of G.x)if(Math.abs(x-g)<hw)return false;for(const g of G.z)if(Math.abs(z-g)<hw)return false;return true;}
-function surfaceAt(i,lat){if(CRS.free&&!HID[i])return swAt(i,lat)?(Math.abs(lat)<=WL[i]+SWI?'curb':'grass'):'road'; /* T826 歩道の端の帯（SWI m）は縁石、その奥は走路の外（ご本人 2026-11-11「歩道走ると大きく減速」） */ /* T510① 街の中はぜんぶ舗装（歩道・横道も）。…（T690） */const W=WL[i],WALL=WAL[i],a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=W+(WALL+1+PWX[i]-W)*PTP[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return NOCB?'road':'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return NOCB?'road':'gravel';return'grass';}
+function surfaceAt(i,lat){if(CRS.free&&!HID[i])return swAt(i,lat)?(Math.abs(lat)<=WL[i]+SWI?'curb':'grass'):'road'; /* T826 歩道の端の帯（SWI m）は縁石、その奥は走路の外（ご本人 2026-11-11「歩道走ると大きく減速」） */ /* T510①・T690 の「街の中はぜんぶ舗装」は T826（β0.423.0）で変わった：街の路面は道・歩道の端の帯（縁石）・歩道の奥（走路の外と同じ減速。見た目はコンクリートなので砂煙・砂利の音は swG で止める） */const W=WL[i],WALL=WAL[i],a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=W+(WALL+1+PWX[i]-W)*PTP[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return NOCB?'road':'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return NOCB?'road':'gravel';return'grass';}
 
 /* ================= Three.js ================= */
 const canvas=document.getElementById('gl');
@@ -7187,7 +7188,7 @@ function syncVisuals(dt){
       const P=DSMP[DSM],ds=P.n&&!RSv.dust&&ENV.wet<.25?driftS(k):0; /* T523⑤ ドリフトの煙（濡れた路面・ゆるい路面は出さない） */
       if(ds>0){k.smA=(k.smA||0)+P.n*ds*dt;let c=P.col;if(TOD[ENV.tod]&&TOD[ENV.tod].night)c=(((c>>16&255)*.42|0)<<16)|(((c>>8&255)*.44|0)<<8)|((c&255)*.48|0);
         while(k.smA>=1){k.smA-=1;const q=rw[(k.smI=(k.smI|0)+1)&1];puff(q[0]+(vrnd()-.5)*.6,q[1]+(vrnd()-.5)*.6,k.vx,k.vz,false,c,ds);}}}
-    else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&__VR()<.25){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass')&&Math.abs(k.u)>8&&__VR()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
+    else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&__VR()<.25){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass'&&!swG(k))&&Math.abs(k.u)>8&&__VR()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
   }
   if(TRF.length)trfSync();if(SIG.length)sigSync();  if(PARKA&&PARKA.length&&!RCL)pkSync(); /* T541① */
   {const f=startGrp.userData.chq;if(f){f.visible=!PUBR&&sess==='race'&&finishOrder.length>0&&(state==='race'||state==='finished'||state==='replay');if(f.visible)f.rotation.z=Math.sin(clockT*9)*.7;}} // T178③ チェッカーを振る
@@ -8472,7 +8473,7 @@ function updateEngine(){if(!eng)return;engWatch();if(sndChk){sndAud();return;}co
   if(envS){const t=ac.currentTime,sp=p?Math.abs(p.u):0,ok=on&&!quiet,ck=isCk(camMode)||camEff()===3&&DIR.sub==='onboard';
    stv(envS.wind.g.gain,ok&&p?.075*Math.pow(Math.min(1.1,sp/60),2)*(ck?.6:1)*cv*(p.ev?1.6:1):0,t,.15);stv(envS.wind.f.frequency,400+sp*14,t,.2);
    const cb=ok&&p&&(p.surf==='curb'||p.surf==='saus')&&sp>6;stv(envS.rumb.g.gain,cb?(p.surf==='saus'?.17:.09)*cv:0,t,.03);stv(envS.rumb.o.frequency,Math.max(24,sp/.8),t,.05);
-   const gv=ok&&p&&(p.surf==='gravel'||p.surf==='grass')&&sp>3?(p.surf==='gravel'?.16:.07)*Math.min(1,sp/20):ok&&p&&RSF[RSI[p.idx]].dust&&RSI[p.idx]<3&&sp>3?.08*Math.min(1,sp/20):0; /* T283 砂利道・雪は走るだけで砂利の音 */stv(envS.grav.g.gain,gv*cv,t,.05);
+   const gv=ok&&p&&(p.surf==='gravel'||p.surf==='grass'&&!swG(p))&&sp>3?(p.surf==='gravel'?.16:.07)*Math.min(1,sp/20):ok&&p&&RSF[RSI[p.idx]].dust&&RSI[p.idx]<3&&sp>3?.08*Math.min(1,sp/20):0; /* T283 砂利道・雪は走るだけで砂利の音 */stv(envS.grav.g.gain,gv*cv,t,.05);
    if(envS.clap&&!(state==='race'||state==='finished'||state==='replay'||state==='countdown')){stv(envS.clap.g.gain,0,t,.2);stv(envS.roar.g.gain,0,t,.2);}
    stv(envS.rain.g.gain,on&&!quiet?.045*ENV.rain*(ck?1.5:1):0,t,.3);} /* T331 雨の音もエンジンと同じ時だけ（結果画面・ポーズでシャーだけ残っていた） */
   npcAudio(on&&!quiet,p);}
