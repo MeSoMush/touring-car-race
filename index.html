@@ -348,7 +348,7 @@ body.drag #rwBtn,body.drag #lineBtn,body.drag #pitBtn,body.drag #fuelBtn,body.dr
 @media (max-height:520px){.tsLogo h1{font-size:clamp(36px,10vh,64px)}.tsLogo p{margin-top:.6em}.mi{padding:4px 14px}.mi b{font-size:19px}.mi span{font-size:12px}#tmenu{gap:3px}.tsMain{gap:8px}}
 /* 一人で走るモード（タイムアタック・予選）とリプレイ */
 body.solo #rank,body.solo #tower{display:none}
-body.replay #topbtns,body.replay #tach,body.replay #rank,body.replay #gaps,body.replay #laps,body.replay #tele,body.replay #flag,body.replay #autoBadge,body.replay #tower,body.replay #topleft{display:none}
+body.replay #topbtns,body.replay #tach,body.replay #rank,body.replay #gaps,body.replay #laps,body.replay #tele,body.replay #flag,body.replay #autoBadge,body.replay #tower{display:none}
 #rpBar{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);transform:translateX(-50%);display:flex;gap:8px;align-items:center;pointer-events:auto;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 24px)}
 #rpBar[hidden]{display:none}
 #rpInfo{position:absolute;left:14px;top:calc(env(safe-area-inset-top,0px) + 12px);display:grid;gap:2px}
@@ -932,6 +932,7 @@ body.touch #setup .label .qj{padding:4px 8px;margin-top:-4px}
 #drv{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;align-items:flex-end;gap:6px;pointer-events:none;transition:opacity .35s}
 #drv #inpCv,#drv #tyreCv{position:static!important;right:auto!important;top:auto!important;bottom:auto!important}
 #drv #inpCv{width:219px!important;height:98px!important}#drv #tyreCv{width:76px!important;height:120px!important}
+body.replay #hud #topleft{display:contents!important}body.replay #topleft>:not(#slipCv){display:none!important}body.replay #slipCv{position:fixed!important;left:50%!important;transform:translateX(-50%);top:auto!important;bottom:calc(env(safe-area-inset-bottom,0px) + 200px)!important;width:330px!important;margin:0}body.touch.replay #slipCv{width:200px!important;bottom:calc(env(safe-area-inset-bottom,0px) + 156px)!important} /* T741 β0.438.0 リプレイの横滑りの針（入力の表示の上） */
 body.photo #drv{display:none}body.replay #drv>:not(#inpCv){display:none!important}body.replay #hud #drv #inpCv{position:fixed!important;left:50%!important;right:auto!important;top:auto!important;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 62px)!important;width:330px!important;height:120px!important}body.touch.replay #hud #drv #inpCv{width:200px!important;height:89px!important;bottom:calc(env(safe-area-inset-bottom,0px) + 54px)!important} /* T805 リプレイは入力の表示だけ（下のボタンの帯の上） */
 body.touch #drv{bottom:calc(env(safe-area-inset-bottom,0px) + 6px);left:calc(50% - 50px)}
 body.touch #drv #inpCv{width:170px!important;height:76px!important}body.touch #drv #tyreCv{width:48px!important;height:76px!important}
@@ -1338,7 +1339,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.437.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.438.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5380,12 +5381,16 @@ function chDrStep(p,C,dt){let D=chD;if(!D||!C.dr)return;if(D.rt!=null&&raceTime<
   if(!r.k&&D.t>=r.t)say('sT','ドリフト（'+r.b+'°以上を '+r.t+' 秒）');if(r.k==='fe'&&D.fe)say('sF','フェイント');if(r.k==='hb'&&D.hbOk)say('sH','サイドで回る');}
 /* T741 横滑りの角度の針（ドリフトの課題の間。見せるだけで補正ではない）：±SGM° の棒に今の角度の針、目標の帯（r.b〜CHMX）、フェイントの課題は逆へ振る目安 ±CHFB° の線。帯に入った時に小さな音 */
 const SGM=45,slS={dt:0,in:0,tT:-9,key:'',mx:0,lap:-1,h:[]};
-function slipHud(dt){const cv=$('slipCv');if(!cv)return;const C=chOn!=null?CH[chOn]:null,p=typeof player==='function'?player():null,st=state==='race'||state==='countdown'||state==='paused',ch=!!(C&&C.dr&&chD&&!chRes),
-  on=slpSel!==2&&!!p&&st&&!p.dnf&&sess!=='drag'&&(ch||slpSel===1);if(cv.hidden===on)cv.hidden=!on;if(!on){slS.in=0;slS.key='';slS.h.length=0;return;}{const fr=!ch&&!isTouch;if(cv.classList.contains('fr')!==fr)cv.classList.toggle('fr',fr);} /* 課題の外の PC は順位の表に隠れるので上の真ん中へ */
-  const b=slipDeg(p),a=Math.abs(b),r=ch?C.dr:null,gs=ch?chGdIn():null,inB=!!r&&a>=r.b&&a<=CHMX;if(inB&&!slS.in&&state==='race'&&raceTime-slS.tT>.4){slS.tT=raceTime;try{tone(1180,.04,'sine',.05);}catch(_){}}slS.in=inB?1:0;
-  if(p.lap!==slS.lap){slS.lap=p.lap;slS.mx=0;}if(state==='race'&&a>slS.mx)slS.mx=a;const mx=ch?chD.mx:slS.mx;
+/* T741 β0.438.0 リプレイの横滑り：記録の 0.1秒ごとのこまから（u＝a[3]・vl＝a[10]・入力 pi）。mx＝0こま目からここまでの最大（こまごとに1度だけ作る） */
+const rpSlipF=(f,j)=>{const o=j*RP_N,u=f.a[o+3];return Math.abs(u)>3?Math.atan2(f.a[o+10],Math.abs(u))*57.3:0;};
+function rpSlipMx(j){const c=rpBuf.smx||(rpBuf.smx={});if(c.j!==j||c.n!==rpBuf.length){c.j=j;c.n=rpBuf.length;c.a=new Float32Array(rpBuf.length);let m=0;for(let i=0;i<rpBuf.length;i++){m=Math.max(m,Math.abs(rpSlipF(rpBuf[i],j)));c.a[i]=m;}}return c.a[Math.min(rpI,c.a.length-1)]||0;}
+function slipHud(dt){const cv=$('slipCv');if(!cv)return;const rp=state==='replay',C=chOn!=null?CH[chOn]:null,p=rp?karts[rpFocus]:typeof player==='function'?player():null,st=state==='race'||state==='countdown'||state==='paused',ch=!rp&&!!(C&&C.dr&&chD&&!chRes),rpCh=rp&&!!(C&&C.dr&&isCh()),
+  on=slpSel!==2&&!!p&&(rp?!p.gone&&(rpCh||slpSel===1):st&&!p.dnf)&&sess!=='drag'&&(rp||ch||slpSel===1);if(cv.hidden===on)cv.hidden=!on;if(!on){slS.in=0;slS.key='';slS.h.length=0;return;}{const fr=!rp&&!ch&&!isTouch;if(cv.classList.contains('fr')!==fr)cv.classList.toggle('fr',fr);} /* 課題の外の PC は順位の表に隠れるので上の真ん中へ */
+  const b=slipDeg(p),a=Math.abs(b),r=ch||rpCh?C.dr:null,gs=ch?chGdIn():null,inB=!!r&&a>=r.b&&a<=CHMX;if(inB&&!slS.in&&state==='race'&&raceTime-slS.tT>.4){slS.tT=raceTime;try{tone(1180,.04,'sine',.05);}catch(_){}}slS.in=inB?1:0;
+  if(!rp&&p.lap!==slS.lap){slS.lap=p.lap;slS.mx=0;}if(state==='race'&&a>slS.mx)slS.mx=a;const mx=rp?rpSlipMx(rpFocus):ch?chD.mx:slS.mx;
   if((slS.dt+=dt)<1/30)return;slS.dt=0;
-  if(slpTr&&state==='race'){const c=inpC||{};slS.h.push([b,Math.max(-1,Math.min(1,c.steer||0)),c.accel?Math.max(0,Math.min(1,c.thr??1)):0,c.brake?Math.max(0,Math.min(1,c.brk??1)):0,c.drift?1:0]);if(slS.h.length>90)slS.h.shift();}
+  if(rp){slS.h.length=0;slS.lap=-1;if(slpTr){const j=rpFocus,me=p.isPlayer;for(let i=Math.max(0,rpI-29);i<=rpI&&i<rpBuf.length;i++){const f=rpBuf[i],q=me&&f.pi;slS.h.push([rpSlipF(f,j),q?q[0]:0,q?q[1]:0,q?q[2]:0,q?q[3]:0]);}}} /* T741 β0.438.0 リプレイは記録の30こま */
+  else if(slpTr&&state==='race'){const c=inpC||{};slS.h.push([b,Math.max(-1,Math.min(1,c.steer||0)),c.accel?Math.max(0,Math.min(1,c.thr??1)):0,c.brake?Math.max(0,Math.min(1,c.brk??1)):0,c.drift?1:0]);if(slS.h.length>90)slS.h.shift();}
   const key=b.toFixed(1)+'|'+Math.round(mx)+'|'+(r?1:0)+'|'+slpTr+'|'+slS.h.length+'|'+(slS.h.length&&slpTr?slS.h[slS.h.length-1].join():'')+'|'+(gs?gs.slip.toFixed(0):'');if(key===slS.key)return;slS.key=key;
   const H=slpTr?182:92;if(cv.height!==H)cv.height=H;
   const g=cv.getContext('2d'),W=cv.width,y0=10,y1=38,x=v=>W/2+Math.max(-SGM,Math.min(SGM,v))/SGM*(W/2-16);g.clearRect(0,0,W,H);
@@ -5398,8 +5403,8 @@ function slipHud(dt){const cv=$('slipCv');if(!cv)return;const C=chOn!=null?CH[ch
   if(gs){const gx=x(gs.slip);g.fillStyle='#5fd8ff';g.beginPath();g.moveTo(gx-8,y0-10);g.lineTo(gx+8,y0-10);g.lineTo(gx,y0+2);g.fill();g.fillRect(gx-1.5,y0,3,y1-y0);} /* T742 水色＝手本の横滑り */
   const col=a>CHMX?'#ff5a4a':inB?'#6be89a':'#ffffff';g.fillStyle=col;g.fillRect(x(b)-4,y0-6,8,y1-y0+12);
   g.textBaseline='middle';g.font='800 30px sans-serif';g.textAlign='left';g.fillText('横滑り '+Math.round(a)+'°',16,66);
-  g.font='700 26px sans-serif';if(r){g.fillStyle='rgba(255,210,63,.95)';g.textAlign='center';g.fillText('目標 '+r.b+'°〜',W/2+26,66);}g.fillStyle='#ff8a7a';g.textAlign='right';g.fillText((r?'最大 ':'この周の最大 ')+Math.round(mx)+'°',W-16,66);
-  if(slpTr){const t0=96,t1=176,n=slS.h.length,X=i=>16+(W-32)*(i+90-n)/89,mid=(t0+t1)/2,hh=(t1-t0)/2;g.fillStyle='rgba(255,255,255,.08)';g.fillRect(16,t0,W-32,t1-t0);g.fillStyle='rgba(255,255,255,.25)';g.fillRect(16,mid,W-32,1);
+  g.font='700 26px sans-serif';if(r){g.fillStyle='rgba(255,210,63,.95)';g.textAlign='center';g.fillText('目標 '+r.b+'°〜',W/2+26,66);}g.fillStyle='#ff8a7a';g.textAlign='right';g.fillText((rp?'ここまでの最大 ':r?'最大 ':'この周の最大 ')+Math.round(mx)+'°',W-16,66);
+  if(slpTr){const t0=96,t1=176,n=slS.h.length,NS=rp?30:90,X=i=>16+(W-32)*(i+NS-n)/(NS-1),mid=(t0+t1)/2,hh=(t1-t0)/2;g.fillStyle='rgba(255,255,255,.08)';g.fillRect(16,t0,W-32,t1-t0);g.fillStyle='rgba(255,255,255,.25)';g.fillRect(16,mid,W-32,1);
    for(let i=0;i<n;i++)if(slS.h[i][4]){g.fillStyle='rgba(255,154,31,.55)';g.fillRect(X(i)-2,t0,4,t1-t0);} /* サイド */
    const ln=(j,col,f)=>{g.strokeStyle=col;g.lineWidth=5;g.beginPath();for(let i=0;i<n;i++){const y=f(slS.h[i][j]);if(i)g.lineTo(X(i),y);else g.moveTo(X(i),y);}g.stroke();};
    if(n>1){ln(2,'#6be89a',v=>t1-v*(t1-t0));ln(3,'#ff5a4a',v=>t1-v*(t1-t0));ln(1,'#6fb7ff',v=>mid-v*hh);ln(0,'#ffffff',v=>mid-Math.max(-SGM,Math.min(SGM,v))/SGM*hh);}
@@ -5501,10 +5506,10 @@ function showCh(){$('resNote').textContent='';$('resNote').classList.remove('ftn
   for(let m=3;m>=1;m--)h+='<tr'+(r.ok&&r.m===m?' class="me"':'')+'><td style="white-space:nowrap"><span class="md'+m+'">'+CHM[m]+'メダル</span></td><td class="t">'+fmt(C.g[3-m])+'</td><td>'+(r.ok&&r.t<=C.g[3-m]+1e-9?'✓':'')+'</td></tr>';
   if(b)h+='<tr><td>自己ベスト</td><td class="t">'+fmt(b.t)+'</td><td>'+(b.m?'<span class="md'+b.m+'">'+CHM[b.m]+'</span>':'')+'</td></tr>';
   $('resultTable').innerHTML=h;
-  $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay||autoUsed?'（オート運転は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+r.why;
+  $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay||autoUsed?'（オート運転は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+(r.why||'').split('（')[0]; /* T611 β0.438.0 PC で言葉の途中で折り返さないように、括弧の中は注記へ */
   const co=[...new Set(chCo)].slice(-4);
   const dn=C.dr&&chD?'<br>ドリフト：'+(C.dr.k?'':'横滑り '+C.dr.b+'°以上 '+chD.t.toFixed(1)+' 秒／'+C.dr.t+' 秒・')+'いちばん大きい横滑り '+Math.round(chD.mx)+'°'+(C.dr.k==='fe'?'・フェイント '+(chD.fe?'○':'×'):C.dr.k==='hb'?'・サイドで回る '+(chD.hbOk?'○':'×'):''):'';
-  $('resNote').innerHTML='課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・セダン FR・標準'+dn+chTip(C,r)+(r.pzH?'<br>'+r.pzH:'')+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
+  $('resNote').innerHTML=(!r.ok&&/（/.test(r.why||'')?'<b>失格の理由</b>　'+r.why+'<br>':'')+'課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・セダン FR・標準'+dn+chTip(C,r)+(r.pzH?'<br>'+r.pzH:'')+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
   $('raceBtn').hidden=true;$('againBtn').hidden=false;$('chListBtn').hidden=false;$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=!lapList().length; /* T742 課題の結果からもラップ比較 */
   $('resultScreen').hidden=false;pad.hidden=true;}
 function ssSplit(p,quiet){const rT=raceTime-raceT0; /* T821 */const a=p.ssSp||(p.ssSp=[]);if(p.lap!==1||p.finished)return;const d=lapDist(p);while(a.length&&d<SLEN*a.length/3-10)a.pop(); /* 巻き戻した時 */
