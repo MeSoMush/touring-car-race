@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.470.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.471.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1506,7 +1506,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <div id="strRow"><div class="label">直近3秒の線<span class="hint">横滑りの針の下に、この3秒のハンドル（青）・アクセル（緑）・ブレーキ（赤）・サイド（橙）・横滑り（白）の線。スピンや失格の前に何をしたかが分かる</span></div><div class="seg" id="strSeg"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
         <div id="hlRow"><div class="label">画面の配置<span class="hint">レース画面の表示（入力の表示・回転計・順位・ミニマップ・ログなど）を、ドラッグで動かし、右下の角で大きさを変え、ダブルクリック（ダブルタップ）で出さないにできる。スマホは操作ボタンも動かせる。PC・スマホの横持ち・縦持ちで別々に覚える（このブラウザに残る）</span></div><div class="seg"><button type="button" id="hlOpenB">配置を変える</button><button type="button" id="hlResetB">元に戻す</button></div></div>
         <div id="isdRow"><div class="label">サイドブレーキの位置<span class="hint">入力の表示の中のサイドブレーキの場所。右ハンドルの車は運転席の左（いちばん左）、左ハンドルの車は右（いちばん右）。ペダルの並びはどちらも同じ</span></div><div class="seg" id="isdSeg"><button type="button" data-v="0">左（右ハンドル）</button><button type="button" data-v="1">右（左ハンドル）</button></div></div>
-        <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線。流れている時は後ろからの視点が進む向きを多めに見る（車が横を向いているのが分かる）。速い時・流れている時は視点が低く近く・視野が少し広く、ドリフトの煙と車体の傾きも少し大きく</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
+        <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線。流れている時は後ろからの視点が進む向きを多めに見る（車が横を向いているのが分かる）。速い時・流れている時は視点が低く近く・視野が少し広く、ドリフトの煙と車体の傾きも少し大きく。近くの路面は速さに合わせて流れ、砂利や雪で滑ると粉が外へ飛ぶ</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div class="adv"><div class="label">スポッター<span class="hint">すぐ横に車がいる時、その側の画面の端がオレンジに光る（ごく近いと赤寄り）。ミラーに映らない真横の車に</span></div><div class="seg" id="soSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
       </div>
       <div class="gsec">操作</div>
@@ -3165,6 +3165,10 @@ function ribbon(l0,l1,y,mat,vScale,mask){
     uv.push(0,v0,1,v0,0,v1,1,v1);idx.push(vc,vc+1,vc+2,vc+1,vc+3,vc+2);vc+=4;}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
   const m=new THREE.Mesh(g,mat);m.receiveShadow=true;scene.add(m);return m;}
+/* T759 速度感の演出：近くの路面の流れ。RFU＝流す長さ m（rfStep）、uMS＝1÷模様の長さ m */
+const RFU={value:0},RFT=isTouch?3:6,RFF='#ifdef USE_MAP\nfloat mbL=uMB*uMS;vec4 texelColor;\nif(mbL>.0003){float j=fract(52.9829189*fract(dot(floor(gl_FragCoord.xy*.5),vec2(.06711056,.00583715))));texelColor=vec4(0.);\nfor(int i=0;i<'+RFT+';i++)texelColor+=mapTexelToLinear(texture2D(map,vUv+vec2(0.,mbL*((float(i)+j)/'+RFT+'.-.5))));texelColor/='+RFT+'.;}\nelse texelColor=mapTexelToLinear(texture2D(map,vUv));\ndiffuseColor*=texelColor;\n#endif';
+function rfMat(m,vs){const q={value:1/vs};m.onBeforeCompile=function(sh,r){THREE.Material.prototype.onBeforeCompile.call(this,sh,r);sh.uniforms.uMB=RFU;sh.uniforms.uMS=q;sh.fragmentShader='uniform float uMB;uniform float uMS;\n'+sh.fragmentShader.replace('#include <map_fragment>',RFF);};return m;}
+function rfStep(){const p=camTarget(),on=SPK>0&&!RM&&p&&!isTV(camEff());RFU.value=on?Math.min(VSK.mx,Math.hypot(p.vx,p.vz)*VSK.mb):0;} /* T759 中継の視点（止まったカメラ）では流さない */
 // 路面
 {const t=canvasTex(512,1024,(g,w,h)=>{noiseFill(g,w,h,'#55575c',.09,26000,2.2);
   for(let i=0;i<8;i++){g.fillStyle=`rgba(${rndS()<.5?'30,30,34':'95,95,100'},.07)`;const pw=30+rndS()*60,ph=120+rndS()*300;g.fillRect(rndS()*(w-pw),rndS()*h,pw,ph);}
@@ -3172,18 +3176,18 @@ function ribbon(l0,l1,y,mat,vScale,mask){
   // 走行ライン（タイヤのゴムで黒ずむ）
   const gr=g.createLinearGradient(0,0,w,0);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(.3,'rgba(10,10,12,.22)');gr.addColorStop(.5,'rgba(10,10,12,.05)');gr.addColorStop(.7,'rgba(10,10,12,.22)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);
   g.fillStyle='#e9e9e4';g.fillRect(w*.018,0,w*.018,h);g.fillRect(w*.964,0,w*.018,h);},true);
- roadMat=new THREE.MeshStandardMaterial({map:t,roughness:.92,metalness:0,bumpMap:t,bumpScale:.06});ribbon(i=>-WL[i],i=>WL[i],.04,roadMat,22);}
+ roadMat=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.92,metalness:0,bumpMap:t,bumpScale:.06}),22);ribbon(i=>-WL[i],i=>WL[i],.04,roadMat,22);}
 // 縁石（コーナーだけ）
 {const t=canvasTex(64,128,(g,w,h)=>{g.fillStyle='#c8201a';g.fillRect(0,0,w,h/2);g.fillStyle='#f1f1ee';g.fillRect(0,h/2,w,h/2);g.fillStyle='rgba(0,0,0,.12)';for(let y=0;y<h;y+=8)g.fillRect(0,y,w,2);},true);
- const m=new THREE.MeshStandardMaterial({map:t,roughness:.7});const ky=(l,i)=>.05+(Math.abs(l)-WL[i])/1.5*.09;const grN=i=>CRS.grl&&WL[i]<W-.5,kc=(sg,g)=>i=>CORNER[i]&&!CRS.free&&!NOCB&&!g===!grN(i)&&!(PLN&&PITZ[i]&&sg===PS);ribbon(i=>WL[i],i=>WL[i]+1.5,ky,m,3.2,kc(1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,m,3.2,kc(-1));if(CRS.grl){const sm=new THREE.MeshStandardMaterial({color:0x6e6d69,roughness:.95});ribbon(i=>WL[i],i=>WL[i]+1.5,ky,sm,3.2,kc(1,1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,sm,3.2,kc(-1,1));} /* T485 峠の狭い区間は灰色の路肩 */  }
+ const m=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.7}),3.2);const ky=(l,i)=>.05+(Math.abs(l)-WL[i])/1.5*.09;const grN=i=>CRS.grl&&WL[i]<W-.5,kc=(sg,g)=>i=>CORNER[i]&&!CRS.free&&!NOCB&&!g===!grN(i)&&!(PLN&&PITZ[i]&&sg===PS);ribbon(i=>WL[i],i=>WL[i]+1.5,ky,m,3.2,kc(1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,m,3.2,kc(-1));if(CRS.grl){const sm=new THREE.MeshStandardMaterial({color:0x6e6d69,roughness:.95});ribbon(i=>WL[i],i=>WL[i]+1.5,ky,sm,3.2,kc(1,1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,sm,3.2,kc(-1,1));} /* T485 峠の狭い区間は灰色の路肩 */  }
 /* T690 街の歩道：道の端から SWR m の低い坂（SWH m 上がる）と、WAL までの平らな板（交差点＝横の通りの帯では切る）。… */
 if(CRS.free&&CRS.grid&&SWK){const t=canvasTex(64,64,(g,w,h)=>{g.fillStyle='#8d8f92';g.fillRect(0,0,w,h);g.fillStyle='rgba(40,40,44,.35)';g.fillRect(0,0,w,2);g.fillRect(0,0,2,h);g.fillStyle='rgba(255,255,255,.06)';g.fillRect(4,4,w/2-6,h/2-6);g.fillRect(w/2+2,h/2+2,w/2-6,h/2-6);},true);
  const pm=new THREE.MeshStandardMaterial({map:t,roughness:.95}),em=new THREE.MeshStandardMaterial({color:0xa9aaa6,roughness:.9}),ok=sg=>i=>{const j=wrap(i+1);return swAt(i,sg*(WL[i]+.05))&&swAt(i,sg*(WAL[i]-.05))&&swAt(j,sg*(WL[j]+.05))&&swAt(j,sg*(WAL[j]-.05));},ry=(l,i)=>.045+Math.min(1,Math.max(0,(Math.abs(l)-WL[i])/SWR))*SWH;
  for(const sg of[1,-1]){ribbon(i=>sg*WL[i],i=>sg*(WL[i]+SWR),ry,em,3,ok(sg));ribbon(i=>sg*(WL[i]+SWR),i=>sg*WAL[i],.045+SWH,pm,2.4,ok(sg));}}
 // グラベル（コーナー外側）
 {const t=canvasTex(256,256,(g,w,h)=>{noiseFill(g,w,h,'#b7a37c',.22,14000,2.4);},true);
- ribbon(i=>OUTS[i]*(WL[i]+1.5),i=>OUTS[i]*(WAL[i]+1),.03,SNW.vm=new THREE.MeshLambertMaterial({map:t}),10,i=>CORNER[i]&&!CRS.free&&!NOCB&&!(ROXN&&ROX[i*2+(OUTS[i]>0?1:0)]>.3)); /* せき止めない街は砂利なし */SNW.vt=t;}
-if(ROXN){const t=canvasTex(128,256,(g,w,h)=>{noiseFill(g,w,h,'#4d4f53',.08,6000,1.8);g.fillStyle='rgba(235,235,230,.6)';for(let y=0;y<h;y+=64){g.beginPath();g.moveTo(8,y);g.lineTo(w/2,y+40);g.lineTo(w-8,y);g.lineTo(w-8,y+10);g.lineTo(w/2,y+50);g.lineTo(8,y+10);g.fill();}},true),m=new THREE.MeshStandardMaterial({map:t,roughness:.95});for(const sg of[1,-1]){const q=i=>ROX[i*2+(sg>0?1:0)];ribbon(i=>sg*(WL[i]+(CORNER[i]?1.5:0)),i=>sg*(WAL[i]+.55+q(i)),.035,m,9,i=>q(i)>.3&&q(wrap(i+1))>.3);}} /* T748 逃げ道の舗装（白い山形の印） */
+ ribbon(i=>OUTS[i]*(WL[i]+1.5),i=>OUTS[i]*(WAL[i]+1),.03,SNW.vm=rfMat(new THREE.MeshLambertMaterial({map:t}),10),10,i=>CORNER[i]&&!CRS.free&&!NOCB&&!(ROXN&&ROX[i*2+(OUTS[i]>0?1:0)]>.3)); /* せき止めない街は砂利なし */SNW.vt=t;}
+if(ROXN){const t=canvasTex(128,256,(g,w,h)=>{noiseFill(g,w,h,'#4d4f53',.08,6000,1.8);g.fillStyle='rgba(235,235,230,.6)';for(let y=0;y<h;y+=64){g.beginPath();g.moveTo(8,y);g.lineTo(w/2,y+40);g.lineTo(w-8,y);g.lineTo(w-8,y+10);g.lineTo(w/2,y+50);g.lineTo(8,y+10);g.fill();}},true),m=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.95}),9);for(const sg of[1,-1]){const q=i=>ROX[i*2+(sg>0?1:0)];ribbon(i=>sg*(WL[i]+(CORNER[i]?1.5:0)),i=>sg*(WAL[i]+.55+q(i)),.035,m,9,i=>q(i)>.3&&q(wrap(i+1))>.3);}} /* T748 逃げ道の舗装（白い山形の印） */
 // ブレーキングの目安看板（コーナー手前の150・100・50m）
 {const nums=[150,100,50];const mats=nums.map(n=>new THREE.MeshLambertMaterial({map:canvasTex(128,96,(g,w,h)=>{g.fillStyle='#f4f4f2';g.fillRect(0,0,w,h);g.strokeStyle='#16181c';g.lineWidth=6;g.strokeRect(5,5,w-10,h-10);g.fillStyle='#16181c';g.font='italic 800 60px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(n),w/2,h/2+3);}),side:THREE.DoubleSide}));
  const spots=[];
@@ -3972,6 +3976,9 @@ function stepSparks(dt){if(!spkLive)return;let any=0;
   spkGeo.attributes.position.needsUpdate=true;spkLive=any;}
 let DGL0=300,DGL1=680,FINCAM=1; // T178：ディスクが光り始める・いちばん明るい温度（℃）、FINCAM＝自分がゴールしたら中継カメラへ
 let scrLv=0; // T174 自車がこすれている強さ（0〜1）。擦れる音の大きさに使い、毎フレーム減らす
+function gvSpray(k,rw,sk,col,f,lx,lz,fx,fz,dt){if(!(SPK>0)||RM||Math.abs(k.u)<5)return;const d=Math.min(1.3,Math.max(0,(k.slipR-.16*sk)/.3)+(k.wheelspin?.35:0));if(d<=0)return; /* T759 砂利・雪の粉を横滑りに合わせて足し、滑る向きへ投げる（速度感の演出の中） */
+ k.gvA=(k.gvA||0)+VSK.gn*d*f*(isTouch?.33:1)*dt;const vl=k.vx*lx+k.vz*lz;
+ while(k.gvA>=1){k.gvA-=1;const q=rw[(k.gvI=(k.gvI|0)+1)&1],a=VSK.gk*(.6+__VR()*.6);puff(q[0]+(__VR()-.5)*.5,q[1]+(__VR()-.5)*.5,k.vx*.6+lx*vl*a-fx*2,k.vz*.6+lz*vl*a-fz*2,true,col);const p=smokes[(smokeI+SMN-1)%SMN];p.gr+=VSK.gs*d;p.o0=Math.min(.75,p.o0+.12*d);p.max+=.35*d;}}
 function puff(x,z,vx,vz,dust,col,s){const p=smokes[smokeI];smokeI=(smokeI+1)%SMN;p.on=true;p.life=0;p.max=dust?1.1:.9;p.vx=vx*.3;p.vz=vz*.3;p.dust=dust;const h=col||(dust?0xb89f72:0xe8e8e8);p.r=(h>>16&255)/255;p.g=(h>>8&255)/255;p.b=(h&255)/255;p.x=x;p.y=.5;p.z=z;p.sc=1;p.op=.55;p.gr=3.5;p.o0=.55;p.ry=1.2;
   if(s){const P=DSMP[DSM];p.max+=s*P.life;p.gr+=s*P.grow;p.o0=Math.min(.7,.55+s*P.op);p.ry=1.2-s*.5;p.vx=vx*.15;p.vz=vz*.15;p.y=.35;}} /* T523⑤ s＝ドリフトの深さ */
 function stepSmoke(dt){let n=0,cx=0,cy=0,cz=0;for(const p of smokes){if(!p.on)continue;p.life+=dt;const t=p.life/p.max;if(t>=1){p.on=false;continue;}p.x+=p.vx*dt;p.z+=p.vz*dt;p.y+=dt*p.ry;p.sc=1+t*p.gr;p.op=(1-t)*p.o0;n++;cx+=p.x;cy+=p.y;cz+=p.z;}
@@ -7291,11 +7298,11 @@ function syncVisuals(dt){
       while(k.lsA>=1){k.lsA-=1;const i=(k.lsI=(k.lsI|0)+1),fr=fw||ff&&i&2,w=fr?[k.x+fx*1.3+lx*(i&1?.8:-.8),k.z+fz*1.3+lz*(i&1?.8:-.8)]:rw[i&1];puff(w[0]+(vrnd()-.5)*.5,w[1]+(vrnd()-.5)*.5,k.vx,k.vz,false,c,.25+.35*q0);}} /* T705 発進・低い速さの空転の煙（駆動輪から。… */
     const rc=rutOn(k,surf);if(rc>=0&&Math.abs(k.u)>1.5&&(k.isPlayer||!pl||Math.hypot(k.x-pl.x,k.z-pl.z)<RUTN))rutStep(k,rw,rc,sliding);else k.rutP=null; /* T764 */
     if(near&&sliding&&(surf==='road'||surf==='curb')){if(k.prevWheel&&rc<0){addSkid(rw[0][0],rw[0][1],k.prevWheel[0][0],k.prevWheel[0][1]);addSkid(rw[1][0],rw[1][1],k.prevWheel[1][0],k.prevWheel[1][1]);}
-      if(__VR()<.35){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;
+      if(__VR()<.35){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;if(RSv.dust)gvSpray(k,rw,RSv.sk,RSv.dust,RSv.rg,lx,lz,fx,fz,dt); /* T759 */
       const P=DSMP[DSM],ds=P.n&&!RSv.dust&&ENV.wet<.25?driftS(k):0; /* T523⑤ ドリフトの煙（濡れた路面・ゆるい路面は出さない） */
       if(ds>0){const vs=SPK>0&&!RM?1:0;k.smA=(k.smA||0)+P.n*ds*(1+VSK.sm*ds*vs)*dt; /* T759 */let c=P.col;if(TOD[ENV.tod]&&TOD[ENV.tod].night)c=(((c>>16&255)*.42|0)<<16)|(((c>>8&255)*.44|0)<<8)|((c&255)*.48|0);
         while(k.smA>=1){k.smA-=1;const q=rw[(k.smI=(k.smI|0)+1)&1];puff(q[0]+(vrnd()-.5)*.6,q[1]+(vrnd()-.5)*.6,k.vx,k.vz,false,c,ds*(1+VSK.so*vs));}}}
-    else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&__VR()<.25){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass'&&!swG(k))&&Math.abs(k.u)>8&&__VR()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
+    else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&__VR()<.25){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass'&&!swG(k))&&Math.abs(k.u)>8&&__VR()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);if(near&&surf==='gravel')gvSpray(k,rw,1,0xb89f72,1,lx,lz,fx,fz,dt); /* T759 */}
   }
   if(TRF.length)trfSync();if(SIG.length)sigSync();  if(PARKA&&PARKA.length&&!RCL)pkSync(); /* T541① */
   {const f=startGrp.userData.chq;if(f){f.visible=!PUBR&&sess==='race'&&finishOrder.length>0&&(state==='race'||state==='finished'||state==='replay');if(f.visible)f.rotation.z=Math.sin(clockT*9)*.7;}} // T178③ チェッカーを振る
@@ -7922,7 +7929,7 @@ function ckAvoid(dt){const tw=$('tower');if(!tw)return;let s=ckAvS;
   if(Math.abs(s-ckAvS)>.01||s===1&&ckAvS!==1){ckAvS=s;tw.style.transformOrigin='top left';tw.style.transform=s<1?'scale('+s.toFixed(3)+')':'';}}
 function camEff(){const p=player();return FINCAM&&sess==='race'&&state==='finished'&&p&&p.finished&&!p.dnf&&!autoPlay&&(camMode<3||camMode===5)?3:camMode;}
 let finCamOn=false;
-function updateCamera(dt){camera.position.y-=fsOff;fsOff=0;updateCamera0(dt);const p=player();if(p&&(p.fsp||0)>.05&&state==='race'&&camMode<=1&&!RM){const u=Math.abs(p.u);fsPh+=u/.33*dt;fsOff=FSV*p.fsp*Math.min(1,u/25)*(camMode===1?1:.5)*Math.sin(fsPh);camera.position.y+=fsOff;}rmStep(dt);}
+function updateCamera(dt){camera.position.y-=fsOff;fsOff=0;updateCamera0(dt);const p=player();if(p&&(p.fsp||0)>.05&&state==='race'&&camMode<=1&&!RM){const u=Math.abs(p.u);fsPh+=u/.33*dt;fsOff=FSV*p.fsp*Math.min(1,u/25)*(camMode===1?1:.5)*Math.sin(fsPh);camera.position.y+=fsOff;}rfStep();rmStep(dt);}
 /* T264 振動。… */
 /* T264 ⑦ ペースノート（ラリーの同乗者の読み上げ）。… */
 let pnMode=2,pnAll=0,pnLd=1,PNA=2.8,PNI=40,PNS=320,PNLL=180,PNT=.85;const PNR=[40,65,95,135,190];const PNLK=[1.4,1,.75]; /* T610④ 読み上げの早さ：早め・ふつう・遅め（先読みの長さに掛ける） */
@@ -8029,7 +8036,7 @@ function updateCameraIn(dt){
 // バックミラー：後ろ向きのカメラで小さな画像に描き、左右反転して画面上に貼る
 let mirOn=!isTouch;
 let CAMYR=2.2,camChT=-1e9; /* T583 後方視点のカメラが回り込む速さの上限（rad/s。… */
-let SPK=1,SPA=6,SPD=.9,SPF=2.5,SPL=.55,camAx=0,camDr=0,CDRK=.35,VSK={cd:.9,ch:.22,sd:.5,sh:.15,fv:4,sm:.6,so:.2,rl:1.5}; /* T759 流れの見た目の強さ（速度感の演出の中）：cd・ch 速い時に寄る・下げる m、sd・sh 流れている時、fv 速い時の視野 度、sm・so 煙の数・濃さ、rl 車体のロールの倍率 */ // T140 速度感の演出：SPK＝1 で有効、SPA＝この加速度(m/s²)で最大、SPD＝カメラの引き・寄せ(m)、SPF＝視野角の増減(度)、SPL＝周辺の速度線が出始める速さ（最高速に対する割合）
+let SPK=1,SPA=6,SPD=.9,SPF=2.5,SPL=.55,camAx=0,camDr=0,CDRK=.35,VSK={cd:.9,ch:.22,sd:.5,sh:.15,fv:4,sm:.6,so:.2,rl:1.5,mb:.015,mx:1.4,gn:24,gk:1.4,gs:1.5}; /* T759 mb・mx 路面の流れ（シャッター秒・上限 m）、gn・gk・gs 砂利と雪の粉（横滑り1で1秒の数・外へ投げる強さ・広がり） */ /* T759 流れの見た目の強さ（速度感の演出の中）：cd・ch 速い時に寄る・下げる m、sd・sh 流れている時、fv 速い時の視野 度、sm・so 煙の数・濃さ、rl 車体のロールの倍率 */ // T140 速度感の演出：SPK＝1 で有効、SPA＝この加速度(m/s²)で最大、SPD＝カメラの引き・寄せ(m)、SPF＝視野角の増減(度)、SPL＝周辺の速度線が出始める速さ（最高速に対する割合）
 const mirCam=new THREE.PerspectiveCamera(30,4,0.5,600);terrCam(mirCam);
 const mirRT=new THREE.WebGLRenderTarget(512,128,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});mirRT.texture.encoding=THREE.sRGBEncoding;
 const mirScene=new THREE.Scene(),mirOrtho=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
@@ -10711,7 +10718,7 @@ function frame0(now){
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw);if(bmk)bmRec(raw*1000); // 時刻が戻った時（負の時間）は進めない（ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
   if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';} /* T786 タイトル・メニュー・ポーズでも消えるように頭で */if(toastTimer>0||$('toast').parentNode===document.body)toastPos();
   if(!bmk)pollPad();bgmTick(dt);msHud();hlSeatT();inpHud(dt);slipHud(dt);autoTech(dt);ckAvoid(dt);
-  if(state==='title'){titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
+  if(state==='title'){RFU.value=0;titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);resMk();}
   if(tmHold()){rMain();mirLayout();renderMirror();updateEngine();return;} /* T255 メニューを開いている間は止める */
   if(state==='paused'){rMain();mirLayout();renderMirror();updateEngine();return;}
