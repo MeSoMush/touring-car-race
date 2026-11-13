@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.453.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.454.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2676,8 +2676,8 @@ const SETB=[{n:'前寄り',bb:.76,rbm:.8},{n:'標準',bb:.7,rbm:1},{n:'後ろ寄
 const SETC=[{n:'小さめ',hf:1.3,cdm:.97},{n:'標準',hf:1,cdm:1},{n:'大きめ',hf:.7,cdm:1.04}]; // ラジエーター・ダクト（T106）：hf＝熱の上がり方の倍率（大きいほど熱くなりやすい）、cdm＝空気抵抗の倍率
 const TYRE=['自動','スリック','レイン','ラジアル','スタッドレス','スパイク','グラベル'];
 /* T285 タイヤの種類（k.ty＝番号。… */
-const TYR=[{n:'スリック',tq:.97,d0:1,wl:0,wc:0,of:1,g:[1,.8,.66,.55],tw:[80,105],wr:1,wt:1,wd:.22,hp:1},
- {n:'レイン',lp:1.034,d0:.9,wl:0,wc:0,of:1,g:[1,.84,.74,.6],tw:[35,65],wr:1,wt:1,wd:.22,hp:.5},
+const TYR=[{n:'スリック',tq:.97,d0:1,wl:null /* T757 null＝WETR */,wc:.45,of:1,ow:.18,g:[1,.8,.66,.55],tw:[80,105],wr:1,wt:1,wd:.22,hp:1},
+ {n:'レイン',lp:1.034,d0:.9,wl:null /* T757 null＝WRR */,wc:.16,of:.9,ow:.1,g:[1,.84,.74,.6],tw:[35,65],wr:1,wt:1,wd:.22,hp:.5},
  {n:'ラジアル',lp:1.057,d0:.74,wl:.17,wc:.22,of:1,g:[1,.72 /* T728 砂利 .93→.72（公道用のタイヤの砂利の減速 0.89→0.63G。… */,.55,.6 /* T728 雪 .8→.55・氷 .68→.6（公道用の雪 0.22G＝夏タイヤ 0.16〜0.19G とオールシーズンの間、氷 0.11G） */],tw:[50,90],oh:[30,0.16] /* T548 公道用は熱を持ちすぎるとスリックの倍の速さで落ちる（窓の上 oh[0]℃ で最大 oh[1]＝+15℃で −8%・+30℃で −16%。… */,wr:.55,wt:1,wd:.12,hp:.7},
  {n:'スタッドレス',lp:1.054,d0:.84,wl:.2,wc:.25,of:1,g:[1,.87,1,.93],tw:[15,55],wr:.75,wt:1.4,wd:.15,hp:.7},
  {n:'スパイク',lp:1.068,d0:.8,wl:.28,wc:.32,of:.95,g:[1,.9,.97,1.2 /* T728 氷 1→1.2（スパイクはスタッドレスより氷で約15%短く止まる〈アラスカの試験〉。… */],tw:[20,65],wr:.6,wt:1.8,wd:.13,hp:.8},
@@ -2984,7 +2984,7 @@ const _c1=new THREE.Color(),_c2=new THREE.Color(),_c3=new THREE.Color();
 function plrSafe(){try{return karts.find(k=>k.isPlayer)||null;}catch(_){return null;}}
 function wetMul(s,k){const r=wetMul0(s,k);return k&&k.tww&&k.tww!==1?1-(1-r)*k.tww:r;}
 let WRR=.07; // T254⑥ レインタイヤの路面の濡れでの落ち方（従来 .07）
-function wetMul0(s,k){const w=k&&k._w!=null?k._w:ENV.wet;if(k&&k.ty>1){const T=TYR[k.ty];return s==='road'?T.d0*(1-T.wl*w):s==='curb'?T.d0*(1-T.wc*w):T.of*(1-.12*w);}if(k&&k.rain)return .9*(s==='road'?1-WRR*w:s==='curb'?1-.16*w:1-.1*w);return s==='road'?1-WETR*w:s==='curb'?1-.45*w:1-.18*w;} // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
+function wetMul0(s,k){const w=k&&k._w!=null?k._w:ENV.wet,T=TYR[k&&k.ty>1?k.ty:k&&k.rain?1:0],wl=T.wl??(T===TYR[1]?WRR:WETR);return s==='road'?T.d0*(1-wl*w):s==='curb'?T.d0*(1-T.wc*w):T.of*(1-(T.ow??.12)*w);} /* T757 濡れの落ち方はタイヤの表 TYR の1か所（スリック・レインも） */ // レインタイヤは乾いた路面で1割遅いが、濡れても落ちにくい（路面の濡れ4割あたりで逆転）
 // 環境反射（空と地面の簡易モデル）。時間帯と雲で作り直す
 let envTex=null,envRT=null,envBK='',pmGen=null;let ENVQ=4;const envQ=pk=>{const i=pk.indexOf(':');if(i<0)return pk;const q=Math.round(+pk.slice(i+1)*ENVQ)/ENVQ,ab=pk.slice(0,i).split('>');return q<=0?ab[0]:q>=1&&ab[1]!=null?ab[1]:pk.slice(0,i+1)+q;}; /* 端は ia／ib の鍵に */ /* T425① 映り込みは作り直すと 0.8〜0.9 秒止まるので、時間帯の間を ENVQ 段だけに（16段→4段） */ /* T343① envBK＝今の映り込みを作った時間帯と雲、pmGen＝使い回す PMREMGenerator */
 /* T339 影の切り替え：castShadow は true のまま（切り替えると影を受ける材質を全部作り直して画面が止まる）。… */
@@ -4187,7 +4187,7 @@ const tnKg=(ci,a,drv='FR')=>{const F=tnFx(ci,a);return 1250*carMass(ci,drv)*KST.
 function lapEstX(top,g,df,mr,wet){const A=[];for(let i=0;i<40;i++){const col=ACCT.map(r=>r[i]),q=col.filter(x=>x!=null);if(!q.length)break;A.push(Math.max(0,q.length<2?q[0]:tabT(col,top))/mr);}
   const wm=wet?.7:1,la0=MU.road*G*.82*g*wm,v=new Float64Array(N);
   for(let i=0;i<N;i++){const la=la0*RSF[RSI[i]].mu*(RPG[i]?PUBM:1);v[i]=Math.min(top,vcOf(i,la,AERO*df));}
-  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*RSF[RSI[i]].mu*wm*SP+2*G*(TE[j]-TE[i]))));}
+  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*RSF[RSI[i]].mu*(RPG[i]?PUBM:1)*wm*SP+2*G*(TE[j]-TE[i]))));} /* T757 PUBM もブレーキに */
   for(let p=0;p<2;p++)for(let i=0;i<N;i++){const j=wrap(i+1),m=RSF[RSI[i]].mu*wm,a=m<1?Math.min(A[Math.floor(v[i]/5)]||0,MU.road*m*G*.5):A[Math.floor(v[i]/5)]||0;v[j]=Math.min(v[j],Math.sqrt(Math.max(0,v[i]*v[i]+2*a*SP-2*G*(TE[j]-TE[i]))));}
   let t=0;for(let i=0;i<N;i++)t+=SP/Math.max(1,(v[i]+v[wrap(i+1)])/2);return t;}
 function tnLap(ci,a,wet){const F=tnFx(ci,a),m0=1250*carMass(ci,'FR')*KST.m,mr=(m0*F.mf+F.kg+(F.tb?TKS[1].kg+IC_KG:0))/m0;const t=topFree(ci,a)/Math.cbrt(F.cd);return lapEstX(t,F.g*F.gr,F.df,mr/frAccK(t),wet);}
