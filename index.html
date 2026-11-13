@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.6</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.7</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6279,7 +6279,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
     if(flo&&!hard&&!follow&&!k.yieldF&&!trail&&!lfb&&k.erS!==2&&u>12&&CORNER[k.idx]&&!(k.dvA<-BSV)&&!(relIdx(CORN[CID[k.idx]].apex,k.idx)>0)&&u<lim+FLU){const ts=-Math.sign(KAP[k.idx]),ob=beta*ts,bt=erPk(RSI[k.idx])*FLB;pA=true;pB=false;k.aiBk=0;thr=Math.min(k.aiThr,Math.max(FLAm,Math.min(1,(FLAS[RSI[k.idx]]??FLA0)+FLG*(bt-ob))))*Math.min(1,(lim+FLU-u)/FLW); /* 前輪が滑って外へふくらむ・外の壁が近い時の絞り k.aiThr は流しでも掛ける */ /* 狙い＋FLU の手前 FLW m/s から踏む量をなだらかに絞る（境目で踏む・離すを刻まない。狙いより速い時はブレーキに任せる＝きつい角に速すぎて入ったまま踏み、前がいっぱいで外の壁へ行っていた） */k.flN=(k.flN||0)+dt;k.pwr=true;k.pso=6;k.drW='flo';} /* T727 流し：角の中（狙いの線が下がり終わった後）は、アクセルで後輪の滑りを保つ。… */ /* 線が BSV m/s² 以上の速さで下がっている間（まだ減速の途中）は、線を BSG m/s 下回るまではアクセルを踏まず、ブレーキは「線の下がる速さ＋ずれを BSE 秒で戻す分」の一定の強さで踏み続ける（踏む→離す→アクセル→踏むの刻みにしない。ご本人 2026-11-05「突っ込んで、滑って速度下げて…ではギクシャクするだけ」） */
     if(!hard){k.aiSw=(k.aiSw||0)+dt;const on=!!k.aiOn;if(pA!==on&&k.aiSw<PDDW&&!pB&&!(on&&follow&&!folP))pA=on;if(pA!==on){k.aiSw=0;k.aiOn=pA;}} /* T372 アクセルを踏む・離すを切り替えたら PDDW 秒はそのまま（ブレーキを踏む時・前の車に詰まった時は待たずに離す） */
     let ta=pA?thr:0,tb=pB?(brk??1):0;const a0=k.aiA??ta,b0=k.aiB??tb;if(!hard&&tb>0&&b0>.02)tb=b0+(tb-b0)*Math.min(1,dt/PDBS); /* T372 踏んでいる間の踏む量はならす */
-    k.aiA=ta>a0?Math.min(ta,a0+dt/(PDRA*(1+PDRS*(k.slv||0)))):Math.max(ta,a0-dt/(PDFA*(1+PDFS*(k.slv||0)))); /* T558 滑りやすいほどジワッと踏み、ゆっくり戻す */k.aiB=hard?tb:tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);
+    k.aiA=pdA(k,ta,a0,dt);k.aiB=hard?tb:pdB(tb,b0,dt);
     pA=k.aiA>.02;pB=k.aiB>.02;thr=k.aiA;brk=k.aiB;k.aiBrake=pB;}else{k.aiA=pA?thr:0;k.aiB=pB?(brk??1):0;}
   {const sl=k.lbSl??1e9;k.lbS=sl<=0||k.lbS===2&&sl<LTH?2:0;if(k.lbS===2&&sl<1e8){const fr=Math.min(1,u*u/Math.max(5,RADL[k.idx])/Math.max(3,k.lbLa||8)),bf=sl<-LTB?1:Math.max(LTF,Math.min(Math.sqrt(Math.max(0,1-fr*fr)),1-LTQ*Math.abs(steer)));const bx=hard?Math.max(bf,brk??1):bf; /* T794 前の車への急ブレーキは弱めない */pA=false;pB=true;brk=bx;thr=0;k.aiA=0;k.aiB=bx;k.aiBrake=true;k.lbBf=bx;}else k.lbS=0;}
   const rqo=rqStep(k,u,dt);if(rqo>0&&!hard){if(pB){brk=(brk??1)*(1-RQB*rqo);k.aiB=brk;pB=brk>.02;}if(pA&&k.fs<.8){thr*=1-RQT*rqo;k.aiA=thr;}else if(!pA&&!pB){pA=true;thr=RQA*rqo;k.aiA=thr;}
@@ -6347,6 +6347,8 @@ let PDBS=.2,PDDW=.3;
 /* T558：AGP 1＝前の車を見る時、道に沿った差（位置の番号）がまっすぐの距離と AGPM m（か その半分）より食い違う車は見ない。… */
 let AGP=1,AGPM=12,ABH=1,PDRS=3,PDFS=2;
 let PDHK=.6,PDH=.5,PDW=3,PDM=.2,PDBW=3,PDBM=.3,PDBL=.3,PDRA=.25,PDFA=.1,PDRB=.1,PDFB=.15;
+function pdA(k,ta,a0,dt){return ta>a0?Math.min(ta,a0+dt/(PDRA*(1+PDRS*(k.slv||0)))):Math.max(ta,a0-dt/(PDFA*(1+PDFS*(k.slv||0))));} /* T755 CPU・オートのアクセルのならし（T558 滑りやすいほどジワッと踏み、ゆっくり戻す） */
+function pdB(tb,b0,dt){return tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);} /* T755 CPU・オートのブレーキのならし */
 let FLS=[0,1,0,0] /* T728 雪 2→0（雪のグリップを実測へ下げると、雪の流しで道の外へ出て壁が 0.58→1.75回/台〈コース0〉。… */,FLAS=[.6,.6,.4,.6],FLF=.8,FLV=.2,FLV0=40,FLV1=90,FLU=.5,FLB=.6,FLA0=.6,FLG=3,FLAm=.15,FLH=.5,FLR=120,FLT=.3,FLW=1.5; /* 流し（アクセル）は角の頂点を過ぎてから＝曲がっている最中は開けず、緩み始めてから開ける（ラリーの教え）。… */ /* 流しの間はパワースライドと同じく、駆動輪の空転の抑え（CPU・オートの .85）を外す */ /* T727 流し（FL）。… */
 let BST=.25,BSM=.5,BSV=2,BSG=.5,BSE=1.5,BSA=8,BSH=1.5; /* T727 BS：BSH＝角の中でアクセルを離さずに保つ幅（m/s）・BST＝線の下がる速さをならす秒・BSM＝ブレーキの効きを覚える秒・BSV＝これより速く線が下がる間だけ・BSG＝線をこれだけ（m/s）下回っ… */
 const wreckCtl=k=>({steer:0,accel:false,brake:k.u>.8,brk:.8,drift:false});
@@ -6559,7 +6561,7 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   let pB=brake||ctl.brake&&u>vt,pA=!brake&&u<vt-.5&&ctl.accel,thr=ctl.thr??1,brk=ctl.brk;
   // ピットへ入る・出る・線までの減速も、80km/h の近くは途中まで踏んで保ち、踏む・離す速さに上限（T365 と同じ定数。…
   if(u>=LOWV){if(!pA&&!pB&&ctl.accel&&u<vt-.5+((k.aiA||0)>.02?PDHK:0))pA=true;if(pA)thr*=Math.max(PDM,Math.min(1,(vt-.5+PDHK-u)/PDW));if(pB)brk=(brk??1)*Math.max(PDBM,Math.min(1,(u-vt)/PDBW));
-    const ta=pA?thr:0,tb=pB?(brk??1):0,a0=k.aiA??ta,b0=k.aiB??tb;k.aiA=ta>a0?Math.min(ta,a0+dt/(PDRA*(1+PDRS*(k.slv||0)))):Math.max(ta,a0-dt/(PDFA*(1+PDFS*(k.slv||0)))); /* T558 滑りやすいほどジワッと踏み、ゆっくり戻す */k.aiB=tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);
+    const ta=pA?thr:0,tb=pB?(brk??1):0,a0=k.aiA??ta,b0=k.aiB??tb;k.aiA=pdA(k,ta,a0,dt);k.aiB=pdB(tb,b0,dt);
     pA=k.aiA>.02;pB=k.aiB>.02;thr=k.aiA;brk=k.aiB;}else{k.aiA=pA?thr:0;k.aiB=pB?(brk??1):0;}
   ctl.brake=pB;ctl.accel=pA;ctl.thr=thr;ctl.brk=brk;k.aiBrake=pB;return ctl;}
 // T83レース中にブレーキバランスを動かす（実際の車のバランス調整のダイヤル）。…
@@ -6635,7 +6637,7 @@ function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const sA=k.aiA,sB=k.aiB,a=a
   if(fd<1e8){if(fd<FMH&&k.u<1.5)k.fmH=1;if(k.fmH){k.aiA=0;k.aiB=1;return {steer:a.steer,accel:false,brake:true,brk:1,drift:false,thr:0};}v=Math.min(v,Math.sqrt(2*FMA*Math.max(0,fd-.6)));} /* T360 自分のグリッドで止まる */
   // T372 隊列の速さ合わせも、速さの差に応じて途中まで踏み、踏む・離す速さに上限（前は 0.3m/s の差で入り切りを毎コマ繰り返していた）
   const u=k.u;if(u>v+1.5)k.rlBk=1;else if(u<v+.3)k.rlBk=0;const pB=!!k.rlBk,ta=pB?0:.7*Math.max(0,Math.min(1,(v+PDH-u)/PDW)),tb=pB?.5*Math.max(PDBM,Math.min(1,(u-v)/PDBW)):0;
-  const a0=k.aiA??ta,b0=k.aiB??tb;k.aiA=ta>a0?Math.min(ta,a0+dt/(PDRA*(1+PDRS*(k.slv||0)))):Math.max(ta,a0-dt/(PDFA*(1+PDFS*(k.slv||0)))); /* T558 滑りやすいほどジワッと踏み、ゆっくり戻す */k.aiB=tb>b0?Math.min(tb,b0+dt/PDRB):Math.max(tb,b0-dt/PDFB);
+  const a0=k.aiA??ta,b0=k.aiB??tb;k.aiA=pdA(k,ta,a0,dt);k.aiB=pdB(tb,b0,dt);
   return {steer:a.steer,accel:k.aiA>.02,brake:k.aiB>.02,brk:k.aiB,drift:false,thr:k.aiA};}
 /* ===== T157・T233 セーフティカーと FCY（実際のレースの手順にならう） scMode：0＝なし／1＝短め（大クラッシュはまず FCY。…（T237） */
 let scMode=1,SCV0=36,SCVK=.65,SCG=16,SCL=26,SCMIN=25,SCDK=.65,SCDV=42,SCW0=260,SCW1=450,SCCK=.85,SCQT=45,SCQG=45;
