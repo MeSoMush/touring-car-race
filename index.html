@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.462.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.463.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1506,7 +1506,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <div id="strRow"><div class="label">直近3秒の線<span class="hint">横滑りの針の下に、この3秒のハンドル（青）・アクセル（緑）・ブレーキ（赤）・サイド（橙）・横滑り（白）の線。スピンや失格の前に何をしたかが分かる</span></div><div class="seg" id="strSeg"><button type="button" data-v="1">出す</button><button type="button" data-v="0">出さない</button></div></div>
         <div id="hlRow"><div class="label">画面の配置<span class="hint">レース画面の表示（入力の表示・回転計・順位・ミニマップ・ログなど）を、ドラッグで動かし、右下の角で大きさを変え、ダブルクリック（ダブルタップ）で出さないにできる。スマホは操作ボタンも動かせる。PC・スマホの横持ち・縦持ちで別々に覚える（このブラウザに残る）</span></div><div class="seg"><button type="button" id="hlOpenB">配置を変える</button><button type="button" id="hlResetB">元に戻す</button></div></div>
         <div id="isdRow"><div class="label">サイドブレーキの位置<span class="hint">入力の表示の中のサイドブレーキの場所。右ハンドルの車は運転席の左（いちばん左）、左ハンドルの車は右（いちばん右）。ペダルの並びはどちらも同じ</span></div><div class="seg" id="isdSeg"><button type="button" data-v="0">左（右ハンドル）</button><button type="button" data-v="1">右（左ハンドル）</button></div></div>
-        <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線。流れている時は後ろからの視点が進む向きを多めに見る（車が横を向いているのが分かる）</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
+        <div class="adv"><div class="label">速度感の演出<span class="hint">加速でカメラが少し引き、ブレーキで寄る。速い時は画面の端に薄い線。流れている時は後ろからの視点が進む向きを多めに見る（車が横を向いているのが分かる）。速い時・流れている時は視点が低く近く・視野が少し広く、ドリフトの煙と車体の傾きも少し大きく</span></div><div class="seg" id="spSeg"><button type="button" data-v="1">ON</button><button type="button" data-v="0">OFF</button></div></div>
         <div class="adv"><div class="label">スポッター<span class="hint">すぐ横に車がいる時、その側の画面の端がオレンジに光る（ごく近いと赤寄り）。ミラーに映らない真横の車に</span></div><div class="seg" id="soSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
       </div>
       <div class="gsec">操作</div>
@@ -7256,8 +7256,8 @@ function syncVisuals(dt){
   const pl=player();
   for(const k of karts){const g=k.g;g.root.visible=!k.gone||!!k.prk;g.root.position.set(k.x,0,k.z);g.root.rotation.y=k.h;
     {const c=state==='replay'?(k.rv&&k.rcr):(k.dnf&&k.cr);if(c){const r=g.root;r.rotation.order='YXZ';r.rotation.x=c.px;r.rotation.z=c.pz;r.position.y=c.y+.7*(1-Math.cos(c.px))+.7*(1-Math.cos(c.pz));g.crV=1;}else if(g.crV){g.root.rotation.x=g.root.rotation.z=0;g.root.position.y=0;g.crV=0;}}
-    // 車体のロールとピッチ（横G・前後G）
-    const roll=Math.max(-.05,Math.min(.05,-k.ay*.0035)),pitch=Math.max(-.035,Math.min(.035,-k.ax*.0028))+(k.shiftT>0?.008:0);
+    // 車体のロールとピッチ（横G・前後G）。T759 速度感の演出ではロールを見た目だけ VSK.rl 倍（g.rlk）
+    const rk=g.rlk=SPK>0&&!RM?VSK.rl:1,roll=Math.max(-.05*rk,Math.min(.05*rk,-k.ay*.0035*rk)),pitch=Math.max(-.035,Math.min(.035,-k.ax*.0028))+(k.shiftT>0?.008:0);
     g.body.rotation.z+=(roll-g.body.rotation.z)*Math.min(1,dt*8);g.body.rotation.x+=(pitch-g.body.rotation.x)*Math.min(1,dt*8);
     const surf=k.surf;g.body.position.y=(surf==='curb'||surf==='gravel'||surf==='saus')&&Math.abs(k.u)>6?(__VR()-.5)*(surf==='saus'?.14:.05):0;
     for(const w of g.wheels){if(w.front)w.piv.rotation.y=Math.max(-VSTEER,Math.min(VSTEER,k.delta));w.spin.rotation.x+=(k.u/w.r)*dt*(w.front?1:(k.wheelspin?1.6:1));}
@@ -7285,8 +7285,8 @@ function syncVisuals(dt){
     if(near&&sliding&&(surf==='road'||surf==='curb')){if(k.prevWheel&&rc<0){addSkid(rw[0][0],rw[0][1],k.prevWheel[0][0],k.prevWheel[0][1]);addSkid(rw[1][0],rw[1][1],k.prevWheel[1][0],k.prevWheel[1][1]);}
       if(__VR()<.35){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,!!RSv.dust,RSv.dust||undefined);}k.prevWheel=rw;
       const P=DSMP[DSM],ds=P.n&&!RSv.dust&&ENV.wet<.25?driftS(k):0; /* T523⑤ ドリフトの煙（濡れた路面・ゆるい路面は出さない） */
-      if(ds>0){k.smA=(k.smA||0)+P.n*ds*dt;let c=P.col;if(TOD[ENV.tod]&&TOD[ENV.tod].night)c=(((c>>16&255)*.42|0)<<16)|(((c>>8&255)*.44|0)<<8)|((c&255)*.48|0);
-        while(k.smA>=1){k.smA-=1;const q=rw[(k.smI=(k.smI|0)+1)&1];puff(q[0]+(vrnd()-.5)*.6,q[1]+(vrnd()-.5)*.6,k.vx,k.vz,false,c,ds);}}}
+      if(ds>0){const vs=SPK>0&&!RM?1:0;k.smA=(k.smA||0)+P.n*ds*(1+VSK.sm*ds*vs)*dt; /* T759 */let c=P.col;if(TOD[ENV.tod]&&TOD[ENV.tod].night)c=(((c>>16&255)*.42|0)<<16)|(((c>>8&255)*.44|0)<<8)|((c&255)*.48|0);
+        while(k.smA>=1){k.smA-=1;const q=rw[(k.smI=(k.smI|0)+1)&1];puff(q[0]+(vrnd()-.5)*.6,q[1]+(vrnd()-.5)*.6,k.vx,k.vz,false,c,ds*(1+VSK.so*vs));}}}
     else{k.prevWheel=null;if(near&&RSv.dust&&(surf==='road'||surf==='curb')&&Math.abs(k.u)>10&&__VR()<.25){const q=rw[__VR()<.5?0:1];puff(q[0],q[1],k.vx,k.vz,true,RSv.dust);} /* T283 ゆるい路面は走るだけで粉が舞う */if(near&&(surf==='gravel'||surf==='grass'&&!swG(k))&&Math.abs(k.u)>8&&__VR()<(surf==='gravel'?.6:.2))puff(rw[0][0],rw[0][1],k.vx,k.vz,true);}
   }
   if(TRF.length)trfSync();if(SIG.length)sigSync();  if(PARKA&&PARKA.length&&!RCL)pkSync(); /* T541① */
@@ -7855,7 +7855,7 @@ function ckPnRender(){const sz=renderer.getDrawingBufferSize(new THREE.Vector2()
   ckPnT=ckPnRT;try{rMain0();}finally{ckPnT=null;renderer.setRenderTarget(null);}const u=ckPnQ.material.uniforms;u.t.value=ckPnRT.texture;u.xm.value=xm;u.asp.value=asp;u.d.value=d;u.tH.value=tH;renderer.render(ckPnS,ckPnC);}
 function cockpitCam(p,dt,snap){
   const fx=Math.sin(p.h),fz=Math.cos(p.h),lx=Math.cos(p.h),lz=-Math.sin(p.h);
-  const roll=p.g.body.rotation.z,pitch=p.g.body.rotation.x;
+  const roll=p.g.body.rotation.z/(p.g.rlk||1),pitch=p.g.body.rotation.x; /* T759 運転席は大きくしたロールを使わない */
   // ブレーキで頭が前へ、加速で後ろへ（ばねで戻る）。シフトアップの瞬間は駆動が抜けて軽く前へ揺れる。動きを減らす設定では止める
   if(hdK!==p||snap){hdK=p;hdX=hdV=0;hdG=p.gear;}
   if(p.gear>hdG&&!RM)hdV+=.32;hdG=p.gear;
@@ -8005,22 +8005,23 @@ function updateCameraIn(dt){
   const r=Math.max(0,p.u)/p.top;const far=camMode===2;
   // T140 速度感：加速で少し引いて視野を広げ、ブレーキで少し寄せて狭める（camAx＝前後の加速度を -1〜1 にならして追従。SPK＝0 で無効、動きを減らす設定 RM でも無効）
   camAx+=(Math.max(-1,Math.min(1,p.ax/SPA))-camAx)*Math.min(1,dt*3);const sx=SPK>0&&!RM?camAx*Math.min(1,Math.max(0,p.u)/15):0;
-  const dist=(far?13:7.6)+r*1.2+camKick*1.2+sx*SPD;
-  const cH=camH+(LK.r||0),tgt=tmpV.set(p.x-Math.sin(cH)*dist,(far?4.4:2.6)+r*.2+camKick*.2,p.z-Math.cos(cH)*dist); /* T445 後ろを見る間は車の前から */
+  const vq=SPK>0&&!RM?Math.max(0,Math.min(1,(r-.3)/.6)):0,vm=far?1.5:1; /* T759 速い時（最高速の3割から9割で最大）・流れている時は低く近く（VSK） */
+  const dist=(far?13:7.6)+r*1.2+camKick*1.2+sx*SPD-vm*(VSK.cd*vq+VSK.sd*camDr);
+  const cH=camH+(LK.r||0),tgt=tmpV.set(p.x-Math.sin(cH)*dist,(far?4.4:2.6)+r*.2+camKick*.2-vm*(VSK.ch*vq+VSK.sh*camDr),p.z-Math.cos(cH)*dist); /* T445 後ろを見る間は車の前から */
   {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WAL[ci]+.2+wx(ci,Math.sign(cl));if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
   {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
   if(LK.r>1e-3&&LK.r<Math.PI-1e-3)camPos.copy(tgt);else camPos.lerp(tgt,Math.min(1,dtS*9)); /* T633 回っている間は回る位置そのもの（追いかけの遅れで車の中を通らない） */camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(__VR()-.5)*shake;camera.position.y+=(__VR()-.5)*shake*.7;}}
   camera.lookAt(p.x+Math.sin(cH)*8,1.1,p.z+Math.cos(cH)*8);
-  const f=baseFov()+r*7+sx*SPF;
+  const f=baseFov()+r*7+sx*SPF+VSK.fv*vq;
   camera.fov+=(f-camera.fov)*Math.min(1,dt*3);camera.updateProjectionMatrix();
   followSun(p.x,p.z);
 }
 // バックミラー：後ろ向きのカメラで小さな画像に描き、左右反転して画面上に貼る
 let mirOn=!isTouch;
 let CAMYR=2.2,camChT=-1e9; /* T583 後方視点のカメラが回り込む速さの上限（rad/s。… */
-let SPK=1,SPA=6,SPD=.9,SPF=2.5,SPL=.55,camAx=0,camDr=0,CDRK=.35; // T140 速度感の演出：SPK＝1 で有効、SPA＝この加速度(m/s²)で最大、SPD＝カメラの引き・寄せ(m)、SPF＝視野角の増減(度)、SPL＝周辺の速度線が出始める速さ（最高速に対する割合）
+let SPK=1,SPA=6,SPD=.9,SPF=2.5,SPL=.55,camAx=0,camDr=0,CDRK=.35,VSK={cd:.9,ch:.22,sd:.5,sh:.15,fv:4,sm:.6,so:.2,rl:1.5}; /* T759 流れの見た目の強さ（速度感の演出の中）：cd・ch 速い時に寄る・下げる m、sd・sh 流れている時、fv 速い時の視野 度、sm・so 煙の数・濃さ、rl 車体のロールの倍率 */ // T140 速度感の演出：SPK＝1 で有効、SPA＝この加速度(m/s²)で最大、SPD＝カメラの引き・寄せ(m)、SPF＝視野角の増減(度)、SPL＝周辺の速度線が出始める速さ（最高速に対する割合）
 const mirCam=new THREE.PerspectiveCamera(30,4,0.5,600);terrCam(mirCam);
 const mirRT=new THREE.WebGLRenderTarget(512,128,{minFilter:THREE.LinearFilter,magFilter:THREE.LinearFilter});mirRT.texture.encoding=THREE.sRGBEncoding;
 const mirScene=new THREE.Scene(),mirOrtho=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
