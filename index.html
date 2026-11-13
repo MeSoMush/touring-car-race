@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.452.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.453.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3363,7 +3363,7 @@ let LDT={"HIGASHI RACEWAY":{"N":1050,"segs":[[160,[-0.01,-0.03,-0.05,-0.08,-0.11
 function ldApply(){if(!IL)return;const t=LDT[crsKey()];if(!t||t.N!==N){LDA=null;return;}let g=0;for(let i=0;i<N;i+=10)if(RSI[i]===1)g++; /* 砂利（路面の番号 1）だけ。雪・氷は入れない。FLS はまだ作られていない所で呼ばれるので使わない */if(g<N/20){LDA=null;return;}if(LDA&&LDA.length===N){let same=true;for(let i=0;i<N;i+=7)if(IL[i]!==LDA[i]){same=false;break;}if(same)return;}
  for(const [a,d] of t.segs)for(let q=0;q<d.length;q++){const i=wrap(a+q);IL[i]=Math.max(-WL[i]+1,Math.min(WL[i]-1,IL[i]+d[q]));}RADL.set(lnRad(IL));LDA=Float32Array.from(IL);}
 function vcFill(C,P,gm,ae,t){const la0=MU.road*G*.82;for(let i=0;i<N;i++){const la=la0*rsG(i,gm,t);C[i]=vcOf(i,la,ae);P[i]=C[i];}
- for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const j=wrap(i+1),n=P[j];P[i]=Math.min(C[i],Math.sqrt(Math.max(0,n*n+2*G*1.2*rsG(i,gm,t)*SP+2*G*(TE[j]-TE[i]))));}}
+ for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const j=wrap(i+1),n=P[j];P[i]=Math.min(C[i],Math.sqrt(Math.max(0,n*n+2*G*AIBG*rsG(i,gm,t)*SP+2*G*(TE[j]-TE[i]))));}} /* T757 ブレーキの見込みは CPU と同じ AIBG（前は 1.2） */
 function vcTy(){let b=0;try{b=tyreBest();}catch(_){}try{const c=new Map();for(const k of karts)if(!k.isPlayer&&!k.dnf)c.set(k.ty||0,(c.get(k.ty||0)||0)+1);let m=-1,r=b;for(const[t,x]of c)if(x>m||x===m&&t===b){m=x;r=t;}b=r;}catch(_){}return b;} /* T757 CPU がいちばん多く履いているタイヤ（同じ数なら tyreBest） */
 function vcRunN(){try{let n=0;for(const k of karts)if(!k.isPlayer&&!k.dnf)n++;return n;}catch(_){return 0;}} /* T757 走っている CPU の数（リタイアで多数派が変わるので） */
 function vcRef(){vcVer++;ENV.vcD=0;ENV.vcN=vcRunN();const p=plrSafe(),b=vcTy();ENV.vcTy=b;vcFill(VC,VP,wetMul0('road',{ty:b,rain:b===1,_w:ENV.wet}),AERO,b);if(p&&((p.dfm||1)!==1||(p.tww||1)!==1||(p.ty||0)!==b))vcFill(VCP,VPP,wetMul('road',p),AERO*(p.dfm||1),p.ty||0);else{VCP.set(VC);VPP.set(VP);}} /* T757 表だけ作り直す（タイヤを替えた時） */
@@ -3535,7 +3535,7 @@ function pudStep(dt,race){const e=ENV;if(race){if(e.rain>=PDR0&&e.wet>.6)e.pl=Ma
   for(const p of PUD)p.a=Math.max(0,Math.min(1,(e.pl-p.th)/Math.max(.2,1-p.th)));pudT-=dt;if(pudT<=0){pudT=.5;pudVis();}}
 function rubTick(dt){if(ENV.wet>.25){const f=1-dt*RWW*ENV.wet;for(let i=0;i<N;i++)RUB[i]*=f;}rubT+=dt;if(rubT>1){rubT=0;rubVis();mbVis();}}
 let lnVer=-1,lnIdx=-1;const LC={g:[.05,.62,.14],y:[1,.62,0],r:[1,.05,.03]},LW_G=.25,LW_R=.62; // 走行ラインの半幅（緑・黄／赤）
-function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';apexMesh.visible=lineMesh.visible;if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const aB=G*1.25*wetMul('road',p),u=Math.max(0,p.u);
+function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='drag';apexMesh.visible=lineMesh.visible;if(!lineMesh.visible)return;const col=lineMesh.geometry.attributes.color.array;const gmB=wetMul('road',p),tyB=p.ty||0,u=Math.max(0,p.u),aB=G*AIBG*rsG(p.idx,gmB,tyB); /* T757 ブレーキの見込みは AIBG・路面とタイヤの相性も（前は 1.25×濡れだけ） */
   const pp=lineMesh.geometry.attributes.position.array;
   // 色に加えて形でも分かるように（T131）：緑＝細い実線、黄＝点線（2点おきに途切れる）、赤＝太い線
   const setC=(i,c)=>{const kind=c===LC.r?2:c===LC.y?1:0,w=kind===2?LW_R:kind===1?((i&3)<2?LW_G:0):LW_G;
@@ -3544,7 +3544,7 @@ function updateLine(p){lineMesh.visible=showLine&&!!p&&state!=='title'&&sess!=='
   // 全体の塗り直しは VP が変わった時だけ。…
   if(lnVer!==vcVer){lnVer=vcVer;for(let i=0;i<N;i++)setC(i,base(i));}else if(lnIdx>=0)for(let j=0;j<150;j++){const i=wrap(lnIdx+j);setC(i,base(i));}
   lnIdx=p.idx;
-  for(let j=0;j<150;j++){const i=wrap(p.idx+j);const need=u*u-(VPP[i]*VPP[i]+2*aB*j*SP);setC(i,u<=VPP[i]+.3?LC.g:need>0?LC.r:need>-2*aB*28?LC.y:LC.g);}
+  let bAc=0;for(let j=0;j<150;j++){const i=wrap(p.idx+j);const need=u*u-(VPP[i]*VPP[i]+bAc+2*G*(TE[i]-TE[p.idx]));setC(i,u<=VPP[i]+.3?LC.g:need>0?LC.r:need>-2*aB*28?LC.y:LC.g);bAc+=2*G*AIBG*rsG(i,gmB,tyB)*SP;} /* T757 点ごとの路面と坂で（VP と同じ形） */
   lineMesh.geometry.attributes.color.needsUpdate=true;lineMesh.geometry.attributes.position.needsUpdate=true;}
 // 中継カメラの位置（コース脇の高い所）
 let GS_SIDE=1,CRW=null; // CRW＝観客（T178④）
@@ -6792,10 +6792,10 @@ const coM=d=>Math.round(Math.abs(d))+'m';
 let BMK=1,BME=6,BMD=2,BMR=5,BMF=-3,BMX=14;
 function bmLearn(k,c){if(!BMK||c.bs==null||c.er||cau()||sess==='drag')return;if(Math.abs(ENV.wet-(k.bmW??ENV.wet))>.25)k.bmo={};k.bmW=ENV.wet;
   const o=k.bmo||(k.bmo={}),e=o[c.cid]??BME;o[c.cid]=c.of||c.sp?Math.min(BMX,e+BMR):Math.max(BMF,e-BMD);k.bmL=(k.bmL||0)+1;}
-function coachBrake(k,C){if(!(coachMode||isCh())||autoPlay||state!=='race')return;const u=Math.max(0,k.u),aB=G*1.25*wetMul('road',k);let need=-1e9;
-  for(let j=0;j<160;j++){const i=wrap(k.idx+j);need=Math.max(need,u*u-(VPP[i]*VPP[i]+2*aB*j*SP));}
-  if(need<-2*aB*120)return; // ブレーキの要らない所で軽く踏んだだけ
-  const off=need/(2*aB),ds=relIdx(C.s,k.idx),pa=relIdx(C.apex,k.idx);let where=`頂点の ${coM(Math.max(0,pa))} 手前`; // 看板から 60m 以上離れていたら、頂点（ラインがいちばんきつい所）からの距離で
+function coachBrake(k,C){if(!(coachMode||isCh())||autoPlay||state!=='race')return;const u=Math.max(0,k.u),gmB=wetMul('road',k),tyB=k.ty||0,aB=G*AIBG*rsG(k.idx,gmB,tyB);let need=-1e9; /* T757 ブレーキの見込みは AIBG・路面とタイヤの相性も */
+  let aM=aB;{let bAc=0;for(let j=0;j<160;j++){const i=wrap(k.idx+j),x=u*u-(VPP[i]*VPP[i]+bAc+2*G*(TE[i]-TE[k.idx]));if(x>need){need=x;if(j)aM=bAc/(2*j*SP);}bAc+=2*G*AIBG*rsG(i,gmB,tyB)*SP;}} /* T757 点ごとの路面と坂で。距離に直す減速 aM はいちばんきつい点までの平均 */
+  if(need<-2*aM*120)return; // ブレーキの要らない所で軽く踏んだだけ
+  const off=need/(2*aM),ds=relIdx(C.s,k.idx),pa=relIdx(C.apex,k.idx);let where=`頂点の ${coM(Math.max(0,pa))} 手前`; // 看板から 60m 以上離れていたら、頂点（ラインがいちばんきつい所）からの距離で
   if(C.bd){let b=150;for(const n of[150,100,50])if(Math.abs(ds-n)<Math.abs(ds-b))b=n;const x=ds-b;if(Math.abs(x)<60)where=`${b}m看板の ${Math.abs(x)<1.5?'所':coM(x)+(x>0?' 手前':' 過ぎて')}`;}
   const j=Math.abs(off)<6?'<b class="ok">ちょうど良い</b>':off<0?`目安より <b class="ea">${coM(off)} 早い</b>`:`目安より <b class="la">${coM(off)} 遅い</b>`;
   // T83自分の目印：同じコーナーで前回踏み始めた所（コーナーの入口からの距離）と比べる
