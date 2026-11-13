@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.5</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.6</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3302,9 +3302,9 @@ function lnRule(){const cs=LNX&&LNX[0].ri;if(!cs||!cs.length)return null;const g
 /* 路面・濡れ・タイヤが変わったら選び直す（calcVC の頭から） */
 function lnAuto(){if(!LNS||LNK>=0)return;{const k=RLMG>0&&lnRough()?'o':'n';if(k!==LNSK){lnUse(k);lnKey='';}}const c=lnRule(),k=c?c.join(''):'';if(k===lnKey)return;lnKey=k;lnMix(c);}
 /* 線の半径（buildRL0 の rad と同じ求め方） */
-function lnRad(L){const R=new Float32Array(N),hx=new Float32Array(N),ka=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2((TX[b]+NX[b]*L[b])-(TX[a]+NX[a]*L[a]),(TZ[b]+NZ[b]*L[b])-(TZ[a]+NZ[a]*L[a]));}
+function lnRad(L,lo=.9){const R=new Float32Array(N),hx=new Float32Array(N),ka=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2((TX[b]+NX[b]*L[b])-(TX[a]+NX[a]*L[a]),(TZ[b]+NZ[b]*L[b])-(TZ[a]+NZ[a]*L[a]));}
  for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);ka[i]=angDiff(hx[b],hx[a])/Math.max(1,Math.hypot((TX[b]+NX[b]*L[b])-(TX[a]+NX[a]*L[a]),(TZ[b]+NZ[b]*L[b])-(TZ[a]+NZ[a]*L[a])));}
- for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];R[i]=Math.max(RAD[i]*.9,Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000)));}return R;}
+ for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];R[i]=Math.max(RAD[i]*lo,Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000)));}return R;} /* T755 線 L の半径。lo＝下限（道の中心線の半径 RAD の何倍） */
 /* 角ごとの線 c[j]（null なら全部 G1）。角の中はその線、角と角の間の直線は真ん中の半分で滑らかに乗りかえる */
 function lnMix(c){LNC=c;const x0=LNX[0],cs=x0.ri||[];if(!c||!cs.length||c.every(k=>k===c[0])){const k=c&&cs.length?c[0]:0,x=LNX[k];IL.set(LNS[k]);RADL.set(LNR[k]);RLINFO=x.ri;PRLINFO=x.pi;PRLH=x.ph;RDL0=x.r0;IL0=x.i0;LNSEL.fill(k);altRad();return;}
  const sel=LNSEL;for(let j=0;j<cs.length;j++){const a=cs[j],b=cs[(j+1)%cs.length],ka=c[j],kb=c[(j+1)%cs.length];const lc=(a.e-a.s+N)%N;for(let q=0;q<lc;q++)sel[wrap(a.s+q)]=ka;
@@ -3335,10 +3335,7 @@ function buildRL0(){const px=new Float32Array(N),pz=new Float32Array(N);
   for(let i=0;i<N;i++){const x=i-sh[i],f=Math.floor(x),t=x-f;IL[i]=o[wrap(f)]*(1-t)+o[wrap(f+1)]*t;}
   RLINFO=cs;}
  // ラインの半径：ライン上の点の向きの変わり方（KAP と同じ求め方）
- const rad=()=>{
- const hx=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));}
- const ka=new Float32Array(N);for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);const arc=Math.hypot((TX[b]+NX[b]*IL[b])-(TX[a]+NX[a]*IL[a]),(TZ[b]+NZ[b]*IL[b])-(TZ[a]+NZ[a]*IL[a]));ka[i]=angDiff(hx[b],hx[a])/Math.max(1,arc);}
- for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];RADL[i]=Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000));RADL[i]=Math.max(RADL[i],RAD[i]*.9);}};
+ const rad=()=>RADL.set(lnRad(IL));
  RDL0=null;IL0=null;if(PUBR&&PRLD>0){rad();RDL0=Float32Array.from(RADL);IL0=Float32Array.from(IL);pubRL();if(!PRLH)RDL0=IL0=null;} /* T527 遅めのアペックスのずらしの後に置く（ずらすと円がゆがむ）。… */
  rad();altRad();
 }
@@ -3346,10 +3343,7 @@ function buildRL0(){const px=new Float32Array(N),pz=new Float32Array(N);
 const RADA=[new Float32Array(N),new Float32Array(N)];let ALW=3.2; // T170 代替ラインのずらし量 m
 let ALM=2.2; /* 代わりのライン（外回り・内回り）を止める、道の端からの余り(m)。… */
 function altRad(){const lim=W-ALM;for(let q=0;q<2;q++){const sg=q?-1:1,P=new Float32Array(N);for(let i=0;i<N;i++){P[i]=Math.max(-(WL[i]-ALM),Math.min(WL[i]-ALM,IL[i]+sg*ALW));if(PARK.length)P[i]=Math.max(PKL[i],Math.min(PKR[i],P[i]));}
-  const xx=i=>TX[i]+NX[i]*P[i],zz=i=>TZ[i]+NZ[i]*P[i];const hx=new Float32Array(N),ka=new Float32Array(N);
-  for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);hx[i]=Math.atan2(xx(b)-xx(a),zz(b)-zz(a));}
-  for(let i=0;i<N;i++){const a=wrap(i-4),b=wrap(i+4);ka[i]=angDiff(hx[b],hx[a])/Math.max(1,Math.hypot(xx(b)-xx(a),zz(b)-zz(a)));}
-  for(let i=0;i<N;i++){let s=0;for(let k=-3;k<=3;k++)s+=ka[wrap(i+k)];RADA[q][i]=Math.max(RAD[i]*.6,Math.min(RAD[i]*3,1/Math.max(Math.abs(s/7),1/2000)));}}}
+  RADA[q].set(lnRad(P,.6));}}
 buildRL();
 // 曲がれる速さ（濡れた路面では下がる）
 // T81 走行ライン上の高さ TE・縦の曲がり TVK（くぼみが正）・外側が高い傾き TBK（バンク。曲がるのを助ける向きが正）。CPU の速度計画と走行ラインの色に使う
