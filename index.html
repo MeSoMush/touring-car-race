@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.8</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.447.9</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3180,9 +3180,9 @@ if(CRS.free&&CRS.grid&&SWK){const t=canvasTex(64,64,(g,w,h)=>{g.fillStyle='#8d8f
 /* T515① 路駐（止まっている一般車。… */
 /* T510① せき止めない街の柵と曲がり角：通りの交差点のうち、見える道（HID でない点）から 10m 以内の物について、4つの向きのうち道が続かない向きの 40m 先に柵（CBAR＝[x,z,幅,奥行き]）。… */
 /* T515③ 信号（ご本人 2026-10-24「信号で車走って来るわ、路駐あるわ」）。… */
-const SIG=[],SGC=36,SGP=[22,3,1.5,6,2,1.5],SGE=CRS.grid?CRS.grid.sw/2+2.5:8;
+const SIG=[],SGC=36,SGP=[22,3,1.5,6,2,1.5],SGE=CRS.grid?CRS.grid.sw/2+2.5:8; /* T755 街の交差点の端（通りの半分の幅＋2.5m）。停止線・柵・建物・信号機が共通に使う */
 let CBXA=3,CBXD=26; /* T692 街の塞ぎ方（T字路・工事中・細い路地を混ぜる）：CBXA＝路地の幅 m、CBXD＝T字路・路地の建物の奥行き m */
-const CBAR=[];if(CRS.free&&CRS.grid){const G=CRS.grid,dV=(x,z)=>{let m=1e9;for(let i=0;i<N;i++){if(HID[i])continue;const d=Math.hypot(x-TX[i],z-TZ[i]);if(d<m)m=d;}return m;},e=G.sw/2+2.5;
+const CBAR=[];if(CRS.free&&CRS.grid){const G=CRS.grid,dV=(x,z)=>{let m=1e9;for(let i=0;i<N;i++){if(HID[i])continue;const d=Math.hypot(x-TX[i],z-TZ[i]);if(d<m)m=d;}return m;},e=SGE;
  for(const gx of G.x)for(const gz of G.z){if(dV(gx,gz)>10)continue;const D=[[1,0],[-1,0],[0,1],[0,-1]],on=D.map(([dx,dz])=>dV(gx+dx*30,gz+dz*30)<6);
   const n2=on.filter(Boolean).length,i0=nearest(gx,gz,0,N),sg=!!(CRS.sig&&n2===2&&((on[0]&&on[1])||(on[2]&&on[3]))&&CRS.sig.s.some(v=>Math.abs(v-i0*SP)<25));
   D.forEach(([dx,dz],q)=>{if(on[q])return;const hh=((Math.round(gx)*73856093)^(Math.round(gz)*19349663)^(q*83492791))>>>0,ty=sg?'w':['t','t','t','t','w','w','w','a','a','a'][hh%10],r=ty==='w'?(sg?88:40):ty==='t'?e+1.6:e+2; /* T692 塞ぐ形：t＝T字路・w＝工事中・a＝細い路地 */
@@ -3734,7 +3734,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
    return [(x0+x1)/2,(z0+z1)/2,x1-x0,z1-z0];};
   const ok=(x,z,rr)=>{if(!CRS.free&&!farFromTrack(x,z,WALL+4+rr))return false; /* せき止めない街は通りの間のブロックにそのまま */for(const i of pz){if(Math.hypot(x-TX[i],z-TZ[i])<WALL+30+rr)return false;}return true;};
   const pos=[],uv=[],col=[],idx=[],rp=[],ri=[],B=[];let vc=0,rc=0;const cl=new THREE.Color();const PAL=[0xc9c2b4,0xa3a8ae,0xd8d4cb,0x8d939a,0x8399ad,0xb3a28c,0xe2ded6,0x75808c,0xb98f78,0x9aa58f];
-  const G=CRS.grid,LOTS=[];if(G){const gx=[...G.x].sort((a,b)=>a-b),gz=[...G.z].sort((a,b)=>a-b),e=G.sw/2+2.5; /* T514 通りの間のブロックに、通りに面して建物を並べる（深いブロックは前と後ろの2列） */
+  const G=CRS.grid,LOTS=[];if(G){const gx=[...G.x].sort((a,b)=>a-b),gz=[...G.z].sort((a,b)=>a-b),e=SGE; /* T514 通りの間のブロックに、通りに面して建物を並べる（深いブロックは前と後ろの2列） */
    for(let u=0;u+1<gx.length;u++)for(let v=0;v+1<gz.length;v++){const xa=gx[u]+e,xb=gx[u+1]-e,za=gz[v]+e,zb=gz[v+1]-e;if(xb-xa<8||zb-za<8)continue;const rows=zb-za>48?[[za,za+Math.min(24,(zb-za)/2-1)],[zb-Math.min(24,(zb-za)/2-1),zb]]:[[za,zb]];
     for(const [z0,z1] of rows){let x=xa;while(x<xb-6){const w=Math.min(xb-x,12+r()*18);if(xb-x-w<8&&xb-x<40){LOTS.push([x+(xb-x)/2,(z0+z1)/2,xb-x-1.5,z1-z0-r()*4]);break;}LOTS.push([x+w/2,(z0+z1)/2,w-1.5,z1-z0-r()*4]);x+=w;}}}
    if(CRS.free)for(const b of CBAR){const ty=b[4];if(ty!=='t'&&ty!=='a')continue;const [dx,dz]=b[5],[gx0,gz0]=b[6],f=e+.5,c=f+CBXD/2; /* T692 T字路＝横の道の口いっぱいの建物、路地＝両側から CBXA m を残して建物 */
@@ -3781,7 +3781,7 @@ const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
   for(const b of CBAR){if(b[4])continue; /* T692 形のある物は上で描いた */const g=new THREE.Group();const L=Math.max(b[2],b[3]),t=bt.clone();t.needsUpdate=true;t.repeat.set(L/4,1);const m=new THREE.Mesh(new THREE.BoxGeometry(b[2],.55,b[3]),new THREE.MeshLambertMaterial({map:t}));m.position.y=1.0;m.scale.y=.5;m.castShadow=true;g.add(m); /* T690 しまの板は上に細く */
    const rt=rwTex.clone();rt.needsUpdate=true;rt.repeat.set(Math.max(1,Math.round(L/2.4)),1);const base=new THREE.Mesh(new THREE.BoxGeometry(b[2],.8,b[3]),new THREE.MeshLambertMaterial({map:rt}));base.position.y=.4;base.castShadow=true;g.add(base); /* T690 台はコンクリートから赤白の樹脂の柵（水を入れる形。… */g.position.set(b[0],0,b[1]);scene.add(g);STATIC.push(g);}
   /* T826 曲がる角の黄色の矢印板は外した（市街地にわざとらしい「＞」の板は置かない。曲がる向きはペースノート、曲がらない道は T692 の自然な物で塞ぐ） */
-  const e=CRS.grid.sw/2+2.5; /* 信号機の柱の位置（区画の道の端から） */
+  const e=SGE; /* 信号機の柱の位置（区画の道の端から） */
   /* T515③ 信号機と停止線 */
   if(SIG.length){const sp=new THREE.MeshLambertMaterial({color:0x5a5f66}),hm=new THREE.MeshLambertMaterial({color:0x1d1f22}),wm=new THREE.MeshBasicMaterial({color:0xdedcd2,polygonOffset:true,polygonOffsetFactor:-2}),LC=[0xff2a1a,0xffb01a,0x1ee07a],lg=new THREE.CylinderGeometry(.21,.21,.06,14);
    for(const g of SIG){g.hd=[0,1].map(()=>{const a=LC.map(c=>new THREE.MeshStandardMaterial({color:0x202020,emissive:c,emissiveIntensity:.04}));a.st=-1;return a;});
@@ -6531,24 +6531,22 @@ function pitBlocked(k,rel){for(const o of karts){if(o===k||o.gone||o.dnf||o.pit!
 function pitBusy(){let n=0;for(const o of karts)if(o.pit>0&&!o.gone)n++;return n;}
 let PBSV=3,PMF=1.3,PMW=.95; /* T830 PBSV＝ピット入口で横の車より何 m/s 遅くして後ろへ下がるか。PMF＝燃料が1周の何倍を切ったら必ず入るか。PMW＝タイヤの摩耗がこれを超えたら必ず入る */
 const pitMust=k=>!k.ev&&k.fuel!=null&&k.fuel<fplOf(k)*PMF||wearMode&&Math.max(k.wF||0,k.wR||0,k.wear||0)>PMW; /* T830 次の周まで持たない＝入るのをやめない */
+function pitMiss(k,dt,lane,ts,rd,rk,tl){k.pit=0;k.box=null;if(lane){k.pbk=null;k.laneT=k.lat;k.ovr=false;}k.pitReq=true;k.pitAuto=0;if(k.isPlayer){$('pitBtn').setAttribute('aria-pressed','true');toast(ts);radio(rd,rk,3);}else telop('PIT',k.name+tl);return aiControl(k,dt);} /* T755 ピットに入れなかった→次の周（lane＝白線・横の車で入れない時は寄せ先と追い越しの状態も戻す。入口に入りきれない時は戻さない＝今までどおり） */
 function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k),gp=rsCur||PWG2&&wetMul('road',k)<PWG2?Math.min(1,rsG(k.idx,wetMul('road',k))):1,PV=rsCur||gp<1?Math.min(PIT_V,PIT_V*Math.sqrt(gp)*1.15):PIT_V; // T283 gp＝路面のグリップの比
   if(k.pit===1&&k.prl!=null&&k.prl<PIT_B&&rel>=PIT_B&&k.lat*PS>W+1&&u>PIT_V+PIT_TOL&&sess==='race'){k.pen=(k.pen||0)+5;k.psv=(k.psv||0)+1;jLog(k,'ピットレーン速度違反（'+Math.round(u*3.6)+'km/h）　＋5秒','p');telop('PIT SPEED',k.name+'　ピットレーン速度違反（'+Math.round(u*3.6)+'km/h）＋5秒');if(k.isPlayer){sfx('pen');radio('ピットレーンの速度違反だ。線までに 80km/h に落とそう','psv',3);}} // T165
   k.prl=k.pit===1?rel:null;
-  if(k.pit===1&&rel>PIT_B+6&&rel<PIT_B+40&&k.lat*PS<PWL){k.pit=0;k.box=null;k.pitReq=true;k.pitAuto=0;if(k.isPlayer){$('pitBtn').setAttribute('aria-pressed','true');toast('ピット入口に入りきれなかった（次の周に入る）');radio('入口に間に合わなかった。次の周にもう一度。ピットの線までに 80km/h に落とそう','pmiss',3);}else telop('PIT',k.name+'　ピット入口に入りきれず');return aiControl(k,dt);} // T206 ピットウォールの手前で本線側に残っていたら、この周は入らない
+  if(k.pit===1&&rel>PIT_B+6&&rel<PIT_B+40&&k.lat*PS<PWL)return pitMiss(k,dt,0,'ピット入口に入りきれなかった（次の周に入る）','入口に間に合わなかった。次の周にもう一度。ピットの線までに 80km/h に落とそう','pmiss','　ピット入口に入りきれず'); // T206 ピットウォールの手前で本線側に残っていたら、この周は入らない
   if(k.pit===2){k.pitT-=dt;k.aiBrake=false;pitWorkStep(k,dt);if(k.isPlayer&&(pwUiT-=dt)<=0){pwUiT=.1;pitUi(k);}if(k.pitT<=0&&!(pitBlocked(k,rel)))pitFinish(k);return{steer:0,accel:false,brake:false,drift:false,thr:0};}
   let vt=1e9;
-  if(k.pit===1&&k.dt){vt=rel<PIT_B-30?Math.sqrt(PV*PV+2*G*Math.min(.9*gp,PBD)*Math.max(0,PIT_B-30-rel)):PV;if(rel>box+6){k.pit=3;k.dt=0;jLog(k,'ドライブスルーを消化','');telop('DRIVE THROUGH',k.name+'　ドライブスルーを消化');}} // T176 止まらずに通過
-  else if(k.pit===1){vt=rel<PIT_B-30?Math.sqrt(PV*PV+2*G*Math.min(.9*gp,PBD)*Math.max(0,PIT_B-30-rel)):PV;const d=box-rel;vt=Math.min(vt,Math.sqrt(2*G*.8*gp*Math.max(0,d-1.2))+.5);
+  const pvIn=()=>rel<PIT_B-30?Math.sqrt(PV*PV+2*G*Math.min(.9*gp,PBD)*Math.max(0,PIT_B-30-rel)):PV; /* T755 ピットの線（PIT_B−30m）で PV まで落とす減速の速さ */
+  if(k.pit===1&&k.dt){vt=pvIn();if(rel>box+6){k.pit=3;k.dt=0;jLog(k,'ドライブスルーを消化','');telop('DRIVE THROUGH',k.name+'　ドライブスルーを消化');}} // T176 止まらずに通過
+  else if(k.pit===1){vt=pvIn();const d=box-rel;vt=Math.min(vt,Math.sqrt(2*G*.8*gp*Math.max(0,d-1.2))+.5);
     if(rel>PIT_A&&d<3.5&&d>-7&&u<.9){k.pit=2;pitStart(k);k.aiBrake=false;return{steer:0,accel:false,brake:false,drift:false,thr:0};}
     if(d<-7){k.pit=3;}}
   else if(k.pit===3){vt=rel<PIT_C?PV:1e9;if(rel>PIT_D){k.pit=0;k.box=null;if(sess==='race'){k.pxm=1;k.lane=k.lat-IL[k.idx];k.laneT=k.lat;k.ovr=true;k.laneTimer=.5;if(k.isPlayer&&!autoPlay&&!pxClear(k,u))radio('ピットアウト。後ろから車が来ている、'+(PS>0?'右':'左')+'端を走って空いてから合流しよう','pxo',5);}}}
   if((k.pit===1||k.pit===3)){const lk=pitLat(k);for(const o of karts){if(o===k||o.gone||o.dnf)continue;const ro=relLine(o),ds=ro-rel;if(ds>0&&ds<70&&(o.pit>0||PWW&&o.lat*PS>PWL)&&Math.abs(pitLat(o)-(o.pit===2?pitLatAt(k,ro):lk))<(o.pit===2?PQS:PQW))vt=Math.min(vt,Math.max(0,o.u)+Math.sqrt(2*G*.7*Math.max(0,ds-PQG)));}}
-  if(PLK&&k.pit===1&&rel>=PLA+PLD&&rel<PIT_A-5&&k.lat*PS<plLat(rel)&&raceTime-(k.pbk??-9)<.4&&!pitMust(k)){k.pit=0;k.box=null;k.pbk=null;k.pitReq=true;k.pitAuto=0;k.laneT=k.lat;k.ovr=false;
-    if(k.isPlayer){$('pitBtn').setAttribute('aria-pressed','true');toast('横に車がいて白線の内側へ寄れなかった（次の周に入る）');radio('横に車がいてピット入口の白線の内側へ寄れなかった。次の周にもう一度','pblk',3);}else telop('PIT',k.name+'　横に車がいてピット入口に入れず（次の周に）');
-    return aiControl(k,dt);} // T320 白線はまたげない
-  if(PSA&&k.pit===1&&rel>=PIT_A-5&&rel<PIT_B&&k.lat*PS<PIT_EL-PSA&&raceTime-(k.pbk??-9)<.4&&!pitMust(k)){k.pit=0;k.box=null;k.pbk=null;k.pitReq=true;k.pitAuto=0;k.laneT=k.lat;k.ovr=false;
-    if(k.isPlayer){$('pitBtn').setAttribute('aria-pressed','true');toast('横に車がいてピット入口に入れなかった（次の周に入る）');radio('横に車がいて入口に寄れなかった。次の周にもう一度','pblk',3);}else telop('PIT',k.name+'　横に車がいてピット入口に入れず（次の周に）');
-    return aiControl(k,dt);} // 不具合報告：以前は横の車をまたいで切り込んでいた
+  if(PLK&&k.pit===1&&rel>=PLA+PLD&&rel<PIT_A-5&&k.lat*PS<plLat(rel)&&raceTime-(k.pbk??-9)<.4&&!pitMust(k))return pitMiss(k,dt,1,'横に車がいて白線の内側へ寄れなかった（次の周に入る）','横に車がいてピット入口の白線の内側へ寄れなかった。次の周にもう一度','pblk','　横に車がいてピット入口に入れず（次の周に）'); // T320 白線はまたげない
+  if(PSA&&k.pit===1&&rel>=PIT_A-5&&rel<PIT_B&&k.lat*PS<PIT_EL-PSA&&raceTime-(k.pbk??-9)<.4&&!pitMust(k))return pitMiss(k,dt,1,'横に車がいてピット入口に入れなかった（次の周に入る）','横に車がいて入口に寄れなかった。次の周にもう一度','pblk','　横に車がいてピット入口に入れず（次の周に）'); // 不具合報告：以前は横の車をまたいで切り込んでいた
   let ctl;
   if(k.pit===1&&rel<PIT_A-5){let blk=null,bfw=0;if(PSK&&rel>(PLK?PLA-PLS:PIT_A-240)){let tg=PS*(PLK?Math.max(PIT_EL,PLX+PLT):PIT_EL);{const wl=Math.min(WL[k.idx],WL[wrap(k.idx+8)]);if(wl<W-.01)tg=PS*Math.min(Math.abs(tg),wl-1.6);} /* T514 狭い所は道の中に */
     if(PSW>0){const fx=Math.sin(k.h),fz=Math.cos(k.h);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z,fw=dx*fx+dz*fz;if(fw<-PSB-Math.max(0,o.u-k.u)*PSV||fw>PSF)continue;
@@ -9691,8 +9689,10 @@ async function gsInflate(u){const r=new Blob([u]).stream().pipeThrough(new Decom
  for(;;){const x=await r.read();if(x.done)break;n+=x.value.length;if(n>3e7){try{r.cancel();}catch(_){}throw new Error('big');}a.push(x.value);} /* 開いたら大きすぎる物は断る */
  const o=new Uint8Array(n);let p=0;for(const v of a){o.set(v,p);p+=v.length;}return o;}
 function gsNm(){const e=$('gsName');return e?e.value.replace(/\s+/g,' ').trim().slice(0,12):'';}
-async function gsPack(ss){const o=gsOwn(ss);if(!o)return null;const g=o.g,dl=new Array(g.length);for(let i=0;i<g.length;i++)dl[i]=i<4?g[i]:g[i]-g[i-4]; /* 0.05秒ごとの差にすると縮みやすい */
- const cs=o.cs&&o.cs.s&&typeof o.cs.s==='object'?o.cs:undefined;
+function gsDl(g){const dl=new Array(g.length);for(let i=0;i<g.length;i++)dl[i]=i<4?g[i]:g[i]-g[i-4];return dl;} /* T755 ゴーストの点を 0.05秒ごとの差に（縮みやすい）。1本・まとめて の両方で */
+function gsCsOf(o){return o.cs&&o.cs.s&&typeof o.cs.s==='object'?o.cs:undefined;} /* T755 ゴーストに付けるセッティング */
+function gsDlOk(dl){return Array.isArray(dl)&&dl.length>=8&&!(dl.length%4)&&dl.length<=8e5&&dl.every(v=>Number.isInteger(v)&&Math.abs(v)<1e8);} /* T755 受け取ったゴーストの差 dl の確かめ（1本・まとめて の両方で） */
+async function gsPack(ss){const o=gsOwn(ss);if(!o)return null;const dl=gsDl(o.g),cs=gsCsOf(o);
  const P={a:'tcr',v:1,ver:String(o.ver||''),phy:String(o.phy||''),k:ghKey(ss),ss:ss?1:0,c:COURSES[CRSI].id,ct:gsCondTx(ss),n:gsNm(),t:o.t,p:o.p|0,m:o.m|0,sp:Array.isArray(o.sp)?o.sp:undefined,car:cs&&Number.isInteger(cs.cr)?cs.cr:curCar(),cs,wx:o.wx===0||o.wx===1?o.wx:undefined,dl}; /* T645 */
  const u=new TextEncoder().encode(JSON.stringify(P));let z=null;if(gsZ()){try{z=await gsDeflate(u);}catch(_){z=null;}}
  return {s:GSH+(z?'z':'j')+'.'+gsB64(z||u),o,z:!!z,cs:!!cs};}
@@ -9701,7 +9701,7 @@ function gsKeyCrs(k){const L=COURSES.slice(1).sort((x,y)=>y.id.length-x.id.lengt
 function gsAll(){const q=ghQ(),a=[];if(dyOn||q.charAt(2)==='u')return a;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(!/^popkart_(ta2|ss1)_/.test(k)||!k.endsWith(q))continue;const o=gsGet(k);if(o&&!o.cg&&String(o.phy||'')===PHYV)a.push([k,o]);}}catch(_){}
  return a.sort((x,y)=>x[0]<y[0]?-1:1);}
 async function gsPackAll(){const L=gsAll();if(!L.length)return null;const G=[];
- for(const [k,o] of L){const g=o.g,dl=new Array(g.length);for(let i=0;i<g.length;i++)dl[i]=i<4?g[i]:g[i]-g[i-4];const cs=o.cs&&o.cs.s&&typeof o.cs.s==='object'?o.cs:undefined;
+ for(const [k,o] of L){const dl=gsDl(o.g),cs=gsCsOf(o);
   G.push({k,ss:k.indexOf('popkart_ss1_')===0?1:0,c:o.c||gsKeyCrs(k).id,ct:String(o.ct||''),t:o.t,p:o.p|0,m:o.m|0,sp:Array.isArray(o.sp)?o.sp:undefined,car:cs&&Number.isInteger(cs.cr)?cs.cr:curCar(),cs,wx:o.wx===0||o.wx===1?o.wx:undefined,ver:String(o.ver||''),phy:String(o.phy||''),dl});}
  const P={a:'tcr',v:2,ver:mvVer(),phy:PHYV,q:ghQ(),qt:gsQTx(ghQ()),n:gsNm(),G};
  const u=new TextEncoder().encode(JSON.stringify(P));let z=null;if(gsZ()){try{z=await gsDeflate(u);}catch(_){z=null;}}
@@ -9715,7 +9715,7 @@ function gsMkR(P,ct){const dl=P.dl,g=new Array(dl.length);for(let i=0;i<dl.lengt
  return {n:String(P.n||'').replace(/\s+/g,' ').trim().slice(0,12)||'相手',t:P.t,p:Number.isInteger(P.p)&&DRIVERS[P.p]?P.p:0,m:P.m|0,sp:Array.isArray(P.sp)&&P.sp.length===2&&P.sp.every(v=>typeof v==='number'&&isFinite(v))?P.sp:undefined,
   car:Number.isInteger(P.car)&&(CARS[P.car]||P.car===FCI)?P.car:curCar(),cs:cs||undefined,ver:String(P.ver||'').slice(0,20),phy:String(P.phy||'').slice(0,20),ct,wx:P.wx===0||P.wx===1?P.wx:undefined,at:Date.now(),g};}
 const gsOkE=E=>E&&typeof E==='object'&&typeof E.k==='string'&&/^popkart_(ta2|ss1)_[A-Za-z0-9_]{1,100}$/.test(E.k)&&typeof E.t==='number'&&isFinite(E.t)&&E.t>=5&&E.t<=36000&&
- Array.isArray(E.dl)&&E.dl.length>=8&&!(E.dl.length%4)&&E.dl.length<=8e5&&E.dl.every(v=>Number.isInteger(v)&&Math.abs(v)<1e8);
+ gsDlOk(E.dl);
 async function gsParse(t){t=String(t||'');const m=t.replace(/\s+/g,'').match(/TCRg(\d+)([a-z])\.([A-Za-z0-9_-]*)/);
  if(!m)return {err:t.trim()?'ゴーストの文字列が見つかりません（TCRg1 で始まる文字列を、最初から最後までそのまま貼ってください）。何も書き込んでいません。':'文字列が空です。送ってもらった文字列を貼ってください。'};
  if(m[1]!=='1')return {err:'この版では読めない形のゴーストです（形の番号 '+m[1]+'）。新しい版で受け取ってください。何も書き込んでいません。'};
@@ -9735,7 +9735,7 @@ async function gsParse(t){t=String(t||'');const m=t.replace(/\s+/g,'').match(/TC
  if(typeof P.k==='string'&&!GQX.test(P.k))return {err:'受け取りませんでした：'+(P.ver?String(P.ver).slice(0,20):'前の版')+' で送った記録で、天気（晴れ・くもり・霧の区別）とアシストの記録がありません。同じ条件の記録だけを一緒に走らせるので、相手に今の版（物理の版 '+PHYV+'）で走り直して送ってもらってください。何も書き込んでいません。'}; /* T688 */
  const dl=P.dl,ss=!!P.ss;
  if(typeof P.k!=='string'||!/^popkart_(ta2|ss1)_[A-Za-z0-9_]{1,100}$/.test(P.k)||(P.k.indexOf('popkart_ss1_')===0)!==ss||typeof P.t!=='number'||!isFinite(P.t)||P.t<5||P.t>36000||
-  !Array.isArray(dl)||dl.length<8||dl.length%4||dl.length>8e5||!dl.every(v=>Number.isInteger(v)&&Math.abs(v)<1e8))return {err:'ゴーストの中身が壊れています。何も書き込んでいません。'};
+  !gsDlOk(dl))return {err:'ゴーストの中身が壊れています。何も書き込んでいません。'};
  const ct=String(P.ct||'').slice(0,160);
  if(!COURSES.some(C=>C.id===P.c))return {err:'このゴーストのコース（'+String(P.c).slice(0,24)+'）はこの版にありません。新しい版で受け取ってください。何も書き込んでいません。'};
  if(dyOn)return {err:'今日の課題の間は受け取れません。タイトルに戻ってから受け取ってください。何も書き込んでいません。'};
