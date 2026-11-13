@@ -69,7 +69,7 @@ body.touch #tach{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 214px)}
 .leds{display:flex;gap:4px;justify-content:flex-end}
 .leds i{width:clamp(8px,1.3vw,12px);height:clamp(8px,1.3vw,12px);border-radius:50%;background:rgba(255,255,255,.14)}
 .leds i.g{background:#27c95a;box-shadow:0 0 6px #27c95a}.leds i.y{background:#f5b400;box-shadow:0 0 6px #f5b400}.leds i.r{background:#e8342a;box-shadow:0 0 6px #e8342a}.leds i.b{background:#3aa0ff;box-shadow:0 0 8px #3aa0ff}
-#slip{font-family:var(--num);font-weight:800;font-style:italic;font-size:13px;letter-spacing:.12em;color:#3aa0ff;opacity:0;transition:opacity .2s}#slip.on{opacity:1}
+#slip{font-family:var(--num);font-weight:800;font-style:italic;font-size:13px;letter-spacing:.12em;color:#3aa0ff;opacity:0;transition:opacity .2s;white-space:nowrap}#slip.on{opacity:1}#slipV{font-size:11px;letter-spacing:.04em;margin-left:6px;color:#9cd0ff}#slipB{display:block;height:3px;margin-top:2px;border-radius:2px;background:linear-gradient(90deg,#3aa0ff,#9cd0ff);width:0;transition:width .12s} /* T858 強さの棒と数 */
 #gaps{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 58px);transform:translateX(-50%);display:grid;gap:2px;font-size:clamp(12px,1.7vw,14px);font-variant-numeric:tabular-nums;min-width:170px}
 #gaps div{display:flex;justify-content:space-between;gap:12px;background:rgba(12,14,18,.6);padding:2px 10px}
 #gaps b{font-family:var(--num);font-weight:800}
@@ -1224,7 +1224,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
   <div id="gaps" class="outline"></div>
   <canvas id="minimap" width="340" height="340"></canvas>
   <div id="rank" class="outline">8<small>位</small></div>
-  <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM</div><canvas id="gauge"></canvas></div>
+  <div id="tach" class="outline"><div class="leds" id="leds"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="slip">SLIPSTREAM<span id="slipV"></span><i id="slipB"></i></div><canvas id="gauge"></canvas></div>
   <div id="drv"><div id="whlBtns" role="group" aria-label="走りの操作" hidden></div><canvas id="inpCv" width="376" height="168" hidden></canvas><canvas id="fuelCv" width="64" height="168" hidden></canvas><canvas id="tyreCv" width="124" height="196" hidden></canvas></div>
   <div id="mtr" hidden></div><div id="hlog" hidden><div class="hh"><b>LOG</b><span>無線・表示・旗</span><button type="button" id="lgFold" aria-label="ログを畳む・広げる">▾</button><button type="button" id="lgHide" aria-label="ログを隠す">×</button></div><div class="hb" id="lgBody"></div></div>
   <div id="tree" hidden></div><div id="setList" hidden></div><div id="judge"></div><div id="coach" class="outline" hidden></div>
@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.468.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.469.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5037,7 +5037,7 @@ function stepKart(k,dt,ctl){
     const capF=mF*Nf,cFx=capF*cxF;let FxF=Fd*fs-Fb*bb*sg; /* T758③ CPU・オートのトレイル・左足ブレーキも前後の配分 bb どおり（前は ctl.fo で前輪だけ） */let lock=false;if(Fb<=0){const cx=cFx*tc*(LSFX)*(Fd>0?dTF:1)*(k.aiDriven&&RSI[k.idx]&&fs>.3&&fs<.9?RS4F:1);if(Math.abs(FxF)>cx){ws=1;wsF1=1;if(Fd>0&&FxF*k.u>0&&!dtc0)dtc+=DTLS*mmI*fs*Math.sign(k.u); /* T730 */FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>cFx*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>cFx){lock=true;FxF=Math.sign(FxF)*cFx*.85;}else{FxF=Math.sign(FxF)*cFx*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
     const ff=FxF/cxF,yf=cyF*Math.max(capF*YFMIN,Fb<=0&&FxF*sg>0?capF*Math.sqrt(Math.max(0,1-(ff/(capF*LSFX))**2)):Math.sqrt(Math.max(0,capF*capF-ff*ff)));{const dn=Fb<=0&&FxF*sg>0?capF*LSFX:capF;Fyf*=Math.max(YFMIN,Math.sqrt(Math.max(0,1-(ff/dn)**2)));}if(Math.abs(Fyf)>yf){Fyf=Math.sign(Fyf)*yf;wsF1=1;}if(lock){Fyf*=.15;k.locked=true;if(FSA)k.fsp=Math.min(1,(k.fsp||0)+FSA*Math.abs(k.u)*h);}
     const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
-    const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;k.drE=drag+G*tgs; /* T390 走る抵抗（空気・転がり・坂） */
+    const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;if(k.isPlayer&&(k.slPk||(k.draft||0)>.02)){const cK=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0));k.slG=Math.max(0,(k.slG||0)+(cK*k.u*Math.abs(k.u)*DRK*(k.draft||0)-2*cK*Math.abs(k.u)*(k.slG||0))*dt);k.slD=(k.slD||0)+k.slG*dt;} /* T858 引っぱりで得た速さ（速くなった分の抵抗の増えを引く。表示だけ） */k.drE=drag+G*tgs; /* T390 走る抵抗（空気・転がり・坂） */
     const du=FxR+FxF*cD-Fyf*sD-drag+dtc+k.vl*k.r;
     const dvl=Fyf*cD+FxF*sD+Fyr-k.u*k.r;
     const dr=(ka*(Fyf*cD+FxF*sD)-kb*Fyr)/(IZ*(k.izm||1))+dfY(k,dif,Fd,fs,wsR1,wsF1,cRx*tc*dTR,cFx*tc*dTF,Nr,Nf,ua,cRx*Math.sqrt(Math.max(0,1-(Fyr/capR)**2)),cFx*Math.sqrt(Math.max(0,1-(Fyf/capF)**2)))-(Fb>0&&YDK>0&&(stbSel||!k.isPlayer||k.aiDriven)?YDK*k.r*Math.max(0,Math.abs(ar)-YD0)*Math.min(1,Math.abs(k.u)/20):0); // T143：ブレーキ中に後輪が限界を超えて滑り出したら、その分だけヨーの回転を抑える（滑り始めを穏やかに。逆ハンドルで受ける時間ができる）
@@ -5095,9 +5095,12 @@ function stepKart(k,dt,ctl){
 
 // スリップストリーム：前の車の真後ろ（4〜32m、後ろほど広い円すい）で空気抵抗が最大3割減る
 // T228⑥ ダーティエア：前の車の DAD m 後ろまで（スリップストリームより少し広い円すい）は乱れた空気で k.dirty が上がる（ダウンフォースが減る。stepKart・aiControl）
+function draftHud(p){const d=p.draft||0,on=d>.08;$('slip').classList.toggle('on',on);if(on){const t='−'+Math.round(DRK*d*100)+'%　'+Math.round(p._drF||0)+'m';if(t!==slipT){slipT=t;$('slipV').textContent=t;}$('slipB').style.width=Math.round(d*100)+'%';}
+ if(coachMode>=1&&state==='race'&&!p.aiDriven){if(d>.25)p.slPk=1;if(p.slPk&&(d<.05||(p.ax||0)<-3)){const kmh=(p.slG||0)*3.6;if(kmh>=1.5&&raceTime-(p.slTT??-99)>6){telop('スリップ','+'+kmh.toFixed(1)+'km/h・'+Math.round(p.slD||0)+'m 詰めた');p.slTT=raceTime;}p.slPk=0;p.slG=0;p.slD=0;}else if(!p.slPk&&d<.02){p.slG=0;p.slD=0;}}} /* T858 スリップの効き具合（引っぱりで得た速さ slG・詰めた距離 slD は練習表示の時だけ） */
+let slipT='';
 function computeDraft(){for(const k of karts){let d=0,da=0;const fx=Math.sin(k.h),fz=Math.cos(k.h);
   if(k.u>12)for(const o of karts){if(o===k||o.gone)continue;const dx=o.x-k.x,dz=o.z-k.z;const f=dx*fx+dz*fz;if(f<3||f>Math.max(32,DAD))continue;const sd=Math.abs(dx*Math.cos(k.h)-dz*Math.sin(k.h));
-    if(k.u>20&&f>=4&&f<=32){const w=1.1+f*.025;if(sd<=w)d=Math.max(d,(1-(f-4)/28)*(1-sd/w*.6));}
+    if(k.u>20&&f>=4&&f<=32){const w=1.1+f*.025;if(sd<=w){const q=(1-(f-4)/28)*(1-sd/w*.6);if(q>d){d=q;k._drF=f;}}} /* T858 _drF＝表示用の前の車までの m */
     if(DAK>0&&f<=DAD&&!o.dnf){const w=1.6+f*.04;if(sd<=w)da=Math.max(da,(1-(f-3)/(DAD-3))*(1-sd/w*.5));}}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;k.dirty=(k.dirty||0)+(da-(k.dirty||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
@@ -8143,7 +8146,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   // シフトランプ
   {const sp=p.manual&&p.gear<kT(p)?k_opt(p)[p.gear]-120:SHIFT_UP;const f=(p.rpm-5600)/(sp-5600);const n=Math.max(0,Math.min(10,Math.round(f*10)));const flash=p.rpm>sp-150&&p.gear<kT(p)&&Math.floor(clockT*12)%2===0;
    const lk=flash?-1:n;if(lk!==ledK){ledK=lk;[...$('leds').children].forEach((el,i)=>{el.className=flash?'b':(i<n?(i<4?'g':i<7?'y':'r'):'');});}}
-  $('slip').classList.toggle('on',(p.draft||0)>.25);spotStep(p);setListUpd();{const v=Math.round((p.pq||0)*10)/10*.75;if(v!==prsV){prsV=v;$('prsEdge').style.opacity=v;}}carHud(p);drawGauge(p);drawTyre(p,.05);fuelHud(p);
+  draftHud(p);spotStep(p);setListUpd();{const v=Math.round((p.pq||0)*10)/10*.75;if(v!==prsV){prsV=v;$('prsEdge').style.opacity=v;}}carHud(p);drawGauge(p);drawTyre(p,.05);fuelHud(p);
   drawMinimap();
 }
 /* ===== メーター（右下）：回転計の針＋速度（大）＋ギア、右に水温・油温・ブースト圧（グランツーリスモ・Forza・Assetto Corsa などの計器表現を参考にした自作） ===== */
@@ -8596,7 +8599,7 @@ function updateEngine(){if(!eng)return;engWatch();if(sndChk){sndAud();return;}co
   stv(squeal.g.gain,Math.min(H.sqM+dd*.05,sq*H.sqG*(1+dd*.35))*cv*(p&&p.ev?1.3:1),ac.currentTime,.05);stv(squeal.bp.frequency,1300+sq*500-dd*380,ac.currentTime,.1);stv(squeal.bp.Q,6-dd*3,ac.currentTime,.1);
   if(scrape){stv(scrape.g.gain,on&&!quiet&&state!=='replay'?Math.min(.2,scrLv*.2)*cv:0,ac.currentTime,.03);stv(scrape.f.frequency,2000+scrLv*1600,ac.currentTime,.05);scrLv*=.55;}
   if(envS){const t=ac.currentTime,sp=p?Math.abs(p.u):0,ok=on&&!quiet,ck=isCk(camMode)||camEff()===3&&DIR.sub==='onboard';
-   stv(envS.wind.g.gain,ok&&p?.075*Math.pow(Math.min(1.1,sp/60),2)*(ck?.6:1)*cv*(p.ev?1.6:1):0,t,.15);stv(envS.wind.f.frequency,400+sp*14,t,.2);
+   stv(envS.wind.g.gain,ok&&p?.075*Math.pow(Math.min(1.1,sp/60),2)*(ck?.6:1)*cv*(p.ev?1.6:1)*(1-.5*(p.draft||0)):0,t,.15); /* T858 スリップの中は風の音が静か */stv(envS.wind.f.frequency,400+sp*14,t,.2);
    const cb=ok&&p&&(p.surf==='curb'||p.surf==='saus')&&sp>6;stv(envS.rumb.g.gain,cb?(p.surf==='saus'?.17:.09)*cv:0,t,.03);stv(envS.rumb.o.frequency,Math.max(24,sp/.8),t,.05);
    const gv=ok&&p&&(p.surf==='gravel'||p.surf==='grass'&&!swG(p))&&sp>3?(p.surf==='gravel'?.16:.07)*Math.min(1,sp/20):ok&&p&&RSF[RSI[p.idx]].dust&&RSI[p.idx]<3&&sp>3?.08*Math.min(1,sp/20):0; /* T283 砂利道・雪は走るだけで砂利の音 */const ls=gv>0?lsOf(p):0;stv(envS.grav.g.gain,gv*(1+1.4*ls)*cv,t,.05);stv(envS.grav.f.frequency,520+ls*620,t,.06);stv(envS.grav.f.Q,.9-ls*.4,t,.06);stv(envS.gsp.g.gain,gv?.4*gv*ls*Math.min(1,sp/15)*cv:0,t,.04); /* T743 滑ると大きく荒く・小石のしぶき */
    if(envS.clap&&!(state==='race'||state==='finished'||state==='replay'||state==='countdown')){stv(envS.clap.g.gain,0,t,.2);stv(envS.roar.g.gain,0,t,.2);}
