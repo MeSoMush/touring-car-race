@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.459.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.460.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4272,7 +4272,7 @@ function fnSteer(k,st,dt,u){if(!(FNG[RSI[k.idx]]||FNP&&PUBR&&!RSI[k.idx]&&!k.fin
   k.fnC=Math.max(0,(k.fnC||0)-dt);const a=wrap(k.idx+Math.round(FND/SP));
   if(k.fnC<=0&&!CORNER[k.idx]&&CORNER[a]&&RAD[CORN[CID[a]].apex]<FNR&&(!pb||u<FNU&&RAD[k.idx]>=FNRS&&WL[k.idx]-k.lat*OUTS[a]-(k.hx||.95)>=FNM)){k.fnO=OUTS[a];const t=angDiff(heading(wrap(a+8)),heading(a));if(Math.abs(t)>.04){k.fnT=FNT;k.fnD=Math.sign(t);k.fnC=4;k.fnN=(k.fnN||0)+1;}} // ハンドルの向きは曲がる向きと逆の符号（steer＝−曲がる向き）なので、足すのは＋曲がる向き
   return st;}
-let WVW=10,WVS=1,WVR=6; /* WVR＝蛇行の狙いのずれを追う速さ（/秒。前は 2 で、振りが半分以下に縮んでいた） */ /* T707 WVW＝ちょうど良い温度の下の端より何℃上まで振り続けるか（前は下の端より WVM ℃下で止めていたので、すぐ止まって目立たなかった。… */
+let WVW=10,WVS=1,WVR=6,WVB=80; /* T846 WVB＝隊列を抜いて行く車（wav）が後ろ何 m 以内なら蛇行をやめる（0 で前の形） */ /* WVR＝蛇行の狙いのずれを追う速さ（/秒。前は 2 で、振りが半分以下に縮んでいた） */ /* T707 WVW＝ちょうど良い温度の下の端より何℃上まで振り続けるか（前は下の端より WVM ℃下で止めていたので、すぐ止まって目立たなかった。… */
 let WVA=3.5 /* T707 2.2→3.5（実際のセーフティカーの後ろは道幅いっぱいに数 m 振る） */,WVP=1.6 /* T707 1.8→1.6 */,WVL=45,WVM=5,WVG=.3,WVH=2.2,WSU=1800,WSG=3;
 // T185 雨のライン：RWG＝濡れた路面ではラバー（ゴムの乗ったライン）がこの割合まで滑る、RWW＝雨でラバーが流れる速さ、WLW＝CPU が雨の日にラインを外へずらす量(m)、LDRY＝雨がやんだ後にライン上が先に乾く割合
 let RWG=.1,RWW=.006,WLW=2.2,LDRY=.45;
@@ -6114,6 +6114,7 @@ function aiControl(k,dt){shStep(k);if(k.cdP&&k.cdC&&cdBusy(k)){k.cdP=null;k.cdC=
   // T185 雨の日のライン：濡れたラバーは滑るので、コーナーではゴムの乗った帯を車1台分ほど外す（雨がやんで乾いていく間はラインへ戻る）
   {const wl=WLW>0&&ENV.rain>=.15&&CORNER[t]?Math.max(0,Math.min(1,(ENV.wet-.3)/.4))*Math.min(1,RUB[t]/.25):0;const tg=wl*WLW*(OUTS[t]||1);k.wo=(k.wo||0)+(tg-(k.wo||0))*Math.min(1,dt*.8);}
   {let wt=0;if((cau()&&k.scV!=null||rollF())&&!k.wav&&!k.pit&&sess==='race'&&u>12&&k.tt!=null&&k.tt<ttWin(k)[0]-WVM+WVW){let st=!CORNER[k.idx];for(let j=4;st&&j<=Math.round(WVL/SP);j+=4)if(CORNER[wrap(k.idx+j)])st=false; // T83 タイヤを左右に振って温める
+    if(st&&WVB>0&&cau())for(const o of karts){if(o===k||!o.wav||o.dnf||o.gone)continue;let ds=pK()-pgO(o);ds-=Math.round(ds/L)*L;if(ds>0&&ds<WVB){st=false;break;}} /* T846 後ろから隊列を抜いて行く車が来ている間は振らない */
     if(st){k.wph=WVS&&rollF()?raceTime*6.283/WVP:(k.wph??Math.random()*6.28)+dt*6.283/WVP;wt=(rollF()?WRA:WVA)*Math.sin(k.wph);}}k.wvo=(k.wvo||0)+(wt-(k.wvo||0))*Math.min(1,dt*WVR);}
   {let tg=0,cap=1e9;if(ENV.pl>.05&&sess!=='drag'&&!k.pit&&u>8&&!k.pxm){const r=pudAvoid(k,u);tg=r.d;if(r.v!=null)cap=r.v;}k.pdo=(k.pdo||0)+(tg-(k.pdo||0))*Math.min(1,dt*2.2);k.pdCap=cap;} // T248 水たまりをよける
   if(IL0&&PRLH){let on=false;if(PRLH[t]||PRLH[k.idx]){const sK=trfS(k);for(const o of TRF){if(!o.on||o.xs||o.dir>0)continue;const ds=trfD(o.s-sK);if(ds>-10&&ds<(Math.max(u,8)+o.v)*PRLT){on=true;break;}}}k.prlB=Math.max(0,Math.min(1,(k.prlB||0)+(on?1:-1)*dt*PRLV));} /* T527 角の線は出口・入口で対向車線も使うので、対向車がこの先 PRLT 秒で出会う所にいる間は元の線（自分の車線寄り）へ移る */
