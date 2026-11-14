@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.471.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.472.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5964,7 +5964,7 @@ let ALS=20,ALB=7; // ALS＝スタートから何秒は代替ラインを使わ�
 let ALR=42,ALD=95,ALH=.35,ALPO=.25,ALPI=.15,PSOT=1.0,ATBK=.6,ATBM=.35,TKT=.18;
 // T120① クロスオーバー：すぐ前（CXR m 以内）の車を追っていて、このコーナーを抜けて CXD m 以内に逆向きのコーナーが続く時は、外回りの線を CXO だけ選びやすくする（外から並んで、次のコーナーでインを取る）。0 で無効
 // T120③ 周回遅れを使う：狙う前の車のすぐ前（LBD m 以内）に周回遅れの遅い車がいる時は、その前の車の出口が鈍るので、全力で仕掛け、差す距離を LBM 倍に。0 で無効
-let XLO=.8,XLS=250,XLR=30,CXO=.6,CXD=200,CXR=25,LBK=1,LBD=60,LBM=1.4;
+let XCK=1,XCR=30,XCT=0.3,XLO=.8,XLS=250,XLR=30,CXO=.6,CXD=200,CXR=25,LBK=1,LBD=60,LBM=1.4;
 /* T772・T761 並走：角の手前で前の車の横へ出て並びかけ、並んだら2台で道幅を分け合い、相手を離すまで線へ戻らない。sbStep は渡された値だけで決める（T773 へ移す形）。同じ側に居続けるので逆向きの角で内外が入れ替わる */
 let HSDR=.5,HSDZ=8,HSW=3.2,HSV=5.5,HSF=20,HSE=9,HSX=5,HSZ=4,HST=.7,HSZ0=1.5,HSH=1,HSGP=3,HSM=1.3,HSP=.7,HSG=4,HSS=3,HSN=6,HSY=.5,HSRT=1.2,HSOT=.8,HSLB=8,HSTI=null,HSIC=null,HSCI=null,HSIN=null,HSXO=null,HSRA=null;const HSRS=[];
 function sbStep(s,me,rs,n,rd,rnd,pr,yl){
@@ -6114,7 +6114,7 @@ function aiControl(k,dt){shStep(k);if(k.cdP&&k.cdC&&cdBusy(k)){k.cdP=null;k.cdC=
   if(CVK>0&&rcs&&!k.finished&&!k.pit&&!k.yieldF&&!k.blue&&!cau()&&!k.npz&&u>25&&!CORNER[k.idx]&&!(k.atkT>0)){let dB=-1;for(let j=2;j<=CVL;j+=2)if(VP[wrap(k.idx+j)]<u-5){dB=j*SP;break;}
     if(dB>0&&dB<u*CVT){let ci=-1;for(let j=2;j<=CVL+40;j+=2){const i=wrap(k.idx+j);if(CORNER[i]){ci=i;break;}}
       if(ci>=0&&k.cvC!==ci){const sd=-OUTS[ci],ins=sd*(W-CVW);let at=null;for(const o of karts){if(o===k||o.dnf||o.pit>0||o.finished)continue;const dg=pK()-pgO(o);if(dg>CVA&&dg<CVD&&(dg<CVN?o.u>u-1:o.u>u+CVV)){at=o;break;}}
-        if(at&&(at.lat-k.lat)*sd<1.2&&(ins-k.lat)*sd>1){k.laneT=ins;k.laneTimer=dB/Math.max(u,1)+.8;k.ovr=true;k.cvC=ci;k.cvN=(k.cvN||0)+1;k.cvX=CID[ci];}}}}
+        if(at&&(at.lat-k.lat)*sd<1.2&&(ins-k.lat)*sd>1){k.laneT=ins;k.laneTimer=dB/Math.max(u,1)+.8;k.ovr=true;k.cvC=ci;k.cvN=(k.cvN||0)+1;k.cvX=CID[ci];if(CVR){k.altS=sd;k.altC=CID[ci];k.altO=false;}} /* T857 閉めたらその角は内回りの線と見込み（閉めた車は出口で損をする） */}}}
   // 守り（T117）：後ろから迫られている間は、横へふらつかない（1直線で動くのは1回まで）
   let chased=false;if(DFW<1&&sess==='race'&&!k.finished&&u>20){for(const o of karts){if(o===k||o.dnf||o.pit>0)continue;const dg=pK()-pgO(o);if(dg>0&&dg<DFD){chased=true;break;}}}
   // スタートの列（T169）：発進から第1コーナーのブレーキング手前までは、グリッドの列（左右）のラインを保ち、同じラインへ一斉に寄らない。SL0 m を過ぎたら SL1 m までに通常のラインへ戻す（SLK＝0 で無効）
@@ -6131,8 +6131,10 @@ function aiControl(k,dt){shStep(k);if(k.cdP&&k.cdC&&cdBusy(k)){k.cdP=null;k.cdC=
       for(let c=0;c<3;c++){let sc=pen[c]-(c===1&&cx?CXO:0)-(c===1&&xl?XLO:0);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0||o.finished)continue;const ds=pgO(o)-pK();if(ds<-ALB||ds>ALR)continue;const ol=Math.abs(o.lat-IL[o.idx]-cand[c]*ALW);if(c&&ds<2&&ds>-ALB&&ol<2.6){sc+=9;continue;} // すぐ横・斜め後ろに車がいる線へは振らない（第1コーナーで一斉に振って多重事故になった）
         if(ds<2||ol>2.4)continue;sc+=(1-ds/ALR)*(1+Math.max(0,u-o.u)/4);}
         if(sc<bs){bs=sc;bi=c;}}if(cx&&bi===1)k.cxN=(k.cxN||0)+1;if(xl&&bi===1)k.xlN=(k.xlN||0)+1;
-      k.altS=cand[bi];k.altO=bi===1;if(bi)k.altN=(k.altN||0)+1;}}
+      k.altS=cand[bi];k.altO=bi===1;k.altOs=os;if(bi)k.altN=(k.altN||0)+1;}}
   else if(!k.pit)k.altS=0;
+  if(XCK>0&&rcs&&!cau()&&!k.npz&&!k.finished&&!k.pit&&!CORNER[k.idx]&&k.altC!=null&&k.altOs&&k.altS!==k.altOs){let o=null,bd=XCR;for(const q of karts){if(q===k||q.dnf||q.gone||q.pit>0||q.finished)continue;const ds=pgO(q)-pK();if(ds>3&&ds<bd){bd=ds;o=q;}} /* T857 クロスライン */
+    if(o&&o.cvX===k.altC&&(o.cvN||0)!==k.xcV){if(k.xcT==null)k.xcT=XCT;k.xcT-=dt;if(k.xcT<=0){k.xcV=o.cvN||0;k.xcT=null;k.altS=k.altOs;k.altO=true;k.xcN=(k.xcN||0)+1;}}else k.xcT=null;}
   if(k.pxm){const r=relLine(k);if(k.pit||k.dnf||sess!=='race'||r>PXL||r<PIT_C||pxClear(k,u))k.pxm=0;else{k.laneT=PS*PIT_EL;k.laneTimer=.5;k.ovr=true;}} // T249 ピット出口の合流待ち
   else if(sess==='race'&&!k.pit&&!k.finished&&!CORNER[k.idx]&&(IL[k.idx]+k.lane)*PS>PXS&&pxNear(k,u)){k.laneT=PS*PXS;k.laneTimer=.5;k.ovr=true;k.pxa=(k.pxa||0)+1;} // T249 ピットに出入りする車がいる間は、ピット側を走らない
   if(PLK&&!k.pit&&sess!=='drag'){const pl=plLat(relLine(k));if(pl!=null&&(IL[k.idx]+(k.ovr?k.laneT-IL[k.idx]:k.lane))*PS>pl-PLM){k.laneT=PS*(pl-PLM);k.laneTimer=.5;k.ovr=true;}} // T320 ピット入口の白線より外
@@ -6888,7 +6890,7 @@ let LFK=1,LFB=.1,LFQ=.6,LFY=3;
 let TDK=1,TDB=.2,TDD=60,TDE=30,TDY=3;
 let LBA=60,LBT=.2;
 // T83インを閉める：CVK＝1 で有効、CVA・CVD＝後ろの車との差（m。…
-let CVK=1,CVA=5.5,CVD=12,CVN=9,CVV=.5,CVT=2.2,CVW=2.6,CVL=80;
+let CVK=1,CVR=1,CVA=5.5,CVD=12,CVN=9,CVV=.5,CVT=2.2,CVW=2.6,CVL=80;
 // T281 抜き合いを戻す仕掛け（CVX・CVO・CVB・PBA）は試して無効のままだったので T754 で消した。DRK＝スリップストリームで減る空気抵抗の最大の割合（.3）。
 /* T493 AFN＝前の車との車間の速さの分 AFT の倍率（コースごと。… */let {DRK,AFN=1}=CRS.cpu;
 let SDL=1.2,SLE0=.7,SLE1=2.6,SLE2=6,TBP=3,TIS=3,TRT=.15,RRM=.2,RRK=.12,OBT=.3,OBB=.85,OBS=.1,BKS=1; // T83OBT＝ハンドルを OBS 以上切りながら、ブレーキを OBB 以上で踏み続けた秒数がこれを超えたら「ブレーキが強すぎてふくらんだ」（測定：120km/h でハンドル半分の時、ブレーキ 30% なら横G 1…
