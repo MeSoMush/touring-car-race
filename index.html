@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.478.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.479.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4945,7 +4945,7 @@ function stepKart(k,dt,ctl){
   let target=stA(k,ctl.steer,dMax,beta)+(k.dmA||0)*DAL; /* T758 当て舵の時は上限を超えて切れる（stA） */ // T234⑧ アライメントのずれ（片方へ流れる）
   const cs=ASSIST[k.aiDriven?AIAS:assistLv].cs;if(cs>0&&(k.drifting||Math.abs(beta)>.12)) /* T758② CPU・オートもアシストの段どおり（前は k.csx .35〜.95・当て始め CST がいつも。当て舵は運転手の aiDrv へ） */target+=beta*(k.drifting?cs+.2:cs)*Math.sign(k.u||1); // カウンター補助（T558④ CPU・オートは CST から＝横滑りが小さいうちに当てる）
   if(BDT>0&&cs>0&&!RSI[k.idx]&&k.ci!=null&&k.bP!=null&&dt>0){const bd=layOf(k.ci)==='R'?1:BDA&&k.aiDriven&&(BDAP?k.isPlayer:1)&&Math.abs(beta)>BDA0?BDA:0;if(bd)target+=(beta-k.bP)/dt*BDT*bd*cs*Math.sign(k.u||1);}k.bP=beta; /* T310 RR の振り子を抑える */
-  const rate=k.aiDriven?6:3.4;k.delta+=Math.max(-rate*dt,Math.min(rate*dt,target-k.delta));
+  const rate=3.4; /* T864(6) 手と同じ */k.delta+=Math.max(-rate*dt,Math.min(rate*dt,target-k.delta));
   // ドリフト（後輪のグリップを抜く）
   if(ctl.drift&&k.u>12&&!k.drifting&&surf!=='gravel')k.drifting=true;
   if(k.drifting){
@@ -5042,7 +5042,7 @@ function stepKart(k,dt,ctl){
     const tc=k.drifting?1:(k.aiDriven?(k.pwr?(k.pso?(k.pso===2?DPTC:PSOT):PWTC):.85):ASSIST[assistLv].tc);
     if(Math.abs(FxR)>cRx*tc*dTR){ws=1;wsR1=1;if(Fd>0&&FxR*k.u>0&&!dtc0)dtc+=DTLS*mmI*(1-fs)*Math.sign(k.u); /* T730 空転中は駆動系の分を抵抗から外す */const ex=Math.abs(FxR)/(cRx*tc*dTR)-1;FxR=Math.sign(FxR)*cRx*tc*dTR*(1-lsp*Math.min(1,ex*LSPX));}
     const fr=FxR/cxR,yr=cyR*Math.sqrt(Math.max(0,capR*capR-fr*fr));Fyr*=Math.sqrt(Math.max(0,1-(fr/capR)**2));if(Math.abs(Fyr)>yr){Fyr=Math.sign(Fyr)*yr;wsR1=1;}if(k.drifting){const vx=k.u,vy=k.vl-kb*k.r,vv=Math.hypot(vx,vy);if(vv>.3){const F=capR*HBXMU;FxR=-F*vx/vv;Fyr=-F*vy/vv;}else{FxR=0;Fyr=0;}ws=1;wsR1=1;} /* T696 サイドブレーキ案③：後輪は止まっている（駆動は切れる）。… */ /* T558④ 縦に力を使った分だけ横の効き（硬さ）も下げる（摩擦円で分け合う。… */
-    const capF=mF*Nf,cFx=capF*cxF;let FxF=Fd*fs-Fb*bb*sg; /* T758③ CPU・オートのトレイル・左足ブレーキも前後の配分 bb どおり（前は ctl.fo で前輪だけ） */let lock=false;if(Fb<=0){const cx=cFx*tc*(LSFX)*(Fd>0?dTF:1)*(k.aiDriven&&RSI[k.idx]&&fs>.3&&fs<.9?RS4F:1);if(Math.abs(FxF)>cx){ws=1;wsF1=1;if(Fd>0&&FxF*k.u>0&&!dtc0)dtc+=DTLS*mmI*fs*Math.sign(k.u); /* T730 */FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>cFx*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>cFx){lock=true;FxF=Math.sign(FxF)*cFx*.85;}else{FxF=Math.sign(FxF)*cFx*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
+    const capF=mF*Nf,cFx=capF*cxF;let FxF=Fd*fs-Fb*bb*sg; /* T758③ CPU・オートのトレイル・左足ブレーキも前後の配分 bb どおり（前は ctl.fo で前輪だけ） */let lock=false;if(Fb<=0){const cx=cFx*tc*(LSFX)*(Fd>0?dTF:1);if(Math.abs(FxF)>cx){ws=1;wsF1=1;if(Fd>0&&FxF*k.u>0&&!dtc0)dtc+=DTLS*mmI*fs*Math.sign(k.u); /* T730 */FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>cFx*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>cFx){lock=true;FxF=Math.sign(FxF)*cFx*.85;}else{FxF=Math.sign(FxF)*cFx*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
     const ff=FxF/cxF,yf=cyF*Math.max(capF*YFMIN,Fb<=0&&FxF*sg>0?capF*Math.sqrt(Math.max(0,1-(ff/(capF*LSFX))**2)):Math.sqrt(Math.max(0,capF*capF-ff*ff)));{const dn=Fb<=0&&FxF*sg>0?capF*LSFX:capF;Fyf*=Math.max(YFMIN,Math.sqrt(Math.max(0,1-(ff/dn)**2)));}if(Math.abs(Fyf)>yf){Fyf=Math.sign(Fyf)*yf;wsF1=1;}if(lock){Fyf*=.15;k.locked=true;if(FSA)k.fsp=Math.min(1,(k.fsp||0)+FSA*Math.abs(k.u)*h);}
     const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
     const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;if(k.isPlayer&&(k.slPk||(k.draft||0)>.02)){const cK=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0));k.slG=Math.max(0,(k.slG||0)+(cK*k.u*Math.abs(k.u)*DRK*(k.draft||0)-2*cK*Math.abs(k.u)*(k.slG||0))*dt);k.slD=(k.slD||0)+k.slG*dt;} /* T858 引っぱりで得た速さ（速くなった分の抵抗の増えを引く。表示だけ） */k.drE=drag+G*tgs; /* T390 走る抵抗（空気・転がり・坂） */
