@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.480.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.481.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5029,7 +5029,7 @@ function stepKart(k,dt,ctl){
   // T81 坂：進む向きの勾配で重力が加減速、横の傾き（バンク）で横へ、峠（kv<0）で荷重が抜けてグリップが減り、くぼみで増える
   let tgs=0,tgl=0,tnf=1;if(sess!=='drag'){const t=terrAt(k.x,k.z,k.h);tgs=t.gs;tgl=t.gl;tnf=Math.max(TNMIN,Math.min(TNMAX,1+k.u*k.u*t.kv/G));}k.tnf=tnf;
   const lsp=sess==='drag'&&!k.aiDriven&&ASSIST[assistLv].tc>=1?LSPK:0; // 0-400m で空転すると駆動力が落ちる（アシスト「なし」の時）
-  const sub=5,h=dt/sub;let ws=0,sF=0,sR=0;
+  const sub=5,h=dt/sub;let ws=0,sF=0,sR=0,pF=0,pR=0;
   for(let s=0;s<sub;s++){
     const ua=Math.max(Math.abs(k.u),UAF),sg=k.u>=0?1:-1;
     const af=Math.atan2(k.vl+ka*k.r,ua)-(k.delta+(TQS&&Fd>0&&fs>.8?TQS*(k.id%2?1:-1)*Math.min(1.5,Fd*fs/G)*Math.min(1,10/ua):0))*sg,ar=Math.atan2(k.vl-kb*k.r,ua);
@@ -5053,9 +5053,9 @@ function stepKart(k,dt,ctl){
     if(Math.hypot(k.u,k.vl)<1.5&&!ctl.accel&&!(ctl.brake&&k.u<=.8)){k.u*=.9;k.vl*=.9;k.r*=.9;} /* T538 横に滑っている車は止めない（前は前後の速さだけで判定し、真横を向いた車の横滑りと回転を約0.1秒で消していた） */
     k.ax+=((du-k.vl*k.r)-k.ax)*.08;k.ay=dvl+k.u*k.r;
     k.h+=k.r*h;syncWorld(k);k.x+=k.vx*h;k.z+=k.vz*h;
-    sF=Math.max(sF,Math.abs(af));sR=Math.max(sR,Math.abs(ar));
+    sF=Math.max(sF,Math.abs(af));sR=Math.max(sR,Math.abs(ar));pF+=(Math.abs(Fyf)*Math.hypot(k.u,k.vl+ka*k.r)*Math.abs(Math.sin(af))+WKX*FxF*FxF/Math.max(1,capF)*Math.abs(k.u))*h;pR+=(Math.abs(Fyr)*Math.hypot(k.u,k.vl-kb*k.r)*Math.abs(Math.sin(ar))+WKX*FxR*FxR/Math.max(1,capR)*Math.abs(k.u))*h; /* T812 滑りの仕事量（横の力×横に滑る速さ＋縦の力×滑り率の見込み×速さ。重さ1あたり） */
   }
-  if(k.lchS){k.lchM=lchMul(k);if(ctl.accel){k.lchT+=dt;if(k.lchR>k.lchB+500){ws=1;k.lws+=dt;}}if(k.lchT>=SRCT||raceTime>8){k.lchS=0;k.lchR=0;if(k.isPlayer&&!autoPlay)lchDone(k);}}k.wheelspin=ws;k.slipF=sF;k.slipR=sR;k.speed=k.u;if(QDB&&k.isPlayer&&!autoPlay)qdbStep(k,dt,ctl);if(fdRun&&k.isPlayer&&!autoPlay&&sess==='ta')fdSpStep(k,ctl); /* T699 */ /* T664 */
+  if(k.lchS){k.lchM=lchMul(k);if(ctl.accel){k.lchT+=dt;if(k.lchR>k.lchB+500){ws=1;k.lws+=dt;}}if(k.lchT>=SRCT||raceTime>8){k.lchS=0;k.lchR=0;if(k.isPlayer&&!autoPlay)lchDone(k);}}k.wheelspin=ws;k.slipF=sF;k.slipR=sR;k.pwF=dt>0?pF/dt:0;k.pwR=dt>0?pR/dt:0;k.speed=k.u;if(QDB&&k.isPlayer&&!autoPlay)qdbStep(k,dt,ctl);if(fdRun&&k.isPlayer&&!autoPlay&&sess==='ta')fdSpStep(k,ctl); /* T699 */ /* T664 */
   // 計器の値（表示用。走りには影響しない）：水温・油温は負荷（アクセル×回転）と走行風で上下、ブースト圧は吸気管圧力（bar。ターボは過給、NAは負圧）
   {if(k.tw==null){k.tw=78;k.to=64;k.bst=-.85;}
    const thr=ctl.accel?(ctl.thr??1):0,rn=Math.min(1.1,k.rpm/8000),ld=thr*(.35+.65*rn),air=Math.min(1,Math.abs(k.u)/50);
@@ -6387,15 +6387,15 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(isSS()){if(r
   if(wearMode>0&&k.manual&&k.rpm>REDLINE-60&&(k.thrV||0)>.5&&!k.finished)k.eng=Math.min(1,(k.eng||0)+dt*EGL);
   if(k.isPlayer&&(k.eng||0)>=(k.engW||0)+.1){k.engW=Math.floor(k.eng*10)/10;radio('エンジンを痛めている（出力 −'+Math.round(EGP*k.eng*100)+'%、ピットでは直らない）。レブリミットに当て続けない、回転を合わせて落とそう','eng',15);}
   if(wearMode>0&&k.pit!==2){const RSw=RSF[RSI[k.idx]],slip=Math.max(k.slipR,k.slipF),ld=Math.min(1.2,Math.abs(k.ay)/(G*1.4)),spd=Math.min(1,Math.abs(k.u)/30);
-    const wk0=dt*wearK()*.36*(k.wpw||1)*(1+AGW*agTy(k))*Math.pow(k.mm||1,WMK)*(k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*tyWr(k.ty||0,RSI[k.idx])*((k.tpd||0)<0?1+TPWR:1),wsl=.02*Math.max(0,slip-.1*RSw.sk)*spd*RSw.wr,wb=.0009*spd+.0075*ld*ld+wsl,ws=(k.wheelspin?.004:0)*RSw.wr,wl=(k.locked?.012:0)*RSw.wr;
+    const wk0=dt*wearK()*.36*(k.wpw||1)*(1+AGW*agTy(k))*Math.pow(k.mm||1,WMK)*(k.tt!=null?1+Math.max(0,Math.min(1,(k.tt-ttWin(k)[1])/30)):1)*tyWr(k.ty||0,RSI[k.idx])*((k.tpd||0)<0?1+TPWR:1),pF0=k.pwF||0,pR0=k.pwR||0,wsl=WSW*(pF0+pR0),wb=.0009*spd+wsl,ws=(k.wheelspin?.004:0)*RSw.wr,wl=(k.locked?.012:0)*RSw.wr;
     k.wear=Math.min(1,k.wear+wk0*(wb+ws+wl));
-    if(WFK){const sF=.5+WFS*((k.fs??0)-.4),fd=Math.min(1,k.fs??0);if(k.wF==null){k.wF=k.wR=k.wear;}const eF=Math.max(0,k.slipF-.1*RSw.sk),eR=Math.max(0,k.slipR-.1*RSw.sk),sS=WSL&&eF+eR>0?sF+(eF/(eF+eR)-sF)*WSL:sF;k.wF=Math.min(1,k.wF+2*wk0*((wb-wsl)*sF+wsl*sS+ws*fd+wl)*(k.cwF||1));k.wR=Math.min(1,k.wR+2*wk0*((wb-wsl)*(1-sF)+wsl*(1-sS)+ws*(1-fd))*(k.cwR||1));k.wear=(k.wF+k.wR)/2;}}
+    if(WFK){const sF=.5+WFS*((k.fs??0)-.4),fd=Math.min(1,k.fs??0);if(k.wF==null){k.wF=k.wR=k.wear;}const sS=pF0+pR0>0?pF0/(pF0+pR0):sF; /* T812 減りの前後の分け方は前後の軸の滑りの仕事量の比 */k.wF=Math.min(1,k.wF+2*wk0*((wb-wsl)*sF+wsl*sS+ws*fd+wl)*(k.cwF||1));k.wR=Math.min(1,k.wR+2*wk0*((wb-wsl)*(1-sF)+wsl*(1-sS)+ws*(1-fd))*(k.cwR||1));k.wear=(k.wF+k.wR)/2;}}
   if(WFK&&k.wF!=null){const wd=TYR[k.ty||0].wd,gA=1-wd*Math.pow(k.wear,1.3);k.wgF=(1-wd*Math.pow(k.wF,1.3))/gA;k.wgR=(1-wd*Math.pow(k.wR,1.3))/gA;}
   k.gripK=(1-TYR[k.ty||0].wd*Math.pow(k.wear,1.3))*(dmgMode===2?1-DMGG*k.dmg:1)*(1-MBG*(k.mbl||0));k.powK=(dmgMode===2?1-DMGP*k.dmg:1)*(1-EGP*(k.eng||0));}
 /* 大クラッシュ（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
 /* T365 CPU のペダルをジワッと：PDP 1＝使う。… */
 /* T372 CPU・オートのペダルのならし（PDBS＝踏む量をならす秒・PDDW＝踏み替えを待つ秒） */
-let PDBS=.2,PDDW=.3;
+let PDBS=.2,PDDW=.3,WSW=1.3e-4,WKX=.1; /* T812 滑りの仕事量 1（重さ1あたり W）あたりの減り・縦の滑り率の見込み（力が限界の時の滑り率） */
 /* T558：AGP 1＝前の車を見る時、道に沿った差（位置の番号）がまっすぐの距離と AGPM m（か その半分）より食い違う車は見ない。… */
 let AGP=1,AGPM=12,ABH=1,PDRS=3,PDFS=2;
 let PDHK=.6,PDH=.5,PDW=3,PDM=.2,PDBW=3,PDBM=.3,PDBL=.3,PDRA=.25,PDFA=.1,PDRB=.1,PDFB=.15;
@@ -6864,7 +6864,7 @@ let BMN=3,BMW=4,BMS=2,BMG=5;
 // ④ブレーキの踏み方：踏み始めから頂点まで（最後に離した所まで）を6つに分けた平均を棒で。最初の3分の1が BPF 以上で、最後の3分の1が最初の BPR 倍以下なら「最初に強く→だんだん抜いた」。最初が BPW 未満で後から強く踏み増したら「踏み始めが弱い」、最後まで BPL 以上なら「強いまま」
 // ⑤アクセルで向きを変える（後輪駆動・4WD。頂点の後でアクセルを XRA 以上開けた時間が XRT 秒以上のコーナー）：後輪の滑り角が XRS 以上かスピン＝流れすぎ、後輪の滑り角が XRG 以上で前輪との差が −XRO 以上（前と同じくらい後ろも滑った。ふだんの CPU は 0.03 前後）＝向きを変えた、ハンドルを半分以上切って前輪が XRU 以上多く滑った＝前が逃げた
 // ⑥縁石：頂点の前後 CBA m の内側の平らな縁石・出口の外側の縁石は乗ってよい（使えたら ○）。ソーセージ縁石・濡れた縁石は知らせる。COALL＝1 で全車の記録を COLOG へ（測定用）
-let WSL=1,WCS=.2,WCR=.12,WCM=.0012,BPF=.7,BPR=.7,BPW=.55,BPL=.85,XRA=.6,XRT=.4,XRS=.2,XRG=.06,XRO=.01,XRU=.05,CBA=40,COALL=0;const COLOG=[];
+let WCS=.2,WCR=.12,WCM=.0012,BPF=.7,BPR=.7,BPW=.55,BPL=.85,XRA=.6,XRT=.4,XRS=.2,XRG=.06,XRO=.01,XRU=.05,CBA=40,COALL=0;const COLOG=[];
 const coBars=a=>{const n=6,o=[];for(let i=0;i<n;i++){const s=a.slice(Math.floor(i*a.length/n),Math.max(Math.floor(i*a.length/n)+1,Math.floor((i+1)*a.length/n)));o.push(s.reduce((x,y)=>x+y,0)/s.length);}return o;};
 function coBrake(c){if(!c.bk)return null;let e=c.bk.length;while(e>0&&c.bk[e-1]<=0)e--;const a=c.bk.slice(0,e);if(a.length<24)return null; // 0.4秒未満は見ない
   const b=coBars(a),t=Math.ceil(a.length/3),av=s=>s.reduce((x,y)=>x+y,0)/Math.max(1,s.length),f=av(a.slice(0,t)),l=av(a.slice(-t)),mx=Math.max(...b);
