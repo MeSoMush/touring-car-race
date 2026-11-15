@@ -1341,7 +1341,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.480.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.480.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6698,7 +6698,7 @@ function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const sA=k.aiA,sB=k.aiB,a=a
 /* ===== T157・T233 セーフティカーと FCY（実際のレースの手順にならう） scMode：0＝なし／1＝短め（大クラッシュはまず FCY。…（T237） */
 let scMode=1,SCV0=36,SCVK=.65,SCG=16,SCL=26,SCMIN=25,SCDK=.65,SCDV=42,SCW0=260,SCW1=450,SCCK=.85,SCQT=45,SCQG=45;
 let FCYV=22.2,FCYW=3,FCYMIN=10,FCYSC=30,FCYD=6;
-let SCWV=1,SCWT=8,SCWK=1,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
+let SCWV=1,SCWT=8,SCWK=.85,SCWX=90,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
 const SC={on:false,ph:1,d:0,t:0,t1:0,u:0,lp:0,inLap:false,out:false,ret:false,wv:0,fin:false,g:null,x:0,z:0,h:0,ahead:null,n:0,rf:0,rfD:0,rfT:0,rfn:0};
 const FCY={on:false,ph:0,t:0,n:0};
 const cau=()=>SC.on||FCY.on,SCN=['なし','短め','実際どおり'];
@@ -6781,9 +6781,10 @@ function scStep(dt){fcyStep(dt);
   const clr=clr0,qd=mx<SCQG||SC.t1>SCQT,fin=ld&&ld.lap>=LAPS;
   // T237 周回遅れの追い越し許可（隊列の中で、自分より後ろに1周以上先の車がいる車）
   if(SCWV&&scMode===2&&SC.ph===1&&!SC.wv&&!SC.inLap&&!SC.rf&&!fin&&clr&&qd&&SC.t1>SCWT){const q=run.slice().sort((a,b)=>((sp-trkPos(a)+L)%L)-((sp-trkPos(b)+L)%L));let n=0;
-    q.forEach((k,i)=>{if(q.slice(i+1).some(o=>progress(o)>progress(k)+L/2)){k.wav=1;n++;}});SC.wv=n?1:2;
+    q.forEach(k=>{if(ld&&progress(ld)>progress(k)+L/2){k.wav=1;k.wvd=SC.n;k.wvA=raceTime;n++;}});SC.wv=n?1:2;
     if(n){telop('SAFETY CAR','周回遅れの車は追い越してよい（前の車とセーフティカーを抜いて隊列の後ろへ）','yellow');const p=player();if(p&&p.wav&&!autoPlay)radio('周回遅れは抜いていい。前の車とセーフティカーを抜いて、隊列の後ろへ回ろう','scwv',10);}}
-  let wv=karts.some(k=>k.wav===1&&!k.dnf&&!k.finished&&!(k.pit>0)); // 全員がセーフティカーを抜いたら戻ってよい（隊列の後ろに追いつくのは待たない）
+  if(SCWV&&scMode===2&&SC.ph===1&&SC.wv&&!SC.inLap&&!SC.rf&&!fin){const q=run.slice().sort((a,b)=>((sp-trkPos(a)+L)%L)-((sp-trkPos(b)+L)%L));let n=0;q.forEach(k=>{if(!k.wav&&k.wvd!==SC.n&&ld&&progress(ld)>progress(k)+L/2){k.wav=1;k.wvd=SC.n;k.wvA=raceTime;n++;}});if(n&&SC.wv===2){SC.wv=1;telop('SAFETY CAR','周回遅れの車は追い越してよい（前の車とセーフティカーを抜いて隊列の後ろへ）','yellow');}} /* 許可の後にピットから出てきた周回遅れの車も、SC が戻ると決まるまでは追い越してよい */
+let wv=karts.some(k=>k.wav===1&&!k.dnf&&!k.finished&&!(k.pit>0)&&!(raceTime-(k.wvA??raceTime)>SCWX)); // 全員がセーフティカーを抜いたら戻ってよい（隊列の後ろに追いつくのは待たない）
   if(fin&&wv){for(const k of karts)k.wav=0;wv=false;} // ファイナルラップに入ったら周回遅れの追い越しは打ち切る（以前はこの行がコメントの中にあった）
   if(SC.ph===1&&!SC.inLap&&!SC.rf){const back=clr&&qd&&!wv&&(scMode===1||SC.lp>=1&&SC.t>SCMIN&&(!SCWV||SC.wv));
     if(fin&&SCFN&&scMode===2&&!back){SC.inLap=true;SC.fin=true;telop('SAFETY CAR','ファイナルラップ　セーフティカーのままゴール（追い越し禁止）','yellow');radio('セーフティカーのままゴールだ。追い越しは禁止','scfin',10);}
