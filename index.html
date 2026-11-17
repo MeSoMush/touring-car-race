@@ -1343,7 +1343,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.512.2</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.513.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6655,7 +6655,7 @@ let pwUiT=0;function pitUi(k){const el=$('pitwork');if(!k){el.hidden=true;return
 let PSW=2.6,PSX=4.5,PSF=9,PSB=10,PSN=90,PWG2=.85; /* T309 PWG2＝舗装でタイヤのグリップ（wetMul）がこれより低い時は、ピット入口の減速を路面のグリップで見込む */ /* T290 */
 let PSL=5,PSVC=3,PLC=1; /* β0.512.1 ピット入口：後ろの車は PSL m（約1車身）＋速さの分 PSVC m までを横の車に・車体が白線に PLC m かかったら取りやめない */
 let PSV=.8,PSA=2; /* PSV＝後ろから近づく車を見る秒数、PSA＝入口でピット側の端からこれ以上外にいて横に車がいたら、この周は入らない */
-let CLK=2.2,PQS=2.2,PQG=8,PQW=2.6,PQN=2,PQX=30;
+let CLK=2.2,PQS=2.2,PQG=8,PQW=2.6,PQN=8,PQX=30; /* β0.513.0 T908 PQN 2→8＝箱の数（pitAssignBox の 0〜7）。実際のレースと同じく、SC の時などは皆が同じ周に入れる（2台までだと CPU が予約したまま入口を黙って通り過ぎ、30周で1レース約5回見送っていた。ピットの中の接触は 1.3→0.9回で増えない＝T103 の車間が効く） */
 // T249ピット出口の合流（実際のサーキットのピット出口の白線＝ブレンドラインの考え方）：ピットを出た CPU（k.pxm）は、すぐ走行ラインへ寄らず、ピット側の端（PIT_EL）を走って加速し、
 // 後ろ（PXG m＋近づく速さ×PXT 秒の内側）に本線の車（ピット側へ PXW m より寄っている車）がいなくなってから合流する。線から PXL m を過ぎたら合流（その先は第1コーナーへ向けてラインもピット側へ寄る）。
 // 自分の車の前（PXR m 以内）にピットから車が出てくる時は無線で知らせる
