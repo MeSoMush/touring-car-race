@@ -601,6 +601,8 @@ body.inPad:not(.touch) #carSeg button:focus .cpF::after{content:'X';border-radiu
 @media (max-height:520px){#resultScreen .panel{gap:6px;padding:8px 14px}#resultScreen .row{gap:6px}#resultScreen .btn{padding:6px 10px;font-size:15px}}
 /* ②10・ラップ比較：閉じるボタンを画面の下に留める */
 #helpScreen .panel>.row:last-child,#lapScreen .panel>.row:last-child{position:sticky;bottom:-16px;z-index:2;padding:8px 0 14px;background:rgba(15,17,21,.97)}
+#helpScreen .panel{max-height:calc(100vh - max(calc(env(safe-area-inset-top,0px) + 16px),calc(var(--sbh,0px) + 8px)) - env(safe-area-inset-bottom,0px) - 16px);max-height:calc(100dvh - max(calc(env(safe-area-inset-top,0px) + 16px),calc(var(--sbh,0px) + 8px)) - env(safe-area-inset-bottom,0px) - 16px);box-sizing:border-box;width:min(820px,100%);overflow-y:auto;overscroll-behavior:contain;background:rgba(15,17,21,.97)}#helpScreen .panel>.row:last-child{bottom:calc(-1*clamp(16px,3vw,28px))}@media (max-height:520px){#helpScreen .panel>.row:last-child{bottom:-12px}} /* T878 HOW TO の窓は中で巻く（画面ごと巻くと本文が上の帯の下へ潜って透けていた） */
+body.inPad.otsOn:not(.autoplay) #lineBtn[data-pad]::after{display:none} /* T878 フォーミュラの決勝はパッドの X＝オーバーテイク（ラインではない） */
 .basic .tonly{display:none}body.touch .basic .tonly{display:grid}body.touch .basic .kbonly{display:none}
 /* ②5 カウントダウン中：スタートランプはミラーの下へ、前後の差の欄は隠す */
 body.mir #slights{top:calc(env(safe-area-inset-top,0px) + var(--mirH,0px) + 16px)}
@@ -1343,7 +1345,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.518.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.519.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1438,7 +1440,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <div id="icRow" class="adv"><div class="label">インタークーラー（ターボのエンジンだけ）<span class="hint">過給で熱くなった空気を冷やす。なし＝10kg 軽いが、全開が続くと吸気が熱くなって出力が最大 約1割落ちる</span></div><div class="seg" id="icSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div id="rgRow" class="adv"><div class="label">回生（EVだけ）<span class="hint">アクセルを戻した時・ブレーキの時に、減速の力で電池を充電する強さ。強い＝電池が長持ちし、戻すだけでよく減速するが、後ろのブレーキが強くなってお尻が出やすい／弱い＝惰性でよく転がるが、電池は早く減る。満タンに近い間は回生が弱い</span></div><div class="seg" id="rgSeg"><button type="button" data-v="0">弱い</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">強い</button></div></div>
         <div class="adv"><div class="label">冷却（ラジエーター）<span class="hint">エンジンの冷え方。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="coolSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
-        <div class="adv"><div class="label">ブレーキ冷却<span class="hint">強いブレーキを続けると熱でききが落ちる。大きいと冷えるが空気抵抗が増える</span></div><div class="seg" id="bcSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
+        <div class="adv"><div class="label">ブレーキ冷却<span class="hint">強いブレーキを続けると熱でききが落ちる。大きいと冷えるが空気抵抗が増える。フォーミュラのカーボンは冷えると効かないので、小さめで温度を保つ手も</span></div><div class="seg" id="bcSeg"><button type="button" data-v="0">小さめ</button><button type="button" data-v="1">標準</button><button type="button" data-v="2">大きめ</button></div></div>
         <div><div class="label">変速<span class="hint">自動＝ギアが自動で変わる／手動＝自分で上げ下げ（<span data-kg="up"></span>・<span data-kg="down"></span>、パッドの右スティック、スマホの▲▼）。0-400m は下の別の設定</span></div><div class="seg" id="mtSeg"><button type="button" data-v="0">自動</button><button type="button" data-v="1">手動</button></div></div>
       </div>
       <p class="note" id="tuneNote"></p>
@@ -1469,7 +1471,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <div><div class="label">パトカー<span class="hint">峠と街の公道バトルで、目立つ走り（赤信号の突っ切り・車に当たる・制限速度の2倍を超える速さ）が溜まるとパトカーが後ろから来る（止められると +10秒。相手の CPU も追われる）。なし＝目立ち度も溜まらず、パトカーも来ない。首都高にはパトカーはいない</span></div><div class="seg" id="polSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div><div class="label">タイヤ摩耗<span class="hint">走るとタイヤが減ってグリップが落ちる。ピットで交換。あり＝長いレースほどゆっくり減る（30周で交換2回くらい、フォーミュラカーのレース風）／速い＝耐久風（30周で7〜8回）</span></div><div class="seg" id="wearSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">あり</button><button type="button" data-v="2">速い</button></div></div>
         <div class="adv"><div class="label">スタートの燃料<span class="hint">作戦どおり＝次のピットまでの分だけ積む（軽くて速い。ピットで給油）／満タン＝ゴールまでの分（タンクに入るだけ。重いがピットを減らせる）。燃料モードはレース中に <span data-kg="fuel"></span>・燃料のボタン</span></div><div class="seg" id="fuelSeg"><button type="button" data-v="0">作戦どおり</button><button type="button" data-v="1">満タン</button></div></div>
-        <div class="adv"><div class="label">タイヤウォーマー<span class="hint">タイヤを履く前に電気の毛布で温めておく道具。クラスどおり＝フォーミュラだけ使える（中まで約70℃。実際のレースと同じく、ツーリングカーや GT は禁止）／全部あり／全部なし。なしの車は、スタートとピットアウトの後しばらく冷えたタイヤで走る（予選は1周目で温める）</span></div><div class="seg" id="wmSeg"><button type="button" data-v="0">クラスどおり</button><button type="button" data-v="1">全部あり</button><button type="button" data-v="2">全部なし</button></div></div>
+        <div class="adv"><div class="label">タイヤウォーマー<span class="hint">タイヤを履く前に電気の毛布で温めておく道具。クラスどおり＝フォーミュラだけ使える（中まで約70℃。決勝で隊列の1周を省くスタート〔静止・ローリング〕は、その1周で冷めて表面 50℃ほどから。実際のレースと同じく、ツーリングカーや GT は禁止）／全部あり／全部なし。なしの車は、スタートとピットアウトの後しばらく冷えたタイヤで走る（予選は1周目で温める）</span></div><div class="seg" id="wmSeg"><button type="button" data-v="0">クラスどおり</button><button type="button" data-v="1">全部あり</button><button type="button" data-v="2">全部なし</button></div></div>
         <div><div class="label">ダメージ</div><div class="seg" id="dmgSeg"><button type="button" data-v="0">なし</button><button type="button" data-v="1">見た目だけ</button><button type="button" data-v="2">性能にも</button></div></div>
         <div class="adv"><div class="label">大クラッシュ<span class="hint">高速でぶつかると吹っ飛んでリタイア</span></div><div class="seg" id="cxSeg"><button type="button" data-v="1">あり</button><button type="button" data-v="0">なし</button></div></div>
         <div class="adv"><div class="label">セーフティカー・FCY<span class="hint">大クラッシュが起きたら。<details class="hx"><summary>くわしく</summary>短め：まず FCY（全体が 80km/h 制限・追い越し禁止）、片付かない・続けて起きたらセーフティカー。実際どおり：セーフティカーがピット出口から先頭の前に出て、隊列で約2周（周回遅れは合図が出たら前の車とセーフティカーを抜いて隊列の後ろへ。最終周までに片付かなければセーフティカーのままゴール）。セーフティカー中はピットの損が小さい。どちらも抜くと＋5秒。セーフティカーがピットへ入っても、コントロールラインを越えるまでは追い越し禁止</details></span></div><div class="seg" id="scSeg"><button type="button" data-v="1">短め</button><button type="button" data-v="2">実際どおり</button><button type="button" data-v="0">なし</button></div></div>
@@ -1634,7 +1636,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <span><kbd>Tab</kbd></span><span>押している間、今の車とセッティングの一覧（ブレーキバランスは走りながら動かした今の値、タイヤは今履いている物。スマホはメニューを開くと出る）。タイヤの小窓（TYRE）には、エンジンの位置（E の四角）と駆動の軸（線。駆動輪のタイヤは白い縁）</span>
         <span data-kg="auto"></span><span>オート運転の切り替え（レース中いつでも）</span>
         <span data-kg="spd"></span><span>倍速（オート運転の間だけ。×1→×2→×3→×5。ボタン「倍速」でも。効果音とエンジン音は止まり（BGM はそのまま）、自分で運転に戻すと×1に戻る。0-400m では使えない）</span>
-        <span>ゲームパッド</span><span>左スティック＝ハンドル、<span class="pbn">RT</span>＝アクセル、<span class="pbn">LT</span>＝ブレーキ（踏み加減が効く）、<span class="pbn">A</span>＝サイドブレーキ、<span class="pbn">B</span>＝巻き戻し、<span class="pbn">X</span>＝ライン、<span class="pbn">Y</span>＝視点、<span class="pbn">LB</span>＝ミラー、<span class="pbn">RB</span>＝ピット、右スティック＝上下で手動変速・左右で横を見る（OPTIONS の「パッドの右スティックの左右」でブレーキバランスにもできる）、左スティック押し込み＝燃料モード、右スティック押し込み＝短く押すと最後の知らせをもう一度・長押しで後ろを見る（ブレーキバランスにした時は押すと知らせをもう一度）、<span class="pbn">START</span>＝ポーズ、<span class="pbn">BACK</span>＝オート運転。メニュー・GARAGE・ポーズ・結果では十字キーで選んで <span class="pbn">A</span> で決定、<span class="pbn">B</span> で戻る（タイトルでは <span class="pbn">START</span> で選んでいる項目を決定、①車〜④出走前では「次へ」「走る」）</span>
+        <span>ゲームパッド</span><span>左スティック＝ハンドル、<span class="pbn">RT</span>＝アクセル、<span class="pbn">LT</span>＝ブレーキ（踏み加減が効く）、<span class="pbn">A</span>＝サイドブレーキ、<span class="pbn">B</span>＝巻き戻し、<span class="pbn">X</span>＝ライン（フォーミュラの決勝ではオーバーテイク、0-400m ではナイトロ）、<span class="pbn">Y</span>＝視点、<span class="pbn">LB</span>＝ミラー、<span class="pbn">RB</span>＝ピット、右スティック＝上下で手動変速・左右で横を見る（OPTIONS の「パッドの右スティックの左右」でブレーキバランスにもできる）、左スティック押し込み＝燃料モード、右スティック押し込み＝短く押すと最後の知らせをもう一度・長押しで後ろを見る（ブレーキバランスにした時は押すと知らせをもう一度）、<span class="pbn">START</span>＝ポーズ、<span class="pbn">BACK</span>＝オート運転。メニュー・GARAGE・ポーズ・結果では十字キーで選んで <span class="pbn">A</span> で決定、<span class="pbn">B</span> で戻る（タイトルでは <span class="pbn">START</span> で選んでいる項目を決定、①車〜④出走前では「次へ」「走る」）</span>
         <span>審判</span><span>接触は実際のレースと同じく、悪い方にだけ点（IP）が付く。2点で警告、4点で＋5秒、6点でドライブスルー（④出走前の「審判」で切れる。「かんたん」は審判なし）。<details class="hx"><summary>くわしく</summary>実際のレースの考え方で責任を決める。追突＝真後ろからは後ろの車が悪い。並走（0.5秒以上並んでいた）の接触＝当たる前に相手の方へ寄った側が悪い（攻める側が寄った、または守る側がスペースを残さずに切り込んだ）。まだ並べていないのに後ろから突っ込んで当たった側（飛び込み）も悪い。ただし前輪が相手の運転席の横まで並びかけていた車に、守る側が寄って当てた時は守る側。守る側が大きく切り込んだ時や、どちらとも言えない接触はレーシングアクシデントで点なし。直線で後ろの車の方へ進路を2回以上変えるブロックにもインシデントポイント（IP）。2点で警告（黒白旗）、4点で＋5秒、6点でドライブスルー（次の周でピットレーンを止まらずに通過。オート運転）、そのあとは2点ごとに＋10秒。最後まで消化できないと＋20秒。IP の付いた CPU は車間をあけて慎重に走る（④出走前の「審判」で切れる）。順位表の名前の右に各車の IP（⚠の数字。2点からは黒白旗の色）とペナルティ（+5s・DT）。自分が絡んだ接触は、相手に点が付いたか、レーシングアクシデントかを無線で知らせる。順位表の印のある行にカーソルを合わせると、いつ・何で・誰との接触で何点付いたか、ペナルティの内容と、あと何点で次の罰かが出る（結果画面は「IP ⓘ」に合わせる）。IP は本格的なレースゲームの「インシデントポイント」にならった呼び方（レースの中でたまって罰が付く。責任を問わず当たった両方に付くゲームもあるが、このゲームは実際のレースの審査と同じく悪い方だけに付く。フォーミュラカーのレースなどの「ペナルティポイント」は通算でたまると出場停止になる別の仕組み）</details></span>
         <span>コース外</span><span>4輪すべてが白線（コーナーは縁石）の外に出て走ると違反。3回までは警告、4回目から1回ごとに＋5秒（設定で切れる）</span>
         <span>旗</span><span>黄旗＝この先に止まった車・スピンした車がいる（注意して減速・その区間は追い越し禁止。止まった車・スピンした車は抜いてよい。審判ありで抜いたら10秒以内に順位を戻す。戻さないと＋5秒）。青旗＝後ろから周回遅れにする速い車が来ている（CPU の周回遅れは、ラインを外して少し緩めて道を譲る。自分が周回遅れの時も譲ると紳士的）</span>
@@ -1652,16 +1654,16 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
         <span>重さの配分</span><span>タイヤは重さが増えるほどグリップの伸びが鈍る（荷重感度）。だから前が重い車は前のタイヤが先に限界になって外へふくらみやすく、後ろが重い車は向きが変わりやすいが後ろが先に限界になる。前後の重さは FF が約6:4、4WD が約57:43（ミッドシップの 4WD は後ろ寄り。ハイパーカーは 41:59）、FR が約52:48、ミッドシップは後ろ寄り、リアエンジン（RR）はさらに後ろ寄りの約4:6（GARAGE に表示）。ブレーキでは前へ、加速では後ろへ重さが移る。曲がる時は外側のタイヤへ重さが移り、内と外で重さが偏るほど、2本を合わせた横のグリップが減る（重心が高く幅の狭い車ほど偏りが大きい。前後どちらが多く受け持つかはスタビライザーで変えられる）。曲がると車体が外へ傾き、タイヤも一緒に傾くので、キャンバー角（タイヤの傾き）の効きも変わる</span>
         <span>車ごとの違い</span><span>車種ごとに空気抵抗とダウンフォースが違う（GARAGE に表示）。空気抵抗が少ない車は直線が速く、ダウンフォースが多い車は高速コーナーが速い。CPU はレースごとに車種（今のクラスに出られる車種から8台）とギア比・ウイング・エンジン特性がくじ引きで変わり、直線が速い車とコーナーが速い車が混ざる（結果画面に各車のセッティング）</span>
         <span>変速機の段</span><span>段の数とギアの比は車ごとに実車の値（4〜7段。軽トールワゴンの CVT は実車のパドルの7段モード、フォーミュラ・EV と実車の値が無い車は6段）。GARAGE の形式に出る「6MT（5速まで）」のような書き方は、実車にある燃費のための高い段は使わず、最高速に届く段（この例は5速）までで走る、という意味</span>
-        <span>フォーミュラ</span><span>GARAGE の「カテゴリー」でフォーミュラにすると、8台すべてが1人乗りのオープンホイールの車になる。軽く（約780kg）、ダウンフォースがとても大きいので、速いコーナーほどツーリングカーより速く曲がれる。後輪駆動。タイヤは強く押し付けられて熱くなるので、スリックのちょうど良い温度もツーリングカー（80〜105℃）より高い 95〜125℃。運転席の視点ではハンドルの表示とハロー（頭を守る輪）が見える。混走クラスとは一緒に使えない</span>
+        <span>フォーミュラ</span><span>GARAGE の「カテゴリー」でフォーミュラにすると、8台すべてが1人乗りのオープンホイールの車になる。軽く（約780kg）、ダウンフォースがとても大きいので、速いコーナーほどツーリングカーより速く曲がれる。後輪駆動。タイヤは強く押し付けられて熱くなるので、スリックのちょうど良い温度もツーリングカー（80〜105℃）より高い 95〜125℃。運転席の視点ではハンドルの表示とハロー（頭を守る輪）が見える。混走クラスとは一緒に使えない。<b>オーバーテイク（OT）</b>：決勝だけ、入れている間は出力が約1割上がる（燃料も約1割多く使う）。<span data-kg="nitro"></span>・パッドの <span class="pbn">X</span>・スマホの「OT」で入り切り。持ち分はレースの長さで決まる合計の秒数（短いレースで約40秒〜最大200秒）。1回に続けて使えるのは持ち分の半分まで、切ってからも持ち分の半分の間は使えない（どちらも最大100秒）。隊列・SC・FCY・ピットの間は使えない（入れていても切れる）。残りは右の小さい計器（OT。スマホはボタン）に。使っている車は空気取り入れ口の上と後ろの翼の支柱のランプが水色に点滅する（CPU も前の車を抜く時・後ろから攻められた時に使う）。<b>カーボンブレーキ</b>：フォーミュラのブレーキはカーボンで、鉄のブレーキと逆に冷えていると効かない（150℃以下はききが約6割、400℃でいっぱいに効き、1000℃から熱だれ）。スタート直後・SC の後・長い直線の後の最初のブレーキは早めに踏む</span>
         <span>混走クラス</span><span>④出走前の「混走クラス」で、自分のクラスと選んだもう1つのクラス（GT3＋GT4 など）が同じレースを走る。速いクラスは前のグリッドから出て、遅いクラスを周回遅れにしながら抜いていく。順位表と結果にクラスの印とクラス内の順位</span>
         <span>クラスと速さの決まり</span><span>GARAGE「車」の「クラス」は実際のレースにならった区分（軽耐久・入門ワンメイク・ツーリングカー・GT4・GT3・GT1）。クラスごとにタイヤの幅・空力（ダウンフォース）・車重の仕様が違い、車種ごとに出られるクラスが決まっている（軽耐久は軽自動車だけ）。CPU の相手は今のクラスに出られる車種から選ぶ。「速さの決まり」：そろえた（BoP）＝同じクラスの車は重りと出力の調整で速さがそろう（実際のレースの性能調整と同じ）／何でもあり＝クラスなし、どの車も一緒に走り、速さは馬力と車重のまま（大きいエンジンは燃料を多く使い、タイヤも減りやすい）</span>
         <span>おすすめ</span><span>GARAGE の「おすすめ」タブ（「車」タブの上の1行からも）で、今のレースの内容（路面・周回数・天気・タイヤ摩耗・エンジン）と選んだドライバーの性格に合う車種とセッティングを、理由つきで出す。「この設定にする」で全部そろう。中身はこのコースをオート運転で走らせて測った値（1周のタイムとタイヤの減り）。差がわずかな所は、ドライバーの性格の好み（攻撃型＝加速寄り、慎重派＝安定、バランス型＝タイヤ長持ちなど）で選ぶ</span>
-        <span>セッティング</span><span>GARAGE でギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン。公道のコースは公道用のタイヤだけ。長持ちするラジアル、雪・氷・砂利道用のスタッドレス・スパイク・グラベルも）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、サスペンション（硬め〜柔らかめ）と車高（低め〜高め）、タイヤの幅、ブレーキ冷却、変速を選べる（駆動方式は車種ごとに元にした実車の1つ〈FF・FR・MR・RR・4WD〉で、チューンでは変えない。GARAGE に表示）。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）</span>
+        <span>セッティング</span><span>GARAGE でギア比、ウイング、ブレーキバランス、タイヤ（雨はレイン。公道のコースは公道用のタイヤだけ。長持ちするラジアル、雪・氷・砂利道用のスタッドレス・スパイク・グラベルも）、冷却、デフ、エンジン特性（トルク曲線のグラフつき）、スタビライザー、サスペンション（硬め〜柔らかめ）と車高（低め〜高め）、タイヤの幅、ブレーキ冷却、変速を選べる（駆動方式は車種ごとに元にした実車の1つ〈FF・FR・MR・RR・4WD〉で、チューンでは変えない。GARAGE に表示）。強いブレーキを続けるとブレーキが熱を持ってききが落ちる（無線で知らせる。直線で冷える）。フォーミュラのカーボンブレーキは逆に冷えていると効かないので、ブレーキ冷却を小さめにして温度を保つ手もある（「フォーミュラ」の欄）</span>
         <span>EV（電気自動車）</span><span>EVセダンは変速なし（ギアの表示は D）。止まった所から最大の力が出る。燃料の代わりに電池（左下の計器が「電池」になる）で、ピットでは充電できない。アクセルを戻した時・ブレーキの時に回生で少し充電する（回生中は計器が緑。満タンに近い間は弱い）。強さは GARAGE の「回生」。電池が熱くなると出力を少し絞る</span>
         <span>タイヤの空気圧</span><span>タイヤの小窓のいちばん上が今の空気圧（bar）。走って温まると上がる。ちょうど良い空気圧なら白、低ければ青、高ければ赤。標準はふだんの走りでちょうど良く、高めは冷たい時（濡れた路面のスリック・走り始め）、低めは攻めて熱い時に合う。GARAGE の「タイヤの空気圧」で変える。自動はスタートでは天気で選び（濡れた路面のスリックは高め）、ピットでタイヤを替える時は直前のタイヤの温度で選び直す。低めは減りが早く、高めは水たまりで浮きにくい</span>
         <span>フラットスポット</span><span>アシスト「なし」でブレーキをロックさせると、前のタイヤが平らに削れる。振動が出て、前のグリップが少し落ちる（タイヤの小窓の前輪に印）。ピットでタイヤを替えるまで直らない</span>
         <span>タイヤの減り</span><span>タイヤは前と後ろで減り方が違う。FF は前（駆動と曲がるのを前輪が受け持つ）、FR・MR は後ろ（駆動）が先に減り、4WD は同じくらい。前が減ると曲がりにくく、後ろが減るとお尻が出やすい。タイヤの小窓（TYRE）に前・後ろの残り。差が開いたら無線が知らせる（ブレーキバランスを、前が減ったら後ろへ・後ろが減ったら前へ。CPU も周の初めに動かす）。ブレーキでロックさせると前が、ホイールスピンは駆動輪が減る。練習表示がコーナーごとに「前を多く減らした／後ろを多く減らした」を知らせる</span>
-        <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、ラジアル 50〜90℃、グラベル 40〜90℃、レイン 35〜65℃、スタッドレス・スパイクはもっと低い）で一番グリップする。熱すぎても滑り、早く減る。公道用のラジアルは熱に弱く、ドリフトや滑らせる走りを続けて上限を超えるとスリックの倍の速さで滑りやすくなる（上限＋15℃で約8%、＋30℃で約16%）。スタート直後とピットで替えた直後は冷えているので、最初の1〜2周は慎重に（曲がる・ブレーキで温まる）。<b>タイヤウォーマー</b>（履く前に温めておく電気の毛布）を使えるのはフォーミュラだけで、中まで約70℃に温めたタイヤで出られる（表面はすぐ冷めるが、中が温かい分だけ早く戻る）。ツーリングカーなどは実際のレースと同じく禁止で、新しいタイヤは外の気温から。④出走前の「タイヤウォーマー」で全部あり・全部なしにもできる。予選も冷えたタイヤで出て、1周目で温めてからアタックする。雨では冷えやすく、スリックは温まらない。タイヤの小窓（TYRE）に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分</span>
+        <span>タイヤの温度</span><span>タイヤは冷えていると滑り、ちょうど良い温度（スリック 80〜105℃、ラジアル 50〜90℃、グラベル 40〜90℃、レイン 35〜65℃、スタッドレス・スパイクはもっと低い）で一番グリップする。熱すぎても滑り、早く減る。公道用のラジアルは熱に弱く、ドリフトや滑らせる走りを続けて上限を超えるとスリックの倍の速さで滑りやすくなる（上限＋15℃で約8%、＋30℃で約16%）。スタート直後とピットで替えた直後は冷えているので、最初の1〜2周は慎重に（曲がる・ブレーキで温まる）。<b>タイヤウォーマー</b>（履く前に温めておく電気の毛布）を使えるのはフォーミュラだけで、中まで約70℃に温めたタイヤで出られる（表面はすぐ冷めるが、中が温かい分だけ早く戻る）。決勝で隊列の1周を省くスタート（静止・ローリング）は、その1周で冷めた分を引くので表面・中とも 50℃ほどから始まる（ピットで替えた直後は中 約70℃）。ツーリングカーなどは実際のレースと同じく禁止で、新しいタイヤは外の気温から。④出走前の「タイヤウォーマー」で全部あり・全部なしにもできる。予選も冷えたタイヤで出て、1周目で温めてからアタックする。雨では冷えやすく、スリックは温まらない。タイヤの小窓（TYRE）に4本の温度を色で表示（青＝冷たい・緑＝ちょうど良い・黄〜赤＝熱い）。外れている時は下にグリップが落ちている分。<b>ブリスター</b>（タイヤ摩耗が「なし」以外の決勝）：タイヤの中がちょうど良い温度の上の端より 15℃以上熱いまま走ると、表面が膨れて剥がれ始める。グリップが落ちて減りが早くなり、ピットで替えるまで直らない（滑らせずに走って冷やせば増えない）。<b>グレイニング</b>（同じく決勝。砂利・雪・氷では起きない）：表面がちょうど良い温度より冷たいタイヤを、グリップの限界を超えて滑らせると表面がささくれてグリップが落ちる。滑らせずに温めて、ちょうど良い温度に入れば1〜2周で取れる。どちらも出たら無線で知らせる</span>
         <span>アップダウン</span><span>コースには上り下り（最大約6%）と、コーナーの軽いバンク（外側が少し高い）がある。上りはよく止まり、下りは止まりにくい。丘の頂上（盛り上がった所）を速く越えると車が軽くなってグリップが減るので、頂上では強く曲がらない・ブレーキしない。くぼみでは押し付けられてグリップが増える</span>
         <span>燃料</span><span>走るほど減って車が軽くなる（終盤ほど少し速い。1周で 入門ワンメイク 約1.9kg・ツーリングカー 約2.3kg・GT4 約2.3kg・GT3 約2.5kg・GT1 約2.6kg・軽耐久 約1.5kg）。タンクは 50kg（ツーリングカーで約20周分。軽いクラスはもっと長く、GT3・GT1 は短い）。スタートは「作戦どおり」なら次のピットまでの分だけ積む（④出走前の「スタートの燃料」で満タンも選べる）。燃料計に残りの量と走れる周の数（ゴールまで足りないと赤。運転席の視点ではダッシュの燃料計で見る）。空になると止まってリタイア。燃料モード（<span data-kg="fuel"></span>・燃料のボタン・パッドの左スティック押し込み）：燃費＝出力 −4.5%・減り −20%・自動変速は早めに上げる（ブレーキの手前で早めにアクセルを戻して惰性で走る〔リフト・アンド・コースト〕と、さらに減らない）／標準／全開＝出力 +2.5%・減り +12%。無線が作戦（ピットの回数と周）と燃料の残りを知らせる。予選は軽く、タイムアタックは一定。タンクは後輪の少し前にあるので、燃料が減ると重さが前へ寄って、ブレーキ中に後ろが少し軽くなる（満タン 50kg→空で、前の重さが約1%増える）</span>
         <span><span data-kg="bbR"></span>／<span data-kg="bbF"></span></span><span>ブレーキバランス（前輪と後輪のブレーキの配分。実際の車の調整ダイヤル）：<span data-kg="bbF"></span>＝前へ、<span data-kg="bbR"></span>＝後ろへ 1% ずつ（50〜72%）。パッドは OPTIONS の「パッドの右スティックの左右」を「ブレーキバランス」にした時だけ右スティックの左右で（はじめの「横を見る」の時はキーで）。前が多いほど安定するが曲がりながらのブレーキで前が逃げる、後ろが多いほど向きが変わるがお尻が出やすい。画面の下のボタン「BB」に今の値（セッティングから変えると色が付く）。練習表示が「ブレーキ中に後ろが流れた／前が逃げた」を知らせる。雨の日は後ろへ：グリップが落ちて減速が弱いと前に荷重が乗りにくいので、後ろへ 2〜5% 動かすと曲がりながらのブレーキで向きが変わる（無線が知らせる。CPU も周の初めに燃料と雨に合わせて動かす）</span>
@@ -2127,7 +2129,7 @@ function buildCar(s,opt={}){mats();
  const secPt=(d,p)=>{const w=hw(d),b=yb(d),ts=Math.max(yS(d),b+.06),tc=Math.max(yC(d),b+.05);const bl=cl((.72-p[0])/.4,0,1);const tt=ts+(tc-ts)*bl;return [p[0]*w,b+p[1]*(tt-b)];};
  const sideX=(d,y)=>{const w=hw(d),b=yb(d),ts=Math.max(yS(d),b+.06);const t=(y-b)/(ts-b);let x=1;for(let i=1;i<sec.length;i++){if(t<=sec[i][1]){const a=sec[i-1],c=sec[i];x=lerp(a[0],c[0],(t-a[1])/((c[1]-a[1])||1));break;}}return x*w;};
  // 断面を並べる位置（端とタイヤの穴の周りは細かく）
- const ds=[];{let d=0;while(d<L){ds.push(d);let st=.09;if(d<.35||d>L-.35)st=.03;for(const a of axD)if(Math.abs(d-a)<Ra+.05)st=.025;d+=st;}ds.push(L);}
+ const ds=[];{let d=0;while(d<L){ds.push(d);let st=0.09;if(d<.35||d>L-.35)st=0.045;for(const a of axD)if(Math.abs(d-a)<Ra+.05)st=0.035;d+=st;}ds.push(L);}
  const g=new THREE.Group();const COL=s.col??opt.color??0xc8202a;const two2=opt.two||s.two,band=s.band;
  const paintV=paintMat((two2||band)?0xffffff:COL);const paint=paintMat(two2?two2.hi:COL,false);
  const ghMat=s.softTop!=null?new THREE.MeshStandardMaterial({color:s.softTop,roughness:.95,metalness:0,side:THREE.DoubleSide}):paintV;
@@ -2172,7 +2174,7 @@ function buildCar(s,opt={}){mats();
   const ring=[...P.map(p=>[p,1]),...P.slice(0,-1).reverse().filter(p=>p>0).map(p=>[p,-1])];
   // 輪：上の真ん中から右回り→下→左→上の真ん中（重なり無し）
   const R2=[...P.slice().reverse().map(p=>[p,1]),...P.slice(1).map(p=>[p,-1])];
-  const zs=[];for(let i=0;i<=48;i++)zs.push(lerp(d0,d3,i/48));
+  const zs=[];for(let i=0;i<=32;i++)zs.push(lerp(d0,d3,i/32));
   const S=zs.map(d=>R2.map(([p,sg])=>{const o=outline(d,p);return BV(sg*o[0],o[1],d);}));
   let wE=d1;for(let d=d0;d<=d1;d+=.01)if(yt(d)>=yR-(s.wsHdr??.07)){wE=d;break;}
   if(s.softTop!=null){const dS=Math.min(d1+.02,wE+.06),k=zs.findIndex(d=>d>=dS);const ring=d=>R2.map(([p,sg])=>{const o=outline(d,p);return BV(sg*o[0],o[1],d);});
@@ -2199,17 +2201,17 @@ function buildCar(s,opt={}){mats();
   const m=G.m??.05;
   // 前のガラスは屋根の手前（屋根より 7cm 低い所）まで、後ろのガラスは屋根より 7cm 低い所から。屋根の縁と柱を塗装で残す
   let rS=d2;for(let d=d3;d>=d2;d-=.01)if(yt(d)>=yR-(s.rwHdr??.07)){rS=d;break;}
-  if(wE-d0>.05)gl(d0+.03,wE,0,.42,1,12,12,true);           // 前のガラス
+  if(wE-d0>.05)gl(d0+.03,wE,0,.42,1,8,8,true);           // 前のガラス
   const dAtY=(y,a=d2,b=d3)=>{for(let i=0;i<32;i++){const m=(a+b)/2;if(yt(m)>y)a=m;else b=m;}return (a+b)/2;};
   if(s.backGlass){const [lo,hi,inX]=s.backGlass,y0=ybG(d3)+lo,y1=yR-hi;           // 後ろのドアのガラス（立った面に貼る）
    add(sheet(12,10,(u,v)=>{const y=lerp(y0,y1,v),w=outline(dAtY(y),.4)[0]-inX,x=lerp(-w,w,u),d=dAtY(y+crown*(x/(w+inX))**2)+.012;return BV(x,y,d);}),MAT.glass);}
   else if(s.rw){const [pb,tg,bg]=s.rw,a=dAtY(yR-tg,d2,d3),b=dAtY(ybG(d3)+bg,d2,d3);if(b-a>.04)gl(a,b,0,pb,1,10,10,true);} // 幌の小さな後ろの窓
-  else if(d3-rS>.05&&!s.noRear)gl(rS,d3-.03,0,.42,1,10,12,true);  // 後ろのガラス
+  else if(d3-rS>.05&&!s.noRear)gl(rS,d3-.03,0,.42,1,8,8,true);  // 後ろのガラス
   const wins=s.wins?s.wins.map(w=>[w[0]*L,w[1]*L]):[[d0+.06,G[4]?G[4]*L-.04:lerp(d1,d2,.45)],[G[4]?G[4]*L+.05:lerp(d1,d2,.45)+.09,(G[5]??lerp(G[2],G[3],.3))*L]];
   if(s.bus){wins.length=0;const a=.11*L,b=.975*L,n=Math.round((b-a)/1.2);for(let i=0;i<n;i++)wins.push([a+(b-a)*i/n+.04,a+(b-a)*(i+1)/n-.04]);}
   // 横の窓は前のガラスがある程度立ち上がった所から始める（正面から見て横の窓が柱の外に見えないように。手前は柱として塗る）
   {let dS=d0;for(let d=d0;d<=d1;d+=.01)if(yt(d)-ybG(d)>=(yR-ybG(d))*(s.winStart??.22)){dS=d;break;}if(wins.length&&!s.bus){wins[0][0]=Math.max(dS,d0+.04);if(wins[0][0]-d0>.08)two(sg=>{const f=(u,v)=>{const d=lerp(d0+.05,wins[0][0]-.015,u),p=lerp(s.winTop??.503,.978,v),o=outline(d,p);return BV(sg*(o[0]+.006),o[1],d);};add(sheet(6,6,f),MAT.black);});}}
-  const cS=s.cSlant??({sedan:.13,sports:.16,race:.16,kei:.06}[s.cat]??0);wins.forEach(([a,b],i)=>two(sg=>gl(a,b,s.winTop??.503,.978,sg,14,6,false,i===wins.length-1&&!s.bus?cS:0)));
+  const cS=s.cSlant??({sedan:.13,sports:.16,race:.16,kei:.06}[s.cat]??0);wins.forEach(([a,b],i)=>two(sg=>gl(a,b,s.winTop??.503,.978,sg,10,4,false,i===wins.length-1&&!s.bus?cS:0)));
   gh.gm={doors:(s.doors||[]).map(f=>+(f*L).toFixed(3)),sill:+(Math.max(yb(L/2),bot(L/2))+(s.sillH??.15)).toFixed(3),wins:wins.map(([a,b])=>{const dm=(a+b)/2,yt2=outline(dm,s.winTop??.503)[1],yb2=outline(dm,.975)[1];return {len:+(b-a).toFixed(3),h:+(yt2-yb2).toFixed(3),hFront:+(outline(a+.02,.51)[1]-outline(a+.02,.975)[1]).toFixed(3),hB:+(outline(b-.05,s.winTop??.503)[1]-outline(b-.05,.975)[1]).toFixed(3),a:+a.toFixed(3),b:+b.toFixed(3)};}),
    belt0:+ybG(d0).toFixed(3),belt3:+ybG(d3).toFixed(3),roof:+yR.toFixed(3),ws:+Math.hypot(d1-d0,yR-ybG(d0)).toFixed(3),wsAng:+(Math.atan2(yR-ybG(d0),d1-d0)*180/Math.PI).toFixed(1),roofLen:+(d2-d1).toFixed(3),
    nose:+yS(0.05).toFixed(3),flushGap:+(hw(L/2)-ghw(L/2)).toFixed(4),bodyAtBelt:+sideX(L/2,ybG(L/2)).toFixed(4),hwMid:+hw(L/2).toFixed(4),cowl:+yS(d0-.05).toFixed(3),wsBase:+(2*outline(d0+.02,.95)[0]).toFixed(3),wsTop:+(2*outline(wE-.02,.42)[0]).toFixed(3)};
@@ -2227,14 +2229,14 @@ function buildCar(s,opt={}){mats();
  // ---- タイヤとホイール
  const wheels=[];
  const mkW=(d,sg,front)=>{const p=new THREE.Group();p.position.set(sg*(W/2-tw/2-(s.tuck??(s.cat==='sports'||s.cat==='race'?.05:.08))+ofX),wr,dz(d)); /* T686 +ofX */g.add(p);
-  const tg=new THREE.CylinderGeometry(wr,wr,tw,32,1);add(tg,MAT.rubber,0,0,0,0,0,Math.PI/2,p);
-  const sw=new THREE.TorusGeometry(wr-.035,.032,8,32);add(sw,MAT.tread,sg*(tw/2-.01),0,0,0,Math.PI/2,0,p);
+  const tg=new THREE.CylinderGeometry(wr,wr,tw,24,1);add(tg,MAT.rubber,0,0,0,0,0,Math.PI/2,p);
+  const sw=new THREE.TorusGeometry(wr-.035,.032,6,24);add(sw,MAT.tread,sg*(tw/2-.01),0,0,0,Math.PI/2,0,p);
   const rr2=wr*(s.rimR||.7),rm=MAT[s.rim||'rim'];
-  add(new THREE.CylinderGeometry(rr2,rr2,.02,28),MAT.rimDark,sg*(tw/2-.035),0,0,0,0,Math.PI/2,p);
-  add(new THREE.TorusGeometry(rr2-.012,.014,6,28),rm,sg*(tw/2-.012),0,0,0,Math.PI/2,0,p);
+  add(new THREE.CylinderGeometry(rr2,rr2,.02,20),MAT.rimDark,sg*(tw/2-.035),0,0,0,0,Math.PI/2,p);
+  add(new THREE.TorusGeometry(rr2-.012,.014,6,20),rm,sg*(tw/2-.012),0,0,0,Math.PI/2,0,p);
   const nsp=s.spokes||5;for(let i=0;i<nsp;i++){const a=i/nsp*Math.PI*2;const sp=box(.02,rr2*.92,s.spokeW||.05,rm,sg*(tw/2-.018),Math.cos(a)*rr2*.46,Math.sin(a)*rr2*.46,a,0,0,p);}
-  add(new THREE.CylinderGeometry(rr2*.18,rr2*.2,.03,12),rm,sg*(tw/2-.015),0,0,0,0,Math.PI/2,p);
-  if(s.caliper!==0){add(new THREE.CylinderGeometry(rr2*.85,rr2*.85,.02,24),MAT.brake,sg*(tw/2-.07),0,0,0,0,Math.PI/2,p);box(.05,.12,.09,s.caliper===2?MAT.rimDark:MAT.caliper,sg*(tw/2-.06),rr2*.55,front?-.12:.12,0,0,0,p);}
+  add(new THREE.CylinderGeometry(rr2*.18,rr2*.2,.03,8),rm,sg*(tw/2-.015),0,0,0,0,Math.PI/2,p);
+  if(s.caliper!==0){add(new THREE.CylinderGeometry(rr2*.85,rr2*.85,.02,16),MAT.brake,sg*(tw/2-.07),0,0,0,0,Math.PI/2,p);box(.05,.12,.09,s.caliper===2?MAT.rimDark:MAT.caliper,sg*(tw/2-.06),rr2*.55,front?-.12:.12,0,0,0,p);}
   wheels.push(p);};
  for(const a of axD)two(sg=>mkW(a,sg,a===axD[0]));
  // ---- T686 オーバーフェンダー：タイヤの穴の縁（半径 Ra）から外へ帯を作る。断面は 内側の返し→縁の外端（張り出し ex）→…→外の縁（車体の面へ戻る）。
@@ -2565,13 +2567,13 @@ const OTSN={e:'早めに使う',b:'ふつう',l:'終盤に取っておく',d:'�
 const otsShow=()=>!!XOS&&sess==='race'&&isForm();
 function otsOk(k){return otsShow()&&state==='race'&&!k.pit&&!k.finished&&!k.dnf&&!cau()&&!(ROLL.on&&!ROLL.green);}
 function otsOff(k){if(k.otA){k.otA=0;k.otCd=xoC();if(k.isPlayer)otsBtn(k);}}
-function otsTog(k){if(!k||!otsShow())return;if(k.otA){otsOff(k);return;}if(!otsOk(k)||k.otCd>0||!(k.otL>0)){if(k.isPlayer&&!autoPlay&&k.otCd>0)telop('オーバーテイク','あと '+Math.ceil(k.otCd)+' 秒使えない');return;}k.otA=1;k.otU=0;if(k.isPlayer)otsBtn(k);}
-let otsLb='',otsPT=0;addEventListener('resize',()=>setTimeout(otsPos,350)); /* T894② */function otsPos(){if(typeof document.querySelector!=='function')return;const b=$('nosBtn'),d=document.querySelector('.tb[data-k="drift"]');if(!b||!d||!document.body.classList.contains('otsOn'))return;const r=d.getBoundingClientRect();if(!(r.width>0))return;Object.assign(b.style,{position:'fixed',left:Math.max(0,r.left-r.width-8)+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});} /* T888⑥ スマホは「サイド」のすぐ左に同じ大きさで */
+function otsTog(k){if(!k||!otsShow())return;if(k.otA){otsOff(k);return;}if(!otsOk(k)||k.otCd>0||!(k.otL>0)){if(k.isPlayer&&!autoPlay){const w=!(k.otL>0)?'使い切った':ROLL.on&&!ROLL.green?'隊列の間は使えない':SC.on?'SC の間は使えない':FCY.on?'FCY の間は使えない':k.pit?'ピットの間は使えない':state!=='race'?'スタートしてから使える':k.otCd>0?'あと '+Math.ceil(k.otCd)+' 秒使えない':'',n=performance.now();if(w&&(w!==otsNW||n-otsNT>1500)){otsNW=w;otsNT=n;telop('オーバーテイク',w);}}return;} /* T878 前は待ち時間の時だけ一言 */k.otA=1;k.otU=0;if(k.isPlayer)otsBtn(k);}
+let otsLb='',otsPT=0,otsNW='',otsNT=-1e9; /* T878 使えない時の一言を続けて出さない */addEventListener('resize',()=>setTimeout(otsPos,350)); /* T894② */function otsPos(){if(typeof document.querySelector!=='function')return;const b=$('nosBtn'),d=document.querySelector('.tb[data-k="drift"]');if(!b||!d||!document.body.classList.contains('otsOn'))return;const r=d.getBoundingClientRect();if(!(r.width>0))return;Object.assign(b.style,{position:'fixed',left:Math.max(0,r.left-r.width-8)+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px'});} /* T888⑥ スマホは「サイド」のすぐ左に同じ大きさで */
 function otsBtn(k){const b=$('nosBtn');if(!b)return;const t=k.otA?'OT '+Math.ceil(k.otL):k.otCd>0?'待 '+Math.ceil(k.otCd):'OT '+Math.ceil(k.otL||0);b.classList.toggle('on',!!k.otA);if(t!==otsLb){otsLb=t;b.textContent=t;}if(isTouch){const n=performance.now();if(n-otsPT>500){otsPT=n;otsPos();}} /* T894②④ */}
 function otsStep(k,dt){if(!otsShow()||k.otL==null)return;
  if(k.otA){if(!otsOk(k))otsOff(k);else{k.otL=Math.max(0,k.otL-dt);k.otU+=dt;if(k.otL<=0||k.otU>=xoX()){otsOff(k);if(k.isPlayer&&k.otL<=0)radio('オーバーテイクを使い切った','ots0',99);}}}else if(k.otCd>0)k.otCd=Math.max(0,k.otCd-dt);
  k.otKT=(k.otKT||0)-dt;if(k.otKT<=0||k.otLK==null){k.otKT=XOI;k.otLK=k.otL;}
- if(k.isPlayer){otsBtn(k);if(otsOk(k)&&!RDS.ots&&!autoPlay){RDS.ots=1;radio('オーバーテイクは決勝で合計 '+xoB()+'秒（1回 最大'+Math.round(xoX())+'秒・切ってから'+Math.round(xoC())+'秒は使えない）。'+(isTouch?'「OT」のボタン':kTx('nitro'))+'で入り切り。後ろの車のランプも見ておこう','ots',99);}}
+ if(k.isPlayer){otsBtn(k);if(otsOk(k)&&!RDS.ots&&!autoPlay){RDS.ots=1;radio(isTouch?'オーバーテイクは合計 '+xoB()+'秒・1回 '+Math.round(xoX())+'秒まで。「OT」で入り切り':'オーバーテイクは決勝で合計 '+xoB()+'秒（1回 最大'+Math.round(xoX())+'秒・切ってから'+Math.round(xoC())+'秒は使えない）。'+kTx('nitro')+'で入り切り。後ろの車のランプも見ておこう','ots',99); /* T878 スマホは短く */}}
  if(k.isPlayer&&!autoPlay&&XSTY&&RDS.ots&&!RDS.otsS&&otsOk(k)&&raceTime-raceT0>20&&k.u>15){const pk=progress(k);for(const o of karts){if(o===k||o.isPlayer||o.dnf||o.pit||o.finished)continue;const d=progress(o)-pk,y=otSty(o);if(Math.abs(d)<k.u*1.5&&y!=='b'){RDS.otsS=1;radio((d>0?'前':'後ろ')+'の'+o.name+'は、オーバーテイクを「'+OTSN[y]+'」型だ'+(y==='l'?'。終盤に気をつけて':y==='d'?'。仕掛けると守りに使ってくる':y==='e'?'。早めに使い切るかも':''),'otsS',99);break;}}}
  if(!k.isPlayer||autoPlay)otsAI(k,dt);}
 function otsAI(k,dt){k.otT0=(k.otT0||0)-dt;if(k.otT0>0)return;k.otT0=.25;if(!otsOk(k)||k.u<15)return;
@@ -4227,7 +4229,8 @@ const kitOf=c=>isForm()?null:freeOn()?KST:KIT[c];
 /* T11② 賞金でパーツ・③ 成績で開いていくガレージ。… */
 let ECO={p:0,g:0};try{const o=JSON.parse(localStorage.getItem('popkart_eco')||'{}');ECO={p:o&&o.p?1:0,g:o&&o.g?1:0};}catch(_){}
 let tnOwn={};try{const o=JSON.parse(localStorage.getItem('popkart_own')||'{}');if(o&&typeof o==='object'&&!Array.isArray(o))tnOwn=o;}catch(_){}
-function ecoFirst(){let had=true;try{had=localStorage.getItem('popkart_eco')!=null;}catch(_){}if(had||ECO.p)return;ECO.p=1;ecoSave();tnKey='';recKey='';try{markSeg('ecoPSeg',1);}catch(_){}setTimeout(()=>toast('ここからは、レースの賞金でパーツを買って車を強くできます（④出走前の「くわしい決まり」で「全部持っている」に戻せる）'),1200);} /* T685④A FIRST DRIVE を済ませたら賞金・パーツをオン（まだ選んでいない人だけ） */
+function ecoFirst(){let had=true;try{had=localStorage.getItem('popkart_eco')!=null;}catch(_){}if(had||ECO.p)return;ECO.p=1;ecoSave();tnKey='';recKey='';try{markSeg('ecoPSeg',1);}catch(_){}ecoTipP=1;setTimeout(ecoTip,1200);}
+let ecoTipP=0;function ecoTip(){if(!ecoTipP||autoPlay||isCh()||dyOn)return;ecoTipP=0;toast('ここからは、レースの賞金でパーツを買って車を強くできます（④出走前の「くわしい決まり」で「全部持っている」に戻せる）');} /* T878 課題①の始めに出て、止まる練習と関係が薄かった */ /* T685④A FIRST DRIVE を済ませたら賞金・パーツをオン（まだ選んでいない人だけ） */
 const ecoSave=()=>{lsPut('popkart_eco',JSON.stringify(ECO),'設定');lsPut('popkart_own',JSON.stringify(tnOwn),'買ったパーツ');};
 const PRZB=[30000,20000,15000,10000,8000,6000,4000,3000],PRZA=[.6,.8,1,1.2,1.5],PRZC=[50000,30000,15000],yen=v=>'¥'+Math.round(v).toLocaleString();
 const TNPR=[[0,15000,35000],null,[0,20000,50000],[0,15000,40000],[0,15000,45000],[0,10000,25000]],TNPR_NA=[0,60000,90000],TNPR_TB=[0,20000,55000],TNPR_EV=[0,60000,90000]; /* T628 EV のモーター・バッテリー */ // パーツの値段（種類×段。過給機は自然吸気／ターボの車で別）
@@ -4890,7 +4893,7 @@ const makeCar=(dr,num,ci)=>carLod(ci===FCI?mkFormula(dr,num):makeKart(dr,num,ci)
 let LODD=isTouch?32:55; /* T262 スマホは 55→32m */
 let LODM=isTouch?12:18; /* T297① これより先（LODD まで）は細部を1つにまとめた形で描く */
 /* T643 新しい車体の遠い段の形。頂点を c m の升目でまとめる（位置は升ごとの平均、法線・色は升と向き〈6方向〉ごとの平均）。潰れた三角形・重なった三角形は捨てる */
-const NBFC=.1,NBSC=.06,NBFN=600,_nbF=new WeakMap();
+const NBFC=.1,NBSC=0.1,NBFN=600,_nbF=new WeakMap();
 const NBMC=.06,NBFD=.3,NBFF=.05; /* T650 中くらいの段の塗装・ガラスの升目（影の形と同じ）・遠い段に残す細部の大きさ（半径 m）・その粗い形の升目（10cm だと羽根の板が潰れた） */
 function nbCoarse(ge,c,ck){const p=ge.attributes.position,nr=ge.attributes.normal,co=ge.attributes.color,ix=ge.index,n=ix?ix.count:p.count,cell=new Map(),kmap=new Map(),cid=new Int32Array(n),kid=new Int32Array(n),CP=[],KN=[],KC=[],KK=[];
   for(let q=0;q<n;q++){const i=ix?ix.getX(q):q,x=p.getX(i),y=p.getY(i),z=p.getZ(i),key=Math.floor(x/c)+','+Math.floor(y/c)+','+Math.floor(z/c)+(ck&&co?'|'+Math.round(co.getX(i)*12)+','+Math.round(co.getY(i)*12)+','+Math.round(co.getZ(i)*12):'') /* T650 */;let a=cell.get(key);if(a===undefined){a=CP.length/4;cell.set(key,a);CP.push(0,0,0,0);}CP[a*4]+=x;CP[a*4+1]+=y;CP[a*4+2]+=z;CP[a*4+3]++;cid[q]=a;
@@ -5267,7 +5270,7 @@ function onLap(k){
     if(!solo()&&valid&&(!fastLap||lt<fastLap.t)){fastLap={t:lt,k};telop('FASTEST LAP',k.name+'　'+fmt(lt),'purple');}}
   if(k.isPlayer&&fdRun&&sess==='ta'&&solo()&&k.lap>LAPS&&LAPS<FDMX&&!k.best&&!k.ret&&!k.finished&&!k.dnf){LAPS=k.lap;toast('前の周は数えません　この周から数え直します');sfx('lap');} /* T680① 無効の周の後も続けて回れる */
   if(k.lap>LAPS&&!k.finished&&!k.dnf){k.finished=true;k.finishTime=raceTime-(isSS()?raceT0:0)+(k.polPen||0) /* 警察の罰 */ /* T821 SS のローリングスタートは線から */;finishOrder.push(k);
-    if(k.isPlayer){const r=finishOrder.length;showBanner('FINISH');toast(PRAC?'練習走行 終了':sess==='quali'?'予選終了':isSS()?'ステージ ゴール　'+fmt(raceTime-raceT0):r+'位でフィニッシュ');sfx('finish');state='finished';afterFinish=0;}}
+    if(k.isPlayer){const r=finishOrder.length;showBanner('FINISH');toast(PRAC?'練習走行 終了':sess==='quali'?'予選終了':isSS()?'ステージ ゴール　'+fmt(raceTime-raceT0):sess==='ta'||karts.length<2?'フィニッシュ':r+'位でフィニッシュ'); /* T878 1台の時に「1位でフィニッシュ」と出ていた */sfx('finish');state='finished';afterFinish=0;}}
   else if(k.isPlayer&&!solo()&&k.lap>=2&&k.lap<=LAPS){if(k.lap===LAPS){toast('ファイナルラップ');sfx('final');}else{toast('ラップ '+k.lap);sfx('lap');}}
   else if(sp&&sess==='quali'&&k.lap===2)telop('QUALIFYING','最後の1周（アタックラップ）');
   if(sess==='race'&&k.lap<2&&FL1)k.fbN=0; // T384：スタートの位置からラインまでの減りを1周目に足さない（以前は足していて、1周の減りを2割多く見積もり、全車が2周目だけ燃費モードになっていた）
@@ -5355,7 +5358,7 @@ function makeGrid(){const o=[];for(let i=0;i<8;i++)if(i!==playerChoice)o.push(i)
   if(gridMode===3)o.splice(4,0,playerChoice);else if(gridMode!==1)o.push(playerChoice); /* T264 中団＝5番手 */
   if(mixSel&&evCls){const sp=d=>CC[dCls(d)].top;return o.slice().sort((x,y)=>sp(y)-sp(x));} // T164 混走は速いクラスが前（クラスの中の並びはそのまま。…
   return o;}
-function startSession(s){sess=s;fdSpH=[];fdSpT=-99;fdSpLast=''; /* T699 */try{tslRun={ck:tslCar(),sig:tslSig()};}catch(_){tslRun=null;} /* T418 走り出した時の設定 */if(s!=='race')PRAC=0;QDB=s==='quali'&&!autoPlay?{T:0,cT:0,uE:0,uB:0,oX:0,oB:0,lk:0,lim:0,st:0,ws:0,hl:0}:null;$('qsSetBtn').hidden=true;$('resAdv').hidden=true; /* T664 */{const ez=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn;document.body.classList.toggle('ez',ez);document.body.classList.toggle('ezs',ez&&(s!=='race'||lapsEff()<8));} /* T264③ かんたん */document.body.classList.toggle('mix',s==='race'&&!!mixSel);LAPS=s==='race'?(PRAC?pracSel:lapsEff()):s==='quali'?2:s==='ta'&&(ssOn||fdRun&&chOn==null&&!dyOn)?1:999 /* T402 FIRST DRIVE も1周 */;document.body.classList.toggle('solo',solo());document.body.classList.toggle('drag',s==='drag');if(s==='race'&&PRAC){PRM=[];}startRace();}
+function startSession(s){sess=s;if(ecoTipP)setTimeout(ecoTip,1500); /* T878 */fdSpH=[];fdSpT=-99;fdSpLast=''; /* T699 */try{tslRun={ck:tslCar(),sig:tslSig()};}catch(_){tslRun=null;} /* T418 走り出した時の設定 */if(s!=='race')PRAC=0;QDB=s==='quali'&&!autoPlay?{T:0,cT:0,uE:0,uB:0,oX:0,oB:0,lk:0,lim:0,st:0,ws:0,hl:0}:null;$('qsSetBtn').hidden=true;$('resAdv').hidden=true; /* T664 */{const ez=wearMode===0&&dmgMode===1&&assistLv===0&&!judgeOn;document.body.classList.toggle('ez',ez);document.body.classList.toggle('ezs',ez&&(s!=='race'||lapsEff()<8));} /* T264③ かんたん */document.body.classList.toggle('mix',s==='race'&&!!mixSel);LAPS=s==='race'?(PRAC?pracSel:lapsEff()):s==='quali'?2:s==='ta'&&(ssOn||fdRun&&chOn==null&&!dyOn)?1:999 /* T402 FIRST DRIVE も1周 */;document.body.classList.toggle('solo',solo());document.body.classList.toggle('drag',s==='drag');if(s==='race'&&PRAC){PRM=[];}startRace();}
 /* T664 予選の後のセッティングとアドバイス（ご本人 2026-10-31「予選後に結果見てセッティングを変える機会が欲しいかもですね、更にソコでアドバイスも有ると尚良いかもです」）。… */
 let QDB=null,qsFlow=0,LLHT=1.15,LLHX=.85; /* T699 LLHT＝背の高い車とみる重心の高さ÷トレッドの倍率（基準の車との比）・LLHX＝内側の荷重がほとんど抜けたとみる左右の荷重移動の割合 */
 function qdbStep(k,dt,ctl){const q=QDB;q.T+=dt;if(k.gear===kT(k)&&k.rpm>REDLINE-150&&ctl.accel)q.lim+=dt;if(k.u>12&&!CORNER[k.idx])q.st+=dt;if(k.locked&&ctl.brake)q.lk+=dt;
@@ -7885,7 +7888,7 @@ function ckGauge3(p,dt){if(!CK.cv3)return;CK.t3-=dt;if(CK.t3>0)return;CK.t3=.25;
   const X=i=>30+i*60,Y=31,R=25;
   if(p.ev){gMiniV(g,X(0),Y,R,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMiniV(g,X(1),Y,R,Math.max(0,ew),0,mx,mx*9,mx*9,'POWER',Math.max(0,ew)+'kW');gMiniV(g,X(2),Y,R,Math.max(0,-ew),0,mx*.6,mx,mx,'REGEN',Math.max(0,-ew)+'kW');}
   else{gMiniV(g,X(0),Y,R,tw,50,130,105,115,'WATER',Math.round(tw)+'°C');gMiniV(g,X(1),Y,R,to,60,150,125,138,'OIL',Math.round(to)+'°C');
-   if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,X(2),Y,R,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OT ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OT',Math.round(p.otL)+'s');else gMiniV(g,X(2),Y,R,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);}
+   if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,X(2),Y,R,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OT ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OT',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,X(2),Y,R,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);}
   gMiniV(g,X(3),Y,R,br,0,bFt(p)+100,bFt(p)-150,bFt(p),'BRAKE',Math.round(br)+'°C');
   gMiniV(g,X(4),Y,R,fu?fr*100:0,0,100,999,999,p.ev?'BATT':'FUEL',fu?lp.toFixed(1)+'周':'—',!fu);
   g.setTransform(1,0,0,1,0,0);CK.tex3.needsUpdate=true;}
@@ -8396,12 +8399,13 @@ let msgPT=0,msgPS=0,msgPK='';function msgPlace(el,on){const now=performance.now(
   else if(msgPS){msgPS=0;c.style.left=c.style.bottom=c.style.top=c.style.width=c.style.justifyContent='';}} /* T606①④ 自分で付けた位置だけ消す（前はスマホでも毎回消していたので、配置〈T601〉の位置が消えて列が左上の速度計に重なり、列の上に出すテロップが画面の外へ出ていた） */
 function lgSet(v){lgMode=v;lgK='';try{markSeg('lgSeg',v);}catch(_){}saveSettings();lgUi();}
 /* 水温・油温・ブーストを丸いメーター（回転計の中にあった小さな丸メーターと同じ目盛り・色）で縦に3つ。… */
-function gMiniV(g,cx,cy,r,v,lo,hi,warn,crit,label,txt,na){const a0=Math.PI*.8,a1=Math.PI*2.2,an=x=>a0+(a1-a0)*Math.max(0,Math.min(1,(x-lo)/(hi-lo)));
+function gMiniV(g,cx,cy,r,v,lo,hi,warn,crit,label,txt,na,lc){ /* T878 lc＝状態の字の色（OT。字も大きく） */const a0=Math.PI*.8,a1=Math.PI*2.2,an=x=>a0+(a1-a0)*Math.max(0,Math.min(1,(x-lo)/(hi-lo)));
   g.fillStyle='rgba(10,12,16,.62)';g.beginPath();g.arc(cx,cy,r+3,0,7);g.fill();g.globalAlpha=na?.4:1;
   g.lineCap='butt';gArc(g,cx,cy,r-3,an(warn),an(crit),GAM,3);gArc(g,cx,cy,r-3,an(crit),a1,GRD,3);
   for(let i=0;i<=4;i++){const a=a0+(a1-a0)*i/4;gNeedle(g,cx,cy,r-9,r-4,a,GWH,1.5);}
   const hot=na?GWH:v>=crit?GRD:v>=warn?GAM:GWH;if(!na)gNeedle(g,cx,cy,0,r-5,an(v),hot,2.4);g.beginPath();g.arc(cx,cy,3.2,0,7);g.fillStyle=GWH;g.fill();
-  g.textAlign='center';g.textBaseline='middle';g.fillStyle='rgba(200,206,214,.9)';g.font='700 9px '+GF;g.fillText(label,cx,cy+r-4);g.fillStyle=hot;g.font='italic 800 14px '+GF;g.fillText(txt,cx,cy+r+11);g.globalAlpha=1;}
+  g.textAlign='center';g.textBaseline='middle';g.fillStyle=lc||'rgba(200,206,214,.9)';g.font='700 '+(lc?11:9)+'px '+GF;g.fillText(label,cx,cy+r-4);g.fillStyle=lc&&lc!==GWH?lc:hot;g.font='italic 800 14px '+GF;g.fillText(txt,cx,cy+r+11);g.globalAlpha=1;}
+const otLc=p=>p.otA?'#ffa000':p.otCd>0?'#5cb4ff':GWH; /* T878 OT の計器の色：入＝橙・待ち＝青 */
 let mtrCv=null;function mtrUi(p){const el=$('mtr');if(!el)return;const on=!isTouch&&!!p&&sess!=='drag'&&state!=='title'&&!document.body.classList.contains('ez')&&!document.body.classList.contains('ckv') /* T691② 運転席はダッシュの丸いメーター */ /* T685① かんたんは水温・油温を出さない（T315 の決まりが縦の計器に通っていなかった） */;if(el.hidden===on)el.hidden=!on;if(!on)return;
   if(!mtrCv){el.innerHTML='<canvas width="152" height="416"></canvas>';mtrCv=el.firstChild;}
   const tw=p.tw??90,to=p.to??100,tb=!!(p.tq&&p.tq.tb),bs=tb?(p.bst??0):0,ew=Math.round(p.evkW||0),mx=Math.max(1,(p.ps||300)*.7355),k=(p.ev?'ev|'+Math.round(p.btT||0)+'|'+ew:Math.round(tw)+'|'+Math.round(to)+'|'+(tb?Math.round(bs*50):'-'))+(otsShow()?'|o'+(p.otA?1:0)+Math.round(p.otL||0)+'_'+Math.ceil(p.otCd||0):'');if(k===mtrK)return;mtrK=k;
@@ -8409,7 +8413,7 @@ let mtrCv=null;function mtrUi(p){const el=$('mtr');if(!el)return;const on=!isTou
   if(p.ev){gMiniV(g,38,27,23,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMiniV(g,38,96,23,Math.max(0,ew),0,mx,mx*9,mx*9,'POWER',Math.max(0,ew)+'kW');gMiniV(g,38,165,23,Math.max(0,-ew),0,mx*.6,mx,mx,'REGEN',Math.max(0,-ew)+'kW');return;} /* T476 EV は電池の温度・出力・回生 */
   gMiniV(g,38,27,23,tw,50,130,105,115,'WATER',Math.round(tw)+'°C');
   gMiniV(g,38,96,23,to,60,150,125,138,'OIL',Math.round(to)+'°C');
-  if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,38,165,23,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OT ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OT',Math.round(p.otL)+'s');else gMiniV(g,38,165,23,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);} /* T888⑥ 過給機の無いフォーミュラは BOOST の欄にオーバーテイクの残り */
+  if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,38,165,23,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OT ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OT',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,38,165,23,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);} /* T888⑥ 過給機の無いフォーミュラは BOOST の欄にオーバーテイクの残り */
 function carSt(p){const lv=(v,a,b)=>v>=b?'#ff4a3d':v>=a?'#f5b400':'';const dm=dmgMode===2||isSS()&&rly;
   const ty=sess==='quali'?['Q','#ff5ad2']:TYB[p.ty??(p.rain?1:0)]||TYB[0];
   const wing=dm&&lv(p.dmW||0,.15,.5)||'rgba(240,242,245,.55)',sv=Math.max(Math.abs(p.dmA||0),p.dmS||0),susC=dm&&lv(sv,.12,.4),sus=susC||'rgba(240,242,245,.8)';
@@ -8812,7 +8816,7 @@ let upTip=0;const keyNm=a=>(keyB[a]||[]).map(keyName);
 const kN1=a=>keyNm(a)[0]||'－';
 const kTx=a=>{const c=(keyB[a]||[])[0];return c?keyName(c)+(/^(Mouse|Wheel)/.test(c)?'':' キー'):'割り当てなし';};
 const kEsc=t=>String(t).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch]);
-const KBTN={rwBtn:'rew',pitBtn:'pit',fuelBtn:'fuel',lineBtn:'line',camBtn:'cam',mirBtn:'mir',hudBtn:'hud',autoBtn:'auto',spdBtn:'spd',bgmBtn:'bgm'};
+const KBTN={rwBtn:'rew',pitBtn:'pit',fuelBtn:'fuel',lineBtn:'line',nosBtn:'nitro',camBtn:'cam',mirBtn:'mir',hudBtn:'hud',autoBtn:'auto',spdBtn:'spd',bgmBtn:'bgm'};
 function keySync(){ // HOW TO の [data-kg] とボタンの右の小さなキーの名前を今の割り当てに
  document.querySelectorAll('[data-kg]').forEach(el=>{const sp=el.dataset.kg.split(',').map(x=>x.split(':'));let out=[];
   for(let i=0;i<2;i++){let one='';for(const [a,ix] of sp){if(ix!=null&&+ix!==i)continue;const n=(keyB[a]||[])[i];if(n)one+='<kbd>'+kEsc(keyName(n))+'</kbd>';}if(one)out.push(one);}
@@ -10435,7 +10439,7 @@ function navOk(el){if(!el.getClientRects().length||el.disabled)return false;if(e
 function navMove(root,d){const it=[...root.querySelectorAll('button,summary')].filter(navOk); /* 閉じた見出しの中は飛ばす */if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?(d>0?0:it.length-1):(i+d+it.length)%it.length;document.body.classList.add('kbnav');it[i].focus();try{it[i].scrollIntoView({block:'nearest'});}catch(_){}tone(880,.03,'square',.06);}
 addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true);
 /* T653 最後に使った入力に合わせてボタンの隅の印を替える（body に inKb／inPad／inMs）。パッドの印は data-pad：PADB の表と、data-key が Esc のボタンは B */
-const PADB={replayBtn:'Y',qsSetBtn:'RB',rpPrev:'←',rpNext:'→',rpCam:'Y',rpSpd:'X',rpEnd:'B',cpBtn:'START',pauseBtn:'START',rwBtn:'B',rwBtn2:'B',pitBtn:'RB',fuelBtn:'L3',lineBtn:'X',camBtn:'Y',mirBtn:'LB',autoBtn:'BACK',setupClose:'START',garBack:'B',flBack:'B',flNext:'START',photoBtn:'X',resPreBtn:'B'};
+const PADB={replayBtn:'Y',qsSetBtn:'RB',rpPrev:'←',rpNext:'→',rpCam:'Y',rpSpd:'X',rpEnd:'B',cpBtn:'START',pauseBtn:'START',rwBtn:'B',rwBtn2:'B',pitBtn:'RB',fuelBtn:'L3',lineBtn:'X',nosBtn:'X',camBtn:'Y',mirBtn:'LB',autoBtn:'BACK',setupClose:'START',garBack:'B',flBack:'B',flNext:'START',photoBtn:'X',resPreBtn:'B'};
 let padPS=false;const PSBN={A:'×',B:'○',X:'□',Y:'△',LB:'L1',RB:'R1',LT:'L2',RT:'R2',START:'OPTIONS',BACK:'SELECT'},padN=n=>padPS&&PSBN[n]||n; /* T653 PlayStation のパッド（id に 054c・DualSense など）なら ×○□△ の名前で（ご本人「ソレが一般的なら切り替え可」。… */
 function padSync(){resMkK='';document.querySelectorAll('[data-key="Esc"]').forEach(el=>{if(!PADB[el.id])el.dataset.pad=padN('B');});for(const id in PADB){const el=$(id);if(el)el.dataset.pad=padN(PADB[id]);}
  document.querySelectorAll('.kbhP').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padPS?el.dataset.xb.replace(/\b(START|BACK|LB|RB|LT|RT|A|B|X|Y)\b/g,m=>PSBN[m]):el.dataset.xb;});document.querySelectorAll('.pbn').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padN(el.dataset.xb);});try{cpList();}catch(_){} /* T675⑦ 文の中のパッドの名前・車種のカードの ☆ の説明 */document.body.classList.toggle('padPS',padPS);}
