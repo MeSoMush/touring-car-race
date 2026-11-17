@@ -1343,7 +1343,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.515.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.516.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2440,7 +2440,7 @@ function buildFormula(s,opt={}){mats();const g=new THREE.Group();const L=s.L,z0=
    curve([[.12,.25],[.6,.33],[1.4,.48],[1.95,.6],[2.25,.64],[2.9,.66],[3.0,.66]]));
  // 運転席の穴（黒）と運転手
  const ck=part(2.2,2.92,.04,curve([[2.2,.1],[2.35,.2],[2.8,.21],[2.92,.18]]),()=>.42,curve([[2.2,.665],[2.92,.675]]),0,MAT.black);
- add(new THREE.SphereGeometry(.135,22,16),MAT.rimGold,0,.79,dz(2.72));add(new THREE.SphereGeometry(.138,22,10,Math.PI*.15,Math.PI*.7,Math.PI*.36,Math.PI*.18),MAT.black,0,.79,dz(2.72)); // ヘルメットと前の黒いバイザー
+ const hg=new THREE.Group();g.add(hg);add(new THREE.SphereGeometry(.135,22,16),MAT.rimGold,0,.79,dz(2.72),0,0,0,hg);add(new THREE.SphereGeometry(.138,22,10,Math.PI*.15,Math.PI*.7,Math.PI*.36,Math.PI*.18),MAT.black,0,.79,dz(2.72),0,0,0,hg); // ヘルメットと前の黒いバイザー（T617② 運転席の視点で隠すので別の入れ物 hg）
  // 頭の後ろの吸気口とエンジンカバー（細くなりながら後ろへ）
  part(2.88,4.75,.04,curve([[2.88,.2],[3.05,.22],[3.6,.24],[4.2,.17],[4.75,.1]]),()=>.12,curve([[2.88,.66],[2.95,.95],[3.1,.98],[3.5,.82],[4.1,.6],[4.75,.46]]));
  add(new THREE.CylinderGeometry(.1,.11,.08,16),MAT.black,0,.9,dz(2.96),Math.PI/2,0,0);
@@ -2458,11 +2458,11 @@ function buildFormula(s,opt={}){mats();const g=new THREE.Group();const L=s.L,z0=
  // ミラー：横のポッドの前の上に短い足で立てる
  for(const sg of[1,-1]){const x=sg*.58;box(.025,.1,.025,MAT.carbon,x,.6,dz(2.78));box(.16,.07,.05,paint,x,.67,dz(2.76));box(.13,.05,.006,MAT.chrome,x,.67,dz(2.76)-.026);}
  // タイヤ・足（上下2本の腕）
- const W=s.W;for(const [d,r,tw] of[[fA,.34,.3],[rA,.36,.4]])for(const sg of[1,-1]){const x=sg*(W/2-tw/2);const p=new THREE.Group();p.position.set(x,r,dz(d));g.add(p);
+ const W=s.W,wls=[];for(const [d,r,tw] of[[fA,.34,.3],[rA,.36,.4]])for(const sg of[1,-1]){const x=sg*(W/2-tw/2);const p=new THREE.Group();p.position.set(x,r,dz(d));g.add(p);wls.push(p);
    add(new THREE.CylinderGeometry(r,r,tw,32),MAT.rubber,0,0,0,0,0,Math.PI/2,p);add(new THREE.CylinderGeometry(r*.6,r*.6,.02,24),MAT.rimDark,sg*(tw/2-.03),0,0,0,0,Math.PI/2,p);
    add(new THREE.TorusGeometry(r*.6,.012,6,24),MAT.rim,sg*(tw/2-.02),0,0,0,Math.PI/2,0,p);
    const bx=d<2?.12:.2,hx=Math.abs(x)-tw/2-.04;for(const [y0,y1] of[[r+.1,d<2?.42:.5],[r-.1,.16]]){const len=hx-bx;box(len,.022,.07,MAT.carbon,sg*(bx+len/2),(y0+y1)/2,dz(d),0,0,Math.atan2(y0-y1,len)*sg);}}
- g.userData={L,W,H:s.H,occ:[]};g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});return g;}
+ g.userData={L,W,H:s.H,occ:[],wheels:wls,hide:[hg]};g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});return g;}
 function resolve(s){if(s.base!=null){const b=SPECS.find(x=>x.id===s.base);s=Object.assign({},b,s,{wing:s.wingOff?null:b.wing,grp:s.grp,id:s.id,name:s.name,en:s.en,ref:s.ref});}return s;}
 // 乗員が収まるまでキャビンを広げる（屋根を上げる・横の内側への倒れを減らす・屋根を後ろへ伸ばす）
 function fitCabin(s){s=Object.assign({},s);if(!s.gh)return s;s.gh=s.gh.slice();let log={roof:0,width:0,len:0};
@@ -4498,11 +4498,12 @@ function nbDecTex(num,dr){const hx=c=>'#'+('000000'+((c==null?0xffffff:c)>>>0).t
     g.fillStyle=ac;g.fillRect(128,0,128,64);g.fillStyle='#101012';g.fillRect(128,0,12,64);g.fillRect(244,0,12,64);
     g.fillStyle='rgba(10,10,12,.92)';g.fillRect(128,64,128,64);g.fillStyle=ac;g.fillRect(128,116,128,12);g.fillStyle='#f4f4f0';g.font='italic bold 30px sans-serif';g.fillText(spn,192,88,120);});}
 const _nbT=new Map();
-function nbTpl(id,col,pl){const sp=CAR_SPECS.find(x=>x.id===id),of=!pl&&!!(CarModel.OFEN&&CarModel.OFEN[id]),key=(sp&&sp.band?id+':'+col:''+id)+(of?':f':''); /* T686 pl＝一般車・路駐（オーバーフェンダーを付けない）。付ける形は鍵に :f を足して分ける */ /* T639 鍵は車種だけ（色は塗装の材質で付けるので。… */let T=_nbT.get(key);if(T)return T;const raw=CarModel.makeVehicle(sp,{color:col,ofen:of});const ud=raw.userData,ws=(ud.wheels||[]).slice();
-  for(const w of ws)if(w.parent)w.parent.remove(w);const MT=CarModel.MAT;let paint=null,paintN=null;raw.traverse(o=>{if(o.isMesh&&!paint&&o.material&&o.material.vertexColors&&o.material.clearcoat)paint=o.material;if(o.isMesh&&!paintN&&o.material&&!o.material.vertexColors&&o.material.clearcoat&&o.material.roughness===.36&&o.material.clearcoatRoughness===.06)paintN=o.material;});
+function nbTpl(id,col,pl){const sp=CAR_SPECS.find(x=>x.id===id),of=!pl&&!!(CarModel.OFEN&&CarModel.OFEN[id]),key=(sp&&sp.band?id+':'+col:''+id)+(of?':f':''); /* T686 pl＝一般車・路駐（オーバーフェンダーを付けない）。付ける形は鍵に :f を足して分ける */ /* T639 鍵は車種だけ（色は塗装の材質で付けるので。… */let T=_nbT.get(key);if(T)return T;const raw=CarModel.makeVehicle(sp,{color:col,ofen:of});const ud=raw.userData,ws=(ud.wheels||[]).slice(),hs=(ud.hide||[]).slice();
+  for(const w of ws)if(w.parent)w.parent.remove(w);for(const h of hs)if(h.parent)h.parent.remove(h); /* T617② 運転席の視点で隠す物（フォーミュラのヘルメット） */const MT=CarModel.MAT;let paint=null,paintN=null;raw.traverse(o=>{if(o.isMesh&&!paint&&o.material&&o.material.vertexColors&&o.material.clearcoat)paint=o.material;if(o.isMesh&&!paintN&&o.material&&!o.material.vertexColors&&o.material.clearcoat&&o.material.roughness===.36&&o.material.clearcoatRoughness===.06)paintN=o.material;});
   const flat=g=>{const out=[];for(const m of g.children)if(m.isMesh){m.geometry.userData.shared=1;out.push({geo:m.geometry,mat:m.material});}return out;};
   const body=flat(CarModel.merge(raw));for(const k in MT)if(MT[k]&&MT[k].userData)MT[k].userData.shared=1;const wheels=ws.map(w=>{const pos=w.position.clone();w.position.set(0,0,0);w.updateMatrixWorld(true);const ms=flat(CarModel.merge(w));ms.sort((a,b)=>(b.mat===MT.rubber)-(a.mat===MT.rubber));for(const q of ms)q.mat.userData.shared=1;return {pos,ms};});for(const q of body)if(q.mat!==paint&&q.mat!==paintN)q.mat.userData.shared=1;
-  T={body,wheels,paint,paintN,L:ud.L,W:ud.W,H:ud.H,occ:ud.occ||[],sp};_nbT.set(key,T);return T;}
+  const hide=[];for(const h of hs){h.updateMatrixWorld(true);for(const q of flat(CarModel.merge(h))){q.mat.userData.shared=1;hide.push(q);}}
+  T={body,wheels,hide,paint,paintN,L:ud.L,W:ud.W,H:ud.H,occ:ud.occ||[],sp};_nbT.set(key,T);return T;}
 function makeKart(dr,num,ci){ci=ci||0;if(nbOn(ci)&&nbCM())try{return makeKartN(dr,num,ci,ci);}catch(e){console.error('新しい車体を作れなかった（前の形で作る）',e);}return makeKart0(dr,num,ci);}
 /* T617 新しい車体の車（makeKart0 と同じ物を返す）。… */
 /* T650② 新しい車体の塗装の作り置きを写す。スマホは T130 の PHY と同じくクリアコートなしの標準の材質に */
@@ -4528,6 +4529,17 @@ function makeKartN(dr,num,ci,id){
   /* T618 ゼッケン・ストライプ・ステッカー（形は車種ごとの作り置き、絵は車ごと）。… */
   let dg=null,dtx=null;if(NBDEC&&!dr.plain)try{const ge=nbDecGeo(T);if(ge){dtx=nbDecTex(num,dr);const m=new THREE.Mesh(ge,new THREE.MeshStandardMaterial({map:dtx,roughness:.5,metalness:.05,alphaTest:.5,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-4}));m.castShadow=false;dg=new THREE.Group();dg.add(m);body.add(dg);}}catch(e){console.error('T618 ゼッケンを貼れなかった',e);dg=null;}
   let blob=null;if(!SHADOWS){blob=new THREE.Mesh(new THREE.PlaneGeometry(T.W*1.15,T.L*1.05),new THREE.MeshBasicMaterial({map:blobTex(),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.05;root.add(blob);}
+  if(T.sp.formula){ /* T617② フォーミュラ（前の形 makeFormula にあった作りを新しい形の寸法へ） */
+   for(const q of T.hide||[]){const m=new THREE.Mesh(q.geo,mp(q.mat));m.castShadow=SHADOWS;m.userData.keep=1;body.add(m);heads.push(m);}
+   const ad=(geo,mat,x,y,z,rx=0,ry=0)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx,ry,0);m.castShadow=false;body.add(m);return m;};
+   fl.position.set(0,.34,-2.12);ad(new THREE.BoxGeometry(.12,.06,.03),tl,0,.3,-2.07); /* 炎と雨のライト（エンジンカバーの後ろの端） */
+   const otm=new THREE.MeshBasicMaterial({color:0x0b2624,toneMapped:false});otm.userData.e=0;ad(new THREE.BoxGeometry(.26,.05,.16),otm,0,F16Y,-.32);ad(new THREE.BoxGeometry(.1,.13,.025),otm,0,.78,-2.2); /* T895① オーバーテイクのランプ（空気取り入れ口の上・後ろの翼の支柱） */
+   const nt=canvasTex(128,128,g=>{g.fillStyle='#f4f4f0';g.fillRect(8,8,112,112);g.fillStyle='#111';g.font='bold 78px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(num),64,68);});
+   const nm=new THREE.MeshStandardMaterial({map:nt,roughness:.5,transparent:true,polygonOffset:true,polygonOffsetFactor:-2});
+   ad(new THREE.PlaneGeometry(.22,.22),nm,0,F16N[1],F16N[0],-Math.PI/2+F16N[2]);for(const sg of[1,-1])ad(new THREE.PlaneGeometry(.3,.3),nm,sg*F16S[0],F16S[1],F16S[2],0,sg*Math.PI/2); /* ゼッケン（鼻の上・エンジンカバーの横） */
+   {const st1=sponsorMat(SPONSORS[(((+num)||0)*7+(dr.name.length||0))%SPONSORS.length],dr.accent);for(const sg of[1,-1])ad(new THREE.PlaneGeometry(.62,.15),st1,sg*F16P[0],F16P[1],F16P[2],0,sg*Math.PI/2);}
+   linAll(root);scene.add(root);
+   return {root,body,wheels,disc,discG:0,wheelS:new THREE.Object3D(),flames,headParts:heads,tail:tl,head:hl,otm,paint,paintBase:paint.color.clone(),dmgShown:0,car:FCI,own:[paint,paintN,tl,hl,disc,flameMat,otm,nt,nm].filter(Boolean),hlx:.3,hly:.3,hlz:2.3,formula:1,camF:-.42,camY:1.16,nb:1,nbT:T,dec:null};}
   if(pl){const pg=[pl,pl];linAll(root);scene.add(root);return {root,body,wheels,disc,discG:0,wheelS:new THREE.Object3D(),flames,headParts:heads,tail:tl,head:hl,paint,paintBase:paint.color.clone(),dmgShown:0,car:ci,camF:c.camF,camY:c.camY,own:[paint,paintN,tl,hl,disc,pl,flameMat,dtx].filter(Boolean),hlx:T.W/2-.3,hly:.68,hlz:T.L/2+.08,nb:1,nbT:T,dec:dg,pl:pg};}
   linAll(root);scene.add(root);
   return {root,body,wheels,disc,discG:0,wheelS:new THREE.Object3D(),flames,headParts:heads,tail:tl,head:hl,paint,paintBase:paint.color.clone(),dmgShown:0,car:ci,camF:c.camF,camY:c.camY,own:[paint,paintN,tl,hl,disc,flameMat,dtx].filter(Boolean),hlx:T.W/2-.3,hly:.68,hlz:T.L/2+.08,nb:1,nbT:T,dec:dg};}
@@ -4869,7 +4881,9 @@ function makeFormula(dr,num){
   let blob=null;if(!SHADOWS){blob=new THREE.Mesh(new THREE.PlaneGeometry(2.1,5.0),new THREE.MeshBasicMaterial({map:blobTex(),transparent:true,depthWrite:false}));blob.rotation.x=-Math.PI/2;blob.position.y=.05;root.add(blob);}
   heads.forEach(m=>m.userData.keep=1);mergeByMaterial(body);linAll(root);scene.add(root);
   return {root,body,wheels,disc,discG:0,wheelS:new THREE.Object3D(),flames,headParts:heads,tail:tl,head:hl,otm,paint,paintBase:paint.color.clone(),dmgShown:0,car:FCI,own,hlx:.3,hly:.3,hlz:2.3,formula:1,camF:-.42,camY:1.16};}
-const makeCar=(dr,num,ci)=>carLod(ci===FCI?makeFormula(dr,num):makeKart(dr,num,ci));
+let NBF=1,F16Y=1.0,F16N=[1.0,.565,.12],F16S=[.235,.74,-.85],F16P=[.775,.36,-.55]; /* T617② NBF＝1 でフォーミュラも新しい形（0＝前の形 makeFormula）。F16〜＝ランプの高さ・ゼッケン（鼻の z・y・傾き／横の x・y・z）・スポンサー（x・y・z）の位置 */
+function mkFormula(dr,num){if(NBF&&nbMode&&nbCM())try{return makeKartN(dr,num,FCI,33);}catch(e){console.error('新しいフォーミュラを作れなかった（前の形で作る）',e);}return makeFormula(dr,num);}
+const makeCar=(dr,num,ci)=>carLod(ci===FCI?mkFormula(dr,num):makeKart(dr,num,ci));
 // 軽量化：車の細かい部品（絵の付いた板・運転席・ホイールの中・キャリパー）を「細部」の組 g.det へ移す。
 // 遠い車（LODD m より先。望遠ほど遠くまで）とミラーでは細部を描かない。タイヤの部品は1つにまとめ、小さな部品・細部は影を落とさない
 let LODD=isTouch?32:55; /* T262 スマホは 55→32m */
