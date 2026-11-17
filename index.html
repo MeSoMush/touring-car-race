@@ -1343,7 +1343,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.511.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.512.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6224,7 +6224,7 @@ function aiControl(k,dt){const nP=k.npz||ylNP(k); /* T872 線の手前・黄旗�
     if(st){const q=wuQ(k),sy=WVS&&rollF();k.wph=sy?raceTime*6.283/WVP:(k.wph??Math.random()*6.28)+dt*6.283/WVP*q.wf;wt=(rollF()?WRA:WVA)*q.wa*Math.sin(k.wph*(sy?q.wf:1));}} /* T883⑥ 型ごとの振れ幅と速さ（隊列は同じ時計の倍の速さ＝隣とぶつからない） */k.wvo=(k.wvo||0)+(wt-(k.wvo||0))*Math.min(1,dt*WVR);}
   {let tg=0,cap=1e9;if(ENV.pl>.05&&sess!=='drag'&&!k.pit&&u>8&&!k.pxm){const r=pudAvoid(k,u);tg=r.d;if(r.v!=null)cap=r.v;}k.pdo=(k.pdo||0)+(tg-(k.pdo||0))*Math.min(1,dt*2.2);k.pdCap=cap;} // T248 水たまりをよける
   if(IL0&&PRLH){let on=false;if(PRLH[t]||PRLH[k.idx]){const sK=trfS(k);for(const o of TRF){if(!o.on||o.xs||o.dir>0)continue;const ds=trfD(o.s-sK);if(ds>-10&&ds<(Math.max(u,8)+o.v)*PRLT){on=true;break;}}}k.prlB=Math.max(0,Math.min(1,(k.prlB||0)+(on?1:-1)*dt*PRLV));} /* T527 角の線は出口・入口で対向車線も使うので、対向車がこの先 PRLT 秒で出会う所にいる間は元の線（自分の車線寄り）へ移る */
-  const sb=k.sb||(k.sb={o:-1,sd:0,ov:0,w:0,at:0,c:-1});if(rcs&&!TRF.length&&!k.finished&&!k.pit&&!(k.clw&&sb.o<0)&&!k.yieldF&&!k.blue&&!cau()&&!nP&&u>12&&raceTime-raceT0>HSS&&!(k.prlB>.2)){if(!HSTI)sbInit();let n=0,gm=0;const ms=pK();for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0||o.finished)continue;const q=pgO(o);if(Math.abs(q-ms)>50)continue;const e=HSRS[n]||(HSRS[n]={});if(q>ms)gm=Math.max(gm,ienOf(k,o));e.id=o.id;e.s=q;e.lat=o.lat;e.u=o.u;n++;}sbStep(sb,{s:ms,lat:k.lat,u},HSRS,n,{hw:Math.min(WL[k.idx],W),toT:HSTI[k.idx]*SP/Math.max(u,8),inC:HSIC[k.idx],cid:HSCI[k.idx],ins:HSIN[k.idx],xo:HSXO[k.idx],vT:VP[wrap(k.idx+HSTI[k.idx])],dr:k.draft||0},Math.random,HSP*l1f(k,L1P)*(SCF[k.dr.tr??2]??1)*(judgeOn?1-.5*Math.min(1,(k.ipt||0)/JG2):1)*(1+IEA*gm),HSY*TRAITS[k.dr.tr??2].yld*(1-gm));}else sb.o=-1;
+  const sb=k.sb||(k.sb={o:-1,sd:0,ov:0,w:0,at:0,c:-1});if(rcs&&!TRF.length&&!k.finished&&!k.pit&&!(k.clw&&sb.o<0)&&!k.yieldF&&!k.blue&&!cau()&&!nP&&u>12&&raceTime-raceT0>HSS&&!(k.prlB>.2)){if(!HSTI)sbInit();let n=0,gm=0,cz=0;const ms=pK();for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0||o.finished)continue;const q=pgO(o);if(Math.abs(q-ms)>50)continue;const e=HSRS[n]||(HSRS[n]={});if(q>ms){gm=Math.max(gm,ienOf(k,o));if(k.ienH&&raceTime-(k.ienH[o.id]??-1e9)<IECT)cz=1;}e.id=o.id;e.s=q;e.lat=o.lat;e.u=o.u;n++;}sbStep(sb,{s:ms,lat:k.lat,u},HSRS,n,{hw:Math.min(WL[k.idx],W),toT:HSTI[k.idx]*SP/Math.max(u,8),inC:HSIC[k.idx],cid:HSCI[k.idx],ins:HSIN[k.idx],xo:HSXO[k.idx],vT:VP[wrap(k.idx+HSTI[k.idx])],dr:k.draft||0},Math.random,HSP*l1f(k,L1P)*(SCF[k.dr.tr??2]??1)*(judgeOn?1-.5*Math.min(1,(k.ipt||0)/JG2):1)*(1+IEA*gm)*(1-IEZ*cz),HSY*TRAITS[k.dr.tr??2].yld*(1-gm));}else sb.o=-1;
   k.sbB=Math.max(0,Math.min(1,(k.sbB||0)+(sb.o>=0?dt*HSRT:-dt*HSOT)));
   const ilT=k.prlB>0?IL[t]+(IL0[t]-IL[t])*k.prlB:IL[t];let lane=Math.max(-W-SWE()+1.4,Math.min(W+SWE()-1.4,ilT+k.lane+(k.wo||0)+(k.wvo||0)+(k.pdo||0)));
   if(k.sbB>0&&sb.sd){const rmD=TRAITS[k.dr.tr??2].room-2.7;const tg=sbLane(ilT,Math.min(WL[t],W),sb.sd,sb.at,HSW+rmD);k.sbL=k.sbL==null?lane:k.sbL+(tg-k.sbL)*Math.min(1,dt*2);lane+=(k.sbL-lane)*k.sbB;if(HSGP>0&&sb.o>=0&&sb.w){const op=karts.find(q=>q.id===sb.o);if(op){const m=op.lat+IL[t]-IL[k.idx];lane=Math.max(-W+1.2,Math.min(W-1.2,sb.sd>0?Math.max(lane,m+HSGP+rmD):Math.min(lane,m-HSGP-rmD)));}}}else k.sbL=null;
@@ -6341,7 +6341,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   // 周回遅れは道を譲る（T85）：青旗（後ろから周回遅れにする車が近づいた）が出たら、ラインを外して少し緩め、先に行かせる。譲る側はコーナーの外側へ、直線ではラインから3m外へ寄る
   k.yieldF=false;
   if(k.blue&&!k.wav&&sess==='race'&&!k.finished&&YLD>0){for(const o of karts){if(o===k||o.finished||o.dnf)continue;const g20=pgO(o)-pK(),g2=g20-Math.max(0,Math.round(g20/L)-1)*L; /* T843 2周以上遅れも */
-    if(g2>L-YLD_D&&g2<L+4){const dl=k.lat-o.lat,side=Math.abs(dl)>.8?Math.sign(dl):(k.lat-IL[k.idx])>=0?1:-1; /* T841 後ろの車の反対側へ（前は線のどちら側にいるかだけで決め、抜く車と同じ側へ寄ることがあった） */const s2=side;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,IL[k.idx]+s2*3.4));k.laneTimer=1;k.ovr=true;k.yieldF=true;k.yS=side;k.yBy=o.id;k.yNr=g2>L-YLD_N&&!CORNER[k.idx];k.yU=g2>L-YLD_N?Math.max(0,o.u)-(CORNER[k.idx]?0:YLDU):null;break;}}}
+    if(g2>L-YLD_D*(1-IEL*ienOf(k,o))&&g2<L+4){const dl=k.lat-o.lat,side=Math.abs(dl)>.8?Math.sign(dl):(k.lat-IL[k.idx])>=0?1:-1; /* T841 後ろの車の反対側へ（前は線のどちら側にいるかだけで決め、抜く車と同じ側へ寄ることがあった） */const s2=side;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,IL[k.idx]+s2*3.4));k.laneTimer=1;k.ovr=true;k.yieldF=true;k.yS=side;k.yBy=o.id;k.yNr=g2>L-YLD_N&&!CORNER[k.idx];k.yU=g2>L-YLD_N?Math.max(0,o.u)-(CORNER[k.idx]?0:YLDU):null;break;}}}
   const yCap=k.yieldF&&k.yU!=null?Math.max(8,k.yU):1e9;
   if(k.laneT!==lt0)k.ovr=true;
   if(k.launchT>0){k.launchT-=dt;return {steer,accel:false,brake:false,drift:false};}
@@ -6985,6 +6985,8 @@ let LFK=1,LFB=.1,LFQ=.6,LFY=3;
 let TDK=1,TDB=.2,TDD=60,TDE=30,TDY=3;
 let LBA=60,LBT=.2;
 // T83インを閉める：CVK＝1 で有効、CVA・CVD＝後ろの車との差（m。…
+let IEV=1.4,IEW=0.4,IECT=60,IEZ=0.6,IEL=0.5; /* T421 後ろから当てた接触：当てられた側 IEV 倍・当てた側 IEW 倍、当てた側は IECT 秒その相手への仕掛けを IEZ 減らす・因縁の相手に周回遅れにされる時は譲り始めを IEL まで近くに */
+function ienHit(a,b){const ds=progress(b)-progress(a);return Math.abs(ds)>=JRD&&Math.abs(b.lat-a.lat)<JRL?(ds>0?a:b):null;}
 let IEK=1,IEC=.5,IEP=.35,IEB=.25,IET=240,IEH=.6,IEA=1,IEY=1,IED=6; /* T421 因縁：当たり IEC×強さ・抜かれ IEP・閉められ IEB を溜め、IET 秒で冷める。IEH を越えた相手には譲らない（IEY）・仕掛けやすい（IEA）・閉めやすい（IED m） */
 function ienNow(k,id){const v=k.ien&&k.ien[id];if(!v)return 0;const d=raceTime-k.ienT[id];return d<0?0:v*Math.exp(-d/IET);}
 function ienOf(k,o){if(!IEK||!o||!k.ien)return 0;return Math.max(0,Math.min(1,(ienNow(k,o.id)-IEH)/IEH));}
@@ -7324,7 +7326,7 @@ function collisions(){
       const tx=-nz,tz=nx;const vt=rvx*tx+rvz*tz;const ta=cross2(px-a.x,pz-a.z,tx,tz),tb=cross2(px-b.x,pz-b.z,tx,tz);
       let jt=-vt/(1/ma+1/mb+ta*ta/Ia+tb*tb/Ib);const lim=.4*jn;jt=Math.max(-lim,Math.min(lim,jt));
       const Jx=nx*jn+tx*jt,Jz=nz*jn+tz*jt;impulse(b,px,pz,Jx,Jz);impulse(a,px,pz,-Jx,-Jz);syncLocal(a);syncLocal(b);dmgHit(a,-vn*.7);dmgHit(b,-vn*.7);crashCheck(a,-vn,14);crashCheck(b,-vn,14);if(-vn>DEBV&&sess==='race'&&state==='race'){if(!a.dnf)debSpawn(a,1+(Math.random()<.5),false);if(!b.dnf)debSpawn(b,1+(Math.random()<.5),false);}
-      if(-vn>.8&&state==='race'){a.ct=a.ct||{};b.ct=b.ct||{};if(!(a.ct[b.id]>raceTime-.8)){a.cont=(a.cont||0)+1;b.cont=(b.cont||0)+1;judgeHit(a,b,px,pz,-vn,pre);{const v=IEC*Math.min(2,-vn/3);ienAdd(a,b,v);ienAdd(b,a,v);}}a.ct[b.id]=b.ct[a.id]=raceTime;}
+      if(-vn>.8&&state==='race'){a.ct=a.ct||{};b.ct=b.ct||{};if(!(a.ct[b.id]>raceTime-.8)){a.cont=(a.cont||0)+1;b.cont=(b.cont||0)+1;judgeHit(a,b,px,pz,-vn,pre);{const v=IEC*Math.min(2,-vn/3),h=ienHit(a,b);if(h){const w=h===a?b:a;ienAdd(w,h,v*IEV);ienAdd(h,w,v*IEW);(h.ienH||(h.ienH={}))[w.id]=raceTime;}else{ienAdd(a,b,v);ienAdd(b,a,v);}}}a.ct[b.id]=b.ct[a.id]=raceTime;}
       if(a.isPlayer||b.isPlayer){if(-vn>1.5)sfx('bump',null,null,Math.min(1,-vn/12));if(-vn>4)shake=Math.max(shake,Math.min(.4,-vn*.03));}
       if(-vn>3&&(a.isPlayer||b.isPlayer||Math.random()<.5))puff(px,pz,0,0,false);
       if(a.drifting&&-vn>5)a.drifting=false;if(b.drifting&&-vn>5)b.drifting=false;}}
