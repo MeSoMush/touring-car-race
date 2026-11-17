@@ -1343,7 +1343,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.512.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.512.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6007,11 +6007,14 @@ function radioLap(k){if(!k.isPlayer||sess!=='race'||k.lap<2||k.lap>LAPS)return;c
   else if(left===3&&LAPS>3)radio(`残り3周。今 ${r}位`);
   else if(k.lap===2&&k.lastLap)radio(`1周目のタイム ${fmt(k.lastLap)}`,'lap1');}
 // 順位の入れ替わり（0.8秒続いたら確定）
-let posShown=0,posPend=0,posT=0,leadShown=null,leadPend=null,leadT=0;
+let posRk=null;let posShown=0,posPend=0,posT=0,leadShown=null,leadPend=null,leadT=0;
 function watchPositions(dt){const p=player();if(!p||state!=='race'||raceTime<3)return;const rk=ranking();const r=rk.indexOf(p)+1;
-  if(!posShown)posShown=r;
+  if(!posShown){posShown=r;posRk=rk.slice();}
   if(r!==posShown){if(r!==posPend){posPend=r;posT=0;}posT+=dt;if(posT>.8){
-    if(r<posShown)telop('OVERTAKE',(rk[r]?rk[r].name+'を抜いて ':'')+r+'位');else telop('POSITION',(rk[r-2]?rk[r-2].name+'に抜かれて ':'')+r+'位','yellow');posShown=r;}}
+    const pv=posRk||rk,pi=pv.indexOf(p); /* β0.512.2 T904 前に知らせた時の並びと比べて、本当に前後が入れ替わった車の名前を出す（前は順位が上がるとすぐ後ろの車の名前を出していて、前の車のリタイア・ピットインでも「（後ろの車）を抜いて」と出ていた） */
+    if(r<posShown){const g=pv.filter((o,j)=>j<pi&&rk.indexOf(o)>r-1),a=g.find(o=>!o.dnf&&!(o.pit>0)),b=g[0];telop('OVERTAKE',(a?a.name+'を抜いて ':b?b.name+(b.dnf?'のリタイアで ':'のピットインで '):rk[r]?rk[r].name+'を抜いて ':'')+r+'位');}
+    else{const l=pv.filter((o,j)=>j>pi&&rk.indexOf(o)<r-1),a=l.length?l.reduce((x,y)=>rk.indexOf(y)>rk.indexOf(x)?y:x):rk[r-2];telop('POSITION',(a?a.name+'に抜かれて ':'')+r+'位','yellow');}
+    posShown=r;posRk=rk.slice();}}
   else posPend=0;
   const ld=rk[0];if(!leadShown)leadShown=ld;
   if(ld!==leadShown){if(ld!==leadPend){leadPend=ld;leadT=0;}leadT+=dt;if(leadT>1){if(!ld.isPlayer&&leadShown&&!leadShown.isPlayer)telop('LEADER',ld.name+' がトップに');leadShown=ld;}}
@@ -6658,7 +6661,7 @@ let CLK=2.2,PQS=2.2,PQG=8,PQW=2.6,PQN=2,PQX=30;
 // 自分の車の前（PXR m 以内）にピットから車が出てくる時は無線で知らせる
 // 本線の CPU：前 PXA m（＋近づく速さ×2秒）〜横に、ピットへ入ろうとしている車（pit＝1 で線 PIT_B より手前）か出口から出てくる車（pit＝3 で PIT_C−40 より先、または pxm）がいる間は、ピット側へ PXS m より寄らない（コーナーの中は除く）
 let HPV0=14,HPV1=38,HPG=.7,HPF=.15,HPRT=.5,HPD=.08; // T248 ハイドロプレーニング
-let PXL=CRS.pxl,PXG=12,PXT=3,PXW=-2.5,PXR=220,PXS=1.5,PXA=120;
+let PSWR=3;let PXL=CRS.pxl,PXG=12,PXT=3,PXW=-2.5,PXR=220,PXS=1.5,PXA=120;
 // T840 SC 中のピット出口の信号：SC が信号の手前 SXR m から合流の所 PIT_D の先までにいる間と、本線の車が信号の手前 SXQ m から合流の所までを通る間は赤（出た車は隊列の後ろへ）。SXS＝信号で止まる所（ピットレーンの終わり PIT_C の何 m 先）
 let SXR=400,SXQ=70,SXS=12,SXP=15; /* β0.512.1 SXP＝出口の線を過ぎてから青になるまで m */
 const scExitRed=k=>{if(!SC.on||SC.ph!==1||sess!=='race')return false;const a=PIT_C+SXS,w=PIT_D-a;if(((scRel()-(a-SXR))%L+L)%L<SXR+Math.min(w,SXP)+20)return true;for(const o of karts){if(o===k||o.dnf||o.gone||o.finished||o.pit>0||o.u<2&&!SC.rf)continue;if(((relLine(o)-(a-SXQ))%L+L)%L<SXQ+Math.min(w,SXP))return true;}return false;};
@@ -6690,7 +6693,7 @@ function pitControl(k,dt){const rel=relLine(k),u=Math.max(0,k.u),box=boxRelOf(k)
   if(PSA&&k.pit===1&&rel>=PIT_A-5&&rel<PIT_B&&k.lat*PS<PIT_EL-PSA&&raceTime-(k.pbk??-9)<.4&&!pitMust(k))return pitMiss(k,dt,'横に車がいてピット入口に入れなかった（次の周に入る）','横に車がいて入口に寄れなかった。次の周にもう一度','pblk','　横に車がいてピット入口に入れず（次の周に）'); // 不具合報告：以前は横の車をまたいで切り込んでいた
   let ctl;
   if(k.pit===1&&rel<PIT_A-5){let blk=null,bfw=0;if(rel>PLA-PLS){let tg=PS*Math.max(PIT_EL,PLX+PLT);{const wl=Math.min(WL[k.idx],WL[wrap(k.idx+8)]);if(wl<W-.01)tg=PS*Math.min(Math.abs(tg),wl-1.6);} /* T514 狭い所は道の中に */
-    if(PSW>0){const fx=Math.sin(k.h),fz=Math.cos(k.h);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z,fw=dx*fx+dz*fz;if(fw<-Math.min(PSB,PSL)-Math.min(PSVC,Math.max(0,o.u-k.u)*PSV)||fw>PSF)continue;
+    if(PSW>0){const fx=Math.sin(k.h),fz=Math.cos(k.h);for(const o of karts){if(o===k||o.dnf||o.gone||o.pit>0)continue;const dx=o.x-k.x,dz=o.z-k.z,fw=dx*fx+dz*fz;if(fw<-Math.min(PSB,PSL)-Math.min(PSVC,Math.max(0,o.u-k.u)*PSV)||fw>PSF)continue;if(Math.abs(dx*fz-dz*fx)>PSX+PSWR)continue; /* β0.512.2 T904 本当に横にいる車だけ（コースの折り返しで並ぶ別の区間の車を、中心線からの横の位置の差だけで「横の車」と取り違え、誰もいないのに「横に車がいて」でピットを取りやめていた） */
       const sd=(o.lat-k.lat)*PS;if(sd<.3||sd>PSX)continue;const lim=PS*(o.lat*PS-PSW);if((tg-lim)*PS>0){tg=lim;blk=o;bfw=fw;}}
      if(blk){k.pbk=raceTime;k.pbV=blk.u;if((tg-k.lat)*PS<0)tg=k.lat;}} /* T290 横の車の方へは寄らない（離れもしない） */
     k.laneT=tg;k.laneTimer=.5;k.ovr=true;}
@@ -9243,7 +9246,7 @@ function startRace(){autoUsed=!!autoPlay;auR=!!autoPlay;slwUsed=false;slwUi();kp
   $('titleScreen').hidden=true;$('resultScreen').hidden=true;$('pauseScreen').hidden=true;hud.hidden=false;pad.hidden=false;
   radioReset();state='countdown';cdHold=ROLL.on||BR.on||sess==='drag'?0:.2+Math.random()*1.3;countdown=ROLL.on?2:BR.on?.3:4.99+cdHold; /* T821 走っている車を長く止めない */$('slights').hidden=true;cdShown=-1;$('toast').textContent='';clearBanner();bannerTimer=0;steerSm=0;mThr=0;saH=0;sbV=0; /* T756⑥ 段階のペダルを前の走りから持ち越さない */rwBuf=[];rwT=0;holdT=0;rwCount=0;retT=0;$('rwAsk').hidden=true;tvI=-1;
   lgSeq0=logN;lgK='';rpBuf=[];rpT=0;ghStart();ghLoad();rvLoad(); /* T419② */if(isBat())ghost=null; /* 公道バトルはゴーストなし */batLead=null;ghDelta=null;tgDelta=null;tgGhost=null;rcRef=null;rcRec=[];rcT=0;rcDelta=null;taMed=sess==='ta'&&!ssOn&&chOn==null?taMedT():null;secBest=[null,null,null];secShow=null;if(ghostMesh)ghostMesh.root.visible=false;$('raceBtn').hidden=true;$('againBtn').hidden=false;
-  fastLap=null;teleQ.length=0;teleT=0;if(teleEl){teleEl.remove();teleEl=null;}$('tele').innerHTML='';posShown=0;posPend=0;leadShown=null;leadPend=null;flagHud='x';flagWarnT=-9;for(const k in flagT)delete flagT[k];$('flag').hidden=true; /* T607① 前のレースの旗の時刻を残さない */for(const p of POSTS){p.c=-1;}
+  fastLap=null;teleQ.length=0;teleT=0;if(teleEl){teleEl.remove();teleEl=null;}$('tele').innerHTML='';posShown=0;posRk=null;posPend=0;leadShown=null;leadPend=null;flagHud='x';flagWarnT=-9;for(const k in flagT)delete flagT[k];$('flag').hidden=true; /* T607① 前のレースの旗の時刻を残さない */for(const p of POSTS){p.c=-1;}
   if(!FMX){const P=TOD[ENV.tod],w=WXN[ENV.wx];telop('CONDITION',`${P.n}・${w.n}　路面 ${rsCur?RSF[rsCur].n+(ENV.wet>.2?'（濡れ）':''):ENV.wet>.6?'ウェット':ENV.wet>.2?'少し濡れている':'ドライ'}`);}
   if(sess==='race'&&!FMX)telop('RULES',ruleText(),judgeOn?'':'yellow');
   try{const n=+(localStorage.getItem('popkart_hint')||0);if(n<3&&!autoPlay&&!FMX){$('toast').innerHTML='<span class="hint1" style="background:rgba(12,14,18,.7);padding:4px 12px;border-radius:4px;position:relative">'+(sess==='drag'?(isTouch?'緑になったら「アクセル」':'緑になったら '+kN1((keyB.accel||[]).length?'accel':'sacc')+'（パッドは '+padN('RT')+'）' /* T656 */):(isTouch?(autoAccel?'アクセルは自動　◀ ▶ ハンドル　右下 ブレーキ':'右下 アクセル　その左 ブレーキ　◀ ▶ ハンドル'):kN1('sacc')+' アクセル（叩くと少し・長押しで全開）　'+kN1('thrDn')+' 戻す　'+kN1('sbrk')+' ブレーキ　'+(msOn?'マウスの左右':kN1('left')+' '+kN1('right'))+' ハンドル<br>'+kN1('lookL')+' '+kN1('lookR')+' '+kN1('lookB')+' 見る　（パッドは '+padN('RT')+' アクセル・'+padN('LT')+' ブレーキ・左スティック ハンドル・右スティック 見る）' /* T680④ 2行に */ /* T656 */))+'</span>';toastTimer=5;localStorage.setItem('popkart_hint',n+1);}toastPos();}catch(_){} /* 初めての人に操作の案内（最初の3回） */ /* T616① HOW TO の頭と同じく段階のアクセル・ブレーキ（はじめは W・S・Space）を勧める（ご本人 2026-10-28） */
