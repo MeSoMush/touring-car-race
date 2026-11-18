@@ -1212,6 +1212,8 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 #pzMore{margin-top:-18px;padding:8px 0 3px;bottom:calc(-1*clamp(16px,3vw,28px) + 2px)}@media (max-height:520px){#pzMore{bottom:-10px}} /* ⑧ ポーズの「▼ 下に…」は窓の下の余白に（OPTIONS のボタンの下半分に重なっていた） */
 @media (orientation:landscape){body.touch:not(.tmenu) #corner>.mini{font-size:16px;line-height:16px;padding-left:3px;padding-right:3px}} /* T642 スマホ横は配置で 0.64 倍に縮むので字が 7.7px だった（幅・高さは元のまま。高さを上げると右の段も広がって重なる） */
 #chScreen .panel{box-sizing:border-box;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);display:flex;flex-direction:column}#chScreen .panel>*{flex:none}#chScreen .panel>#chList{flex:0 1 auto;min-height:0} /* T642 PC 720 で「閉じる」が下で切れていた */
+#drvK{display:none;flex:0 1000 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--dot);font-style:normal;font-weight:600;font-size:12px;letter-spacing:.04em;color:var(--muted);margin-right:4px}.tscreen.flow #drvK,.tscreen:has(#setup.carFirst:not([hidden])) #drvK{display:block}body.touch #drvK{display:none!important} /* T616 */
+@media (orientation:landscape){body.touch #carst{top:max(calc(env(safe-area-inset-top,0px) + 134px + clamp(34px,7vw,56px)),var(--csB,0px))}} /* T642④ */
 </style>
 
 <div id="game"><canvas id="gl"></canvas></div>
@@ -1347,7 +1349,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.521.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.522.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8824,7 +8826,7 @@ function keySync(){ // HOW TO の [data-kg] とボタンの右の小さなキー
  document.querySelectorAll('[data-kg]').forEach(el=>{const sp=el.dataset.kg.split(',').map(x=>x.split(':'));let out=[];
   for(let i=0;i<2;i++){let one='';for(const [a,ix] of sp){if(ix!=null&&+ix!==i)continue;const n=(keyB[a]||[])[i];if(n)one+='<kbd>'+kEsc(keyName(n))+'</kbd>';}if(one)out.push(one);}
   el.innerHTML=out.length?out.join('／'):'<kbd>なし</kbd>';});
- for(const id in KBTN){const el=$(id);if(!el)continue;const n=kN1(KBTN[id]);if(n==='－')el.removeAttribute('data-key');else el.dataset.key=n;}}
+ for(const id in KBTN){const el=$(id);if(!el)continue;const n=kN1(KBTN[id]);if(n==='－')el.removeAttribute('data-key');else el.dataset.key=n;}try{drvKUp();}catch(_){}}
 function keyHold(a,v){if(v&&(a==='accel'||a==='sacc'||a==='brake'||a==='rev'||a==='lbrk'||a==='sbrk'))pedKt=performance.now();if(v&&!input[a]){if(a==='sacc'){thrStep(1,THK/THS);saT=performance.now()/1000;}else if(a==='sbrk'){sbV=Math.min(1,sbV+SBGS);sbT=performance.now()/1000;}} /* 叩いた回数は押した瞬間に数える（1コマの間に押して離しても取りこぼさない） */input[a]=v;}
 function keyPress(a){switch(a){
  case 'cam':if(state!=='title')setCam(camNext(camMode));break;
@@ -9690,14 +9692,15 @@ function rsvResume0(d){
 $('contBtn').addEventListener('click',rsvResume);
 $('nosBtn').addEventListener('pointerdown',e=>{e.preventDefault();if(sess==='drag')nitroGo();else if(otsShow()&&!autoPlay)otsTog(player());});document.body.classList.toggle('nosOn',!!dragNos);
 /* T900 このレースの出来事：ミス（errN の増え）・抜き（2台の前後が 2m を越えて入れ替わる。40m より離れた・ピット・隊列の間は数えない）・自分への因縁の山・オーバーテイクの使用回数 */
-const RDK={ks:null,t:0,rel:null,en:{},oa:{},ot:{},ip:{},ps:[],er:[],gw:{},wg:[]};
+const RDK={ks:null,t:0,rel:null,en:{},oa:{},ot:{},ip:{},iv:{},ps:[],er:[],gw:{},wg:[]};
 function rdkStep(){if(sess!=='race'||karts.length<2||state!=='race'&&state!=='finished')return;const n=karts.length;
- if(RDK.ks!==karts||raceTime<RDK.t-.05){if(RDK.ks!==karts){RDK.ps=[];RDK.er=[];RDK.en={};RDK.oa={};RDK.ot={};RDK.ip={};RDK.gw={};RDK.wg=[];}else{RDK.ps=RDK.ps.filter(e=>e.t<=raceTime);RDK.er=RDK.er.filter(e=>e.t<=raceTime);RDK.wg=RDK.wg.filter(e=>e.t<=raceTime);} /* 巻き戻しは先の分を捨てる */RDK.ks=karts;RDK.rel=new Int8Array(n*n);}
+ if(RDK.ks!==karts||raceTime<RDK.t-.05){if(RDK.ks!==karts){RDK.ps=[];RDK.er=[];RDK.en={};RDK.oa={};RDK.ot={};RDK.ip={};RDK.iv={};RDK.gw={};RDK.wg=[];}else{RDK.ps=RDK.ps.filter(e=>e.t<=raceTime);RDK.er=RDK.er.filter(e=>e.t<=raceTime);RDK.wg=RDK.wg.filter(e=>e.t<=raceTime);} /* 巻き戻しは先の分を捨てる */RDK.ks=karts;RDK.rel=new Int8Array(n*n);}
  RDK.t=raceTime;const p=player(),ro=ROLL.on&&!ROLL.green,pr=karts.map(k=>k.finished||k.dnf||k.gone||k.pit>0||ro?null:progress(k)),lp=k=>Math.max(1,Math.min(LAPS,k.lap));
  {let rk=null;for(const k of karts){if(RDK.gw[k.id]&&!k.gw&&k.gwW!==3&&RDK.wg.length<200){rk=rk||ranking();RDK.wg.push({t:raceTime,k,pos:rk.indexOf(k),d:raceTime-(k.gwA??raceTime)});}RDK.gw[k.id]=!!k.gw;}} /* T861(c) 待つのをやめて仕掛けた時の順位 */
  for(const k of karts){const e=k.errN||0;if(e>(RDK.en[k.id]||0))RDK.er.push({t:raceTime,lap:lp(k),k,c:CID[wrap(k.idx+Math.round(55/SP))]});RDK.en[k.id]=e;
   if(k.otA&&!RDK.oa[k.id])RDK.ot[k.id]=(RDK.ot[k.id]||0)+1;RDK.oa[k.id]=!!k.otA;
-  if(p&&k!==p&&k.ien&&k.ien[p.id]){const v=ienNow(k,p.id);if(v>(RDK.ip[k.id]||0))RDK.ip[k.id]=v;}}
+  if(p&&k!==p&&k.ien&&k.ien[p.id]){const v=ienNow(k,p.id);if(v>(RDK.ip[k.id]||0))RDK.ip[k.id]=v;}
+  if(k!==p&&k.ien)for(const id in k.ien){if(p&&+id===p.id)continue;const v=ienNow(k,+id);if(v>IEH){const q=Math.min(k.id,+id)+'_'+Math.max(k.id,+id);if(v>(RDK.iv[q]||0))RDK.iv[q]=v;}}}
  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const x=i*n+j;if(pr[i]==null||pr[j]==null){RDK.rel[x]=0;continue;}const g=pr[i]-pr[j];if(Math.abs(g)>40){RDK.rel[x]=0;continue;}if(Math.abs(g)<=2)continue;
   const sg=g>0?1:-1,q=RDK.rel[x];RDK.rel[x]=sg;if(q&&q!==sg&&RDK.ps.length<4000){const w=sg>0?karts[i]:karts[j];RDK.ps.push({t:raceTime,lap:lp(w),w,l:sg>0?karts[j]:karts[i]});}}}
 function rdkShow(){const el=$('resDk');el.hidden=true;el.innerHTML='';if(sess!=='race'||karts.length<2||RDK.ks!==karts)return;
@@ -9709,6 +9712,8 @@ function rdkShow(){const el=$('resDk');el.hidden=true;el.innerHTML='';if(sess!==
   if(k){const m=mu(k);L.push(k.name+'とあなたがやり合った（⚔'+(m?'・抜き合い '+m+'回':'')+'）');}
   else{let b=null,c=0;for(const o of karts)if(o!==p){const m=mu(o);if(m>c){c=m;b=o;}}if(c>=3)L.push(b.name+'とあなたで抜きつ抜かれつ '+c+'回');}}
  {let b=null,bs=0,bg=0;for(const e of RDK.wg){const g=e.pos-fo(e.k),lw=e.d>=GFW;if(fo(e.k)<99&&(g>=2||lw&&g>=1)){const sc=g+(lw?1.5:0);if(sc>bs){bs=sc;bg=g;b=e;}}}if(b)L.push(nm(b.k)+'は前の争いを'+(b.d>=GFW?Math.round(b.d)+'秒':'')+'待ってから仕掛け、そこから '+bg+'台抜いた');} /* T861(c) 漁夫の利 */
+ if(!L.some(t=>t.includes('⚔'))){const ki=id=>karts.find(o=>o.id===id);let b=null,bs=0;for(const q in RDK.iv){const [a,c]=q.split('_').map(Number),x=ki(a),y=ki(c);if(!x||!y)continue;const m=RDK.ps.filter(e=>e.w===x&&e.l===y||e.w===y&&e.l===x).length,sc=RDK.iv[q]+m;if(sc>bs){bs=sc;b=[x,y,m];}}
+  if(b)L.push(b[0].name+'と'+b[1].name+'に因縁（⚔'+(b[2]?'・抜き合い '+b[2]+'回':'')+'）');} /* T421 CPU どうしの因縁（自分との因縁の行が無い時） */
  if(RDK.ps.length){const [k,c,m]=cnt(RDK.ps,e=>e.w),pc=p?m.get(p)||0:0,one=c>=2&&[...m.values()].filter(v=>v===c).length===1; /* 同数・1回だけの時は名前を出さない */
   L.push('抜き合い '+RDK.ps.length+'回'+(one?'、いちばん多く抜いたのは '+nm(k)+'（'+c+'回）'+(k!==p&&pc?'・あなた '+pc+'回':''):pc?'（あなた '+pc+'回）':''));}
  {const ids=Object.keys(RDK.ot);if(ids.length){let b=null,c=0;for(const o of karts){const v=RDK.ot[o.id]||0;if(v>c){c=v;b=o;}}const pc=p?RDK.ot[p.id]||0:0;L.push('OTS（出力アップ）'+(p?'：あなた '+pc+'回':'')+(b&&b!==p?'・いちばん多く使ったのは '+b.name+'（'+c+'回）':''));}}
@@ -10336,7 +10341,7 @@ let flStep=null,flM=null,flLast=null,fSurf=offSurf;
 const flMode=id=>FLM.flatMap(g=>g.m).find(m=>m.id===id)||null;
 const flCrsOf=m=>m.crs.filter(i=>COURSES[i]&&(m.id!=='ch'||i===0||COURSES[i].ch));
 const flDesc=i=>{const b=document.querySelector('#tmRun .stc[data-crs="'+i+'"] span');return b?b.textContent:'';};
-function flOpen(step){flStep=step;tScr.classList.add('flow');$('flow').hidden=false;$('flMode').hidden=step!=='mode';$('flCrs').hidden=step!=='crs';$('flPre').hidden=step!=='pre';
+function flOpen(step){flStep=step;drvKUp();tScr.classList.add('flow');$('flow').hidden=false;$('flMode').hidden=step!=='mode';$('flCrs').hidden=step!=='crs';$('flPre').hidden=step!=='pre';
   let car='';try{car=carName(carOf(playerChoice))+'　'+myDr(playerChoice).name+'　'+ccName();}catch(_){}
   const m=flMode(flM);$('flS').textContent=step==='mode'?'車：'+car+'　（押すと①車へ）':step==='pre'?'車：'+car+'　›　'+flB(m)+'　›　'+CRS.name+(REV?' 逆回り':'')+'　（押すとコースへ）':'車：'+car+'　›　'+flB(m)+'　（押すと遊び方へ）';
   if(step==='mode')flModeUi(true);else if(step==='pre')flPreUi(true);else flCrsUi(true);}
@@ -10415,7 +10420,7 @@ $('flPR').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classLis
 $('flL').addEventListener('focusin',e=>{const b=e.target.closest('[data-c]');if(b)flMap(+b.dataset.c);});$('flL').addEventListener('pointerover',e=>{const b=e.target.closest('[data-c]');if(b)flMap(+b.dataset.c);});
 try{const f=JSON.parse(sessionStorage.getItem('popkart_flow')||'null');if(f){sessionStorage.removeItem('popkart_flow');flM=f.m;if(f.s!=null)fSurf=f.s;const st=f.st==='pre'&&flPreOf(flMode(flM))?'pre':f.st==='mode'?'mode':'crs';if(st==='pre'){const m=flMode(flM);catCur=m.id==='ss'&&fSurf===0?'st':m.cat;$('tmRun').dataset.cat=catCur;}setTimeout(()=>{setStage(1);flOpen(st);},300);}}catch(_){} /* コース・向きを変えて読み込み直した後は③コースへ（T570② 一般車の量・通行の側を④から変えた時は④へ） */
 let garFlow=0;function cfTabs(on){$('garTabs').querySelectorAll('button').forEach((b,i)=>{if(i===2||i===4){b.hidden=true;return;} /* T675② どこでも出さない（④出走前・③コースに同じ行） */if(on){if((i===2||i===3)&&!b.hidden){b.hidden=true;b.dataset.cfh='1';}}else if(b.dataset.cfh){b.hidden=false;delete b.dataset.cfh;}});} /* T660 C ①車は「車」「セッティング」だけ（レースの決まり・0-400m は④出走前、表示・操作・音は OPTIONS） */
-function carGo(){garFlow=1;openSetup();$('setup').classList.add('carFirst');cfTabs(true);if(gMain(garTab)>1)setGarTab(0);$('setup').scrollTop=0;setGarTab(0);$('garBack').hidden=false;$('setupClose').textContent='次へ（遊び方）';$('setupClose').removeAttribute('data-key');$('garBack').dataset.key='Esc';$('kbhEsc').textContent='戻る';}
+function carGo(){garFlow=1;drvKUp();openSetup();$('setup').classList.add('carFirst');cfTabs(true);if(gMain(garTab)>1)setGarTab(0);$('setup').scrollTop=0;setGarTab(0);$('garBack').hidden=false;$('setupClose').textContent='次へ（遊び方）';$('setupClose').removeAttribute('data-key');$('garBack').dataset.key='Esc';$('kbhEsc').textContent='戻る';}
 function garFlowOff(){garFlow=0;cfTabs(false);$('setup').classList.remove('carFirst');$('garBack').hidden=true;$('setupClose').textContent='決定';$('setupClose').dataset.key='Esc';$('garBack').removeAttribute('data-key');$('kbhEsc').textContent='決定';}
 function garEsc(){if(garFlow){garFlowOff();catTop(); /* T660① 結果の「①車を変える」→ 戻る */closeSetup();menuFocus('goBtn');}else closeSetup();} /* ①車の Esc・B は「戻る」（タイトルへ） */
 $('goBtn').addEventListener('click',carGo);$('garBack').addEventListener('click',garEsc);
@@ -10445,8 +10450,9 @@ addEventListener('pointerdown',()=>document.body.classList.remove('kbnav'),true)
 const PADB={replayBtn:'Y',qsSetBtn:'RB',rpPrev:'←',rpNext:'→',rpCam:'Y',rpSpd:'X',rpEnd:'B',cpBtn:'START',pauseBtn:'START',rwBtn:'B',rwBtn2:'B',pitBtn:'RB',fuelBtn:'L3',lineBtn:'X',nosBtn:'X',camBtn:'Y',mirBtn:'LB',autoBtn:'BACK',setupClose:'START',garBack:'B',flBack:'B',flNext:'START',photoBtn:'X',resPreBtn:'B'};
 let padPS=false;const PSBN={A:'×',B:'○',X:'□',Y:'△',LB:'L1',RB:'R1',LT:'L2',RT:'R2',START:'OPTIONS',BACK:'SELECT'},padN=n=>padPS&&PSBN[n]||n; /* T653 PlayStation のパッド（id に 054c・DualSense など）なら ×○□△ の名前で（ご本人「ソレが一般的なら切り替え可」。… */
 function padSync(){resMkK='';document.querySelectorAll('[data-key="Esc"]').forEach(el=>{if(!PADB[el.id])el.dataset.pad=padN('B');});for(const id in PADB){const el=$(id);if(el)el.dataset.pad=padN(PADB[id]);}
- document.querySelectorAll('.kbhP').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padPS?el.dataset.xb.replace(/\b(START|BACK|LB|RB|LT|RT|A|B|X|Y)\b/g,m=>PSBN[m]):el.dataset.xb;});document.querySelectorAll('.pbn').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padN(el.dataset.xb);});try{cpList();}catch(_){} /* T675⑦ 文の中のパッドの名前・車種のカードの ☆ の説明 */document.body.classList.toggle('padPS',padPS);}
-function inMode(m){if(inMode.m===m)return;inMode.m=m;const c=document.body.classList;c.toggle('inKb',m==='kb');c.toggle('inPad',m==='pad');c.toggle('inMs',m==='ms');}
+ document.querySelectorAll('.kbhP').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padPS?el.dataset.xb.replace(/\b(START|BACK|LB|RB|LT|RT|A|B|X|Y)\b/g,m=>PSBN[m]):el.dataset.xb;});document.querySelectorAll('.pbn').forEach(el=>{if(el.dataset.xb==null)el.dataset.xb=el.textContent;el.textContent=padN(el.dataset.xb);});try{cpList();}catch(_){} /* T675⑦ 文の中のパッドの名前・車種のカードの ☆ の説明 */document.body.classList.toggle('padPS',padPS);try{drvKUp();}catch(_){}}
+function inMode(m){if(inMode.m===m)return;inMode.m=m;const c=document.body.classList;c.toggle('inKb',m==='kb');c.toggle('inPad',m==='pad');c.toggle('inMs',m==='ms');drvKUp();}
+function drvKUp(){const el=document.getElementById('drvK');if(!el)return;let t='';try{if(inMode.m==='pad')t='運転　'+padN('RT')+' アクセル　'+padN('LT')+' ブレーキ　左スティック ハンドル';else{const k=a=>{const n=kN1(a);return n==='－'?'':n;},ac=k('sacc')||k('accel'),bk=k('sbrk')||k('brake'),dn=k('thrDn'),hl=msOn?'マウスの左右':(k('left')+' '+k('right')).trim();t='運転　'+[ac&&ac+' アクセル',dn&&dn+' 戻す',bk&&bk+' ブレーキ',hl&&hl+' ハンドル'].filter(Boolean).join('　');}}catch(_){}el.textContent=t;} /* T616 選んでいる間に今の割り当ての運転の操作を1行 */
 padSync();addEventListener('keydown',()=>inMode('kb'),true);addEventListener('pointerdown',()=>inMode('ms'),true);
 function menuMove(d){const it=menuItems();if(!it.length)return;let i=it.indexOf(document.activeElement);i=i<0?0:(i+d+it.length)%it.length;it[i].focus();tone(880,.03,'square',.06);}
 /* T323 メニューは2列。… */
@@ -10983,9 +10989,11 @@ let hlM0=null;var hlSeat=false;function hlSeatT(){const st=state==='paused'?paus
 function hlApply(){const m=hlMode();hlM0=m;{const d=$('drv');if(d){d.style.removeProperty('transform');d.style.removeProperty('left');if(m&&m!=='pc'&&HLDRV.some(id=>hlCur(m,id))){d.style.setProperty('transform','none','important');d.style.setProperty('left','0','important');}}} /* 帯の中を動かす時は、帯の translateX を外す（中の position:fixed が画面に対して効くように） */for(const id of hlAll()){const e=hlEl(id);if(!e)continue;for(const q of HLQ)e.style.removeProperty(q);if(!m||!HLP[m].some(p=>p[0]===id))continue;const p=hlCur(m,id);if(!p)continue;const S=(q,v)=>e.style.setProperty(q,v,'important');
   if(p.off){S('display','none');continue;}if(m!=='pc'&&hlGrp(id))S('position','fixed');const r=p.ax==='r',b=p.ay==='b';
   S(r?'right':'left',(p.x*100).toFixed(3)+'%');S(r?'left':'right','auto');S(b?'bottom':'top',(p.y*100).toFixed(3)+'%');S(b?'top':'bottom','auto');S('margin','0');
-  if(p.bw){S('width',p.bw+'px');S('min-width','0');S('max-width','none');}S('transform-origin',(r?'100%':'0')+' '+(b?'100%':'0'));S('transform','scale('+(+p.s||1).toFixed(3)+')');}}
+  if(p.bw){S('width',p.bw+'px');S('min-width','0');S('max-width','none');}S('transform-origin',(r?'100%':'0')+' '+(b?'100%':'0'));S('transform','scale('+((+p.s||1)*(m==='spl'?Math.min(1,innerWidth/844):1)).toFixed(3)+')');}} /* T642② 位置は画面の割合・部品は決まった px なので、812×375 などでボタンが重なっていた */
 function hlSave(){try{localStorage.setItem(HLK,JSON.stringify(HLAY));}catch(_){}}
-try{GWQ.addEventListener('change',hlApply);}catch(_){}addEventListener('resize',()=>{if(hlMode()!==hlM0)hlApply();});hlApply();
+try{GWQ.addEventListener('change',hlApply);}catch(_){}addEventListener('resize',()=>{if(hlMode()!==hlM0||hlM0==='spl')hlApply();}); /* T642② 横のまま幅が変わった時も縮め直す */
+function csCarst(){const b=document.body,c=$('cstack');if(!b.classList.contains('touch')||innerWidth<innerHeight||!c){b.style.removeProperty('--csB');return;}const r=c.getBoundingClientRect();b.style.setProperty('--csB',(r.height>2?Math.round(r.bottom+4):0)+'px');} /* T642④ スマホ横：知らせの列（ペースノート・オート運転中など）が伸びるとダメージの箱が隠れていたので、列の下へ逃がす */
+try{new ResizeObserver(csCarst).observe($('cstack'));}catch(_){}addEventListener('resize',csCarst);hlApply();
 const hlE={on:false,B:[],sel:-1,dr:null,snap:true,tp:null,m:null};
 const hlU=()=>{const r=HLR[hlE.m]||HLR.pc;return Math.min(innerWidth/r[0],innerHeight/r[1]);};
 const hlMN={pc:'PC',spl:'スマホ 横持ち',spv:'スマホ 縦持ち'};
