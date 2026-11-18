@@ -1349,7 +1349,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.525.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.526.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6319,7 +6319,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(pzK(k)&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))]; /* T869 オート（APZ）もミス・ブレーキ位置のずれ */
     if(cn&&!k.cnPrev&&Math.random()<aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
-    if(cn&&!k.cnPrev)k.bnz=(Math.random()+Math.random()-1)*BNZ*Math.max(.3,1-SKZ*skv(k,'brk')); /* T866③ この角のブレーキ位置のずれ（m、正＝遅い） */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
+    if(cn&&!k.cnPrev){const m=(1+BNS*(1-(k.stam??1)))*(1+BNP*(k.prs||0)*prOf(k)),gi=wrap(k.idx+Math.round(55/SP)),g=Math.min(1,rsG(gi,wetMul('road',k),k.ty)/BNG),r=BNR*g;k.bnb=(k.bnb||0)*r+(Math.random()+Math.random()-1)*BNZ*Math.sqrt(1-r*r)*m;k.bnz=k.bnb*g*Math.max(.3,1-SKZ*skv(k,'brk'));} /* T866③・T813 R5 ブレーキ位置の見積りのずれ（m、正＝遅い）。角から角へ引き継ぎ、疲れ・プレッシャーで揺れが大きい。滑る路面では縮める */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,trC=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0,tr=vcw>0?{...trC,gap:trC.gap*(1+VGP*vcw),bm:trC.bm-VBM*vcw}:trC; /* T375 見通しが悪いと車間を空け、急ブレーキを早めに決める */ // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
   let follow=false,hard=false,fV=1e9,folB=false;k.emgF=0;const fx=Math.sin(k.h),fz=Math.cos(k.h);let afvNo=AFVS>0&&raceTime<AFVS;if(!afvNo&&AFVD>0){const jn=Math.round(u*AFVD/SP);for(let j=0;j<=jn;j+=3)if(CORNER[wrap(k.idx+j)]){afvNo=true;break;}} /* T256 の続き：スタート直後とコーナーの手前は、前の車が離れていく間も車間を保つ */k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
@@ -6528,7 +6528,7 @@ function wearStep(k,dt){if(sess==='quali'){k.gripK=QTYRE;return;}if(isSS()){if(r
 /* 大クラッシュ（T71）：高速の衝突で車が跳ねて転がり、走れなくなってリタイア。しきい値は法線方向の衝突速度（壁17・車どうし14 m/s）、残骸は12秒後に撤去（gone） */
 /* T365 CPU のペダルをジワッと：PDP 1＝使う。… */
 /* T372 CPU・オートのペダルのならし（PDBS＝踏む量をならす秒・PDDW＝踏み替えを待つ秒） */
-let SKWC=2,SKWN=.8,SKC=.004,SKN=.03,SKE=.25,SKB=.25,SKZ=.35,BNZ=4,SKD=.03,SKT=.2,SKL=.03; /* T866③ 腕前の技能の段 1つの大きさ（DRIVERS の pz.sk。説明は skv の上） */
+let SKWC=2,SKWN=.8,SKC=.004,SKN=.03,SKE=.25,SKB=.25,SKZ=.35,BNZ=4,BNR=.8,BNS=1,BNP=.8,BNG=.75,SKD=.03,SKT=.2,SKL=.03; /* T866③ 腕前の技能の段 1つの大きさ（DRIVERS の pz.sk。説明は skv の上） */
 /* T866③ skv＝運転手の技能の段（自分の車・オートは 0）。曲がれる見込み SKC・線のぶれ SKN とミス SKE（安定）・ブレーキの余白 SKB と角ごとのブレーキ位置のばらつき BNZ m（SKZ）・トレイルブレーキの深さ SKD・アクセルの追い方 SKT・発進の回転のずれ SKL */
 function skW(k,t,w){return skv(k,t)+w*(ENV.wet||0)*skv(k,'wet');} /* T866④ 雨の上手さ：濡れの分だけ技能 wet を角（SKWC 倍）・安定（SKWN 倍）の段に足す */
 function skv(k,t){return !pzK(k)||!k.dr||!k.dr.pz||!k.dr.pz.sk?0:k.dr.pz.sk[t]||0;}
