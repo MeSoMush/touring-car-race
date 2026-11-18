@@ -983,7 +983,7 @@ body:not(.touch) #wx{bottom:auto;right:calc(12px + clamp(110px,18vw,170px) + 8px
  body.touch #advBtn{min-height:34px}body.touch #garTabs button{padding-top:6px;padding-bottom:6px}}
 .gsec{font-weight:800;font-size:13px;letter-spacing:.12em;color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:3px;margin:16px 0 8px}.gsec:first-child{margin-top:2px}
 #garTabs button{white-space:nowrap}#fdNextCh,#fdNextDr,#fdNextRace,#fdNextCup{font-size:18px;white-space:nowrap}body.touch #fdNextCh,body.touch #fdNextDr,body.touch #fdNextRace,body.touch #fdNextCup{font-size:12px;letter-spacing:0}body:not(.touch) #gtab3 .tch{display:none}body.touch #msRow{display:none}
-#slipCv{display:block;width:11em;height:auto;margin-top:3px}#slipCv[hidden]{display:none}body.touch #slipCv{width:13em}body:not(.touch) #slipCv.fr{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 232px);width:300px}body.touch #autoBadge{white-space:nowrap;letter-spacing:.08em}body.hudmin #slipCv,body.photo #slipCv{display:none}
+#slipCv{display:block;width:11em;height:auto;margin-top:3px}#ldCv{display:block;width:4.4em;height:auto;margin-top:3px}#ldCv[hidden]{display:none}body.hudmin #ldCv,body.photo #ldCv{display:none}#slipCv[hidden]{display:none}body.touch #slipCv{width:13em}body:not(.touch) #slipCv.fr{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top,0px) + 232px);width:300px}body.touch #autoBadge{white-space:nowrap;letter-spacing:.08em}body.hudmin #slipCv,body.photo #slipCv{display:none}body.touch #ldCv{position:absolute;left:calc(100% + 6px);bottom:0;margin:0;width:4.6em}
 #autoBadge .atT{color:#ffd23f;letter-spacing:.04em}#autoBadge.tq{animation:none}
 #chGoal{font-size:.78em;font-weight:800;letter-spacing:.04em;color:#e8eaee}#chGoal[hidden]{display:none}#chGoal b{color:#ffd23f}#chGoal b.m1{color:#d9dde3}#chGoal b.m2{color:#d79a5c}#chGoal b.m3{color:#ff8a7a}
 /* β0.177.0 レース画面の並べ替え（PC の横長の画面。ご本人が配置図で決めた 1280×720 の位置 × --u）。右下：右端に回転計（上にレブの光）→ 水温・油温・ブースト → タイヤ・ブレーキの温度 → 燃料 → 入力 → 走りのボタン。左下にログ */
@@ -1224,7 +1224,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 
 <div id="hud" hidden>
   <canvas id="fx"></canvas>
-  <div id="topleft" class="outline"><div id="lap">ラップ <b>1</b>/3</div><div id="time">0'00"00</div><div id="lbNote" hidden></div><div id="secs"></div><div id="chGoal" hidden></div><canvas id="slipCv" width="480" height="92" hidden></canvas><div id="dlt" hidden></div></div>
+  <div id="topleft" class="outline"><div id="lap">ラップ <b>1</b>/3</div><div id="time">0'00"00</div><div id="lbNote" hidden></div><div id="secs"></div><div id="chGoal" hidden></div><canvas id="slipCv" width="480" height="92" hidden></canvas><canvas id="ldCv" width="150" height="196" hidden></canvas><div id="dlt" hidden></div></div>
   <div id="carst" class="outline" hidden></div>
   <div id="pitwork" class="outline" hidden></div>
   <div id="wx" class="outline"></div>
@@ -1350,7 +1350,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.528.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.529.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1676,7 +1676,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 <span>長いレース</span><span>15周・30周はピットの作戦が大事。CPU（とタイヤ「自動」）はレースの前に、ピットの損（ピットレーンで約9秒＋作業の時間）・タイヤの種類（速いが減るスリック／遅いが持つラジアルなど）・タイヤの落ち・燃料の重さを比べてピットの回数と周を決め、ピットのたびに残りの周で立て直す。摩耗「あり」は長いレースほどゆっくり減り（30周で交換2回くらい）、「速い」は耐久レース風（30周で7〜8回）</span>
         <span>続きから</span><span>8周以上のレース（選手権・カップ戦の途中も）は周ごとに保存。途中でやめても、タイトルの CONTINUE「続きから」で戻れる。保存は1つだけで、新しく8周以上のレースを始めた時（RACE を2回押す）と、走り切った時に消える。課題・タイムアタック・SS・0-400m では消えない。物理の版が変わった後の保存は使えない（ボタンが出ない）。</span>
         <span>サービスパーク</span><span>④出走前の「RALLY SS の本数」を3本にすると、ステージの間に SERVICE PARK。<details class="hx"><summary>くわしく</summary>持ち時間 30分の中で、足回りの修理（コーナーのグリップが戻る）・エンジンと駆動の修理（出力が戻る）・タイヤ交換（10分。路面と天気に合うタイヤに ★）・サスペンションと車高の変更（各5分）を選ぶ。修理の時間は傷みが大きいほど長い。30分を過ぎると1分ごとに10秒のペナルティ（実際のラリーと同じ）。ラリーの間はタイヤが減り（1本で 2〜3割）、当たった分の傷みは次のステージへ持ち越す。3本の合計（＋ペナルティ）が記録。サービスで変えたタイヤ・足回りは、ラリーが終わると元の設定に戻る</details></span>
-        <span>運転の課題</span><span>②遊び方の「サーキット」の「CHALLENGE」。決まった車でコースの一部（ブレーキ・コーナー・S字・高速・雨・砂利道など。コースで数が違う）を走り、タイムで金・銀・銅。ドリフトの課題（砂利のヘアピン・S字をドリフトで・フェイント・サイドで回る・タックイン・左足ブレーキ）は、横滑りの角度で「その技が出たか」も見る（補助は付けない。出なければ失格。60° を超えた回りすぎは数えない。巻き戻すと判定もやり直し）。区間の路面には、角の入口から頂点までの外の端に白い「外の帯」、頂点の内の端にオレンジの「内の点」（実際のドリフト競技の目安。お尻を外の帯に寄せ、内の点をかすめる）。通ると緑に光る（判定には入らない）。メダルの目安は、流しながら走り切った試しの走りのいちばん速い所が金・真ん中が銀。<details class="hx"><summary>くわしく</summary>止まった所から信号でスタートし、白黒の帯（止まる課題は黄色の枠）まで。コース外（4輪とも白線の外）・スピン・壁に当たると失格。巻き戻すと記録しない。メダルの目安はオート運転の速さから（金＝オートと同じ。ドリフトの課題は、条件を満たして走り切った走りから作った目安）。結果に練習表示の講評が出る（OPTIONS の「運転の練習表示」を切っていても出る）。課題の間は車とセッティングが決まった1台になり、終わると元の設定に戻る。手本：ドリフトの課題では、OPTIONS の「ゴースト」が「目標のメダル」の時、手本（うまい人の走りのまね）の半透明の車が一緒に走る。目標の行の「手本 −0.3秒」は手本との差（−なら自分が先）。入力の表示の水色の印は手本のハンドル・ペダル。横滑りの針：車の真ん中の横滑りの角度（目標の下。課題では目標の帯つきで、水色の印は手本の角度）。その下の直近3秒の線は、この3秒のハンドル（青）・アクセル（緑）・ブレーキ（赤）・サイド（橙）・横滑り（白）で、スピンや失格の前に何をしたかが分かる。横滑りの針と入力の表示（手本の水色の印も）は課題のリプレイでも出る（OPTIONS の「横滑りの針」「直近3秒の線」で出す・出さない）</details></span>
+        <span>運転の課題</span><span>②遊び方の「サーキット」の「CHALLENGE」。決まった車でコースの一部（ブレーキ・コーナー・S字・高速・雨・砂利道など。コースで数が違う）を走り、タイムで金・銀・銅。ドリフトの課題（砂利のヘアピン・S字をドリフトで・フェイント・サイドで回る・タックイン・左足ブレーキ、HIGASHI の砂利の広場の定常円・8の字・サイドで入って定常円）は、横滑りの角度で「その技が出たか」も見る（補助は付けない。出なければ失格。60° を超えた回りすぎは数えない。巻き戻すと判定もやり直し）。区間の路面には、角の入口から頂点までの外の端に白い「外の帯」、頂点の内の端にオレンジの「内の点」（実際のドリフト競技の目安。お尻を外の帯に寄せ、内の点をかすめる）。通ると緑に光る（判定には入らない）。広場の課題は、パイロンのまわりの白い輪の上を、回る向きに流しながら回った角度だけ数える（広場の外・パイロンに当たる・時間切れで失格）。ドリフトの課題の間は、横滑りの針の下に4輪の荷重の図（タイヤの箱が大きく橙ほど重い・青ほど軽い）。メダルの目安は、流しながら走り切った試しの走りのいちばん速い所が金・真ん中が銀。<details class="hx"><summary>くわしく</summary>止まった所から信号でスタートし、白黒の帯（止まる課題は黄色の枠）まで。コース外（4輪とも白線の外）・スピン・壁に当たると失格。巻き戻すと記録しない。メダルの目安はオート運転の速さから（金＝オートと同じ。ドリフトの課題は、条件を満たして走り切った走りから作った目安）。結果に練習表示の講評が出る（OPTIONS の「運転の練習表示」を切っていても出る）。課題の間は車とセッティングが決まった1台になり、終わると元の設定に戻る。手本：ドリフトの課題では、OPTIONS の「ゴースト」が「目標のメダル」の時、手本（うまい人の走りのまね）の半透明の車が一緒に走る。目標の行の「手本 −0.3秒」は手本との差（−なら自分が先）。入力の表示の水色の印は手本のハンドル・ペダル。横滑りの針：車の真ん中の横滑りの角度（目標の下。課題では目標の帯つきで、水色の印は手本の角度）。その下の直近3秒の線は、この3秒のハンドル（青）・アクセル（緑）・ブレーキ（赤）・サイド（橙）・横滑り（白）で、スピンや失格の前に何をしたかが分かる。横滑りの針と入力の表示（手本の水色の印も）は課題のリプレイでも出る（OPTIONS の「横滑りの針」「直近3秒の線」で出す・出さない）</details></span>
         <span>ペースノート</span><span>ラリーの同乗者のように、先のコーナーを画面と声で知らせる（RALLY SS と運転の課題。OPTIONS の「ペースノートを出す所」を「いつも」にするとタイムアタック・レースでも。OPTIONS の「ペースノート」で声も・表示だけ・なし）。<details class="hx"><summary>くわしく</summary>「右3 長い › 100」＝右コーナー、きつさ 3、長い、出口から次のコーナーまで 100m。きつさは 1 がいちばんきつく 6 がゆるい（このコースは 3〜5）。F（フラット）は全開で行ける曲がり。「きつくなる」は奥で曲がりがきつくなる、「ひらく」は奥でゆるくなる。「すぐ」は次のコーナーがすぐ続く（続けて読む）。右の数字はそのコーナーの入口まで。速いほど早めに読む。声が出ない時は端末に日本語の読み上げの声が入っていない（表示はいつも出る）</details></span>
         <span>練習表示</span><span>ブレーキの踏み始めの位置（看板の何m手前・目安との差）と踏み方を教えてくれる。OPTIONS の「運転の練習表示」で切り替え。<details class="hx"><summary>くわしく</summary>ブレーキを踏むと「100m看板の 12m 手前　目安より 5m 早い」のように出る（目安＝走行ラインが赤になり始める所）。下の行は自分の目印：同じコーナーで前回踏み始めた所より何m奥・手前か。3回続けて同じ所（4m の幅）なら「3回続けて同じ所」、その上で目安より早ければ「次は 5m 奥へ」（目印は少しずつ奥へずらすのが実際の詰め方）。「比較も」にすると、コーナーの出口で最速の CPU とブレーキ開始・最低速度・踏み始め（アクセル）を比べる。ターンイン（曲がり始め）でブレーキを少し残すと前に荷重が乗って向きが変わる（トレイルブレーキ）：出口に「ブレーキを残して 0.4秒（頂点の 15m 手前まで）」か「曲がる前にブレーキを離した」。かっこの中はブレーキを最後まで残した所（トレイルブレーキの深さ）。「比較も」では最速の CPU の深さも並べて出す（うまい CPU ほど頂点の近くまで残す）。頂点を過ぎても踏んでいると「頂点を過ぎてもブレーキ」（頂点までに抜き終えてアクセルへ）。ハンドルを切りながら強いブレーキを踏み続けると、タイヤの力がブレーキに取られて曲がらず、外へふくらむ：出口に「ブレーキが強すぎてふくらんだ」（曲がり始めたら少しずつ弱める）。ブレーキの踏み方は、踏み始めから頂点までの量を6本の棒で出す：最初にしっかり踏んで、曲がり始めに向けてだんだん抜くのが基本（「最初に強く→だんだん抜いた」）。キーボードはアクセルと同時押しで弱いブレーキ、軽いブレーキのキーで半分のブレーキになる。前の車の真後ろ（スリップストリーム）から横へ出た時は、ブレーキの何秒前だったかが出る（ブレーキの約1〜2.5秒前がちょうど良い。早すぎると空気の壁で伸びが止まり、遅いと並ぶ前にブレーキになる）。前輪駆動（FF）と四輪駆動（4WD）は、曲がり始めにアクセルを残したまま軽くブレーキを踏む（左足ブレーキ）と前に荷重が乗って向きが変わる（「左足ブレーキ」）。後輪駆動（FR・MR）は、頂点を過ぎてアクセルを開けると後輪が少し流れて向きが変わる：うまくいくと「アクセルで向きを変えた」、開け方が急で流れすぎると知らせる。入口：曲がり始めは走行ラインの外側の位置から（ラインより 2.5m 以上内側で曲がり始めると「外に寄り切れていない（あと ○m）」）。半径を大きくするほど速く曲がれる（アウト・イン・アウト）。下り坂のブレーキは止まりにくいので、踏んだ時に「下り坂 ○%」と出る。丘の頂上では車が浮きかけて荷重が抜け、ブレーキも曲がる力も弱くなる：頂上で踏み続けると出口に「頂上でブレーキ」、踏み始めた時に先に頂上があれば「この先 ○m 頂上」（頂上の手前で減速を終える）。砂利道・雪・氷のきついコーナーは、手前で一瞬逆へ振って車を逆向きに滑らせてから曲がる（フェイント。逆へ 4°以上〈12°未満〉滑らせてから 1.5秒の中に曲がる向きへ 12°以上。車が揺り戻されて向きが早く変わる。講評と課題は同じ見方）か、ブレーキを残して前に荷重を乗せて向きを作る：出口に「フェイントで向きを作った」「ブレーキを残して向きを作った」、曲がり切れないと知らせる。縁石：コーナーの内側と出口の平らな縁石（赤と白）は乗ってよい（「頂点の縁石を使った」）。きついコーナーの内側の奥の黄と黒のソーセージ縁石は跳ねて傷む。雨の日の縁石は滑る。雨の日はゴムの帯の上を走ったか。アシスト「なし」の手動変速では、ブレーキ中にアクセルを煽ってシフトダウンする（ヒール・アンド・トウ）と「ヒール・アンド・トウ」、煽らずにショックが出ると知らせる。OPTIONS の「運転の練習表示」で切り替え</details></span>
         <span>天気</span><span>雨は路面が濡れてグリップが落ちる（画面の右、ミニマップの下に ドライ／少し濡れ／ウェット）。雨が強く長く降ると、コースの低い所・コーナーの内側・直線の端に水たまり（暗い水面に雨の波紋）ができて広がり、やむと縮む。上を速く通るとタイヤが浮いて（ハイドロプレーニング）グリップがほとんどなくなり、ハンドルも効きにくい。よけるか、手前で速度を落とす（レインタイヤは浮きにくい。CPU もよける）。夜はヘッドライトが点く</span>
@@ -2653,7 +2653,7 @@ const CRSI=(()=>{try{const m=typeof location!=='undefined'&&/[?&]crs=(\d+)/.exec
 const REV=(()=>{try{if(COURSES[CRSI].p2p||COURSES[CRSI].norev)return 0;if(typeof location!=='undefined'&&/[?&]rev(=1)?(&|$)/.test(location.search||''))return 1;return svGet().lay===1?1:0;}catch(_){return 0;}})(); /* T361 逆回り（でコースの設定より前へ移した） */
 /* T498 ③ 運転の課題の区間（コースごと。… */
 COURSES[2].ch=[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[13.7,14.1,14.6]},{"n":"ヘアピン2つ","d":"右 ヘアピン → 左 ヘアピン。奥まで我慢してから向きを変え、立ち上がりで踏む","s0":920,"e":1700,"g":[27.9,28.8,30]},{"n":"高速の右から長い左","d":"右 フラット → 右5 → 左の長いヘアピン。高い速さから一気に落とす","s0":1730,"e":2620,"g":[27.5,28.4,29.5]},{"n":"後半の切り返し","d":"右 → 左 → 右。続く向きの変化で荷重を移す","s0":2600,"e":3320,"g":[23.9,24.7,25.7]},{"n":"雨のヘアピン2つ","d":"濡れた路面で右 ヘアピン → 左 ヘアピン。ブレーキは早め、踏むのはまっすぐになってから","s0":920,"e":1700,"o":{"wxSel":2},"g":[29.9,30.8,32]},{"n":"砂利のヘアピンをドリフトで","d":"砂利道で右 ヘアピン → 左 ヘアピン。手前で向きを作り、角の中は横滑りを保ったまま回る","s0":920,"e":1700,"o":{"roadSurf":1},"dr":{"b":15,"t":2},"g":[37,39.8,44.6]},{"n":"フェイントで入るヘアピン","d":"砂利道で、角の手前で外へ軽く振ってから切り込み、振り返しで向きを作る（スカンジナビアン・フリック）","s0":920,"e":1700,"o":{"roadSurf":1},"dr":{"b":12,"t":0,"k":"fe"},"g":[36.8,39.6,44.4]},{"n":"サイドで回るヘアピン","d":"砂利道のヘアピンで、サイドブレーキを短く引いて後ろを出し、向きを変えてから踏む","s0":920,"e":1700,"o":{"roadSurf":1},"dr":{"b":25,"t":0,"k":"hb"},"g":[39.6,43.7,48.9]},{"n":"左足ブレーキで向きを入れる","d":"砂利道の速い右（FF ハッチバック）。アクセルを半分以上残したまま、軽いブレーキを短く当てて前に荷重を移し、向きを変える","s0":2800,"e":3320,"o":{"roadSurf":1,"myCar":2,"setDrv":0},"dr":{"b":4,"t":0,"k":"lf"},"g":[23.4,24,26.9]}];COURSES[3].ch=[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[13.7,14.1,14.6]},{"n":"右の直角2つで路地へ","d":"右の直角 → 右の直角。2つ目の先で道幅が 9m に細くなる。出口で壁に寄せすぎない","s0":620,"e":1060,"g":[19.6,20.2,21]},{"n":"路地からの左・右","d":"細い路地から左の直角 → 少し広い通りで右の直角。狭い所ほどブレーキは早め","s0":1100,"e":1450,"g":[16.8,17.4,18]},{"n":"左・左で大通りへ","d":"細い通りから左の直角 → 左の直角で幅 14m の大通りへ。立ち上がりで踏む","s0":1680,"e":2080,"g":[18.5,19.1,19.9]},{"n":"大通りからS字","d":"大通りの終わりで右の直角 → 街の形でできた S字 → 長い直線。S字はまっすぐ抜けるラインを探す","s0":2150,"e":2700,"g":[17.9,18.5,19.2]},{"n":"雨の直角","d":"濡れた一般道で右の直角 → 右の直角。サーキットより滑る","s0":620,"e":1060,"o":{"wxSel":2},"g":[23.7,24.4,25.4]}];
-COURSES[2].mtn=[[5,1.1],[13,1.15]];COURSES[9].mtn=[[67,.75],[29,.4]]; /* 港町：低い丘 */COURSES[9].ch=[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[14.6,15,15.6]},{"n":"大通りの先の直角","d":"幅 15m の長い大通りから右の直角 → ビル街の少し広い右の直角。1つ目の外は広いので、奥まで我慢してブレーキ","s0":576,"e":956,"g":[16.4,16.9,17.5]},{"n":"ビル街の切り返し","d":"道幅 11m のビル街で左の直角 → 右の直角。1つ目の立ち上がりで2つ目の側へ寄せすぎない","s0":936,"e":1259,"g":[15.7,16.1,16.8]},{"n":"港のヘアピン","d":"海沿いの全開の道から右のヘアピン。高い速さから一気に落とし、外の余白を使って向きを変える","s0":1940,"e":2207,"g":[14.1,14.6,15.1]},{"n":"大通りの速い曲がり","d":"左の角 → 大通りの続く速い曲がり。踏んだまま、なるべく真っすぐなラインで抜ける","s0":2157,"e":2560,"g":[14.5,14.9,15.5]},{"n":"旧市街から最終の角","d":"道幅 8.5m の旧市街で左 → 右 → 左 → 右の直角、最終の右の角で大通りへ。壁ぎりぎりで抜けない所","s0":2520,"e":3003,"g":[24,24.8,25.7]},{"n":"雨の港のヘアピン","d":"濡れた一般道で右のヘアピン。サーキットより滑る","s0":1940,"e":2207,"o":{"wxSel":2},"g":[17,17.5,18.2]}]; /* 港町の運転の課題（金・銀・銅は ch388.js で測った値） */COURSES[3].mtn=[[91,.9],[47,.45]];COURSES[4].mtn=[[23,1.05],[61,1.25]];COURSES[5].mtn=[[41,1.3],[19,1.2]];
+COURSES[0].pad={x:-90,z:300,w:120,d:76,R:12,B:4,sp:24}; /* T744 ドリフトの広場（中心・幅 x・奥行き z・輪の半径・輪の帯の半幅・2つのパイロンの間）。複製のコースより後に置く */COURSES[2].mtn=[[5,1.1],[13,1.15]];COURSES[9].mtn=[[67,.75],[29,.4]]; /* 港町：低い丘 */COURSES[9].ch=[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[14.6,15,15.6]},{"n":"大通りの先の直角","d":"幅 15m の長い大通りから右の直角 → ビル街の少し広い右の直角。1つ目の外は広いので、奥まで我慢してブレーキ","s0":576,"e":956,"g":[16.4,16.9,17.5]},{"n":"ビル街の切り返し","d":"道幅 11m のビル街で左の直角 → 右の直角。1つ目の立ち上がりで2つ目の側へ寄せすぎない","s0":936,"e":1259,"g":[15.7,16.1,16.8]},{"n":"港のヘアピン","d":"海沿いの全開の道から右のヘアピン。高い速さから一気に落とし、外の余白を使って向きを変える","s0":1940,"e":2207,"g":[14.1,14.6,15.1]},{"n":"大通りの速い曲がり","d":"左の角 → 大通りの続く速い曲がり。踏んだまま、なるべく真っすぐなラインで抜ける","s0":2157,"e":2560,"g":[14.5,14.9,15.5]},{"n":"旧市街から最終の角","d":"道幅 8.5m の旧市街で左 → 右 → 左 → 右の直角、最終の右の角で大通りへ。壁ぎりぎりで抜けない所","s0":2520,"e":3003,"g":[24,24.8,25.7]},{"n":"雨の港のヘアピン","d":"濡れた一般道で右のヘアピン。サーキットより滑る","s0":1940,"e":2207,"o":{"wxSel":2},"g":[17,17.5,18.2]}]; /* 港町の運転の課題（金・銀・銅は ch388.js で測った値） */COURSES[3].mtn=[[91,.9],[47,.45]];COURSES[4].mtn=[[23,1.05],[61,1.25]];COURSES[5].mtn=[[41,1.3],[19,1.2]];
 const CRS=REV&&COURSES[CRSI].rev?{...COURSES[CRSI],...COURSES[CRSI].rev}:COURSES[CRSI],CREFB=CRS.ref||COURSES[0].ref,CRK=CRSI?'_c'+COURSES[CRSI].id:''; /* T302 記録の保存の鍵に足すコースの印（基準のコースは空＝前の鍵のまま） */
 let LAPS=3;const W=CRS.w, WALL=W+CRS.wallO, SCALE=CRS.scale;
 const PUBR=!!CRS.st;let PGP=PUBR?1.5:1; /* T519 公道の車間の倍率 */ /* T508 公道のコース（市街地・林道・峠。… */
@@ -3776,7 +3776,7 @@ if(P2P){const rM=new THREE.MeshStandardMaterial({color:0xd8342a,roughness:.7}),w
   const x=TX[i]+NX[i]*lat*s,z=TZ[i]+NZ[i]*lat*s;if(!farFromTrack(x,z,WALL+1.5))continue; // 別の区間のコースが近くを通る所で、その路面の上に生えていた（不具合報告）
   const sc=.6+Math.random()*.9;D.position.set(x,0,z);D.rotation.set(0,Math.random()*3,0);D.scale.set(sc,sc*(.8+Math.random()*.6),sc);D.updateMatrix();im.setMatrixAt(c++,D.matrix);}
  im.count=CRS.city?0:c; /* T494 市街地は草むらなし（Math.random の並びを変えないよう作る処理は同じ） */scene.add(im);SNW.gr=im;}
-function farFromTrack(x,z,m){for(let i=0;i<N;i+=2){if(HID[i])continue;const dx=x-TX[i],dz=z-TZ[i],r=m+WAL[i]-WALL;if(dx*dx+dz*dz<r*r)return false;}return true;} /* m は WALL を基にした距離。… */
+function farFromTrack(x,z,m){const pd=CRS.pad;if(pd&&Math.abs(x-pd.x)<pd.w/2+m&&Math.abs(z-pd.z)<pd.d/2+m)return false; /* T744 広場に木・丘を置かない */for(let i=0;i<N;i+=2){if(HID[i])continue;const dx=x-TX[i],dz=z-TZ[i],r=m+WAL[i]-WALL;if(dx*dx+dz*dz<r*r)return false;}return true;} /* m は WALL を基にした距離。… */
 let minX=1e9,maxX=-1e9,minZ=1e9,maxZ=-1e9;for(let i=0;i<N;i++){minX=Math.min(minX,TX[i]);maxX=Math.max(maxX,TX[i]);minZ=Math.min(minZ,TZ[i]);maxZ=Math.max(maxZ,TZ[i]);}
 const CX=(minX+maxX)/2,CZ=(minZ+maxZ)/2;
 /* ===== 背景 ===== */
@@ -5050,7 +5050,7 @@ function rankOf(k){return ranking().indexOf(k);}
 function syncWorld(k){const fx=Math.sin(k.h),fz=Math.cos(k.h),lx=Math.cos(k.h),lz=-Math.sin(k.h);k.vx=k.u*fx+k.vl*lx;k.vz=k.u*fz+k.vl*lz;}
 function syncLocal(k){const fx=Math.sin(k.h),fz=Math.cos(k.h),lx=Math.cos(k.h),lz=-Math.sin(k.h);k.u=k.vx*fx+k.vz*fz;k.vl=k.vx*lx+k.vz*lz;}
 function stepKart(k,dt,ctl){
-  k.locked=false;
+  k.locked=false;if(PAD)pdPin(k); /* T744 */
   if(!k.aiDriven&&(k.pso||k.pwr||k.idT)){k.pso=0;k.pwr=false;k.idT=0;} /* T535 オートを切ったら CPU 用のドリフトの状態を残さない */
   const surf=surfaceAt(k.idx,k.lat);k.surf=surf;
   // T186 A5 ソーセージ縁石に乗ると跳ねる：向き・横の速さが乱れ、少し減速して傷む（0.35秒に1回）。乗っている間はタイヤが浮いてグリップが落ちる
@@ -5151,7 +5151,7 @@ function stepKart(k,dt,ctl){
     const af=Math.atan2(k.vl+ka*k.r,ua)-(k.delta+(TQS&&Fd>0&&fs>.8?TQS*(k.id%2?1:-1)*Math.min(1.5,Fd*fs/G)*Math.min(1,10/ua):0))*sg,ar=Math.atan2(k.vl-kb*k.r,ua);
     const lof=LOK>0&&fs>.5&&!ctl.accel&&!ctl.brake&&k.u>8?1+LOK:1;const hcm=k.hcm||1,dN=Math.max(-LTX*lof,Math.min(LTX*lof,k.ax*HCG*1.8*lof*hcm));const df=AERO*(k.dfm||1)*(1-DAK*(k.dirty||0))*k.u*k.u*.5; // T139：FF のアクセルオフ（リフトオフ）は後輪の荷重が抜けて巻き込む
     const Nf=Math.max(1,G*kb/kl*tnf-dN+df*.9*(1-DWK*(k.dmW||0)) /* T888③ 前の翼の傷は前の押し付けだけ */),Nr=Math.max(1,G*ka/kl*tnf+dN+df*1.1);
-    const lsN=(Nf+Nr)/2,lsd=(1-LSDY)*dN,llm=llM(k,Math.abs(k.ay||0),Nf,Nr),dx=Fd>0?llX(k,Math.abs(k.ay||0),Nf,Nr):null,dTR=dx?dfT(dx[1],dif.lo?1:DTB):1,dTF=dx?dfT(dx[0],dif.lo?1:DTB):1,mF=(muF*Math.pow((Nf+lsd)/lsN,-LSQ))*llm[0],mR=(muR*Math.pow((Nr-lsd)/lsN,-LSQ))*llm[1]; // T304 荷重感度・T528 左右の荷重移動
+    k.ldF=Nf;k.ldR=Nr; /* T704 荷重の図（見せるだけ） */const lsN=(Nf+Nr)/2,lsd=(1-LSDY)*dN,llm=llM(k,Math.abs(k.ay||0),Nf,Nr),dx=Fd>0?llX(k,Math.abs(k.ay||0),Nf,Nr):null,dTR=dx?dfT(dx[1],dif.lo?1:DTB):1,dTF=dx?dfT(dx[0],dif.lo?1:DTB):1,mF=(muF*Math.pow((Nf+lsd)/lsN,-LSQ))*llm[0],mR=(muR*Math.pow((Nr-lsd)/lsN,-LSQ))*llm[1]; // T304 荷重感度・T528 左右の荷重移動
     const rg=(LSRG)*(k.rgc||1);let wsR1=0,wsF1=0,dtc=0;const cbm=cbM(k,Math.abs(k.ay||0),Nf,Nr),cyF=(cbm?cbm[0]+cbD(k,af):k.cyF==null||k.cyF===1&&!(k.cbF>0)?1:cbFy(k,af))*(k.tlk||1),cyR=(cbm?cbm[1]:k.cyR||1)*(k.tlk||1),cxR=k.cxR||1,cxF=k.cxF||1;const csF=CSQ?Math.pow(Math.max(.2,Nf/Math.max(1,Nf+dN)),-CSQ):1,csR=CSQ?Math.pow(Math.max(.2,Nr/Math.max(1,Nr-dN)),-CSQ):1;let Fyf=-mF*Nf*tF(af*csF)*cyF,Fyr=-mR*rg*Nr*tR(ar*csR)*cyR; /* T587 移った荷重の分だけ滑り角を伸び縮み＝硬さを荷重^(1−CSQ) に */
     // 後輪：駆動力と横力の合計はグリップ円の中
     const capR=mR*rg*Nr,cRx=capR*cxR;let FxR=Fd*(1-fs)-Math.min(Fb*(1-bb),cRx*RBR /* T848 ABS なしも同じ RBR（.6+.1 の時と同じ .7） */*(k.rbm||1))*sg;
@@ -5205,8 +5205,8 @@ function stepKart(k,dt,ctl){
     const tg=k.ic===0?Ta+55*pb*(T.sc?1.15:1):Ta+10*pb+.35*Math.max(0,k.ict-Ta);k.iat+=(tg-k.iat)*Math.min(1,dt*(k.ic===0?1.2:.8));
     k.icK=turbo?1-ICL*Math.max(0,Math.min(1,(k.iat-35)/50)):1;}}
   // トラック位置と壁
-  k.prevIdx=k.idx;k.idx=nearest(k.x,k.z,k.idx,16);k.lat=lateralAt(k.idx,k.x,k.z);
-  wallCollide(k);pitWallCollide(k);if(P2P)p2pWall(k,dt);if(PARK.length)parkCollide(k);if(TRF.length)trfCollide(k);if(CRS.free)cityCollide(k); /* T510① */ /* T515② */
+  const pdP=!!PAD&&pdPin(k); /* T744 広場の間は線の位置を止めて壁を見ない */if(!pdP){k.prevIdx=k.idx;k.idx=nearest(k.x,k.z,k.idx,16);k.lat=lateralAt(k.idx,k.x,k.z);}
+  if(!pdP){wallCollide(k);pitWallCollide(k);}if(P2P)p2pWall(k,dt);if(PARK.length)parkCollide(k);if(TRF.length)trfCollide(k);if(CRS.free)cityCollide(k); /* T510① */ /* T515② */
   {const s=Math.sign(k.lat),lw=WAL[k.idx]+.9+wx(k.idx,s);if(!CRS.free&&Math.abs(k.lat)>lw) /* T510① せき止めない街は横道へ入れる（道へ押し戻さない） */{const push=Math.abs(k.lat)-lw;k.x-=NX[k.idx]*s*push;k.z-=NZ[k.idx]*s*push;k.lat=s*(lw+.3);}}
   if(k.bump>0)k.bump-=dt;
   const a=k.prevIdx,b=k.idx;
@@ -5550,7 +5550,7 @@ function feStep(D,b,big){if(D.rt!=null&&raceTime<D.rt-1e-6){D.l={};D.pk={};D.sg=
 const slipDeg=k=>Math.abs(k.u)>3?Math.atan2(k.vl,Math.abs(k.u))*57.3:0;
 /* T611 β0.440.0 技の課題（タックイン ti・左足ブレーキ lf）の決まり。Fable の下調べ（まね）で決めた */
 const CHTA=.5,CHTS=.3,CHTR=5,CHTT=1.2,CHLB=.3,CHLD=.3,TQK=r=>!!r&&(r.k==='ti'||r.k==='lf');
-const chDrTxt=C=>{const r=C.dr;if(!r)return '';return r.k==='ti'?'舵を切りアクセルを半分以上踏んで曲がっている所から、アクセルを全部戻して '+CHTT+' 秒の中に内向きの横滑りを '+r.b+'°以上増やす（ブレーキ・サイドは使わない）':r.k==='lf'?'曲がっている間にアクセルを半分以上残したまま軽いブレーキ（3割以上）を '+CHLD+' 秒以上当て、'+CHTT+' 秒の中に内向きの横滑りを '+r.b+'°以上増やす':r.k==='fe'?'角の手前で逆へ '+CHFB+'°以上（'+r.b+'°未満）振ってから '+CHFT+' 秒の中に反対へ '+r.b+'°以上':r.k==='hb'?'サイドを引いてから '+CHHT+' 秒の中に横滑り '+r.b+'°以上':'横滑り '+r.b+'°以上を合わせて '+r.t+' 秒';};
+const chDrTxt=C=>{const r=C.dr;if(!r)return '';if(C.pad)return pdRule(C);return r.k==='ti'?'舵を切りアクセルを半分以上踏んで曲がっている所から、アクセルを全部戻して '+CHTT+' 秒の中に内向きの横滑りを '+r.b+'°以上増やす（ブレーキ・サイドは使わない）':r.k==='lf'?'曲がっている間にアクセルを半分以上残したまま軽いブレーキ（3割以上）を '+CHLD+' 秒以上当て、'+CHTT+' 秒の中に内向きの横滑りを '+r.b+'°以上増やす':r.k==='fe'?'角の手前で逆へ '+CHFB+'°以上（'+r.b+'°未満）振ってから '+CHFT+' 秒の中に反対へ '+r.b+'°以上':r.k==='hb'?'サイドを引いてから '+CHHT+' 秒の中に横滑り '+r.b+'°以上':'横滑り '+r.b+'°以上を合わせて '+r.t+' 秒';};
 function chDrStep(p,C,dt){let D=chD;if(!D||!C.dr)return;if(D.rt!=null&&raceTime<D.rt-1e-6)D=chD={t:0,mx:0,l:{},pk:{},hb:-9,fe:0,hbOk:0,bP:0,tOn:-9,tl:null,tiMx:0,tiOk:0,lf:null,lfMx:0,lfT:0,lfOk:0,mk:[]}; /* 巻き戻した：前の記録は使わない（覚えた時刻が先になって誤って通った） */D.rt=raceTime;if(p.tt!=null)D.trMx=Math.max(D.trMx||0,p.tt-(p.tdF||0)); /* T901 後ろのタイヤの表面 */const b=slipDeg(p),a=Math.abs(b),r=C.dr;
   if(a>D.mx)D.mx=a;if(a>=r.b&&a<=CHMX)D.t+=dt;if(!r.k){if(a>=r.b){if(D.inU==null)D.inU=p.u*3.6;if(D.fd){if(Math.sign(b)!==D.sg&&raceTime-D.fdT<=CHSW)D.sw=(D.sw||0)+1;else D.brk=(D.brk||0)+1;D.fd=0;}D.inB=1;D.sg=Math.sign(b);}else if(D.inB&&a<r.b*CHFL){D.inB=0;D.fd=1;D.fdT=raceTime;}} /* T327 講評：入りの速さ（初めて帯に入った時）・流れ（帯から CHFL 倍の下へ落ちてまた入った回数。CHSW 秒以内に逆向きへ入り直したのは切り返し） */ /* フェイントは講評と同じ判定（coachStep が chD.fe を立てる。T802） */
   if(inpC&&inpC.drift&&p.u>5)D.hb=raceTime;if(a>=r.b&&raceTime-D.hb<=CHHT)D.hbOk=1;
@@ -5563,7 +5563,7 @@ function chDrStep(p,C,dt){let D=chD;if(!D||!C.dr)return;if(D.rt!=null&&raceTime<
      if(D.lf){if(raceTime-D.lf.t>CHTT)D.lf=null;else if(D.lf.du>=CHLD){const d=b*D.lf.sg-D.lf.b;if(d>D.lfMx)D.lfMx=d;if(d>=r.b)D.lfOk=1;}}}}
   D.bP=b;
   const say=(q,t)=>{if(D[q])return;D[q]=1;telop('CHALLENGE',t+'　○');try{tone(1320,.07,'square',.07);tone(1760,.1,'square',.07,0,.08);}catch(_){}}; /* T741② 技が出た瞬間に知らせと音（巻き戻すと D が作り直されて言い直す） */
-  if(!r.k&&D.t>=r.t)say('sT','ドリフト（'+r.b+'°以上を '+r.t+' 秒）');if(r.k==='fe'&&D.fe)say('sF','フェイント');if(r.k==='hb'&&D.hbOk)say('sH','サイドで回る');if(r.k==='ti'&&D.tiOk)say('sTi','タックイン');if(r.k==='lf'&&D.lfOk)say('sL','左足ブレーキ');}
+  if(!r.k&&!C.pad&&D.t>=r.t)say('sT','ドリフト（'+r.b+'°以上を '+r.t+' 秒）');if(r.k==='fe'&&D.fe)say('sF','フェイント');if(r.k==='hb'&&D.hbOk)say('sH','サイドで回る');if(r.k==='ti'&&D.tiOk)say('sTi','タックイン');if(r.k==='lf'&&D.lfOk)say('sL','左足ブレーキ');}
 /* T741 横滑りの角度の針（ドリフトの課題の間。見せるだけで補正ではない）：±SGM° の棒に今の角度の針、目標の帯（r.b〜CHMX）、フェイントの課題は逆へ振る目安 ±CHFB° の線。帯に入った時に小さな音 */
 const CHFL=.6,CHSW=1,SGM=45,slS={dt:0,in:0,tT:-9,key:'',mx:0,lap:-1,h:[]};
 /* T741 β0.438.0 リプレイの横滑り：記録の 0.1秒ごとのこまから（u＝a[3]・vl＝a[10]・入力 pi）。mx＝0こま目からここまでの最大（こまごとに1度だけ作る） */
@@ -5594,6 +5594,13 @@ function slipHud(dt){const cv=$('slipCv');if(!cv)return;const rp=state==='replay
    const ln=(j,col,f)=>{g.strokeStyle=col;g.lineWidth=5;g.beginPath();for(let i=0;i<n;i++){const y=f(slS.h[i][j]);if(i)g.lineTo(X(i),y);else g.moveTo(X(i),y);}g.stroke();};
    if(n>1){ln(2,'#6be89a',v=>t1-v*(t1-t0));ln(3,'#ff5a4a',v=>t1-v*(t1-t0));ln(1,'#6fb7ff',v=>mid-v*hh);ln(0,'#ffffff',v=>mid-Math.max(-SGM,Math.min(SGM,v))/SGM*hh);}
    g.font='700 18px sans-serif';g.textAlign='left';g.fillStyle='rgba(255,255,255,.7)';g.fillText('3秒前',18,t0+12);g.textAlign='right';g.fillText('今',W-18,t0+12);}}
+/* T704 4輪の荷重の小さな図（ドリフトの課題の間だけ。見せるだけ）：前を上に、4つのタイヤの箱の大きさと色が荷重（止まっている時の 1/4 を基準に、軽い＝青・重い＝橙）、下の字は全体に対する割合 */
+let ldK='',ldT=0;function ldHud(){const cv=$('ldCv');if(!cv)return;const p=typeof player==='function'?player():null,C=chOn!=null?CH[chOn]:null,on=!!p&&!p.dnf&&isCh()&&!!(C&&C.dr)&&!chRes&&(state==='race'||state==='countdown'||state==='paused')&&p.ldF>0;if(cv.hidden===on)cv.hidden=!on;if(!on){ldK='';return;}
+  const now=performance.now();if(now-ldT<60)return;ldT=now;const Nf=p.ldF,Nr=p.ldR,x=llX(p,Math.abs(p.ay||0),Nf,Nr),s=Math.sign(p.ay||0),T=Nf+Nr,w=[Nf/2*(1-s*x[0]),Nf/2*(1+s*x[0]),Nr/2*(1-s*x[1]),Nr/2*(1+s*x[1])].map(v=>Math.max(0,v)/T); /* 左前・右前・左後・右後（ay が正＝左へ曲がる＝右が外） */
+  const key=w.map(v=>Math.round(v*200)).join();if(key===ldK)return;ldK=key;const g=cv.getContext('2d'),W=cv.width,H=cv.height;g.clearRect(0,0,W,H);g.fillStyle='rgba(12,14,18,.62)';g.fillRect(0,0,W,H);
+  g.fillStyle='rgba(255,255,255,.85)';g.font='700 22px sans-serif';g.textAlign='center';g.textBaseline='top';g.fillText('荷重',W/2,6);g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=3;g.strokeRect(W/2-24,46,48,118);
+  const cx=[W/2-46,W/2+46],cy=[74,146];for(let i=0;i<4;i++){const f=w[i]*4,a=Math.sqrt(Math.max(.15,Math.min(2.2,f))),bw=20*a,bh=34*a,X=cx[i%2],Y=cy[i>>1],c=f<1?[90+165*f,170+85*f,255]:[255,Math.max(120,255-130*(f-1)),Math.max(40,255-215*(f-1))];
+   g.fillStyle='rgb('+c.map(v=>Math.round(Math.max(0,Math.min(255,v)))).join()+')';g.fillRect(X-bw/2,Y-bh/2,bw,bh);g.fillStyle='rgba(255,255,255,.9)';g.font='700 17px sans-serif';g.fillText(Math.round(w[i]*100)+'%',X,Y+bh/2+2>H-20?H-20:Y+bh/2+2);}}
 /* T804 オート運転中の札に今の技（見るだけ。名前は 0.8 秒は出し続ける） */
 const atS={n:'',t:0,h:''};
 function autoTech(dt){const el=$('autoBadge');if(!el||el.hidden)return;const k=typeof player==='function'?player():null;let n='';
@@ -5610,7 +5617,7 @@ function chDrOk(C){const D=chD,r=C.dr;if(!r)return null;if(!D)return 'ドリフ�
 /* T611 β0.437.0 ドリフトの課題の「次の一手」（結果の講評の上に1行）。手本の数字：最大の横滑り・条件の角度にいた秒・いちばん遅い所（走り出し 3秒の後） */
 function chGdSt(C){const G=chGuide(),gi=G&&chGdI();if(!gi)return null;let mx=0,t=0;for(let i=0;i<gi.length;i+=5){const a=Math.abs(gi[i+4]);if(a>mx)mx=a;if(a>=C.dr.b&&a<=CHMX)t+=.1;}const tl=chGdC.tl||(chGdC.tl=chTel(G.s,gi,.1,G.t));return{mx,t,vm:tl?chVmin(tl.s):null};}
 function chVmin(q){let m=1e9;for(let i=1;i<q.length;i+=5)if(q[i+3]>3&&q[i]<m)m=q[i];return m<1e8?m*3.6:null;}
-function chTip(C,r){const D=chD,R=C.dr;if(!R||!D||!r||r.ok&&r.m===3)return '';const w=r.why||'',g=chGdSt(C),gx=g?'（手本：最大 '+Math.round(g.mx)+'°'+(R.k?'':'・'+R.b+'°以上 '+g.t.toFixed(1)+' 秒')+'）':'';let t;
+function chTip(C,r){if(C.pad)return pdTip(C,r);const D=chD,R=C.dr;if(!R||!D||!r||r.ok&&r.m===3)return '';const w=r.why||'',g=chGdSt(C),gx=g?'（手本：最大 '+Math.round(g.mx)+'°'+(R.k?'':'・'+R.b+'°以上 '+g.t.toFixed(1)+' 秒')+'）':'';let t;
  if(!r.ok&&(/スピン/.test(w)||D.mx>CHMX))t='回りすぎ（最大 '+Math.round(D.mx)+'°）：滑り始めたら早めにハンドルを逆へ当て、アクセルを少し戻して '+CHMX+'° より手前で止める'+gx;
  else if(!r.ok&&/壁|コース外/.test(w))t='外へ膨らんだ：角の手前で速さを落としきってから向きを変え、滑っている間はアクセルの量で外へ流れる量を合わせる'+gx;
  else if(!r.ok&&R.k==='ti')t=D.tiMx>0?'抜いたが向きが入りきらない（増えた横滑り '+D.tiMx.toFixed(1)+'°・目標 '+R.b+'°）：もう少し速い所・舵を多めに切った所で、すっと全部戻す':'タックイン：舵を切ってアクセルを半分以上踏んだまま曲がり、前が外へ逃げ始めたらアクセルを全部戻す（ブレーキ・サイドは使わない）。鼻が内へ入ったら踏み直す';
@@ -5622,9 +5629,62 @@ function chTip(C,r){const D=chD,R=C.dr;if(!R||!D||!r||r.ok&&r.m===3)return '';co
  else{const own=chTel(ghRec,chInR,.05,r.t),a=own?chVmin(own.s):null,b=g&&g.vm;t='条件は満たした。'+(a!=null&&b!=null&&a<b-2?'速さを落としすぎ（いちばん遅い所 '+Math.round(a)+'km/h・手本 '+Math.round(b)+'km/h）：角度を浅めにして出口の速さを残す':'あとは速さ：滑らせる時間を短くして早く出口へ向ける')+'。どこで差が付いたかは「ラップ比較」で手本と比べられる';}
  return '<br><b class="chTip">次の一手</b>　'+t;}
 let CHH=3,CHB=1.05;
-var CH=CRS.ch||[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[13.7,14.1,14.6]},{"n":"第1・第2コーナー","d":"右3 すぐ 右4。ブレーキの踏み始めと、続くコーナーへのつなぎ","s0":380,"e":930,"g":[15.2,15.7,16.3]},{"n":"S字","d":"左3 長い → 右4 長い。切り返しで荷重を移す","s0":1420,"e":2240,"g":[21.7,22.4,23.3]},{"n":"高速セクション","d":"右 フラット → 右5。アクセルを抜くか、踏み切るか","s0":2520,"e":3040,"g":[13.8,14.3,14.8]},{"n":"雨の第1コーナー","d":"濡れた路面で右3 すぐ 右4。ブレーキは早め、縁石とゴムの帯に注意","s0":380,"e":930,"o":{"wxSel":2},"g":[16.2,16.7,17.4]},{"n":"砂利道の S字","d":"砂利道で左3 → 右4。滑らせながら向きを変える","s0":1420,"e":2240,"o":{"roadSurf":1},"g":[25.8,26.6,27.7]},{"n":"砂利の S字をドリフトで","d":"砂利道で左3 → 右4。切り返しで振り子のように向きを入れ替え、横滑りを保ってつなぐ","s0":1420,"e":2240,"o":{"roadSurf":1},"dr":{"b":12,"t":1.5},"g":[28.1,28.7,30.2]},{"n":"タックインで向きを入れる","d":"砂利道の速い左（FF ハッチバック）。踏んだまま曲がると前が外へ逃げる。舵を切ったままアクセルを全部戻し、前に荷重を移して鼻を内へ入れる","s0":1420,"e":1950,"o":{"roadSurf":1,"myCar":2,"setDrv":0},"dr":{"b":4,"t":0,"k":"ti"},"g":[20.3,20.7,23.2]}];
+/* T744 段のドリフトの課題（ドリフトの学校の順：定常円で保つ → 8の字で切り返す → サイドで入る）。q＝[パイロン 0 左・1 右, 1 左回り・−1 右回り] を順に1周ずつ */
+const PADCH=[{"n":"定常円（左回り）","d":"広場のパイロンのまわりを左回りで、横滑りを保ったまま2周。アクセルで角度を作り、ハンドルは滑った分だけ逆へ（ドリフトの学校の1段目）","s0":30,"o":{"roadSurf":1},"pad":{"q":[[0,1],[0,1]],"tl":90,"bp":[30,28,.2,1.5,.4,.03,.08,.35,0,3.5,28,.3,.05,0,0]},"dr":{"b":20,"t":0},"g":[47,56,70]},
+ {"n":"8の字","d":"左のパイロンを左回りで1周、真ん中で切り返して右のパイロンを右回りで1周、これを2回。切り返しは一瞬アクセルを抜き、車が逆へ振れたらすぐ踏み直す（2段目）","s0":30,"o":{"roadSurf":1},"pad":{"q":[[0,1],[1,-1],[0,1],[1,-1]],"tl":200,"bp":[28,24,.2,1.5,.6,.03,.08,.35,0,3.5,26,.3,.05,0,0]},"dr":{"b":20,"t":0},"g":[138,160,190]},
+ {"n":"サイドで入って定常円","d":"広場の端から加速し、輪に入る所でサイドを短く引いて向きを変え、そのまま左回りで1周（3段目）","s0":30,"o":{"roadSurf":1},"pad":{"q":[[0,1]],"run":34,"hb":1,"tl":60,"bp":[30,24,.2,1.5,.6,.03,.08,.35,0,3.5,28,.3,.05,0,0]},"dr":{"b":20,"t":0},"g":[34,41,52]}];
+var CH=CRS.ch||[{"n":"止まる","d":"全開から、黄色の枠の中で止まる（車の真ん中が枠に入ればよい）","s0":30,"box":[440,455],"g":[13.7,14.1,14.6]},{"n":"第1・第2コーナー","d":"右3 すぐ 右4。ブレーキの踏み始めと、続くコーナーへのつなぎ","s0":380,"e":930,"g":[15.2,15.7,16.3]},{"n":"S字","d":"左3 長い → 右4 長い。切り返しで荷重を移す","s0":1420,"e":2240,"g":[21.7,22.4,23.3]},{"n":"高速セクション","d":"右 フラット → 右5。アクセルを抜くか、踏み切るか","s0":2520,"e":3040,"g":[13.8,14.3,14.8]},{"n":"雨の第1コーナー","d":"濡れた路面で右3 すぐ 右4。ブレーキは早め、縁石とゴムの帯に注意","s0":380,"e":930,"o":{"wxSel":2},"g":[16.2,16.7,17.4]},{"n":"砂利道の S字","d":"砂利道で左3 → 右4。滑らせながら向きを変える","s0":1420,"e":2240,"o":{"roadSurf":1},"g":[25.8,26.6,27.7]},{"n":"砂利の S字をドリフトで","d":"砂利道で左3 → 右4。切り返しで振り子のように向きを入れ替え、横滑りを保ってつなぐ","s0":1420,"e":2240,"o":{"roadSurf":1},"dr":{"b":12,"t":1.5},"g":[28.1,28.7,30.2]},{"n":"タックインで向きを入れる","d":"砂利道の速い左（FF ハッチバック）。踏んだまま曲がると前が外へ逃げる。舵を切ったままアクセルを全部戻し、前に荷重を移して鼻を内へ入れる","s0":1420,"e":1950,"o":{"roadSurf":1,"myCar":2,"setDrv":0},"dr":{"b":4,"t":0,"k":"ti"},"g":[20.3,20.7,23.2]}].concat(CRS.pad?PADCH:[]);
 const CHV={bopMode:1,catSel:0,ccChoice:1,myCar:0,setDrv:1,setG:1,setW:1,setB:1,setT:0,setC:1,setDf:1,setBC:1,setE:1,setS:1,setTW:1,setSU:1,setRH:1,setTP:0,setCF:1,setCR:1,setK:1,setIC:1,todSel:1,wxSel:0,wearMode:0,dmgMode:1,crashMode:0,judgeOn:false,mixSel:0,roadSurf:0};
 function isCh(){return chOn!=null&&sess==='ta';}
+/* T744 広場の課題：自分の車の線の位置を直線の1点 PADI・横 0 に止め（路面はその点の舗装・壁とコース外と周の数えは効かない）、車は x・z を自由に走る。地形は平ら（起伏 0 の所）なので坂も無い。失格は広場の外・パイロンに当たる・時間切れ */
+const PAD=CRS.pad||null,PYL=2.25,PYW=1.0;let PADI=-1,chP=null,pdM=null;
+const isPad=()=>!!PAD&&isCh()&&!!CH[chOn]&&!!CH[chOn].pad,pdPy=i=>[PAD.x+(i?.5:-.5)*PAD.sp,PAD.z];
+function pdIdx(){let bi=0,bs=-1e18;const ic=CRS.icy||[];for(let i=0;i<N;i++){let ok=1;for(let j=-25;j<=25&&ok;j++){const q=wrap(i+j);if(CORNER[q]||PITZ[q]||HID[q])ok=0;}if(!ok)continue;const d=i*SP;if(ic.some(c=>d>c[0]-40&&d<c[1]+40))continue;const v=-Math.abs(TH(TX[i],TZ[i]))*100-Math.abs(d-L/2)*.001;if(v>bs){bs=v;bi=i;}}return bi;}
+function pdPin(k){if(!k.isPlayer||!isPad())return false;if(PADI<0)PADI=pdIdx();k.prevIdx=k.idx=PADI;k.lat=0;return true;}
+const pdDN=(C,i)=>{const q=C.pad.q[i];return (C.pad.q.some(x=>x[0]!==C.pad.q[0][0])?(q[0]?'右':'左')+'のパイロン ':'')+(q[1]>0?'左回り':'右回り');};
+function pdStart(C){const p=player();if(!p)return;const P=C.pad,q=P.q[0],y=pdPy(q[0]),dir=q[1],R=PAD.R,tx=dir,tz=0;let x=y[0],z=y[1]+R;if(P.run)x-=tx*P.run;
+  p.x=x;p.z=z;p.h=Math.atan2(tx,tz);p.u=p.vl=p.r=0;p.delta=0;syncWorld(p);pdPin(p);chP={seg:0,acc:0,th:null,hb:0,on:0,tq:0,sp:[],bt:null};pdRing(C);}
+function pdStep(p,C,dt){const P=C.pad,S=chP;if(!S)return;const lx=p.x-PAD.x,lz=p.z-PAD.z;if(Math.abs(lx)>PAD.w/2||Math.abs(lz)>PAD.d/2)return chFail('広場の外へ出た');
+  {const fx=Math.sin(p.h),fz=Math.cos(p.h);for(let i=0;i<2;i++){const y=pdPy(i),dx=y[0]-p.x,dz=y[1]-p.z;if(Math.abs(dx*fx+dz*fz)<PYL&&Math.abs(dx*fz-dz*fx)<PYW)return chFail('パイロンに当たった');}}
+  if(raceTime>P.tl)return chFail('時間切れ（'+P.tl+' 秒）');
+  const q=P.q[S.seg],y=pdPy(q[0]),dir=q[1],dx=p.x-y[0],dz=p.z-y[1],d=Math.hypot(dx,dz),th=Math.atan2(dx,dz),b=slipDeg(p),a=Math.abs(b);
+  if(P.hb&&!S.hb&&chD&&chD.hbOk)S.hb=1;let dh=0;if(S.th!=null){dh=th-S.th;while(dh>Math.PI)dh-=2*Math.PI;while(dh<-Math.PI)dh+=2*Math.PI;}S.th=th;
+  S.on=a>=C.dr.b&&a<=CHMX&&Math.sign(b)===-dir&&Math.abs(d-PAD.R)<=PAD.B&&(!P.hb||S.hb)?1:0; /* 数えるのは：横滑りが目標の角度の中・回る向きに流れている（左回りなら後ろが右へ）・輪の帯の上 */
+  if(S.on){S.acc=Math.max(0,S.acc+dh*dir);S.tq+=dt;}
+  if(S.acc>=2*Math.PI){S.sp.push(raceTime);S.seg++;S.acc=0;S.th=null;if(S.seg>=P.q.length)return chEnd({ok:true,t:raceTime});telop('CHALLENGE',S.seg+'/'+P.q.length+' 周　○'+(P.q[S.seg][0]!==q[0]?'　切り返して '+pdDN(C,S.seg):''));try{tone(1320,.07,'square',.07);tone(1760,.1,'square',.07,0,.08);}catch(_){}pdRing(C);}}
+const pdRule=C=>'横滑り '+C.dr.b+'°以上で、回る向きに流しながら白い輪（パイロンから '+(PAD?PAD.R-PAD.B:8)+'〜'+(PAD?PAD.R+PAD.B:16)+'m）の上を回った分だけ数える'+(C.pad.hb?'（サイドで入ってから）':'')+'。'+C.pad.q.length+' 周（広場の外・パイロンに当たる・'+C.pad.tl+' 秒で失格）';
+const pdGoal=C=>{const S=chP;if(!S)return '';const n=C.pad.q.length,i=Math.min(S.seg,n-1);return pdDN(C,i)+' '+(Math.min(S.seg,n-1)+1)+'/'+n+' 周目 '+Math.round(S.acc*57.3)+'°／360°'+(S.on?' <b>○</b>':'')+(C.pad.hb&&!S.hb?'　サイドで入る まだ':'');};
+function pdRes(C){const S=chP,D=chD;if(!S)return '';let t='<br>広場：回った周 '+Math.min(S.seg,C.pad.q.length)+'／'+C.pad.q.length+'・数えた時間 '+S.tq.toFixed(1)+' 秒';if(S.sp.length){let a=0;t+='・周ごと '+S.sp.map(x=>{const v=x-a;a=x;return v.toFixed(1);}).join('／')+' 秒';}
+  if(D)t+='<br>ドリフト：いちばん大きい横滑り '+Math.round(D.mx)+'°'+(D.inU!=null?'・入りの速さ 時速'+Math.round(D.inU)+'km・流れ '+(D.brk?'途切れ '+D.brk+'回':'途切れなし')+(D.sw?'（切り返し '+D.sw+'回）':''):'')+(C.pad.hb?'・サイドで入る '+(S.hb?'○':'×'):'');return t;}
+function pdTip(C,r){const D=chD,w=r&&r.why||'',S=chP||{};let t;if(r&&r.ok&&r.m===3)return '';
+  if(/広場の外/.test(w))t='外へ膨らんだ：アクセルを少し戻すと角度が浅くなって輪の内へ戻る。ハンドルは滑った分だけ逆へ当て、戻しすぎない';
+  else if(/パイロン/.test(w))t='内へ巻き込んだ：後ろが出すぎたらアクセルを少し戻し、ハンドルを逆へ多めに当てる。足りないうちに当てすぎると内へ切れ込む';
+  else if(C.pad.hb&&!S.hb)t='サイド：輪に入る所でハンドルを内へ切りながらサイドを短く（0.3秒ほど）引き、後ろが出たら離してアクセル（引いてから '+CHHT+' 秒の中に '+C.dr.b+'° 以上）';
+  else if(D&&D.mx<C.dr.b)t='角度が足りない（最大 '+Math.round(D.mx)+'°・目標 '+C.dr.b+'°）：2速で輪の上を回りながら、ハンドルを内へ切り足して一気に全開。後ろが出たら逆へ当てて踏み続ける';
+  else if(!(r&&r.ok))t='流しが続かない：角度はアクセルで（足りなければ踏む・多ければ少し戻す）、向きはハンドルで（輪の外へ出そうなら内へ少し戻す）。白い輪の上を外さない';
+  else t=C.pad.q.length>2?'あとは切り返し：真ん中の手前で一瞬アクセルを抜くと車が逆へ振れる。振れたらすぐハンドルを逆へ当てて踏み直す':'あとは速さ：角度を浅めに保つと速く回れる（周ごとの時間を見比べる）';
+  return '<br><b class="chTip">次の一手</b>　'+t;}
+/* 広場の絵：舗装・縁の白線・2つの輪（白い線と帯）・パイロン。今の周の輪の帯を濃く */
+function pdMarks(C){const g=chGrp,mt=(col,op)=>{const m=new THREE.MeshBasicMaterial({color:new THREE.Color(col).convertSRGBToLinear(),transparent:op<1,opacity:op,depthWrite:op>=1,polygonOffset:true,polygonOffsetFactor:-4,side:THREE.DoubleSide});m.userData.lin=1;return m;},fl=(geo,m,x,z,y,ro)=>{const o=new THREE.Mesh(geo,m);o.rotation.x=-Math.PI/2;o.position.set(x,y,z);o.renderOrder=ro||0;g.add(o);return o;};
+  const am=new THREE.MeshLambertMaterial({color:roadSurf===1?0x8f7a5a:roadSurf>=2?0xdfe6ee:0x44464b,polygonOffset:true,polygonOffsetFactor:-2});fl(new THREE.PlaneGeometry(PAD.w,PAD.d),am,PAD.x,PAD.z,.03);
+  const wm=mt(0xffffff,.9);for(const [w,d,x,z] of [[PAD.w,.3,0,PAD.d/2-.4],[PAD.w,.3,0,-PAD.d/2+.4],[.3,PAD.d,PAD.w/2-.4,0],[.3,PAD.d,-PAD.w/2+.4,0]])fl(new THREE.PlaneGeometry(w,d),wm,PAD.x+x,PAD.z+z,.06,2);
+  pdM={b:[]};for(let i=0;i<2;i++){const y=pdPy(i);fl(new THREE.RingGeometry(PAD.R-.13,PAD.R+.13,96),wm,y[0],y[1],.07,2);pdM.b.push(fl(new THREE.RingGeometry(PAD.R-PAD.B,PAD.R+PAD.B,96),mt(0xffd23f,.16),y[0],y[1],.065,2));
+   const cm=new THREE.MeshLambertMaterial({color:0xff6a10}),c=new THREE.Mesh(new THREE.ConeGeometry(.32,.78,16),cm);c.position.set(y[0],.39,y[1]);g.add(c);const sm=new THREE.MeshLambertMaterial({color:0xf2f2f2}),st=new THREE.Mesh(new THREE.CylinderGeometry(.17,.21,.14,16),sm);st.position.set(y[0],.5,y[1]);g.add(st);fl(new THREE.PlaneGeometry(.8,.8),mt(0x111111,1),y[0],y[1],.075,2);}
+  if(C.pad.run){const y=pdPy(C.pad.q[0][0]);fl(new THREE.PlaneGeometry(.35,3.4),wm,y[0]-C.pad.run-2.6,y[1]+PAD.R,.07,2);}}
+function pdRing(C){if(!pdM||!chP)return;const n=C.pad.q.length,i=C.pad.q[Math.min(chP.seg,n-1)][0];pdM.b.forEach((m,j)=>{m.material.opacity=j===i?.34:.1;});}
+/* 広場の手本の運転手（オートの時・メダルの目安）：ハンドル・アクセル・サイドだけで回る（補正は無し）。輪に乗って速さを作る → 内へ切って全開（サイドの課題はサイド）で流し始める → 前輪を進む向きにそろえて内への向きを足し、角度はアクセルで保つ */
+let PBK=[30,24,.2,1.5,.6,.03,.08,.35,0,3.5,28,.3,.05,0,0],PBX=0; /* 課題ごとの組は pad.bp（測って選んだ。道具から PBX で PBK を使う） */
+function pdBot(k,dt,C){const S=chP,O={steer:0,accel:false,brake:false,drift:false,pb:1};if(!S)return O;const P=C.pad,n=P.q.length,q=P.q[Math.min(S.seg,n-1)],[VK,TG,TH0,KT,K1,K2,KF,HBT,KQ,XD,VH,KV,KS,TM,MD]=(!PBX&&P.bp)||PBK;
+  const B=S.bt||(S.bt={ph:P.run?-1:0,t:0,py:q[0],dir:q[1]});if(q[0]!==B.py&&Math.hypot(k.x-PAD.x,k.z-PAD.z)<XD){B.py=q[0];B.dir=q[1];B.ph=3;B.t=0;} /* 8の字：前の輪を回り続け、真ん中まで来たら切り返す */B.t+=dt;
+  const y=pdPy(B.py),dir=B.dir,u=Math.abs(k.u),dM=stMx(u,dmaxDiv(k)),b=u>3?Math.atan2(k.vl,u):0,sm=-dir*b*57.3,rx=k.x-y[0],rz=k.z-y[1],d=Math.hypot(rx,rz)||1,ux=rx/d,uz=rz/d,v=Math.hypot(k.vx,k.vz)||.01,pO=(k.vx*ux+k.vz*uz)/v,er=d-PAD.R;
+  const d0=Math.atan2(k.vl+(k.ka||KA)*k.r,Math.max(u,1)),gp=dir*(Math.atan((k.kl||KL)/PAD.R)+K1*pO+K2*er);let dl=gp,thr=0,hb=false;
+  if(B.ph===-1){dl=0;thr=1;if(-(rx)*dir<=VK/3.6*HBT*1.6){B.ph=1;B.t=0;}} /* サイドの課題：真っすぐ加速して輪の手前まで */
+  else if(B.ph===0){thr=Math.max(0,Math.min(1,.25+.5*(VK/3.6-v)));if(v>=VK/3.6-.5&&Math.abs(er)<2.5){B.ph=1;B.t=0;}}
+  else if(B.ph===1){dl=dir*dM;thr=1;if(P.hb&&B.t<HBT){hb=true;thr=.3;}if(sm>12||B.t>1.5){B.ph=2;B.t=0;}}
+  else if(B.ph===3){dl=d0;thr=0;if(B.t>.2&&(Math.abs(b*57.3)<5||sm>6)||B.t>1){B.ph=0;B.t=0;}} /* 8の字の切り返し：一瞬抜いて振り返す */
+  else if(MD){thr=Math.max(TM,Math.min(1,TH0+KV*(VH-KQ*Math.max(0,er)-v*3.6)/10));dl=d0+dir*(KF+K1*pO+K2*er+KS*(TG-sm)/30);if(sm>60){dl=d0-dir*.05;}if(sm<4&&B.t>1){B.ph=1;B.t=0;}} /* 速さはアクセル・角度と向きはハンドル */
+  else{dl=d0+dir*(KF+K1*pO+K2*er+KS*(TG-sm)/30);thr=Math.max(TM,Math.min(1,TH0+KT*(TG-sm)/30-KV*(v*3.6-VH)/10-KQ*Math.max(0,er)/PAD.B*.3));if(sm>55){thr=0;dl=d0;}if(sm<4&&B.t>1){B.ph=1;B.t=0;}}
+  dl=Math.max(-SLK,Math.min(SLK,dl));O.steer=Math.max(-1,Math.min(1,stI(k,dl,dM,b)));O.accel=thr>.02;O.thr=thr;O.drift=hb;return O;}
 function chSwap(o){const old={};for(const k in o){old[k]=eval(k);eval(k+'=o[k]');}return old;}
 function chRestore(){if(chSnap){const o=chSnap;chSnap=null;chSwap(o);}}
 const chBest=()=>{try{const o=JSON.parse(localStorage.getItem('popkart_ch')||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}; /* T790 */}catch(_){return {};}};
@@ -5636,7 +5696,7 @@ function chOpen(e){const dO=e===1,b=chBest(),od=[...CH.keys()].sort((x,y)=>!!CH[
 function chClose(){if($('chScreen').hidden)return;$('chScreen').hidden=true;if(state==='title'){const m=flLast&&flMode(flLast);if(m&&(m.id==='ch'||m.id==='dr')){flM=flLast;catCur='top';$('tmRun').dataset.cat='top';flOpen('crs');return;}if(catTop()){menuFocus('goBtn');return;}} /* T660② 入ってきた③コースへ戻る（前は古い入口へ） */try{$('chBtn').focus({preventScroll:true});}catch(_){}}
 function chGo(i){$('chScreen').hidden=true;$('lapScreen').hidden=true;if(!autoPlay&&typeof fdDone==='function')fdDone(); /* T800 課題・デイリーでは「続きから」を消さない */
   if(chSnap)chRestore();const C=CH[i];chSnap=chSwap(Object.assign({},CHV,C.o||{}));chOn=i;dyOn=null;newEvent();ssOn=false;startSession('ta');}
-function chQuit(){chOn=null;dyOn=null;taMed=null;chRes=null;chMarks(null);chRestore();$('chScreen').hidden=true;$('chListBtn').hidden=true;$('chAsBtn').hidden=true;}
+function chQuit(){chP=null;chOn=null;dyOn=null;taMed=null;chRes=null;chMarks(null);chRestore();$('chScreen').hidden=true;$('chListBtn').hidden=true;$('chAsBtn').hidden=true;}
 /* T355 今日の課題：日付を種に、車・クラス・駆動方式・路面・天気・時間帯を決めたタイムアタック（タイヤは条件に合うもの）。… */
 const dyDate=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
 function dyCond(ds){let h=2166136261;for(let i=0;i<ds.length;i++){h^=ds.charCodeAt(i);h=Math.imul(h,16777619);}let z=h>>>0;
@@ -5654,7 +5714,7 @@ function dyGo(){$('chScreen').hidden=true;$('lapScreen').hidden=true;if(!autoPla
   try{const ks=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'';if(k.indexOf('popkart_dy_')===0&&k.indexOf('popkart_dy_'+ds)!==0)ks.push(k);}ks.forEach(k=>localStorage.removeItem(k));}catch(_){}
   chSnap=chSwap(Object.assign({},CHV,dyCond(ds)));dyOn=ds;newEvent();ssOn=false;startSession('ta');}
 // 枠とゴールの線（路面の上。高さは地形の仕組みが足す）
-function chMarks(C){chMk=null;if(chGrp){scene.remove(chGrp);chGrp.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});chGrp=null;}if(!C)return;chGrp=new THREE.Group();
+function chMarks(C){chMk=null;if(chGrp){scene.remove(chGrp);chGrp.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});chGrp=null;}if(!C)return;chGrp=new THREE.Group();if(C.pad&&PAD){pdMarks(C);scene.add(chGrp);return;} /* T744 */
   const P=(x,l)=>{const f=((x%L)+L)%L/SP,i=Math.floor(f),t=f-i,a=wrap(i),b=wrap(i+1);return [TX[a]+(TX[b]-TX[a])*t+(NX[a]+(NX[b]-NX[a])*t)*l,TZ[a]+(TZ[b]-TZ[a])*t+(NZ[a]+(NZ[b]-NZ[a])*t)*l];};
   const strip=(a,b,col,op)=>{const pos=[],idx=[],n=Math.max(1,Math.ceil((b-a)/1.5));for(let q=0;q<=n;q++){const x=a+(b-a)*q/n,wl=WL[wrap(Math.round(((x%L)+L)%L/SP))];for(const l of[-wl,wl]){const p=P(x,l);pos.push(p[0],.07,p[1]);}if(q<n)idx.push(q*2,q*2+1,q*2+2,q*2+1,q*2+3,q*2+2);}
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);
@@ -5675,7 +5735,7 @@ function chMkStep(p){if(!chMk||!chD)return;const mk=chD.mk||(chD.mk=[]),d=lapDis
   for(let i=0;i<chMk.length;i++){const M=chMk[i];if(!mk[i]){if(M.k===0){if(d>=M.d0&&d<=M.d1){const rx=p.x-Math.sin(p.h)*1.8,rz=p.z-Math.cos(p.h)*1.8;if(lateralAt(p.idx,rx,rz)*M.o>M.lb)mk[i]=1;}}else if(Math.abs(d-M.d)<12&&Math.hypot(p.x-M.x,p.z-M.z)<CMKI)mk[i]=1;if(mk[i])sfx('blip');}
     const on=!!mk[i];if(M.lit!==on){M.lit=on;M.m.material.color.set(new THREE.Color(on?0x4dff7a:M.c0).convertSRGBToLinear());M.m.material.opacity=on?.85:M.op0;}}}
 function chMkTxt(){if(!chMk||!chMk.length)return '';const mk=chD&&chD.mk||[];let a=0,b=0,c=0,e=0;chMk.forEach((M,i)=>{if(M.k===0){b++;if(mk[i])a++;}else{e++;if(mk[i])c++;}});return '<br>路面の印（目安）：外の帯 '+a+' / '+b+'・内の点 '+c+' / '+e;}
-function chBegin(){const C=CH[chOn];chRes=null;chRw=0;chCo=[];chD=C.dr?{t:0,mx:0,l:{},pk:{},hb:-9,fe:0,hbOk:0,bP:0,tOn:-9,tl:null,tiMx:0,tiOk:0,lf:null,lfMx:0,lfT:0,lfOk:0,mk:[]}:null;ghStart();chgLoad();chMarks(C);$('chListBtn').hidden=false;
+function chBegin(){const C=CH[chOn];chRes=null;chRw=0;chCo=[];chD=C.dr?{t:0,mx:0,l:{},pk:{},hb:-9,fe:0,hbOk:0,bP:0,tOn:-9,tl:null,tiMx:0,tiOk:0,lf:null,lfMx:0,lfT:0,lfOk:0,mk:[]}:null;ghStart();chgLoad();chMarks(C);if(C.pad&&PAD)pdStart(C);else chP=null;$('chListBtn').hidden=false;
   telop('CHALLENGE',(chOn+1)+'「'+C.n+'」'+(C.dr?'条件：'+chDrTxt(C):C.d)); /* T611 画面⑤ 短く（スマホ横で目標の行を隠した） */
   logAdd('課題',C.d+'　金 '+fmt(C.g[0])+'・銀 '+fmt(C.g[1])+'・銅 '+fmt(C.g[2]));chAidTx(C);}
 function chSideKey(){return isTouch?'「サイド」ボタン':gp.on?'パッドの '+padN('A'):kN1('drift');}
@@ -5691,14 +5751,15 @@ let chGoalK='';function chGoalUi(){const el=$('chGoal');if(!el)return;const ta=!
   if(ta){const m=taLv(),i=2-m,dl=m<3&&tgDelta!=null&&ghSel===0&&(ghost||!dlMode)?'　'+(tgDelta<=0?'−':'+')+Math.abs(tgDelta).toFixed(1):'';const h=(dyOn?'今日 ':'')+(m<3?'目標 <b class="m'+i+'">'+CHM[m+1]+' '+fmt(taMed[i])+'</b>'+dl:'<b>金メダル</b> 取った　次は自己ベスト');if(h!==chGoalK){chGoalK=h;el.innerHTML=h;}return;} /* T354 */
   const C=CH[chOn],p=player(),t=state==='race'?raceTime:0,m=t<=C.g[0]?0:t<=C.g[1]?1:t<=C.g[2]?2:3;let h=m<3?'目標 <b class="m'+m+'">'+['金','銀','銅'][m]+' '+fmt(C.g[m])+'</b>':'メダルの時間を過ぎた';
   if(C.box&&p){const r=C.box[0]-lapDist(p);h+=r>0?'　枠まで '+Math.round(r)+'m':'　枠の中';}
-  if(C.dr&&chD){const r=C.dr;h+=r.k==='ti'?'　タックイン '+(chD.tiOk?'<b>○</b>':'まだ'):r.k==='lf'?'　左足ブレーキ '+(chD.lfOk?'<b>○</b>':'まだ'):r.k==='fe'?'　フェイント '+(chD.fe?'<b>○</b>':'まだ'):r.k==='hb'?'　サイドで回る '+(chD.hbOk?'<b>○</b>':'まだ'):'　ドリフト '+(chD.t>=r.t?'<b>○</b>':chD.t.toFixed(1)+'／'+r.t+'秒');}if(ghSel===0&&tgDelta!=null&&chGuide())h+='　手本 '+(tgDelta<=0?'−':'+')+Math.abs(tgDelta).toFixed(1)+'秒';else if(ghost&&ghost.ch&&ghDelta!=null)h+='　自己ベスト '+(ghDelta<=0?'−':'+')+Math.abs(ghDelta).toFixed(1)+'秒'; /* T642 単位 */ /* T742③ */if(h!==chGoalK){chGoalK=h;el.innerHTML=h;}}
+  if(C.pad&&chP)h+='　'+pdGoal(C);else if(C.dr&&chD){const r=C.dr;h+=r.k==='ti'?'　タックイン '+(chD.tiOk?'<b>○</b>':'まだ'):r.k==='lf'?'　左足ブレーキ '+(chD.lfOk?'<b>○</b>':'まだ'):r.k==='fe'?'　フェイント '+(chD.fe?'<b>○</b>':'まだ'):r.k==='hb'?'　サイドで回る '+(chD.hbOk?'<b>○</b>':'まだ'):'　ドリフト '+(chD.t>=r.t?'<b>○</b>':chD.t.toFixed(1)+'／'+r.t+'秒');}if(ghSel===0&&tgDelta!=null&&chGuide())h+='　手本 '+(tgDelta<=0?'−':'+')+Math.abs(tgDelta).toFixed(1)+'秒';else if(ghost&&ghost.ch&&ghDelta!=null)h+='　自己ベスト '+(ghDelta<=0?'−':'+')+Math.abs(ghDelta).toFixed(1)+'秒'; /* T642 単位 */ /* T742③ */if(h!==chGoalK){chGoalK=h;el.innerHTML=h;}}
 const chFail=why=>{if(isCh()&&state==='race')chEnd({ok:false,why});};
 function chStep(dt){if(!isCh()||state!=='race'||chRes)return;const p=player(),C=CH[chOn];if(!p)return;
+  if(C.pad&&PAD){chDrStep(p,C,dt);return pdStep(p,C,dt);} /* T744 */
   chDrStep(p,C,dt);chMkStep(p);const d=lapDist(p);
   if(C.box){if(d>C.box[1])return chFail('枠を行き過ぎた');if(p.u<.3&&d>C.s0+5){if(d>=C.box[0])chEnd({ok:true,t:raceTime});else chFail('枠の手前で止まった');}}
   else if(d>=C.e){const w=chDrOk(C);if(w)chEnd({ok:false,why:w,t:raceTime});else chEnd({ok:true,t:raceTime});}}
 // 自分の車の操作：終わったら止まる。止まる課題のオート運転は、枠の真ん中で止まるようにブレーキ
-function chCtl(k,dt,c){if(!k.isPlayer)return c;const C=CH[chOn];
+function chCtl(k,dt,c){if(!k.isPlayer)return c;const C=CH[chOn];if(C.pad&&PAD){if(chRes)return {steer:0,accel:false,brake:k.u>.3,brk:1,drift:false,pb:1};if(k.aiDriven)return pdBot(k,dt,C);return c;} /* T744 */
   if(chRes){const a=k.aiDriven?c:aiControl(k,dt);return {steer:a.steer,accel:false,brake:k.u>.3,brk:1,drift:false};}
   if(C.box&&k.aiDriven){const d=lapDist(k),tg=(C.box[0]+C.box[1])/2,need=k.u*k.u/(2*G*CHB*wetMul('road',k)),b=d+need>=tg-1.5;return {steer:c.steer,accel:!b,thr:1,brake:b,brk:1,drift:false};}
   return c;}
@@ -5709,9 +5770,9 @@ function showCh(){$('resNote').textContent='';$('resNote').classList.remove('ftn
   $('resultTable').innerHTML=h;
   $('resultTitle').textContent=r.ok?(r.m?CHM[r.m]+'メダル！　':'メダルに届かず　')+fmt(r.t)+(autoPlay||autoUsed?'（'+auNm()+'は記録しない）':chRw?'（巻き戻したので記録なし）':r.rec&&r.old?'　自己ベスト更新':''):'失格：'+(r.why||'').split('（')[0]; /* T611 β0.438.0 PC で言葉の途中で折り返さないように、括弧の中は注記へ */
   const co=[...new Set(chCo)].slice(-4);
-  const dn=C.dr&&chD?'<br>'+(TQK(C.dr)?'技：':'ドリフト：')+(C.dr.k?'':'横滑り '+C.dr.b+'°以上 '+chD.t.toFixed(1)+' 秒／'+C.dr.t+' 秒・')+'いちばん大きい横滑り '+Math.round(chD.mx)+'°'+(!C.dr.k&&chD.inU!=null?'・入りの速さ 時速'+Math.round(chD.inU)+'km・流れ '+(chD.brk?'途切れ '+chD.brk+'回':'途切れなし')+(chD.sw?'（切り返し '+chD.sw+'回）':''):'')+(C.dr.k==='ti'?'・タックイン '+(chD.tiOk?'○':'×')+'（増えた横滑り '+chD.tiMx.toFixed(1)+'°）':C.dr.k==='lf'?'・左足ブレーキ '+(chD.lfOk?'○':'×')+'（増えた横滑り '+chD.lfMx.toFixed(1)+'°・同時踏み '+chD.lfT.toFixed(1)+' 秒）':C.dr.k==='fe'?'・フェイント '+(chD.fe?'○':'×'):C.dr.k==='hb'?'・サイドで回る '+(chD.hbOk?'○':'×'):'')+(chD.trMx?'<br>後ろのタイヤ（表面）：いちばん熱い '+Math.round(chD.trMx)+'℃（ちょうど良い '+ttWin(player()).join('〜')+'℃）':''):''; /* T901 */
+  const dn=C.pad&&chP?pdRes(C):C.dr&&chD?'<br>'+(TQK(C.dr)?'技：':'ドリフト：')+(C.dr.k?'':'横滑り '+C.dr.b+'°以上 '+chD.t.toFixed(1)+' 秒／'+C.dr.t+' 秒・')+'いちばん大きい横滑り '+Math.round(chD.mx)+'°'+(!C.dr.k&&chD.inU!=null?'・入りの速さ 時速'+Math.round(chD.inU)+'km・流れ '+(chD.brk?'途切れ '+chD.brk+'回':'途切れなし')+(chD.sw?'（切り返し '+chD.sw+'回）':''):'')+(C.dr.k==='ti'?'・タックイン '+(chD.tiOk?'○':'×')+'（増えた横滑り '+chD.tiMx.toFixed(1)+'°）':C.dr.k==='lf'?'・左足ブレーキ '+(chD.lfOk?'○':'×')+'（増えた横滑り '+chD.lfMx.toFixed(1)+'°・同時踏み '+chD.lfT.toFixed(1)+' 秒）':C.dr.k==='fe'?'・フェイント '+(chD.fe?'○':'×'):C.dr.k==='hb'?'・サイドで回る '+(chD.hbOk?'○':'×'):'')+(chD.trMx?'<br>後ろのタイヤ（表面）：いちばん熱い '+Math.round(chD.trMx)+'℃（ちょうど良い '+ttWin(player()).join('〜')+'℃）':''):''; /* T901 */
   $('resNote').innerHTML=(!r.ok&&/（/.test(r.why||'')?'<b>失格の理由</b>　'+r.why+'<br>':'')+'課題 '+(chOn+1)+'「'+C.n+'」　ツーリングカー・'+((CARS[myCar]||{}).name||'')+' '+(['FF','FR','4WD'][setDrv]||'')+'・標準'+dn+chMkTxt()+chTip(C,r)+(r.pzH?'<br>'+r.pzH:'')+(co.length?'<span class="chCo"><b>講評</b>'+co.join('<br>')+'</span>':'');
-  $('raceBtn').hidden=true;$('againBtn').hidden=false;$('chListBtn').hidden=false;$('chAsBtn').hidden=!(C.dr&&(assistLv!==1||csxSel)); /* T916 S7 押した時だけアシストを標準に（原則③） */$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=!lapList().length; /* T742 課題の結果からもラップ比較 */
+  $('raceBtn').hidden=true;$('againBtn').hidden=false;$('chListBtn').hidden=false;$('chAsBtn').hidden=!(C.dr&&(assistLv!==1||csxSel)); /* T916 S7 押した時だけアシストを標準に（原則③） */$('replayBtn').hidden=rpBuf.length<10;$('lapBtn').hidden=!!C.pad||!lapList().length; /* T742 課題の結果からもラップ比較（広場は線に沿わないので出さない） */
   $('resultScreen').hidden=false;pad.hidden=true;}
 function ssSplit(p,quiet){const rT=raceTime-raceT0; /* T821 */const a=p.ssSp||(p.ssSp=[]);if(p.lap!==1||p.finished)return;const d=lapDist(p);while(a.length&&d<SLEN*a.length/3-10)a.pop(); /* 巻き戻した時 */
   const n=a.length;if(n<2&&d>=SLEN*(n+1)/3&&d<SLEN*.97){a.push(rT);if(quiet)return;
@@ -6166,7 +6227,7 @@ let XORX=3,XOLB=.5; /* T895① ランプの点滅：XOLB 秒で1回（6割が明
 let RXK=.15,RXB=.03,RXY=.7,RXR=.6,RXS=.15,RXF=.6,RXP=.3,RXJ=.2,RXH=1,RXC=1,RXL=1,RXG=.8; /* T879 人らしい反応の遅れ：RXK＝基準の秒（0＝前の形）・RXB＝「後ろが出た」と気づく横滑り rad・RXY×RXB より小さい時間が RXR 秒で落ち着く・RXS＝技能の段（cons）1つで短く／長くなる割合・RXF＝疲れ・RXP＝プレッシャー・RXJ＝ばらつき・RXH＝急ブレーキの遅れの倍率（0＝ブレーキは遅らせない）・RXC＝接触でもう一度・RXL＝路面のグリップが RXG より低い所（砂利・雪・氷）での遅れの倍率（滑るのを初めから構えている。1＝同じ） */
 function rxDl(k){if(!(RXK>0))return 0;return RXK*Math.max(.5,1-RXS*skv(k,'cons'))*(1+RXF*(1-(k.stam??1)))*(1+RXP*(k.prs||0)*prOf(k))*(1+RXJ*(Math.random()*2-1))*((RSF[RSI[k.idx]]||RSF[0]).mu<RXG?RXL:1);}
 let AICR=.02,AIDW=.25,ABRG=.7,ABRW=1,RQH=1; /* T864 Y：ブレーキ中の当て舵の強さの下限 ABRG・振り子止めの重み ABRW（手で運転する人がブレーキ中に後ろが出たら、横滑りの分だけ前輪を向け、出始めの速さにも当てるのと同じ形。0＝前のまま）。RQH＝前の車への急ブレーキ中も滑りの見張りの当て舵は効かせる（ブレーキは弱めない） */ /* T758② CPU・オートの当て舵の反応の遅れ（秒）。0.06秒以上だと当て舵が一度戻ってまた当たり、オートの流しが2回に分かれる・課題のフェイントに受からない（2026-11-11 の測り） */
-function aiDrv(k,o,dt){if(!o||k.dnf)return o;const u=k.u,au=Math.abs(u),b=au>3?Math.atan2(k.vl,au):0,dM=stMx(au,dmaxDiv(k)),sg=u<0?-1:1; /* T758② CPU・オートの運転手のハンドル：運転が狙った角度（dMax で表した舵）に、横滑りを反応の遅れ AICR 秒でならした分の当て舵（前の補助と同じ強さ k.csx）を足し、stepKart と同じ形 stA の逆 stI で入力に表し直す */
+function aiDrv(k,o,dt){if(!o||k.dnf||o.pb)return o; /* T744 広場の手本は自分で当てる */const u=k.u,au=Math.abs(u),b=au>3?Math.atan2(k.vl,au):0,dM=stMx(au,dmaxDiv(k)),sg=u<0?-1:1; /* T758② CPU・オートの運転手のハンドル：運転が狙った角度（dMax で表した舵）に、横滑りを反応の遅れ AICR 秒でならした分の当て舵（前の補助と同じ強さ k.csx）を足し、stepKart と同じ形 stA の逆 stI で入力に表し直す */
  const c0=k.csB; /* k.csB＝ならした横滑り（k.cbF は前輪のキャンバーなので別の名前。Fable の指摘 2026-11-12） */k.csB=k.csB==null?b:k.csB+(b-k.csB)*Math.min(1,dt/AICR);let a=-(o.steer||0)*dM;
  if(RXK>0&&pzK(k)){const ab=Math.abs(b); /* T879 予期しない横滑りへの最初の当て舵だけ遅れる（運転手が気づいて手が動くまで） */
   if(k.pso>0||k.hbT>0||k.drifting||k.erS>0||k.enS>0||k.idT>0||k.pit>0||sess==='drag'||au<8){k.rxS=2;k.rxQ=0;}
@@ -6484,7 +6545,7 @@ let WLM=.38;const wearK=()=>LAPS<=12?wearMode:wearMode===1?Math.max(WLM,Math.pow
 const QTYRE=1.07; // 予選用タイヤ：予選だけグリップ7%増（T48）
 let RSQK=1,RSQT=15,RSQD=3;
 let WFS=.25,BBWW=.1,WFR=.15; /* T83 タイヤの摩耗の前後（WFS＝駆動輪の側へ寄せる量、BBWW＝前後の減りの差 1 あたりにブレーキバランスを動かす量、WFR＝無線で知らせる差） */
-function rescueStep(k,dt){if(!RSQK||sess==='drag'||state!=='race'||k.dnf||k.finished||k.pit===2||!k.aiDriven||cau()||SC.rf||ROLL.on&&!ROLL.green){k.rqT=0;k.rqP=null;return;}
+function rescueStep(k,dt){if(!RSQK||PAD&&k.isPlayer&&isPad()||sess==='drag'||state!=='race'||k.dnf||k.finished||k.pit===2||!k.aiDriven||cau()||SC.rf||ROLL.on&&!ROLL.green){k.rqT=0;k.rqP=null;return;}
   const pg=progress(k);if(k.rqP==null||pg-k.rqP>RSQD){k.rqP=pg;k.rqT=0;return;}k.rqT+=dt;if(k.rqT<RSQT)return;
   const i=k.idx,inPit=k.pit>0&&PITZ[i],lim=inPit?WAL[i]+PWX[i]:WL[i]-1.6,lat=Math.max(-lim,Math.min(lim,k.lat));
   k.x=TX[i]+NX[i]*lat;k.z=TZ[i]+NZ[i]*lat;k.h=heading(i);k.u=k.vl=k.r=0;k.delta=0;syncWorld(k);k.lat=lat;k.stuckT=0;k.revT=0;k.fwdT=2;k.rqT=0;k.rqP=progress(k);k.rqN=(k.rqN||0)+1;
@@ -6988,7 +7049,7 @@ const coM=d=>Math.round(Math.abs(d))+'m';
 let BMK=1,BME=6,BMD=2,BMR=5,BMF=-3,BMX=14;
 function bmLearn(k,c){if(!BMK||c.bs==null||c.er||cau()||sess==='drag')return;if(Math.abs(ENV.wet-(k.bmW??ENV.wet))>.25)k.bmo={};k.bmW=ENV.wet;
   const o=k.bmo||(k.bmo={}),e=o[c.cid]??BME;o[c.cid]=c.of||c.sp?Math.min(BMX,e+BMR):Math.max(BMF,e-BMD);k.bmL=(k.bmL||0)+1;}
-function coachBrake(k,C){if(!(coachMode||isCh())||autoPlay||state!=='race')return;const u=Math.max(0,k.u),gmB=wetMul('road',k),tyB=k.ty||0,tqC=tyAI(k),aB=brkA(k,G*AIBG*rsG(k.idx,gmB,tyB)*tqC,u*u);let need=-1e9; /* T757 ブレーキの見込みは AIBG・路面とタイヤの相性も */
+function coachBrake(k,C){if(!(coachMode||isCh())||autoPlay||state!=='race'||isPad())return;const u=Math.max(0,k.u),gmB=wetMul('road',k),tyB=k.ty||0,tqC=tyAI(k),aB=brkA(k,G*AIBG*rsG(k.idx,gmB,tyB)*tqC,u*u);let need=-1e9; /* T757 ブレーキの見込みは AIBG・路面とタイヤの相性も */
   let aM=aB;{let bAc=0;for(let j=0;j<160;j++){const i=wrap(k.idx+j),x=u*u-(VPP[i]*VPP[i]+bAc+2*G*(TE[i]-TE[k.idx]));if(x>need){need=x;if(j)aM=bAc/(2*j*SP);}bAc+=2*Math.max(.5,brkA(k,G*AIBG*rsG(i,gmB,tyB)*tqC,Math.max(VPP[i]*VPP[i],u*u-bAc)))*SP;}} /* T757 点ごとの路面と坂で。距離に直す減速 aM はいちばんきつい点までの平均 */
   if(need<-2*aM*120)return; // ブレーキの要らない所で軽く踏んだだけ
   const off=need/(2*aM),ds=relIdx(C.s,k.idx),pa=relIdx(C.apex,k.idx);let where=`頂点の ${coM(Math.max(0,pa))} 手前`; // 看板から 60m 以上離れていたら、頂点（ラインがいちばんきつい所）からの距離で
@@ -7055,7 +7116,7 @@ let TRX=.35,TVL=3.5,TCL=4.5,CVK=1,CVR=1,CVA=5.5,CVD=12,CVN=9,CVV=.5,CVT=2.2,CVW=
 // T281 抜き合いを戻す仕掛け（CVX・CVO・CVB・PBA）は試して無効のままだったので T754 で消した。DRK＝スリップストリームで減る空気抵抗の最大の割合（.3）。
 /* T493 AFN＝前の車との車間の速さの分 AFT の倍率（コースごと。… */let {DRK,AFN=1}=CRS.cpu;
 let SDL=1.2,SLE0=.7,SLE1=2.6,SLE2=6,TBP=3,TIS=3,TRT=.15,RRM=.2,RRK=.12,OBT=.3,OBB=.85,OBS=.1,BKS=1; // T83OBT＝ハンドルを OBS 以上切りながら、ブレーキを OBB 以上で踏み続けた秒数がこれを超えたら「ブレーキが強すぎてふくらんだ」（測定：120km/h でハンドル半分の時、ブレーキ 30% なら横G 1…
-function coachCorner(k,cid,ex){if(!(coachMode||isCh())||autoPlay)return;const me=k.crec[cid];let ref=null,who='';
+function coachCorner(k,cid,ex){if(!(coachMode||isCh())||autoPlay||isPad())return;const me=k.crec[cid];let ref=null,who='';
   const only=()=>{if(ex)coachShow(`<i>第${cid+1}コーナー</i>${ex}`,4);};
   if(coachMode<2){only();return;}
   if(sess==='race'){let best=null;for(const o of karts){if(o.isPlayer||!o.crec||!o.crec[cid]||o.dnf)continue;const sc=o.best?o.best:1e4-(o.skill||0)*100;if(!best||sc<best.sc)best={o,sc};}if(best){ref=best.o.crec[cid];who=best.o.name;}}
@@ -8128,7 +8189,7 @@ const PN=(()=>{const a=[];
   if(P2P)a.forEach((q,i)=>{if(i<a.length-1){q.fin=-1;return;}const g=Math.max(0,P2P.b-q.e*SP);q.gap=g;q.fin=g;q.link=g<PNI?'すぐ':g>=PNS?'長い直線':String(Math.max(50,Math.round(g/50)*50));});
   return a;})();
 let pnDone=new Map(),pnShow=[],pnT=0,pnV=null;
-const pnOn=()=>pnMode>0&&sess!=='drag'&&(pnAll||isSS()||(typeof isCh==='function'&&isCh()))&&!(typeof isCh==='function'&&isCh()&&CH[chOn].box); /* T348 止まる課題はコーナーと関係ないので出さない */
+const pnOn=()=>pnMode>0&&sess!=='drag'&&(pnAll||isSS()||(typeof isCh==='function'&&isCh()))&&!(typeof isCh==='function'&&isCh()&&(CH[chOn].box||CH[chOn].pad)); /* T348 止まる課題はコーナーと関係ないので出さない */
 function pnReset(){pnDone.clear();pnShow.length=0;pnT=0;const el=$('pnote');if(el){el.hidden=true;el.innerHTML='';}try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(_){}}
 const pnDir=q=>q.d>0?'右':'左';
 function pnLink(q){return isSS()&&q.fin>=0?'ゴール '+Math.max(50,Math.round(q.fin/50)*50):q.link;}
@@ -8205,7 +8266,7 @@ function updateCameraIn(dt){
   const vq=SPK>0&&!RM?Math.max(0,Math.min(1,(r-.3)/.6)):0,vm=far?1.5:1; /* T759 速い時（最高速の3割から9割で最大）・流れている時は低く近く（VSK） */
   const dist=(far?13:7.6)+r*1.2+camKick*1.2+sx*SPD-vm*(VSK.cd*vq+VSK.sd*camDr);
   const cH=camH+(LK.r||0),tgt=tmpV.set(p.x-Math.sin(cH)*dist,(far?4.4:2.6)+r*.2+camKick*.2-vm*(VSK.ch*vq+VSK.sh*camDr),p.z-Math.cos(cH)*dist); /* T445 後ろを見る間は車の前から */
-  {const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WAL[ci]+.2+wx(ci,Math.sign(cl));if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
+  if(!(PAD&&p.isPlayer&&isPad())){const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WAL[ci]+.2+wx(ci,Math.sign(cl));if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
   {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
   if(LK.r>1e-3&&LK.r<Math.PI-1e-3)camPos.copy(tgt);else camPos.lerp(tgt,Math.min(1,dtS*9)); /* T633 回っている間は回る位置そのもの（追いかけの遅れで車の中を通らない） */camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
@@ -10357,7 +10418,7 @@ function catUp(){if(catCur!=='top'){catGo('top');flOpen('mode');}} /* 入口（S
 const FLM=[{g:'サーキット',m:[{id:'race',b:'RACE',n:'レース',d:'8台で周回するレース。周回・CPU の強さ・審判などは④出走前の画面で。',cat:'on',btn:'startBtn',crs:[0,2,3,9],rev:1},
   {id:'ta',b:'TIME ATTACK',n:'タイムアタック',d:'1台で周回し、ベストラップをゴーストと競う。',cat:'on',btn:'taBtn',crs:[0,2,3,9],rev:1},
   {id:'ch',b:'CHALLENGE',n:'運転の課題　金・銀・銅',d:'止まる・コーナーなどの短い課題。順回りのコースだけ。',cat:'on',btn:'chBtn',crs:[0,2,3,9]},
-  {id:'dr',b:'DRIFT',n:'ドリフトの課題　金・銀・銅',d:'流す・サイドで回る・フェイント・タックイン・左足ブレーキの短い課題。横滑りの角度の針を見ながら。順回りのコースだけ。',cat:'on',btn:'drBtn',crs:[0,2,3,9]}]}, /* T916 */
+  {id:'dr',b:'DRIFT',n:'ドリフトの課題　金・銀・銅',d:'流す・サイドで回る・フェイント・タックイン・左足ブレーキの短い課題と、HIGASHI の広場の定常円・8の字。横滑りの角度の針と4輪の荷重の図を見ながら。順回りのコースだけ。',cat:'on',btn:'drBtn',crs:[0,2,3,9]}]}, /* T916 */
  {g:'0-400m（ゼロヨン）',m:[{id:'drag',b:'0-400m',n:'ゼロヨン加速勝負',d:'400m（または 1/8マイル）の加速勝負。HIGASHI RACEWAY の順回りの正面の直線で。距離・相手・ツリー・ナイトロなどは④出走前の画面で。',cat:'on',btn:'dragBtn',crs:[0]}]}, /* T660 C 0-400m は1つの種目（ご本人「0-400ｍは一つのジャンルと捉えて下さい」） */
  {g:'ラリー（砂利道・雪・氷）',m:[{id:'ss',b:'RALLY SS',n:'ラリーのステージ　1台で1本',d:'道を閉じたステージを1台ずつ走り、タイムを競う。路面は下の行で（公道のコースは舗装も）。',cat:'off',btn:'ssBtn',crs:[4,0,2,5,6,8],srf:1},
   {id:'offr',b:'OFF ROAD RACE',n:'砂利道・雪のレース',d:'砂利道・雪の路面で8台のレース（氷はレースでは選べない）。',cat:'off',btn:'startBtn',crs:[0,2],srf:1,rev:1}]},
@@ -10936,7 +10997,7 @@ function phX(a){if(phS){for(const [k,x,z,h] of phS){k.x=x;k.z=z;k.h=h;}phS=null;
 function frame0(now){
   const raw=(now-last)/1000;let dt=Math.max(0,Math.min(.05,raw));last=now;autoRes(raw);if(bmk)bmRec(raw*1000); // 時刻が戻った時（負の時間）は進めない（ではこの行の処理がコメントの中に入って、毎フレーム0.05秒進んでいた＝60fps の画面で約3倍速）
   if(toastTimer>0){toastTimer-=dt;if(toastTimer<=0)$('toast').textContent='';} /* T786 タイトル・メニュー・ポーズでも消えるように頭で */if(toastTimer>0||$('toast').parentNode===document.body)toastPos();
-  if(!bmk)pollPad();bgmTick(dt);msHud();hlSeatT();inpHud(dt);slipHud(dt);autoTech(dt);ckAvoid(dt);
+  if(!bmk)pollPad();bgmTick(dt);msHud();hlSeatT();inpHud(dt);slipHud(dt);ldHud();autoTech(dt);ckAvoid(dt);
   if(state==='title'){RFU.value=0;titleStep(dt);envStep(dt,false);lodCars(camera);renderer.render(scene,camera);mirLayout();updateEngine();return;}
   if(state==='results'){resultCam(dt);envStep(dt,false);stepSmoke(dt);stepSparks(dt);resMk();}
   if(tmHold()){rMain();mirLayout();renderMirror();updateEngine();return;} /* T255 メニューを開いている間は止める */
