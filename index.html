@@ -39,6 +39,7 @@ body.touch #garInfo>div{background:rgba(8,10,13,.8)}
 #hud[hidden]{display:none}#toast.toastM{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top,0px) + 50px);bottom:auto;z-index:45;pointer-events:none;font-size:clamp(15px,2.2vw,22px);background:rgba(10,12,16,.86);border:1px solid rgba(255,215,94,.45);padding:6px 16px} /* T786 */
 #rank{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);font-family:var(--num);font-weight:800;font-style:italic;font-size:clamp(48px,9vw,92px);line-height:.9;color:var(--paper)}
 #rank small{font-family:var(--display);font-style:normal;font-weight:700;font-size:.3em;color:var(--muted);margin-left:4px}
+#rank small.you{position:absolute;left:2px;top:100%;margin:0;font-size:.26em;white-space:nowrap} /* T920① */
 body.touch #rank{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 98px);font-size:clamp(34px,7vw,56px)}
 #wx{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px + clamp(44px,8.2vw,84px));background:rgba(12,14,18,.6);padding:3px 10px;font-size:clamp(11px,1.6vw,14px);font-weight:700;letter-spacing:.04em}#wx b{font-family:var(--num);font-style:italic;letter-spacing:.1em;margin-left:2px}#pitwork{position:absolute;left:50%;top:33%;transform:translateX(-50%);background:rgba(12,14,18,.72);padding:8px 14px;font-family:var(--num);font-weight:700;font-size:clamp(12px,1.8vw,15px);letter-spacing:.04em;min-width:min(330px,80vw);z-index:6}#pitwork b{display:block;color:var(--gold);font-size:1.15em;margin-bottom:4px}#pitwork div{display:flex;align-items:center;gap:8px;margin:3px 0;white-space:nowrap}#pitwork span{width:6.2em}#pitwork em{font-style:normal;opacity:.85;font-size:.9em}#pitwork .pb{display:inline-block;width:110px;height:8px;background:rgba(255,255,255,.18)}#pitwork .pb s{display:block;height:100%;background:#3ddc6c;text-decoration:none}body.replay #pitwork,body.drag #pitwork{display:none}body.touch #pitwork{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);font-size:12px;min-width:0;padding:5px 10px}body.touch #pitwork .pb{width:70px}
 #carst{position:absolute;left:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 42px + clamp(44px,8.2vw,84px));background:rgba(12,14,18,.6);padding:3px 10px;font-family:var(--num);font-weight:700;font-size:clamp(11px,1.7vw,14px);letter-spacing:.06em;white-space:nowrap}#carst[hidden]{display:none}
@@ -1349,7 +1350,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.527.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.527.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6818,7 +6819,7 @@ function ylNP(k){return YZP>0&&sess==='race'&&!!k.yellow&&!k.inc&&!(k.pit>0)&&!c
 function npzAhead(k){const pk=progress(k);let b=null;for(const o of karts){if(o===k||o.dnf||o.gone||o.finished||o.pit>0||o.u<NPV||o.inc)continue;const g=progress(o)-pk;if(g>0&&g<NPD&&(!b||g<b.g))b={k:o,g};}return b;}
 function npzStep(dt){const p=player();if(sess!=='race'||state!=='race'||!p||autoPlay||p.dnf||p.finished||p.pit>0){NPZ.ahead=null;return;}
   const run=karts.filter(o=>o!==p&&!o.dnf&&!o.finished&&!(o.pit>0)),pp=progress(p);
-  if(!p.npz&&ylNP(p)&&!(raceTime>=(NPZ.wT??-1e9)&&raceTime-NPZ.wT<YWT)){const b=npzAhead(p);if(b&&b.g<YWD&&p.u>b.k.u+.5&&Math.abs(p.lat-b.k.lat)>1.1){NPZ.wT=raceTime;showBanner('黄旗　追い越し禁止');logAdd('表示','黄旗の区間で'+b.k.name+'に並びかけた（追い越し禁止）','#f5c400');sfx('warn');}} /* T882④ 黄旗の区間で並びかけたら真ん中に注意（YWD m 以内・YWT 秒あけ） */
+  if(!p.npz&&ylNP(p)&&!(raceTime>=(NPZ.wT??-1e9)&&raceTime-NPZ.wT<YWT)){const b=npzAhead(p);if(b&&b.g<YWD&&p.u>b.k.u+.5&&Math.abs(p.lat-b.k.lat)>1.1){NPZ.wT=raceTime;telop('YELLOW','黄旗　追い越し禁止（'+b.k.name+'）','yellow');sfx('warn');}} /* T882④ 黄旗の区間で並びかけたら真ん中に注意（YWD m 以内・YWT 秒あけ） */
   const yz=!p.npz&&ylNP(p)&&judgeOn; /* T872 黄旗の区間（審判ありの時だけ） */if((p.npz||yz)&&!cau()){const now=new Set(run.filter(o=>progress(o)>pp&&!o.inc).map(o=>o.id));
     if(NPZ.ahead)for(const id of NPZ.ahead){if(now.has(id)||NPZ.owe.some(w=>w.id===id))continue;const o=karts.find(q=>q.id===id);if(o&&o.u>=NPV&&!o.inc&&progress(o)<pp-1&&!(NPZ.last[id]!=null&&raceTime>=NPZ.last[id]&&raceTime-NPZ.last[id]<3) /* 巻き戻しで先の時刻が残っていても警告する */){NPZ.last[id]=raceTime;NPZ.owe.push({id,t:raceTime,y:yz});radio((yz?'黄旗の区間で ':'コントロールラインの手前で ')+o.name+' を抜いた。順位を戻して（'+NPT+'秒以内）','npzo',1);telop('WARNING',(yz?'黄旗の区間の追い越し　':'線の手前の追い越し　')+o.name+' に順位を戻す','yellow');sfx('warn');}}
     NPZ.ahead=now;}else NPZ.ahead=null;
@@ -7900,7 +7901,7 @@ function ckGauge3(p,dt){if(!CK.cv3)return;CK.t3-=dt;if(CK.t3>0)return;CK.t3=.25;
   const X=i=>30+i*60,Y=31,R=25;
   if(p.ev){gMiniV(g,X(0),Y,R,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMiniV(g,X(1),Y,R,Math.max(0,ew),0,mx,mx*9,mx*9,'POWER',Math.max(0,ew)+'kW');gMiniV(g,X(2),Y,R,Math.max(0,-ew),0,mx*.6,mx,mx,'REGEN',Math.max(0,-ew)+'kW');}
   else{gMiniV(g,X(0),Y,R,tw,50,130,105,115,'WATER',Math.round(tw)+'°C');gMiniV(g,X(1),Y,R,to,60,150,125,138,'OIL',Math.round(to)+'°C');
-   if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,X(2),Y,R,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OTS ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OTS',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,X(2),Y,R,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);}
+   if(otsShow()&&p.otL!=null)gMiniV(g,X(2),Y,R,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OTS ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OTS',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,X(2),Y,R,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);}
   gMiniV(g,X(3),Y,R,br,0,bFt(p)+100,bFt(p)-150,bFt(p),'BRAKE',Math.round(br)+'°C');
   gMiniV(g,X(4),Y,R,fu?fr*100:0,0,100,999,999,p.ev?'BATT':'FUEL',fu?lp.toFixed(1)+'周':'—',!fu);
   g.setTransform(1,0,0,1,0,0);CK.tex3.needsUpdate=true;}
@@ -8049,7 +8050,7 @@ function obPitch(p,cF,cY){const g=p.g;if(g._obA===undefined){g._obA=null;try{g.r
   return Math.max(OBP0*Math.PI/180,Math.min(OBP1*Math.PI/180,A-OBK*vh));}
 // T178① デモの中継：カットの頭で映す車を決め、カットの間は同じ車を追う（以前は常に先頭を追い、先頭が入れ替わるとカットの途中で別の車へ飛んだ）。
 // 接戦（前の車と1.2秒以内）を8割で優先し、上位ほど・前のカットと違う車ほど選ばれやすい。残りは先頭か上位5台から
-function tvPickFoc(){const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit);if(!rk.length)return null;const c=[];
+function tvPickFoc(){const r0=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit),r1=r0.filter(k=>!k.finished),rk=r1.length?r1:r0; /* T920② ゴールした車は走っている車が居る間は選ばない */if(!rk.length)return null;const c=[];
   for(let i=1;i<rk.length;i++){const gp=(progress(rk[i-1])-progress(rk[i]))/Math.max(15,rk[i].u);if(gp<1.2)c.push({k:rk[i],w:(1.3-gp)*(i<=3?1.5:1)*(rk[i]===tvFoc?.4:1)});}
   if(c.length&&__VR()<.8){let t=0;for(const o of c)t+=o.w;let x=__VR()*t;for(const o of c){x-=o.w;if(x<=0)return o.k;}return c[0].k;}
   return __VR()<.5?rk[0]:rk[__VR()*Math.min(rk.length,5)|0];}
@@ -8059,7 +8060,7 @@ function tvWOn(){return sess==='race'&&watchCam!=null&&autoPlay&&isTV(camMode)&&
 function tvTrack(dt){if(TVH.ks!==karts){TVH.ks=karts;TVH.b={};TVH.gw={};TVH.go=null;TVH.msgT=-99;TVH.said={};TVH.pt={};}if((TVH.c+=dt)<.5)return;const st=TVH.c;TVH.c=0;
  const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit&&!k.finished),nb={};
  for(let i=1;i<rk.length;i++){const a=rk[i-1],k=rk[i],q=k.id+'_'+a.id;if((progress(a)-progress(k))/Math.max(15,k.u)<1.2)nb[q]=(TVH.b[q]||0)+st;}TVH.b=nb;
- {const ra=ranking();for(const k of karts){const pt=k.pit>0;if(pt&&!TVH.pt[k.id]&&!k.dnf&&!k.finished&&k.lap<LAPS){const i=ra.indexOf(k),a=ra[i-1],b=ra[i+1],cl=o=>o&&!o.pit&&!o.dnf&&Math.abs(progress(o)-progress(k))/Math.max(15,k.u)<3,o=cl(a)?a:cl(b)?b:null;if(o||i<3)tvSay('pit'+k.id+'_'+k.lap,'PIT',k.name+'がピットへ（'+k.lap+'周目・'+(i+1)+'位）'+(o?'　'+(o===a?'前の':'後ろの')+o.name+'とは作戦が分かれる':''));}TVH.pt[k.id]=pt;}} /* T862 ピットの作戦の分かれ目 */
+ {const ra=ranking();for(const k of karts){const pt=k.pit>0;if(pt&&!TVH.pt[k.id]&&!k.dnf&&!k.finished&&k.lap<LAPS){const i=ra.indexOf(k),a=ra[i-1],b=ra[i+1],cl=o=>o&&!o.pit&&!o.dnf&&Math.abs(progress(o)-progress(k))/Math.max(15,k.u)<3,o=cl(a)?a:cl(b)?b:null;if(o||i<3)tvSay('pit'+k.id+'_'+k.lap,'PIT',k.name+(k.dt?'がドライブスルーの罰でピットレーンへ（':'がピットへ（')+k.lap+'周目・'+(i+1)+'位）'+(o&&!k.dt?'　'+(o===a?'前の':'後ろの')+o.name+'とは作戦が分かれる':''));}TVH.pt[k.id]=pt;}} /* T862 ピットの作戦の分かれ目 */
  for(const k of karts){const w=!!k.gw;if(TVH.gw[k.id]&&!w&&k.gwW!==3&&raceTime-(k.gwA??raceTime)>=TVG)TVH.go={k,t:raceTime,d:raceTime-(k.gwA??raceTime)};TVH.gw[k.id]=w;}}
 function tvSay(q,head,text){if(raceTime-TVH.msgT<TVQ||raceTime-(TVH.said[q]??-1e9)<TVR)return;TVH.msgT=raceTime;TVH.said[q]=raceTime;telop(head,text);}
 function tvPickHot(){const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit&&!k.finished);if(!rk.length)return null;const g=TVH.go;
@@ -8315,7 +8316,7 @@ function spotStep(p){let L=0,Rt=0;if(spotOn&&p&&!p.finished&&(state==='race'||st
 function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   const p=player();if(!p)return;
   lastHud+=dt;if(lastHud<.05)return;if(secShow)secShow.T-=lastHud;lastHud=0;{const h=secHtml(p),e=$('secs');if(e.dataset.h!==h){e.dataset.h=h;e.innerHTML=h;}}dlUi(p);mtrUi(p);lgUi();
-  const rk=ranking();const r=rk.indexOf(p)+1;H('rank').innerHTML=r+'<small>位</small>';
+  const rk=ranking();const r=rk.indexOf(p)+1,tvO=tvWOn()&&(camTarget()||p)!==p;H('rank').innerHTML=(tvO?'<small class="you">あなた</small>':'')+r+'<small>位</small>'; /* T920① 中継で他の車を映している間は、順位・前後の差が自分の物だと書く */
   towerT-=.05;if(towerT<=0){towerT=.25;const lead=rk[0];const pace=p.top*.62;
     H('tower').innerHTML=rk.map((k,i)=>{let gap=k.dnf?'リタイア':i===0?'トップ':(k.finished?'ゴール':'+'+Math.max(0,(progress(lead)-progress(k))/pace).toFixed(1));if(lead.finished&&!k.finished&&!k.dnf&&i>0)gap='+'+Math.max(0,((LAPS+1)*L-progress(k))/pace).toFixed(1);
       const tg=tkTag(k);return `<div class="tw${k.isPlayer?' me':''}${judgeOn&&sess==='race'&&(k.ipt||k.pen||k.dt)||tg?' hasip':''}" data-k="${k.id}"><b>${i+1}</b><i style="background:#${k.dr.color.toString(16).padStart(6,'0')}"></i><u title="${trFull(TRAITS[k.dr.tr??2])}">${TRAITS[k.dr.tr??2].s}</u><span>${mixSel&&sess==='race'?`<small class="cl ${clFast(k)?'gt':''}">${k.cls}</small>`:''}${k.name}</span><em>${ipTag(k)}${tg}${!k.isPlayer&&ienOf(k,player())>0?'<s class="tk h" title="因縁（何度も当たった・抜かれた相手）">⚔</s>':''}${tn(gap)}</em></div>`;}).join('');$('tower').classList.toggle('ip',judgeOn&&sess==='race'&&rk.some(k=>k.ipt||k.pen||k.dt)||rk.some(k=>tkState(k).length));
@@ -8324,7 +8325,7 @@ function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
     if(sess==='drag'){const c=karts.find(k=>!k.isPlayer);const d=(p.dd||0)-(c?c.dd||0:0);H('laps').innerHTML='変速 '+(p.manual||p.dm&&p.dm.man?'手動':'自動')+'　タイヤ '+Math.round(30+60*(p.dT||0))+'℃'+(p.dsp?'（ドラッグ用）':'')+(drag&&drag.dp?'　申告 '+drag.dp.toFixed(2)+(p.dm&&p.dm.launch!=null&&!p.dFin&&p.u>5?'　見込み '+(raceTime-p.dm.launch+(DRAG_D-(p.dd||0))/p.u).toFixed(2):''):'')+(dragNos?'　N2O '+(p.nosT>0?'<b>噴射中</b>':p.nos?(isTouch?'あり':'あり（N）'):'—'):'');
       H('gaps').innerHTML=(dragRec?`<div><span>自己ベスト</span><b>${dragRec.et.toFixed(3)}</b></div>`:'')+(c&&state!=='countdown'?`<div><span>${c.name}</span><b class="dlt ${d>=0?'f':'s'}">${d>=0?'+':'−'}${Math.abs(d).toFixed(1)}m</b></div>`:'');}
     else if(solo())H('gaps').innerHTML=(ghost?`<div><span>記録</span><b>${tn(fmt(ghost.t))}</b></div>`:'')+(ghDelta!=null&&!dlMode?`<div><span>ベスト比</span><b class="dlt ${ghDelta<=0?'f':'s'}">${ghDelta<=0?'−':'+'}${tn(Math.abs(ghDelta).toFixed(2))}</b></div>`:'')+rvGap() /* T645 */;else
-    H('gaps').innerHTML=p.dnf?'':(a&&!a.finished?`<div><span>前 ${a.name}</span><b>${tn(g(a,p))}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>後 ${b.name}</span><b>${tn(g(p,b))}秒</b></div>`:'');}
+    H('gaps').innerHTML=p.dnf?'':(a&&!a.finished?`<div><span>${tvO?'あなたの':''}前 ${a.name}</span><b>${tn(g(a,p))}秒</b></div>`:'')+(b&&!p.finished&&!b.dnf?`<div><span>${tvO?'あなたの':''}後 ${b.name}</span><b>${tn(g(p,b))}秒</b></div>`:'');}
   if(sess==='drag'){const m=p.dm||{};H('lap').innerHTML=(dragDist?'1/8マイル':'0-400m')+'　<b>'+Math.min(DRAG_D,Math.max(0,p.dd||0)).toFixed(0)+'</b>m';TM.textContent=m.foul&&m.launch==null?'FOUL':((m.t400??raceTime)-(m.launch??raceTime)).toFixed(3);if(drag&&drag.green>=0&&raceTime>2.5)$('tree').hidden=true;}
   else if(isCh()){H('lap').innerHTML='課題 '+(chOn+1)+'　<b class="chN">'+CH[chOn].n+'</b>';TM.textContent=fmt(chRes&&chRes.ok?chRes.t:raceTime);}
   else if(isSS()){H('lap').innerHTML=(isFc()?'先行・後追い '+FC.h+'/2　'+(FC.h===1?'後ろと':'前と')+' <b>'+Math.max(0,Math.round(FC.gp))+'</b>m　':isBat()?(()=>{const q=karts.find(k=>!k.isPlayer);if(!q||q.finished||p.finished)return 'BATTLE';const d=progress(p)-progress(q);return 'BATTLE <span style="color:'+(d>=0?'#5fe08f':'#ff8a80')+';font-weight:800">'+(d>=0?'LEAD +':'CHASE −')+Math.round(Math.abs(d))+'m</span>';})():rly?'SS'+(rly.st+1)+'/'+rlN:'RALLY SS')+'　区間 <b>'+Math.min(3,(p.ssSp||[]).length+1)+'</b>/3'+polHud(p);TM.textContent=fmt(p.finished?p.finishTime:BR.on&&!BR.green?0:raceTime-raceT0+(p.polPen||0))+(p.lapBad?' ×':'');}
@@ -8438,14 +8439,14 @@ function gMiniV(g,cx,cy,r,v,lo,hi,warn,crit,label,txt,na,lc){ /* T878 lc＝状�
   const hot=na?GWH:v>=crit?GRD:v>=warn?GAM:GWH;if(!na)gNeedle(g,cx,cy,0,r-5,an(v),hot,2.4);g.beginPath();g.arc(cx,cy,3.2,0,7);g.fillStyle=GWH;g.fill();
   g.textAlign='center';g.textBaseline='middle';g.fillStyle=lc||'rgba(200,206,214,.9)';g.font='700 '+(lc?11:9)+'px '+GF;g.fillText(label,cx,cy+r-4);g.fillStyle=lc&&lc!==GWH?lc:hot;g.font='italic 800 14px '+GF;g.fillText(txt,cx,cy+r+11);g.globalAlpha=1;}
 const otLc=p=>p.otA?'#ffa000':p.otCd>0?'#5cb4ff':GWH; /* T878 OT の計器の色：入＝橙・待ち＝青 */
-let mtrCv=null;function mtrUi(p){const el=$('mtr');if(!el)return;const on=!isTouch&&!!p&&sess!=='drag'&&state!=='title'&&!document.body.classList.contains('ez')&&!document.body.classList.contains('ckv') /* T691② 運転席はダッシュの丸いメーター */ /* T685① かんたんは水温・油温を出さない（T315 の決まりが縦の計器に通っていなかった） */;if(el.hidden===on)el.hidden=!on;if(!on)return;
+let mtrCv=null;/* T915 OTS がある時は BOOST の場所に OTS（ターボのフォーミュラでも） */function mtrUi(p){const el=$('mtr');if(!el)return;const on=!isTouch&&!!p&&sess!=='drag'&&state!=='title'&&!document.body.classList.contains('ez')&&!document.body.classList.contains('ckv') /* T691② 運転席はダッシュの丸いメーター */ /* T685① かんたんは水温・油温を出さない（T315 の決まりが縦の計器に通っていなかった） */;if(el.hidden===on)el.hidden=!on;if(!on)return;
   if(!mtrCv){el.innerHTML='<canvas width="152" height="416"></canvas>';mtrCv=el.firstChild;}
   const tw=p.tw??90,to=p.to??100,tb=!!(p.tq&&p.tq.tb),bs=tb?(p.bst??0):0,ew=Math.round(p.evkW||0),mx=Math.max(1,(p.ps||300)*.7355),k=(p.ev?'ev|'+Math.round(p.btT||0)+'|'+ew:Math.round(tw)+'|'+Math.round(to)+'|'+(tb?Math.round(bs*50):'-'))+(otsShow()?'|o'+(p.otA?1:0)+Math.round(p.otL||0)+'_'+Math.ceil(p.otCd||0):'');if(k===mtrK)return;mtrK=k;
   const g=mtrCv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,152,416);g.setTransform(2,0,0,2,0,0);
   if(p.ev){gMiniV(g,38,27,23,p.btT||0,10,70,BTL-5,BTL,'BATT',Math.round(p.btT||0)+'°C');gMiniV(g,38,96,23,Math.max(0,ew),0,mx,mx*9,mx*9,'POWER',Math.max(0,ew)+'kW');gMiniV(g,38,165,23,Math.max(0,-ew),0,mx*.6,mx,mx,'REGEN',Math.max(0,-ew)+'kW');return;} /* T476 EV は電池の温度・出力・回生 */
   gMiniV(g,38,27,23,tw,50,130,105,115,'WATER',Math.round(tw)+'°C');
   gMiniV(g,38,96,23,to,60,150,125,138,'OIL',Math.round(to)+'°C');
-  if(otsShow()&&p.otL!=null&&!tb)gMiniV(g,38,165,23,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OTS ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OTS',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,38,165,23,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);} /* T888⑥ 過給機の無いフォーミュラは BOOST の欄にオーバーテイクの残り */
+  if(otsShow()&&p.otL!=null)gMiniV(g,38,165,23,p.otL,0,xoB(),xoB()+1,xoB()+2,p.otA?'OTS ON':p.otCd>0?'待 '+Math.ceil(p.otCd):'OTS',Math.round(p.otL)+'s',false,otLc(p));else gMiniV(g,38,165,23,bs,-1,1.6,1.15,1.4,'BOOST',tb?(Math.round(bs*100)<0?'−':'+')+Math.abs(bs).toFixed(2):'NA',!tb);} /* T888⑥ 過給機の無いフォーミュラは BOOST の欄にオーバーテイクの残り */
 function carSt(p){const lv=(v,a,b)=>v>=b?'#ff4a3d':v>=a?'#f5b400':'';const dm=dmgMode===2||isSS()&&rly;
   const ty=sess==='quali'?['Q','#ff5ad2']:TYB[p.ty??(p.rain?1:0)]||TYB[0];
   const wing=dm&&lv(p.dmW||0,.15,.5)||'rgba(240,242,245,.55)',sv=Math.max(Math.abs(p.dmA||0),p.dmS||0),susC=dm&&lv(sv,.12,.4),sus=susC||'rgba(240,242,245,.8)';
