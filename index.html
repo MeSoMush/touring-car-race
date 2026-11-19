@@ -1356,7 +1356,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.551.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.552.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6567,7 +6567,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
         // 狙う場所：覚えたベストのコーナー（追従を SCT 秒続けた後）か取り返しの時は全力、それ以外は性格に応じて控えめ
         if(sc&&SCV>0&&sc.t>=SCT&&(sc.pl!==k.lap||sc.pick==null)){sc.pl=k.lap;let mg=1e9;for(const c in sc.g)mg=Math.min(mg,sc.g[c]);const cand=Object.keys(sc.g).filter(c=>sc.g[c]<=mg+SCV);sc.pick=+cand[Math.random()*cand.length|0];} // T120 狙うコーナーは毎周、近づけたコーナーの中から選び直す（いちばん近づけた所だけを固定で狙うと読まれる）
         const full=revenge||(sc&&sc.t>=SCT&&(SCV>0?sc.pick:sc.bc)===cid);const dmax=(judgeOn?1-.5*Math.min(1,(k.ipt||0)/JG2):1)*PB_D*(full?1:(SCF[k.dr.tr??2]??1))*(revenge?1+SBD:1);
-        if(ABK>0&&k.abC===cid&&k.abL===k.lap)continue; /* T647 R3 やめる点：仕掛けた車が、ブレーキの所（狙いの速さが今より ABV m/s 以上低い）に入っても相手より ABD m 以上後ろ（鼻先が相手の後輪に届いていない）なら、やめて相手の線の後ろへ戻る。… */if(ds<4||ds>dmax||ds>=tds)continue;if(Math.abs(o.lat-k.lat)>2.6||k.u<o.u-1.5)continue;
+        const ac=k.atkO===o.id&&k.atkT>0;if(ac&&ABK>0&&ds>ABD&&vAllow<u-ABV&&!CORNER[k.idx]){k.atkT=0;k.atkO=null;k.abC=cid;k.abL=k.lap;k.abN=(k.abN||0)+1;k.laneT=Math.max(-W+2.2,Math.min(W-2.2,o.lat));k.laneTimer=.8;k.ovr=true;continue;}if(!ac&&ABK>0&&k.abC===cid&&k.abL===k.lap)continue; /* β0.552.0 T941 やめる点を働く形に（元は PBW＞0 の時だけで、PBW＝0 のため β0.319.0 から一度も働いていなかった） */ /* T647 R3 やめる点：仕掛けた車が、ブレーキの所（狙いの速さが今より ABV m/s 以上低い）に入っても相手より ABD m 以上後ろ（鼻先が相手の後輪に届いていない）なら、やめて相手の線の後ろへ戻る。… */if(ds<4||ds>dmax||ds>=tds)continue;if(Math.abs(o.lat-k.lat)>2.6||k.u<o.u-1.5)continue;
         tg=o;tds=ds;tfull=full;trev=revenge;tsc=sc;} // 狙うのはいちばん近い車
       if(tg){const o=tg,s=-OUTS[ci],sd=Math.max(tr.room+.8,2.8);const nt=Math.max(-W+2.2,Math.min(W-2.2,o.lat+s*sd));
         // 内側に別の車がいたら仕掛けない
