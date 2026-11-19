@@ -1356,7 +1356,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.552.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.553.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6514,7 +6514,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(pzK(k)&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))]; /* T869 オート（APZ）もミス・ブレーキ位置のずれ */
     if(cn&&!k.cnPrev&&Math.random()<aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
-    if(cn&&!k.cnPrev){const m=(1+BNS*(1-(k.stam??1)))*(1+BNP*(k.prs||0)*prOf(k)),gi=wrap(k.idx+Math.round(55/SP)),g=Math.min(1,rsG(gi,wetMul('road',k),k.ty)/BNG),r=BNR*g;k.bnb=(k.bnb||0)*r+(Math.random()+Math.random()-1)*BNZ*Math.sqrt(1-r*r)*m;k.bnz=k.bnb*g*Math.max(.3,1-SKZ*skv(k,'brk'));} /* T866③・T813 R5 ブレーキ位置の見積りのずれ（m、正＝遅い）。角から角へ引き継ぎ、疲れ・プレッシャーで揺れが大きい。滑る路面では縮める */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
+    if(cn&&!k.cnPrev){const m=(1+BNS*(1-(k.stam??1)))*(1+BNP*(k.prs||0)*prOf(k)),gi=wrap(k.idx+Math.round(55/SP)),g=Math.min(1,rsG(gi,wetMul('road',k),k.ty)/BNG),r=BNR*g;k.bnb=(k.bnb||0)*r+(Math.random()+Math.random()-1)*BNZ*Math.sqrt(1-r*r)*m;k.bnz=k.bnb*g*Math.max(.3,1-SKZ*skv(k,'brk'));if(IEBK>0&&sess==='race'&&k.ien&&!cau()){let ri=0;for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;const ds=pgO(o)-pK();if(ds>3&&ds<Math.max(10,u*IEBT)&&Math.abs(o.lat-k.lat)<3.2)ri=Math.max(ri,ienOf(k,o));}if(ri>0){k.bnz+=IEBK*ri*Math.max(.3,1+.5*agOf(k))*g;k.iebN=(k.iebN||0)+1;}}} /* β0.553.0 T421② 因縁の相手を IEBT 秒以内で追う間はブレーキを奥へ（宿敵への飛び込み。性格の攻め気で大小・滑る路面では縮める） */ /* T866③・T813 R5 ブレーキ位置の見積りのずれ（m、正＝遅い）。角から角へ引き継ぎ、疲れ・プレッシャーで揺れが大きい。滑る路面では縮める */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,trC=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0,tr=vcw>0?{...trC,gap:trC.gap*(1+VGP*vcw),bm:trC.bm-VBM*vcw}:trC; /* T375 見通しが悪いと車間を空け、急ブレーキを早めに決める */ // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
   let follow=false,hard=false,fV=1e9,folB=false;k.emgF=0;const fx=Math.sin(k.h),fz=Math.cos(k.h);let afvNo=AFVS>0&&raceTime<AFVS;if(!afvNo&&AFVD>0){const jn=Math.round(u*AFVD/SP);for(let j=0;j<=jn;j+=3)if(CORNER[wrap(k.idx+j)]){afvNo=true;break;}} /* T256 の続き：スタート直後とコーナーの手前は、前の車が離れていく間も車間を保つ */k.yT=(k.yT||0)-dt;k.enc=k.enc||{};
@@ -7244,7 +7244,7 @@ let LBA=60,LBT=.2;
 // T83インを閉める：CVK＝1 で有効、CVA・CVD＝後ろの車との差（m。…
 let IEV=1.4,IEW=0.4,IECT=60,IEZ=0.6,IEL=0.5; /* T421 後ろから当てた接触：当てられた側 IEV 倍・当てた側 IEW 倍、当てた側は IECT 秒その相手への仕掛けを IEZ 減らす・因縁の相手に周回遅れにされる時は譲り始めを IEL まで近くに */
 function ienHit(a,b){const ds=progress(b)-progress(a);return Math.abs(ds)>=JRD&&Math.abs(b.lat-a.lat)<JRL?(ds>0?a:b):null;}
-let IEC=.5,IEP=.35,IEB=.25,IET=240,IEH=.6,IEA=1,IEY=1,IED=6; /* T421 因縁：当たり IEC×強さ・抜かれ IEP・閉められ IEB を溜め、IET 秒で冷める。IEH を越えた相手には譲らない（IEY）・仕掛けやすい（IEA）・閉めやすい（IED m） */
+let IEBK=3,IEBT=1.5,IEC=.5,IEP=.35,IEB=.25,IET=240,IEH=.6,IEA=1,IEY=1,IED=6; /* T421 因縁：当たり IEC×強さ・抜かれ IEP・閉められ IEB を溜め、IET 秒で冷める。IEH を越えた相手には譲らない（IEY）・仕掛けやすい（IEA）・閉めやすい（IED m） */
 let ICR=.5,ICM=.3,ICT=600; /* T421 選手権の次の戦へ：終わりの因縁が ICM を越えた組を ICR 倍で持ち越し（k.ienC）、レースの中は ICT 秒でゆっくり冷める */
 function ienNow(k,id){const c=k.ienC&&k.ienC[id]?k.ienC[id]*Math.exp(-raceTime/ICT):0,v=k.ien&&k.ien[id];if(!v)return c;const d=raceTime-k.ienT[id];return c+(d<0?0:v*Math.exp(-d/IET));}
 function ienCarry(){if(!CUP)return;const m={};for(const k of karts)if(k.ien)for(const id in k.ien){const o=karts.find(q=>q.id===+id);if(!o)continue;const v=ienNow(k,+id);if(v>ICM)m[kD(k)+'_'+kD(o)]=+(v*ICR).toFixed(3);}CUP.ien=m;}
