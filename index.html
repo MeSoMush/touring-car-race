@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.558.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.559.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8310,6 +8310,8 @@ function tvPickHot(){const rk=ranking().filter(k=>!k.dnf&&!k.gone&&!k.pit&&!k.fi
  let b=null,ba=null,bs=0,why='';for(let i=1;i<rk.length;i++){const a=rk[i-1],k=rk[i],gp=(progress(a)-progress(k))/Math.max(15,k.u);if(gp>=1.2)continue;
   const iv=Math.max(ienNow(k,a.id),ienNow(a,k.id)),bt=TVH.b[k.id+'_'+a.id]||0,w=iv>IEH?'ien':bt>=TVB?'long':'';
   const sc=(1.3-gp)+Math.min(3,bt/20)+(w==='ien'?3:0)+(i<=3?.5:0)-(k===tvFoc?1.2:0);if(sc>bs){bs=sc;b=k;ba=a;why=w;}}
+ if(!why){const av=k=>k.ltR&&k.ltR.length>=2?k.ltR.reduce((x,y)=>x+y,0)/k.ltR.length:null;let cb=null;for(let i=1;i<rk.length;i++){const a=rk[i-1],k=rk[i],ma=av(a),mk=av(k);if(ma==null||mk==null||k.lap>=LAPS)continue;const d=ma-mk,g=(progress(a)-progress(k))/Math.max(15,k.u);if(d<=.3||g<CTG)continue;const n=g/d;if(n<1||n>CTN-1||n>LAPS-k.lap+1)continue;const sc=d-(k===tvFoc?1:0);if(!cb||sc>cb.sc)cb={k,a,d,n,sc};}
+  if(cb&&__VR()<.6){const q='ct'+cb.k.id+'_'+cb.a.id;tvSay(q,'CATCH',cb.k.name+'が前の'+cb.a.name+'より1周 '+cb.d.toFixed(1)+'秒速い。約'+Math.max(1,Math.round(cb.n))+'周で追いつく');return cb.k;}} /* T862② 何周で追いつくか（因縁・長い競り合いが無い時。1〜CTN−1 周） */
  if(!b||!why&&__VR()<.3)return tvPickFoc();
  const q=Math.min(b.id,ba.id)+'_'+Math.max(b.id,ba.id),bt=TVH.b[b.id+'_'+ba.id]||0;
  if(why==='ien')tvSay(q,'BATTLE',ba.name+'と'+b.name+'、因縁のバトル ⚔');else if(why==='long')tvSay(q,'BATTLE',ba.name+'と'+b.name+'の競り合い、'+(bt>=60?Math.floor(bt/60)+'分':Math.min(59,Math.round(bt))+'秒')+'続く');
