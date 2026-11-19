@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.557.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.558.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5352,7 +5352,7 @@ function onLap(k){
   const sp=solo()&&k.isPlayer;
   if(k.lap===1){k.lapStart=raceTime;k.lapBad=false;k.secN=0;k.secT0=raceTime;k.secX=[raceTime];k.secC=[];k.secL=[];if(sp)ghStart();k.tlCur={t0:raceTime,s:[],pit:0};k.telT=0;k.tlLaps=[];k.tlBest=k.tlLast=null;if(k.isPlayer&&sess==='race'){rcRec=[];rcT=0;}if(k.isPlayer)k._njc=k.cont||0;}
   else if(k.lap>=2&&sp&&isSS())ssDone(k);
-  else if(k.lap>=2){secLap(k);const lt=raceTime-(k.lapStart||0);k.lastLap=lt;const valid=!k.lapBad;telLap(k,lt,valid);if(k.isPlayer)najLap(k,valid,null); /* T682 K1 */
+  else if(k.lap>=2){secLap(k);const lt=raceTime-(k.lapStart||0);k.lastLap=lt;const valid=!k.lapBad;telLap(k,lt,valid);if(!SC.on&&!FCY.on&&!(k.best<1e8&&lt>k.best*CTW)){(k.ltR=k.ltR||[]).push(lt);if(k.ltR.length>3)k.ltR.shift();} /* T862② 追いつきの見込みに使う直近3周（SC・FCY・ピットなどの遅い周は除く） */if(k.isPlayer)najLap(k,valid,null); /* T682 K1 */
     if(valid&&(!k.best||lt<k.best)){k.best=lt;if(k.isPlayer)tslLap(lt); /* T418 */if(k.isPlayer&&(k.lap>2||solo()))toastT2('ベストラップ '+fmt(lt));}
     else if(sp&&!valid)toastT2('無効ラップ '+fmt(lt));
     else if(sp)toastT2('ラップ '+fmt(lt));
@@ -6148,7 +6148,7 @@ function trackLimits(k,dt){if(k.dnf||k.finished||state!=='race'||holdT>0||k.pit>
     else if(k.isPlayer){telop('TRACK LIMITS',(plx?'ピット入口の白線をまたいだ':'コース外走行')+'　警告 '+k.tl+'/3','yellow');sfx('warn');}}}
   else if(!out){k.tlT=0;k.tlHit=false;}}
 // 旗：止まった車・スピン・コース外で遅い車の手前250mに黄旗。周回遅れにされる車に青旗
-let YLH=3,YLK=2; // YLK＝車ごとの黄旗と旗ポストも、出なくなってから YLK 秒は出し続ける（黄旗の区間 250m の境目にいる車・事故の車と並んだ車で点いたり消えたりしていた）。…（T387）
+let YLH=3,YLK=2,CTW=1.15,CTG=1.5,CTN=4; // YLK＝車ごとの黄旗と旗ポストも、出なくなってから YLK 秒は出し続ける（黄旗の区間 250m の境目にいる車・事故の車と並んだ車で点いたり消えたりしていた）。…（T387）
 function incident(k){if(k.gone||k.finished||raceTime<4||k.pit>0){k.incT=-99;return false;}const b=Math.abs(k.u)>3?Math.abs(Math.atan2(k.vl,Math.abs(k.u))):0;if(Math.abs(k.u)<6&&!rollF()||b>.7||(Math.abs(k.lat)>WL[k.idx]+2&&k.u<18)){k.incT=raceTime;return true;}const e=raceTime-(k.incT??-99);return YLH>0&&e>=0&&e<YLH;}
 let flagHud='',flagWarnT=-9;const flagT={};
 /* T604 旗が変わったら、旗の色の枠で出し、ログに時間と一緒に残して、旗ごとの音を鳴らす（同じ旗は 8秒に1回まで） */
@@ -6221,6 +6221,9 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
    else{RDS.batK=null;RDS.batT=0;}}
   if(!autoPlay)for(const o of karts){if(o===p||o.dnf||o.finished||!(o.pxm||o.pit===3&&relLine(o)>PIT_C-60))continue;const gp=progress(o)-progress(p);if(gp>0&&gp<PXR&&p.u>o.u+4){radio('ピット出口から '+o.name+' が合流してくる（'+(PS>0?'右':'左')+'側）。並ぶ時は注意','pex',10);break;}}
   if(!autoPlay)for(const o of karts){if(o===p||o.dnf||o.finished||o.pit!==1||relLine(o)>=PIT_B)continue;const gp=progress(o)-progress(p);if(gp>0&&gp<PXR&&p.u>o.u+3){radio('前の '+o.name+' がピットに入る。'+(PS>0?'右':'左')+'へ寄って減速するぞ','pin',10);break;}} // T249
+  {const av=k=>k&&k.ltR&&k.ltR.length>=2?k.ltR.reduce((x,y)=>x+y,0)/k.ltR.length:null,mp=av(p);RDS.ctS=RDS.ctS||{};
+   for(const [o,ah] of [[a,1],[b,0]]){if(!o||o.finished||o.pit||p.lap>=LAPS||mp==null)continue;const mo=av(o);if(mo==null)continue;const d=ah?mo-mp:mp-mo,g=ah?(progress(o)-progress(p))/pace:(progress(p)-progress(o))/pace;if(!(d>.15)||g<CTG)continue;const n=g/d,left=LAPS-p.lap+1;if(n<1||n>CTN||n>left)continue;const key=o.id+(ah?'a':'b');if(RDS.ctS[key]&&p.lap-RDS.ctS[key]<3)continue;RDS.ctS[key]=p.lap;const N=Math.max(1,Math.round(n));
+    radio(ah?'前の '+o.name+' より1周 '+d.toFixed(1)+'秒速い。このままなら約'+N+'周で追いつく':'後ろの '+o.name+' は1周 '+d.toFixed(1)+'秒速い。このままだと約'+N+'周で追いつかれる','catch',30);break;}} /* T862② 何周で追いつくか（差÷直近の周のペースの差。1〜CTN 周の時だけ・同じ相手は3周あける） */
   const early=raceTime-raceT0<OBS2;
   // T228③ 前後1.5秒以内の車のツケ（タイヤ・ブレーキ・熱・疲れ）を知らせる。…
   if(!early&&a&&!a.finished&&(progress(a)-progress(p))/pace<1.5){const st=tkState(a);const kA=st.length?a.id+st[0][0]:"";if(st.length&&!RDS.tkS[kA]){RDS.tkS[kA]=1;radio('前の '+a.name+'、'+{t:'タイヤがきつそうだ。コーナーの出口で差を詰めよう',b:'ブレーキが熱そうだ。ブレーキングで仕掛けられるぞ',h:'エンジンが熱そうだ。直線が伸びていない',s:'競り合いで集中が切れてきたようだ。ミスを誘えるぞ、離れずについていこう',p:'焦ってきている。離れずに後ろから圧をかけ続けよう、ミスが出るぞ',m:'ラインの外でゴムかすを拾ったようだ。数コーナーは立ち上がりが鈍いぞ',d:'マシンにダメージ。コーナーが遅いぞ',e:'エンジンが弱っている。直線で並べるぞ'}[st[0][0]],'tk',25);}}
