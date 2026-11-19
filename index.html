@@ -1355,7 +1355,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.536.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.537.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6360,6 +6360,7 @@ function lbOk(k,u,dt){const up=k.lbU;k.lbU=u;if(up!=null&&(k.aiB||0)>.8&&!(k.aiA
 let USTM=.4,USTC=.3,USCM=.7,USCC=.6,USTT=.3; /* T780 アンダーが出たら舵を戻す（FF・4WD） */
 let LTF0=[0,1,1,0]; /* T778 路面ごと（舗装・砂利・雪・氷） */
 let AUSK=1.087; /* T768 オートの曲がれる見込み＝CPU 達人の並み（skill 約1.05^AISK）。自車だけ 1 だったので砂利で同じ車の CPU より 1周 約2.7秒遅かった。舗装では速くならず壁が増えたので砂利・雪・氷だけ */
+let CLBK=1,CLBA=.1,CLBU=.2; /* T911 這い上がり：前へ CLBU m/s 以上で進みながら、ならした加速 uAc が CLBA m/s² を超えている間は立ち往生と数えない（運転手は前へ速くなっていく間はバックしない）。前は加速 0.4 m/s² 超えの時だけ（gain）で、雪の 11.5% の上り坂を FR が 0.3〜0.5 m/s² で登っている最中に 1.2秒でバックに入り、登った分を捨てて同じ所を何分もくり返していた（コース2・雪・種3）。CLBK＝0 で前のまま */
 function aiControl(k,dt){const nP=k.npz||ylNP(k); /* T872 線の手前・黄旗の区間は追い越し禁止 */const rcs=sess==='race'||RCB>0&&PUBR&&ssBat>0&&sess!=='drag',W=WK(k),AFTk=AFT*AFN; /* T493 コースごとの車間の倍率 */let pKv;const pK=()=>pKv??(pKv=progress(k));const aS=++aiPgS,pgO=o=>o._pgS===aS?o._pgV:(o._pgS=aS,o._pgV=progress(o)); /* T297⑥ */
   const p=player();
   // 走り方（T79）：基本はレーシングライン IL（アウト・イン・アウト）。弱い CPU ほど線のぶれが大きい。並走・よけで laneT が決まった間（ovr）はその横位置
@@ -6557,7 +6558,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   k.uAc=(k.uAc??0)+((k.u-(k.uPrv??k.u))/Math.max(dt,1e-3)-(k.uAc??0))*Math.min(1,dt*UAK);const gain=k.uAc>.4;k.uPrv=k.u; /* T565 UAK＝ならす速さ（1/秒）。… */const startWait=raceTime-raceT0<12&&Math.abs(k.lat)<W&&!wrongWay;
   // （T224 の続き）：赤旗・セーフティカーで止められている間（scV が QWV 未満）と、すぐ前 QWA〜QWB m に止まった車（残骸でない）が並んでいる間も、道路の上で正しい向きなら待つ。…
   const qWait=()=>{if(Math.abs(k.lat)>=W||wrongWay)return false;if(WTC>0&&k.pdCap<WTC)return true; /* T565 信号・一般車・路駐の前で待つと決めている間 */if(SC.rf||cau()&&(k.scV??99)<QWV)return true;const pk=pK();for(const o of karts){if(o===k||o.dnf||o.gone||Math.abs(o.u)>=3)continue;const d=pgO(o)-pk;if(d>QWA&&d<QWB)return true;}return false;};
-  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;if(FWE>0){if(Math.abs(k.u)<1){if((k.fwE=(k.fwE||0)+dt)>FWE)k.fwdT=0;}else k.fwE=0;}if(k.fwdT<=0)k.fwE=0;} /* T565 バックの後の前進で FWE 秒続けて動けなければ、前進をやめて立ち往生の数えへ */else if((Math.abs(k.u)<3&&!(follow&&raceTime<12)&&!startWait&&!(gain&&k.u>0)&&!qWait()||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
+  if(k.fwdT>0){k.fwdT-=dt;k.stuckT=0;if(FWE>0){if(Math.abs(k.u)<1){if((k.fwE=(k.fwE||0)+dt)>FWE)k.fwdT=0;}else k.fwE=0;}if(k.fwdT<=0)k.fwE=0;} /* T565 バックの後の前進で FWE 秒続けて動けなければ、前進をやめて立ち往生の数えへ */else if((Math.abs(k.u)<3&&!(follow&&raceTime<12)&&!startWait&&!(gain&&k.u>0)&&!(CLBK>0&&k.u>CLBU&&k.uAc>CLBA)&&!qWait()||wrongWay&&Math.abs(k.u)<8))k.stuckT=(k.stuckT||0)+dt;else k.stuckT=Math.max(0,(k.stuckT||0)-dt*2);
   if(AWT>0&&!k.revT&&Math.abs(k.lat)>W+2&&k.u>.5&&k.awL!=null&&(Math.abs(k.lat)-k.awL)/Math.max(dt,1e-3)>.5){if((k.awT=(k.awT||0)+dt)>AWT){k.revT=AWR;k.awT=0;k.fwdT=0;}}else k.awT=0;k.awL=Math.abs(k.lat); /* T565 道の外で前へ進むほど道から離れる（横道・路地へ頭から入った）時は、長めにバックして出る */
   if(k.stuckT>1.2&&!k.revT){k.revT=1.3;k.stuckT=0;}
   if(k.revT>0){if(RVB>0&&revWait(k))return {steer:0,accel:false,brake:k.u>.3,drift:false}; /* T621 後ろから車が来る間はバックしない */k.revT-=dt;const need=angDiff(heading(k.idx),k.h);if(k.revT<=0&&RVDX>0&&Math.abs(need)>RVDH&&(k.rvX=(k.rvX||0)+dt)<RVDX&&Math.abs(k.lat)<=Math.abs(k.rvL??k.lat)+.3&&!(k.rvX>.5&&Math.abs(k.u)<.5)&&!(k.lat*(k.rvL??k.lat)<0&&Math.abs(k.lat)>W-2))k.revT=1e-3; /* T856 向きが直るまでバックを延ばす（雪で 1.3秒では約1m・10〜25°しか回らず、また壁へ出ていた） */if(k.revT<=0){k.revT=0;k.fwdT=3;k.rvX=0;k.rvL=undefined;}else if(k.rvL==null)k.rvL=k.lat;return {steer:Math.sign(need)||1,accel:false,brake:!(RVV>0&&k.u<-RVV),drift:false};}
