@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.556.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.557.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2609,7 +2609,8 @@ function drsTog(k){if(!k||!drsShow())return;if(k.drA){drsOff(k);return;}const z=
 function drsSt(k){const z=DRZI?DRZI[k.idx]:-1;return k.drA?2:drsOn0&&k.dzE>=0&&(z<0||z===k.dzE&&k.dzC!==z)?1:0;} /* 2 開けている・1 開けられる・0 無し（計器とボタン） */const drsTx=k=>['—','DRS 可','DRS 開'][drsSt(k)],drsFx=k=>{const s=drsSt(k);return s===2?{fill:'rgba(20,140,64,.92)',ring:'#3be07a',tc:'#3be07a'}:s===1?{ring:'#3be07a',tc:'#3be07a'}:null;}; /* T947 字はスマホのボタンと同じ「DRS 可／開」、可＝縁が緑・開＝地が緑 */
 function drsBtn(k){const b=$('nosBtn');if(!b)return;const t=['DRS','DRS 可','DRS 開'][drsSt(k)];b.classList.toggle('on',!!k.drA);if(t!==drsLb){drsLb=t;b.textContent=t;}}
 function drsStep(k,dt){if(!drsShow()){k.drA=0;return;}if(!DRZI)drsBuild();if(!drsOn0||k.pit||k.dnf||k.finished||state!=='race'){drsOff(k);k.dzE=-1;k.dzD=-1;if(k.isPlayer)drsBtn(k);return;}
- const z=DRZI[k.idx],d=DRZD[k.idx];if(d>=0&&k.dzD!==d){k.dzD=d;k.dzE=drsGap(k)<DRSG?d:-1;k.dzC=-1;if(k.isPlayer&&!autoPlay&&k.dzE>=0)radio('DRS が使える。直線で開けろ（ブレーキで閉じる）','drsz',20);}
+ const z=DRZI[k.idx],d=DRZD[k.idx];if(d>=0&&k.dzD!==d){k.dzD=d;k.dzE=drsGap(k)<DRSG&&!k.yellow?d:-1;k.dzC=-1;if(k.isPlayer&&!autoPlay&&k.dzE>=0)radio('DRS が使える。直線で開けろ（ブレーキで閉じる）','drsz',20);else if(k.isPlayer&&!autoPlay&&k.yellow&&drsGap(k)<DRSG)radio('黄旗：この区間の DRS は使えない','drsy',20);}
+ if(k.yellow&&k.dzE>=0){drsOff(k);k.dzE=-1;if(k.isPlayer)drsBtn(k);} /* T948① 黄旗の区間ではゾーンの検知を止める（F2 のゾーンの光の板が黄色の間と同じ） */
  if(z<0&&d<0){drsOff(k);if(k.dzE>=0&&k.dzD>=0&&DRZD[k.idx]<0)k.dzE=-1;k.dzD=-1;}
  if(z>=0&&!k.drA&&k.dzE===z&&k.dzC!==z&&(!k.isPlayer||autoPlay)&&k.u>20){k.drA=1;sfx('drsO',k);}
  if(k.isPlayer){drsBtn(k);if(!autoPlay&&!RDS.drs&&drsOn0){RDS.drs=1;radio(isTouch?'DRS：検知点で前の車と '+DRSG+' 秒以内なら、次の直線で『DRS』で翼を開ける（ブレーキで閉じる）':'DRS：検知点で前の車と '+DRSG+' 秒以内なら、次の直線で '+kTx('nitro')+'で後ろの翼を開ける（空気抵抗 −'+Math.round(DRSC*100)+'%。ブレーキで閉じる）','drs0',99);}}}
@@ -5303,7 +5304,7 @@ function computeDraft(){for(const k of karts){let d=0,da=0;const fx=Math.sin(k.h
     if(DAK>0&&f<=DAD&&!o.dnf){const w=1.6+f*.04;if(sd<=w)da=Math.max(da,(1-(f-3)/(DAD-3))*(1-sd/w*.5));}}
   k.draft=(k.draft||0)+(d-(k.draft||0))*.1;k.dirty=(k.dirty||0)+(da-(k.dirty||0))*.1;}}
 // 巻き戻し：0.1秒ごとに全車の状態を記録（10秒分）
-const RW_KEYS=['fsp','tpd','ttA','x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','spin','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','spn','spnA','cont','pen','wear','wF','wR','wgF','wgR','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','ty','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','clw','clO','clA','agD','agBt','agT0','rxS','rxT','rxH','rxQ','rxBt','rxBq','tc','tdF','cdF','ttKF','ttKR','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','btT','btK','sauT','fmode','drA','dzE','dzC','dzD','otL','otA','otU','otCd','otW','otG0','otLK','otKT','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav','pxm','pdo','polPen','polStop','ph','phS','dmS','dmE','tw','to','iat','ict','bst','bP','blF','blR','grF','grR']; /* T882③ ブリスターの傷・グレイニングの粒も巻き戻す */ /* T537 警察の罰と強制ブレーキも巻き戻す。T793 ラリーの傷み */
+const RW_KEYS=['fsp','tpd','ttA','x','z','h','u','vl','r','delta','gear','rpm','erpm','shiftT','idx','prevIdx','lap','cp','lat','drifting','finished','finishTime','lapStart','best','lastLap','dnf','gone','stuckT','revT','fwdT','launchT','lane','laneT','laneTimer','ovr','wan','ax','ay','draft','vx','vz','locked','wheelspin','tl','tlT','tlHit','spn','spnA','cont','pen','wear','wF','wR','wgF','wgR','dmg','pit','pitT','pitReq','pitDone','box','gripK','powK','rain','ty','pitAuto','ipt','dt','bmN','bmT','tb','bfK','tt','ttK','clw','clO','clA','agD','agBt','agT0','rxS','rxT','rxH','rxQ','rxBt','rxBq','tc','tdF','cdF','ttKF','ttKR','wo','altS','altO','altC','altIn','tkT','tkC','fuel','fm','btT','btK','sauT','fmode','drA','dzE','dzC','dzD','otL','otA','otU','otCd','otW','otG0','otLK','otKT','pitN','fbN','pLap0','prk','stam','dirty','npz','mbl','prs','eng','dmW','dmA','wav','pxm','pdo','polPen','polStop','ph','phS','dmS','dmE','tw','to','iat','ict','bst','bP','blF','blR','grF','grR']; /* T882③ ブリスターの傷・グレイニングの粒も巻き戻す */ /* T537 警察の罰と強制ブレーキも巻き戻す。T793 ラリーの傷み */
 let rwBuf=[],rwT=0,holdT=0,rwCount=0,rwSel=0,retT=0;const RETW=8;
 /* T909 巻き戻しの戻し忘れ：RW_KEYS（物も参照のまま）に加えて、車の数・真偽・文字の値は名前の一覧を車ごとに自動で足していく（k._rwL）。物4つは浅い写し・区間タイムの配列は写し・角の参照はそのまま。
    記録の時に物だった値は RWS（戻さない）。記録の後に出てきた名前は、戻す時に消す。路面のラバー RUB・天気 ENV の数の値も記録 */
@@ -7677,7 +7678,7 @@ function syncVisuals(dt){
     g.wheelS.rotation.z=-k.delta*3;
     {const gl=Math.max(0,Math.min(1,((k.tb||0)-DGL0-(isCb(k)?200:0))/(DGL1-DGL0)));if(Math.abs(gl-g.discG)>.02){g.discG=gl;g.disc.emissiveIntensity=gl*gl*1.3;}} // T178② ブレーキの温度でディスクが赤く光る
     g.tail.emissiveIntensity=k.isPlayer&&input.brake||k.aiBrake?(g.tailBase>.5?2.6:1.6):(g.tailBase||.35);
-    if(g.otm){const e=k.otA?((raceTime%XOLB)<XOLB*.6?2:1):0;if(g.otm.userData.e!==e){g.otm.userData.e=e;g.otm.color.setHex(e===2?0x00ffd8:e===1?0x006a5c:0x0b2624);}} /* T895① */
+    if(g.otm){const L=k.otL,r=L>0&&L<20,e=!(L>0)?0:k.otA&&(raceTime%XOLB)>=XOLB*.6?0:r?2:1;if(g.otm.userData.e!==e){g.otm.userData.e=e;g.otm.color.setHex(e===2?0xff2a12:e===1?0x22ff4a:0x0b2624);}} /* T895① T948② 実車どおり：使える間は緑・残り20秒を切ると赤・使っている間は点滅・使い切ると消える */
     if(k.popT>0)k.popT-=dt; // T174 アクセルオフ・シフトダウンのポップでも炎
     const fl=(k.shiftT>.06||k.popT>0)&&__VR()<.6;g.flames.forEach(f=>{f.visible=fl;if(fl){const s=.8+__VR()*.6;f.scale.set(s,s,s);}});
     // ダメージ：塗装がくすみ、ひどいとボンネットから煙
