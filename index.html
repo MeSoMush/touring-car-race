@@ -425,7 +425,7 @@ body.touch .sb,body.touch .tb{opacity:.9}
 /* 見た目の整理：数字がゆれない・枠が重ならない */
 .d{display:inline-block;width:.52em;text-align:center}
 .mini{white-space:nowrap}
-#tower .tw.hasip{pointer-events:auto;cursor:help}#tower .tw.hasip:hover{outline:1px solid rgba(255,215,94,.7)}
+#tower .tw.hasip{pointer-events:auto;cursor:help}@media (hover:hover){#tower .tw{pointer-events:auto;cursor:help}#tower .tw:hover{outline:1px solid rgba(255,255,255,.35)}} /* T962 マウスのある PC は全部の行に吹き出し（タッチの画面は行が触れる所を塞がない） */#ipTip p.car{color:#cfe3ff;font-size:12px;margin:2px 0 0}#tower .tw.hasip:hover{outline:1px solid rgba(255,215,94,.7)}
 #ipTip{position:fixed;z-index:30;max-width:min(380px,90vw);background:rgba(12,14,18,.94);border:1px solid rgba(255,215,94,.5);border-left:4px solid #ffd75e;padding:7px 10px;font-size:13px;line-height:1.45;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.5)}#ipTip[hidden]{display:none}
 #ipTip b{color:#fff}#ipTip ul{margin:4px 0 0;padding:0;list-style:none}#ipTip li{padding:1px 0;border-top:1px solid rgba(255,255,255,.08)}#ipTip li i{font-style:normal;color:var(--muted);margin-right:8px;font-family:var(--num)}#ipTip li.p{color:#ff8a7a}#ipTip li.w{color:#ffd75e}#ipTip p{margin:4px 0 0;color:var(--muted);font-size:12px}#ipTip p.tk{color:#ffb34d;font-size:13px}
 #tower{min-width:0;width:188px}#tower.ip{width:214px}body.mix #tower.ip{width:252px}
@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.563.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.564.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8547,7 +8547,8 @@ function tkState(k){if(sess!=='race'||state==='results'||k.dnf||k.finished||k.go
   if((k.eng||0)>=.1)a.push(['e','エ','エンジンを傷めた（出力 −'+Math.round(EGP*k.eng*100)+'%。レブリミット（回転の上限）に当て続けた・回転を合わせないシフトダウン）']);
   return a;}
 function tkTag(k){const a=tkState(k);return a.length?'<s class="tk '+a[0][0]+'">'+a.map(x=>x[1]).join('')+'</s>':'';}
-function ipText(k){const st=tkState(k),sx=st.length?'<p class="tk">'+st.map(x=>x[2]).join('<br>')+'</p>':'';return (judgeOn&&(k.ipt||k.pen||k.dt)?ipText0(k):'<b>'+k.name+'</b>')+sx;}
+function carTip(k){const c=CARS[k.ci],t=TYR[k.ty],a=[c&&c.name,k.cls?'クラス '+k.cls:'',k.fs>.8?'FF':k.fs<.3?'後輪駆動':'4WD',t&&t.n?t.n+'タイヤ':''];if(sess==='race'&&(k.pitN||0)>0)a.push('ピット '+k.pitN+'回');return '<p class="car">'+a.filter(x=>x).join('・')+'</p>';} /* T962 */
+function ipText(k){const st=tkState(k),sx=st.length?'<p class="tk">'+st.map(x=>x[2]).join('<br>')+'</p>':'';return (judgeOn&&(k.ipt||k.pen||k.dt)?ipText0(k):'<b>'+k.name+'</b>')+carTip(k)+sx;}
 function ipText0(k){const n=+(k.ipt||0).toFixed(1),h=(k.jh||[]).filter(e=>e.t<=raceTime+.01).slice().reverse();const tm=t=>{t=Math.max(0,t-raceT0);return Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');};
   return '<b>'+k.name+'</b>　インシデントポイント（IP） '+n+(k.pen?'・ペナルティ ＋'+k.pen+'秒':'')+(k.dt?'・ドライブスルー待ち':'')+(h.length?'<ul>'+h.slice(0,8).map(e=>'<li class="'+e.kind+'"><i>'+e.lap+'周目 '+tm(e.t)+'</i>'+e.txt+'</li>').join('')+'</ul>':'<p>（内容の記録なし）</p>')+(n>0&&n<JG1?'<p>'+JG1+'点で警告、'+JG2+'点で＋5秒、'+JG3+'点でドライブスルー</p>':n>=JG1&&n<JG2?'<p>あと '+(+(JG2-n).toFixed(1))+'点で＋5秒</p>':n>=JG2&&n<JG3?'<p>あと '+(+(JG3-n).toFixed(1))+'点でドライブスルー</p>':'');}
 function ipTag(k){if(!judgeOn||sess!=='race')return '';const n=+(k.ipt||0).toFixed(1);if(!n&&!k.pen&&!k.dt)return '';
@@ -8563,8 +8564,8 @@ function spotStep(p){let L=0,Rt=0;if(spotOn&&p&&!p.finished&&(state==='race'||st
   for(const o of karts){if(o===p||o.gone||o.pit===2)continue;const dx=o.x-p.x,dz=o.z-p.z,fw=dx*fx+dz*fz;if(Math.abs(fw)>HZ*2.2)continue;const sd=dx*Math.cos(p.h)-dz*Math.sin(p.h),a=Math.abs(sd);if(a<1.3||a>4.6)continue;const v=a<2.6?2:1;if(sd>0)L=Math.max(L,v);else Rt=Math.max(Rt,v);}}
   const k=L+'|'+Rt;if(k===spotK)return;spotK=k;const set=(id,v)=>{const e=$(id);e.classList.toggle('on',v>0);e.classList.toggle('near',v>1);};set('spotL',L);set('spotR',Rt);}
 {let ipK=null;const tip=()=>$('ipTip');
- const show=(k,x,y)=>{const el=tip();if(!k){if(!el.hidden)el.hidden=true;ipK=null;return;}const h=ipText(k);if(el._h!==h){el._h=h;el.innerHTML=h;}el.hidden=false;ipK=k;const r=el.getBoundingClientRect();el.style.left=Math.min(innerWidth-r.width-8,x+16)+'px';el.style.top=Math.min(innerHeight-r.height-8,Math.max(8,y-10))+'px';};
- addEventListener('mousemove',e=>{const row=e.target&&e.target.closest?e.target.closest('#tower .tw.hasip'):null;const k=row&&karts.find(q=>q.id===+row.dataset.k);show(k&&(state==='race'||state==='finished'||state==='paused')?k:null,e.clientX,e.clientY);},{passive:true});
+ const show=(k,x,y)=>{const el=tip();if(!k){if(!el.hidden)el.hidden=true;ipK=null;return;}const h=ipText(k);if(el._h!==h){el._h=h;el.innerHTML=h;}el.hidden=false;ipK=k;const r=el.getBoundingClientRect();el.style.left=(x+16+r.width>innerWidth-8?Math.max(8,x-r.width-16):x+16)+'px'; /* T962 右端の順位表では、マウスの左に出す（行の上に重ねて下の行を隠していた） */el.style.top=Math.min(innerHeight-r.height-8,Math.max(8,y-10))+'px';};
+ addEventListener('mousemove',e=>{const row=e.target&&e.target.closest?e.target.closest('#tower .tw'):null;const k=row&&karts.find(q=>q.id===+row.dataset.k);show(k&&(state==='race'||state==='finished'||state==='paused')?k:null,e.clientX,e.clientY);},{passive:true});
  window.ipTipTick=()=>{const el=tip();if(ipK&&!el.hidden){if(!(state==='race'||state==='finished'||state==='paused')||!karts.includes(ipK)){el.hidden=true;ipK=null;return;}const h=ipText(ipK);if(el._h!==h){el._h=h;el.innerHTML=h;}}};}
 function updateHud(dt){if(window.ipTipTick)window.ipTipTick();
   const p=player();if(!p)return;
