@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.562.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.562.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -9125,7 +9125,7 @@ function keyPress(a){switch(a){
  case 'line':setLine(!showLine);break;
  case 'auto':if(state==='race'||state==='countdown'||state==='finished')setAuto(!autoPlay);break;
  case 'spd':spdStep();break;
- case 'pause':if(state==='race'||state==='countdown')pause();else if(state==='paused'){if(!$('helpScreen').hidden)closeHelp();else resume();}break;
+ case 'pause':if(canPz())pause();else if(state==='paused'){if(!$('helpScreen').hidden)closeHelp();else resume();}break;
  case 'bgm':bgmToggle();break;
  case 'rpt':ntfRpt();break;}}
 keyLoad();
@@ -9149,7 +9149,7 @@ addEventListener('keydown',e=>{if(optOn()&&!$('helpScreen').hidden&&$('keyScreen
   for(const a of ks)if(!KACTM[a].h&&a!=='bgm')keyPress(a); // T330 割り当てた操作（BGM は上で）
   if(TESTK&&e.code==='KeyK'&&e.shiftKey&&state==='race'&&sess==='race'){const pk=player();if(pk&&!pk.dnf){pk.u=Math.max(pk.u,30);crashCheck(pk,26,14);}} // 試験用（T73）：Shift+K で自車を大クラッシュさせる。Shift+J で前の車
   if(TESTK&&e.code==='KeyJ'&&e.shiftKey&&state==='race'&&sess==='race'){const pk=player();let b=null,bd=1e9;for(const o of karts){if(o===pk||o.dnf)continue;const d=progress(o)-progress(pk);if(d>0&&d<bd){bd=d;b=o;}}if(b){b.u=Math.max(b.u,30);crashCheck(b,26,14);}}
-  if(e.code==='Escape'&&(state==='race'||state==='countdown'))pause();
+  if(e.code==='Escape'&&canPz())pause();
   else if(e.code==='Escape'&&state==='paused'){if(!$('helpScreen').hidden)closeHelp();else resume();}});
 addEventListener('keyup',e=>{for(const a of keyActs(e))if(KACTM[a].h)input[a]=false;});
 // マウスホイール：手前に回す＝アップ、奥に回す＝ダウン（シーケンシャルレバーを引く＝アップ、押す＝ダウン）。マニュアルの時だけ（ページのスクロールは止める）
@@ -9197,7 +9197,7 @@ function pollPad(){const gs=typeof navigator!=='undefined'&&navigator.getGamepad
   if(!$('bugScreen').hidden){const bs=$('bugScreen');if(edge(12)||edge(14))navMove(bs,-1);else if(edge(13)||edge(15))navMove(bs,1);else if(edge(0)){const a=document.activeElement;if(bs.contains(a)&&a.tagName==='BUTTON')a.click();}else if(edge(1))closeBug();for(let i=0;i<g.buttons.length;i++)gp.prev[i]=bp(i);return;}
   if(volPad&&volPad(edge,bp)){for(let i=0;i<g.buttons.length;i++)gp.prev[i]=bp(i);return;}
   const racing=state==='race'||state==='countdown'||state==='finished';
-  if(racing){if(edge(1))doRewind();if(edge(2)){if(sess==='drag')nitroGo();else if(otsShow()&&!autoPlay)otsTog(player());else if(drsShow()&&!autoPlay)drsTog(player()); /* T888⑥ フォーミュラの決勝は X でオーバーテイク */else setLine(!showLine);}if(edge(3))setCam(camNext(camMode));if(edge(4))setMir(!mirOn);if(edge(5))togglePit();if(edge(10)){const p=player();if(p)setFuelMode(((p.fmode??1)+1)%3);}if(edge(8))setAuto(!autoPlay);if(lkRs){if(bp(11)){const t=performance.now();if(!gp.r3t)gp.r3t=t;gp.lb=t-gp.r3t>200;}else{if(gp.r3t&&!gp.lb)ntfRpt();gp.r3t=0;gp.lb=false;}}else{gp.r3t=0;gp.lb=false;if(edge(11))ntfRpt();} /* T610③ 右スティックの押し込み */ /* T633 横を見る時は長押しで後ろ */if(edge(9)&&state!=='finished')pause();}
+  if(racing){if(edge(1))doRewind();if(edge(2)){if(sess==='drag')nitroGo();else if(otsShow()&&!autoPlay)otsTog(player());else if(drsShow()&&!autoPlay)drsTog(player()); /* T888⑥ フォーミュラの決勝は X でオーバーテイク */else setLine(!showLine);}if(edge(3))setCam(camNext(camMode));if(edge(4))setMir(!mirOn);if(edge(5))togglePit();if(edge(10)){const p=player();if(p)setFuelMode(((p.fmode??1)+1)%3);}if(edge(8))setAuto(!autoPlay);if(lkRs){if(bp(11)){const t=performance.now();if(!gp.r3t)gp.r3t=t;gp.lb=t-gp.r3t>200;}else{if(gp.r3t&&!gp.lb)ntfRpt();gp.r3t=0;gp.lb=false;}}else{gp.r3t=0;gp.lb=false;if(edge(11))ntfRpt();} /* T610③ 右スティックの押し込み */ /* T633 横を見る時は長押しで後ろ */if(edge(9))pause();}
   else if(state==='paused'&&!$('helpScreen').hidden){const hs=$('helpScreen');if(edge(12)||edge(14))helpNav(-1);else if(edge(13)||edge(15))helpNav(1);else if(edge(0)){const a=document.activeElement;if(hs.contains(a))a.click();else closeHelp();}else if(edge(1)||edge(9))closeHelp();}
   else if(state==='paused'){const ps=$('pauseScreen');if(edge(12)||edge(14))navMove(ps,-1);else if(edge(13)||edge(15))navMove(ps,1);else if(edge(0)){const a=document.activeElement;if(ps.contains(a)&&a.tagName==='BUTTON')a.click();else resume();}if(edge(9))resume();if(edge(1))resume();} /* T660 C② パッドの B＝つづける（Esc と同じ。… */
   else if(state==='title'){titlePad(edge);}
@@ -9283,7 +9283,7 @@ function msLock(){if(!msLockOk()||ms.req||document.pointerLockElement===canvas||
 function msUnlock(){ms.req=false;ms.lockMe=false;ms.noT=performance.now()+1500;try{if(document.pointerLockElement&&document.exitPointerLock)document.exitPointerLock();}catch(_){}}
 document.addEventListener('pointerlockerror',()=>{ms.req=false;ms.lockMe=false;ms.fail=true;}); /* 取れなかったら、このあとはカーソルの位置でハンドル（GARAGE で選び直すとまた試す） */
 addEventListener('blur',msUnlock);addEventListener('pagehide',msUnlock);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')msUnlock();});
-document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.x=0;ms.y=0; /* T342 */ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(state==='race'||state==='countdown')pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
+document.addEventListener('pointerlockchange',()=>{ms.req=false;if(document.pointerLockElement===canvas){if(!msLockOk())msUnlock();return;}ms.x=0;ms.y=0; /* T342 */ms.noT=performance.now()+1500;if(ms.lockMe){ms.lockMe=false;setTimeout(()=>{if(canPz())pause();},80);}}); /* Esc でロックが外れたらポーズ（Esc のキーが先に届いてポーズ済みなら何もしない） */
 /* T336 入力の表示（#inpCv）：inpC＝自分の車に実際に入った操作。… */
 var slpSel=0,slpTr=0; /* T741④⑤ 横滑りの針 0 課題だけ・1 いつも・2 出さない／直近3秒の線（起動の途中の ctlSave から読まれるので var） */try{const o=ctlGet();if(o){if(o.sg!=null)slpSel=Math.max(0,Math.min(2,o.sg|0));slpTr=o.str?1:0;}}catch(_){}
 let inpOn=isTouch?0:1,inpC=null,inpSd=0; /* T367 inpSd：サイドブレーキの位置 0＝左（右ハンドル）・1＝右（左ハンドル） */const inpS={key:'',abs:0,absT:0};
@@ -9643,7 +9643,7 @@ for(const id of['rwBtn','pitBtn','fuelBtn','pauseBtn','cpBtn','fsBtn','hudBtn'])
  fs.addEventListener('click',()=>{try{if(isFs()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{const p=(root.requestFullscreen||root.webkitRequestFullscreen).call(root);if(p&&p.catch)p.catch(()=>{toast('この場所では全画面にできません（GitHub Pages のゲームでは使えます）');fs.style.display='none';});}}catch(_){}});
  document.addEventListener('fullscreenchange',fsLabel);document.addEventListener('webkitfullscreenchange',fsLabel);
  hb.addEventListener('click',()=>{const on=!document.body.classList.contains('hudmin');document.body.classList.toggle('hudmin',on);hb.textContent=on?'表示を戻す':'表示を減らす';hb.setAttribute('aria-pressed',String(on));});
- cp.addEventListener('click',()=>{if(state==='paused')resume();else if(state==='race'||state==='countdown')pause();});
+ cp.addEventListener('click',()=>{if(state==='paused')resume();else if(canPz())pause();});
 }
 let spdMul=1;const SPD_STEPS=[1,2,3,5];
 function setSpd(n){spdMul=n;$('spdBtn').textContent='倍速 ×'+n;$('autoBadge').textContent=n>1?'オート運転中　×'+n:'オート運転中';if(n>1)toast('×'+n+' 倍速（効果音とエンジン音は止まります。BGM はそのまま）');}
@@ -9731,13 +9731,13 @@ function quitTo(){try{if(flLast&&flMode(flLast)){const m=flMode(flLast);return f
 function pzLbl(){$('restartBtn').textContent=rlStRe()?'この SS をやり直す':'最初から';$('retireBtn').title='このレースをやめて'+quitTo()+'へ戻る（2回押す）';}
 function pzAsk(id,msg,fn){if(pzAskId===id&&performance.now()-pzAskT<3000){padTitleReset();fn();return;}padTitleReset();pzAskId=id;pzAskT=performance.now();$(id).textContent=msg;tone(660,.05,'square',.08);setTimeout(()=>{if(pzAskId===id&&performance.now()-pzAskT>=2900)padTitleReset();},3100);}
 function padTitleReset(){pzAskId=null;pzAskT=0;$('retireBtn').textContent='レースをやめる';pzLbl();}
-$('pauseBtn').addEventListener('click',()=>{if(state==='race'||state==='countdown')pause();});
+$('pauseBtn').addEventListener('click',()=>{if(canPz())pause();});
 function bgmToggle(){bgmOn=!bgmOn;$('bgmBtn').textContent=bgmOn?'BGM ON':'BGM OFF';$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));try{localStorage.setItem('popkart_bgm',bgmOn?1:0);}catch(_){}initAudio();}
 try{if(localStorage.getItem('popkart_bgm')==='0'){bgmOn=false;$('bgmBtn').textContent='BGM OFF';}}catch(_){}$('bgmBtn').setAttribute('aria-pressed',String(bgmOn));$('muteBtn').setAttribute('aria-pressed','true'); // T175⑦
 $('bgmBtn').addEventListener('click',bgmToggle);
-function rotChk(){try{const b=document.body;if(b.classList.contains('touch')&&!b.classList.contains('rotOk')&&matchMedia('(orientation:portrait)').matches&&(state==='race'||state==='countdown'))pause();}catch(_){}} /* T792 「横向きにしてください」の幕が出る時は止める（横に戻してもポーズのまま。幕をタップして縦のまま続ける時は止めない） */
+function rotChk(){try{const b=document.body;if(b.classList.contains('touch')&&!b.classList.contains('rotOk')&&matchMedia('(orientation:portrait)').matches&&canPz())pause();}catch(_){}} /* T792 「横向きにしてください」の幕が出る時は止める（横に戻してもポーズのまま。幕をタップして縦のまま続ける時は止めない） */
 addEventListener('resize',rotChk);try{const q=matchMedia('(orientation:portrait)');q.addEventListener?q.addEventListener('change',rotChk):q.addListener(rotChk);}catch(_){}
-document.addEventListener('visibilitychange',()=>{if(document.hidden){if(state==='race'||state==='countdown')pause();rsvSave();if(ac&&ac.state==='running')ac.suspend();}else if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});});['pointerdown','keydown','touchend'].forEach(t=>addEventListener(t,()=>{if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});},true)); /* 音が止まったままにならない */
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(canPz())pause();rsvSave();if(ac&&ac.state==='running')ac.suspend();}else if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});});['pointerdown','keydown','touchend'].forEach(t=>addEventListener(t,()=>{if(ac&&ac.state!=='running'&&ac.state!=='closed')ac.resume().catch(()=>{});},true)); /* 音が止まったままにならない */
 $('muteBtn').addEventListener('click',()=>{muted=!muted;if(muted)pnHush();$('muteBtn').textContent=muted?'音 OFF':'音 ON';$('muteBtn').setAttribute('aria-pressed',String(!muted));initAudio();});
 // T199 タイトルの上の帯の「音」「全画面」：レース中のボタンと同じ働き（表示もそろえる。…
 const tsSync=()=>{const m=$('tsMute');m.textContent=muted?'音 OFF':'音 ON';m.setAttribute('aria-pressed',String(!muted));const f=$('fsBtn'),t=$('tsFs');t.hidden=f.style.display==='none';t.textContent=f.textContent;};
@@ -9755,7 +9755,7 @@ tsSync();
  const qReset=()=>{qArm=0;clearTimeout(qTmr);bQ.classList.remove('is-armed');$('sysAsk').hidden=true;};
  function sbSync(){const pz=state==='paused';
   bar.classList.toggle('compact',isTouch||document.body.classList.contains('touch')||innerWidth<1100||innerHeight<=520||GWQ.matches); /* T614⑤ 同じ条件の GWQ を使う */ /* T600 PC の横長は右上の 320 に収めるので記号だけ */
-  bP.hidden=!(state==='race'||state==='countdown'||pz);bP.classList.toggle('is-on',pz);
+  bP.hidden=!(canPz()||pz);bP.classList.toggle('is-on',pz);
   TB.set(bP,pz?'play':'pause',pz?'再開':'ポーズ',pz?'レースを再開する（Esc / P）':'レースをポーズする（Esc / P）');
   bV.classList.toggle('is-on',muted);
   TB.set(bV,TB.volIcon(mVol,muted),muted?'消音中':'音量',(muted?'消音中':'音量 '+mVol)+'（押すと音量と消音の窓。BGM と効果音すべて）');bV.setAttribute('aria-expanded',String(!vp.hidden));if(!vp.hidden)vpSync();
@@ -9769,7 +9769,7 @@ tsSync();
   document.body.classList.toggle('pzd',pz);{const p=$('pauseScreen').querySelector('.panel'),m=$('pzMore');if(m)m.hidden=!(pz&&p&&p.scrollHeight>p.clientHeight+4&&p.scrollTop+p.clientHeight<p.scrollHeight-24);} /* T609② */
   {const r=$('flPR');if(r&&r.offsetHeight)r.classList.toggle('more',r.scrollTop+r.clientHeight<r.scrollHeight-4);} /* T609③ */
   if(qArm&&!midRun())qReset();}
- bP.addEventListener('click',()=>{if(state==='paused'){if(!$('bugScreen').hidden)closeBug();$('helpScreen').hidden=true;resume();}else if(state==='race'||state==='countdown')pause();sbSync();});
+ bP.addEventListener('click',()=>{if(state==='paused'){if(!$('bugScreen').hidden)closeBug();$('helpScreen').hidden=true;resume();}else if(canPz())pause();sbSync();});
  /* T266② 音量の窓：消音の切り替え＋音量のつまみ（0〜100。動かすとすぐ反映・保存、消音中に動かすと消音を解く）。
     閉じる＝もう一度音量ボタン・窓の外を押す・Esc・パッド B。キーボード＝矢印で音量・Enter で消音。パッド＝十字の左右で音量・A で消音 */
  const vp=$('sysVolPop'),vR=$('svRange'),vM=$('svMute'),vT=$('svVal');let vTone=0;
@@ -9832,6 +9832,7 @@ const specHtml=p=>specRows(p).map(([a,b,c])=>'<div><i>'+a+'</i><em'+(c?' class="
 let slOn=false;function setListUpd(){const el=$('setList'),tm=document.body.classList.contains('tmenu'),run=state==='race'||state==='countdown'||state==='finished',on=slOn&&!tm&&run;const rbf=()=>sess==='race'?'<b>今の決まり<small><span class="rdot">●</span> ほんかくより易しい</small></b><div class="pspec">'+rulesHtml()+'</div>'+(ruleNote()?'<p class="rnote">'+ruleNote()+'</p>':''):'';if(tm&&run)H2($('tmSpec')).innerHTML=rbf()+'<b>今の車とセッティング</b><div class="pspec">'+specHtml(player())+'</div>';if(el.hidden===!on&&!on)return;el.hidden=!on;if(on)H2(el).innerHTML=rbf()+'<b>今の車とセッティング<small>Tab を離すと消える</small></b><div class="pspec">'+specHtml(player())+'</div>';}
 addEventListener('keydown',e=>{if(e.code==='Tab'&&(state==='race'||state==='countdown'||state==='finished')){e.preventDefault();if(!slOn){slOn=true;setListUpd();}}});
 addEventListener('keyup',e=>{if(e.code==='Tab'&&slOn){slOn=false;setListUpd();}});addEventListener('blur',()=>{if(slOn){slOn=false;setListUpd();}});
+function canPz(){return state==='race'||state==='countdown'||state==='finished';} /* 一時停止できる時：レース中・スタート前・完走やリタイアの後で結果画面が出る前（リタイアした場面でもポーズから不具合報告を送れるように。前は finished で右上のボタンが消えていた） */
 function pause(){msgPT=0;lgK='';setTimeout(()=>{try{lgUi();}catch(_){}},0); /* T605 */msUnlock();pnHush();pzLbl();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
 {let d=null,ox=0,oy=0;const ps=$('pauseScreen'),h=ps&&ps.querySelector('h2'),pn=()=>ps.querySelector('.panel');if(h){h.title='ドラッグで動かせる（ダブルクリックで元の位置）';
   h.addEventListener('pointerdown',e=>{d={x:e.clientX-ox,y:e.clientY-oy};try{h.setPointerCapture(e.pointerId);}catch(_){}});h.addEventListener('pointermove',e=>{if(!d)return;ox=e.clientX-d.x;oy=e.clientY-d.y;pn().style.translate=ox+'px '+oy+'px';});
@@ -10716,7 +10717,7 @@ $('goBtn').addEventListener('click',carGo);$('garBack').addEventListener('click'
 $('anyOpt').addEventListener('click',()=>optAny());
 /* どの場面からでも OPTIONS（ご本人 2026-10-27「とりあえずどの場面からでもオプションは変更できるようにして下さい」）。… */
 let optBack=null,optTsH=true,optHid=[];const optOn=()=>tScr.classList.contains('optOnly');
-function optAny(){ /* T660 C① タイトルでも重ねの OPTIONS（前は GARAGE の全部のタブ） */if(optOn())return;if(state==='race'||state==='countdown')pause();
+function optAny(){ /* T660 C① タイトルでも重ねの OPTIONS（前は GARAGE の全部のタブ） */if(optOn())return;if(canPz())pause();
   optBack=document.activeElement;optTsH=$('titleScreen').hidden;msUnlock();advSync();$('titleScreen').hidden=false;tScr.classList.add('optOnly');document.body.classList.add('optOn');$('setup').hidden=false;for(let i=0;i<GTN;i++)$('gtab'+i).hidden=i!==3;
   optHid=(state==='title'?[]:['kpSeg','bmDurSeg','sndOpen']).map( /* タイトルでは隠さない */id=>$(id)&&$(id).parentElement).filter(r=>r&&!r.classList.contains('optHide'));optHid.forEach(r=>r.classList.add('optHide'));for(const r of optHid.slice()){const row=r.closest('.setrow');if(row&&!row.classList.contains('optHide')&&[...row.children].every(c=>c.classList.contains('optHide')||c.hidden)){row.classList.add('optHide');optHid.push(row);const g=row.previousElementSibling;if(g&&g.classList.contains('gsec')&&!g.classList.contains('optHide')){g.classList.add('optHide');optHid.push(g);}}} /* T640 各設定の箱に印（前は .setrow のまとまり全体に hidden を付け、見た目の指定に負けて見えたままだった） */
   $('setup').scrollTop=0;try{$('optClose').focus({preventScroll:true});}catch(_){}tone(760,.05,'square',.08);}
