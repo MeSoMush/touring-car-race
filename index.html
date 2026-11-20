@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.3</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.576.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2583,7 +2583,7 @@ const xoB=()=>Math.round(Math.min(XOT,Math.max(XOM,XOK*LAPS*L/XOV))),xoX=()=>Mat
 let XSTY=1,XRE=0.05,XRL=0.75,XLF=0.2,XRD=0.55,XDB=1.25,XOI=10; /* T895③ 使い方の型（XSTY＝0 で型なし）：早め e は取っておく割合 XRE・終盤 l は XRL を残りが XLF×2 の所まで持ち、XLF で使い切る・守り d は攻めに XRD を取っておき、守りは取っておく分を気にせず後ろ XOB×XDB 秒で入れる。④ 相手の残りは XOI 秒ごとにしか伝わらない（チームの無線） */
 function otSty(k){if(!XSTY||!pzK(k)||!k.dr)return 'b';const t=TRAITS[k.dr.tr??2];return t.blk?'d':t.sp==='late'||t.sd<=.6?'l':t.sd>=1.3?'e':t.ag<=-.3?'d':'b';}
 const OTSN={e:'早めに使う',b:'ふつう',l:'終盤に取っておく',d:'守りに使う'};
-const otsShow=()=>sess==='race'&&isForm()&&fcl(ccChoice).ot==='o' /* T922 OTS はトップだけ（F3級・F2級は DRS、ジュニアは無し） */;
+const otsShow=()=>sess==='race'&&!PRAC&&isForm()&&fcl(ccChoice).ot==='o' /* T948⑥ OTS は決勝だけ（スーパーフォーミュラと同じ。練習走行では使えない） */ /* T922 OTS はトップだけ（F3級・F2級は DRS、ジュニアは無し） */;
 function otsOk(k){return otsShow()&&state==='race'&&!k.pit&&!k.finished&&!k.dnf&&!cau()&&!(ROLL.on&&!ROLL.green);}
 function otsOff(k){if(k.otA){k.otA=0;if(k.isPlayer)sfx('otsC');k.otCd=xoC();if(k.isPlayer)otsBtn(k);}}
 function otsTog(k){if(!k||!otsShow())return;if(k.otA){otsOff(k);return;}if(!otsOk(k)||k.otCd>0||!(k.otL>0)){if(k.isPlayer&&!autoPlay){const w=!(k.otL>0)?'使い切った':ROLL.on&&!ROLL.green?'隊列の間は使えない':SC.on?'SC の間は使えない':FCY.on?'FCY の間は使えない':k.pit?'ピットの間は使えない':state!=='race'?'スタートしてから使える':k.otCd>0?'あと '+Math.ceil(k.otCd)+' 秒使えない':'',n=performance.now();if(w&&(w!==otsNW||n-otsNT>1500)){otsNW=w;otsNT=n;telop('OTS',w);}}return;} /* T878 前は待ち時間の時だけ一言 */k.otA=1;k.otU=0;if(k.isPlayer){otsBtn(k);sfx('otsO');};}
@@ -2603,8 +2603,8 @@ function drsBuild(){DRZ=[];DRZI=new Int8Array(N).fill(-1);DRZD=new Int8Array(N).
  const pts=Math.ceil(DRZL/SP),dp=Math.max(1,Math.round(DRSD/SP)),ok=runs.filter(r=>r[1]-r[0]>=pts).sort((a,b)=>(b[1]-b[0])-(a[1]-a[0])).slice(0,DRZN);
  ok.forEach((r,q)=>{const a=r[0]+dp,b=r[1];if(b-a<pts/2)return;const id=DRZ.length;DRZ.push({s:p2?a:(st+a)%N,e:p2?b:(st+b)%N,m:Math.round((b-a)*SP)});for(let j=a;j<b;j++)DRZI[p2?j:(st+j)%N]=id;for(let j=r[0];j<a;j++)DRZD[p2?j:(st+j)%N]=id;});}
 function drsUpd(){if(!drsShow()){drsOn0=0;return;}let ld=0;for(const o of karts)if(!o.dnf&&!o.finished)ld=Math.max(ld,lapsDoneF(o));
- if(cau()||ROLL.on&&!ROLL.green){drsCw=1;drsOn0=0;return;}if(drsCw){drsCw=0;drsLap=Math.floor(ld)+DRSL;}const on=state==='race'&&DRZ.length>0&&ld>=drsLap&&ENV.wet<=DRSW?1:0;
- if(on!==drsOn0&&state==='race'&&raceTime-raceT0>1){drsOn0=on;telop('DRS',on?'使える（検知点で前の車と '+DRSG+' 秒以内なら、次のゾーンで開けられる）':cau()?'SC の間は使えない':'濡れた路面なので使えない',on?null:'yellow');}else drsOn0=on;}
+ if(cau()||ROLL.on&&!ROLL.green){drsCw=1;drsOn0=0;return;}if(drsCw){drsCw=0;drsLap=Math.floor(ld)+DRSL;}const on=state==='race'&&DRZ.length>0&&(PRAC||ld>=drsLap)&&ENV.wet<=DRSW?1:0;
+ if(on!==drsOn0&&state==='race'&&raceTime-raceT0>1){drsOn0=on;telop('DRS',on?(PRAC?'使える（練習走行はゾーンの中ならいつでも開けられる）':'使える（検知点で前の車と '+DRSG+' 秒以内なら、次のゾーンで開けられる）'):cau()?'SC の間は使えない':'濡れた路面なので使えない',on?null:'yellow');}else drsOn0=on;}
 function drsGap(k){let b=1e9;for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;let d=progress(o)-progress(k);if(!CRS.p2p)d=((d%L)+L)%L;if(d>0&&d<b)b=d;}return b/Math.max(5,k.u);}
 function drsOff(k){if(!k.drA)return;k.drA=0;sfx('drsC',k);k.dzC=DRZI?DRZI[k.idx]:-1;if(k.isPlayer)drsBtn(k);}
 function drsTog(k){if(!k||!drsShow())return;if(k.drA){drsOff(k);return;}const z=DRZI?DRZI[k.idx]:-1;if(drsOn0&&z>=0&&k.dzE===z&&k.dzC!==z&&!k.pit){k.drA=1;sfx('drsO',k);drsBtn(k);return;}
@@ -2612,7 +2612,7 @@ function drsTog(k){if(!k||!drsShow())return;if(k.drA){drsOff(k);return;}const z=
 function drsSt(k){const z=DRZI?DRZI[k.idx]:-1;return k.drA?2:drsOn0&&k.dzE>=0&&(z<0||z===k.dzE&&k.dzC!==z)?1:0;} /* 2 開けている・1 開けられる・0 無し（計器とボタン） */const drsTx=k=>['—','DRS 可','DRS 開'][drsSt(k)],drsFx=k=>{const s=drsSt(k);return s===2?{fill:'rgba(20,140,64,.92)',ring:'#3be07a',tc:'#3be07a'}:s===1?{ring:'#3be07a',tc:'#3be07a'}:null;}; /* T947 字はスマホのボタンと同じ「DRS 可／開」、可＝縁が緑・開＝地が緑 */
 function drsBtn(k){const b=$('nosBtn');if(!b)return;const t=['DRS','DRS 可','DRS 開'][drsSt(k)];b.classList.toggle('on',!!k.drA);if(t!==drsLb){drsLb=t;b.textContent=t;}}
 function drsStep(k,dt){if(!drsShow()){k.drA=0;return;}if(!DRZI)drsBuild();if(!drsOn0||k.pit||k.dnf||k.finished||state!=='race'){drsOff(k);k.dzE=-1;k.dzD=-1;if(k.isPlayer)drsBtn(k);return;}
- const z=DRZI[k.idx],d=DRZD[k.idx];if(d>=0&&k.dzD!==d){k.dzD=d;k.dzE=drsGap(k)<DRSG&&!k.yellow?d:-1;k.dzC=-1;if(k.isPlayer&&!autoPlay&&k.dzE>=0)radio('DRS が使える。直線で開けろ（ブレーキで閉じる）','drsz',20);else if(k.isPlayer&&!autoPlay&&k.yellow&&drsGap(k)<DRSG)radio('黄旗：この区間の DRS は使えない','drsy',20);}
+ const z=DRZI[k.idx],d=DRZD[k.idx];if(d>=0&&k.dzD!==d){k.dzD=d;k.dzE=(PRAC||drsGap(k)<DRSG)&&!k.yellow?d:-1; /* T948⑥ 練習走行は1秒の決まりなし（F1・F2・F3 の練習走行と同じ） */k.dzC=-1;if(k.isPlayer&&!autoPlay&&k.dzE>=0)radio('DRS が使える。直線で開けろ（ブレーキで閉じる）','drsz',20);else if(k.isPlayer&&!autoPlay&&k.yellow&&drsGap(k)<DRSG)radio('黄旗：この区間の DRS は使えない','drsy',20);}
  if(k.yellow&&k.dzE>=0){drsOff(k);k.dzE=-1;if(k.isPlayer)drsBtn(k);} /* T948① 黄旗の区間ではゾーンの検知を止める（F2 のゾーンの光の板が黄色の間と同じ） */
  if(z<0&&d<0){drsOff(k);if(k.dzE>=0&&k.dzD>=0&&DRZD[k.idx]<0)k.dzE=-1;k.dzD=-1;}
  if(z>=0&&!k.drA&&k.dzE===z&&k.dzC!==z&&(!k.isPlayer||autoPlay)&&k.u>20){k.drA=1;sfx('drsO',k);}
