@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.2</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.3</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3264,10 +3264,12 @@ function envStep(dt,race){const e=ENV;e.t+=dt;if(e.rain>=RNSN)e.rnSeen=1; /* T70
  const p=player();const on=TOD[e.tod].night||e.fog>.5;
  if(p&&(on||race&&todSpd&&sess==='race'&&lapsEff()>=TDL))e.hdK=1; // T404：一度入れた光はそのレースの間は外さない（光の数が変わると全部の面の描き方を作り直して数秒止まる）。…
  headSpot.visible=!!(p&&(on||e.hdK)); // 昼は光源ごと外して、全部の面の計算から省く（T124）
- if(p&&on){headSpot.intensity=TOD[e.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
- else headSpot.intensity=0;
- {let bt=false;try{bt=isBat();}catch(_){}const q=bt?karts.find(k=>!k.isPlayer):null;rvSpot.visible=!!(q&&headSpot.visible);if(q&&on&&!q.gone){rvSpot.intensity=TOD[e.tod].night?2.2:1;const hx=q.x+Math.sin(q.h)*2.2,hz=q.z+Math.cos(q.h)*2.2,tx=q.x+Math.sin(q.h)*30,tz=q.z+Math.cos(q.h)*30;rvSpot.position.set(hx,.75+TH(hx,hz),hz);rvSpot.target.position.set(tx,TH(tx,tz),tz);rvSpot.target.updateMatrixWorld();}else rvSpot.intensity=0;} /* T499③ */
+ hdPlace(p,on); /* β0.575.3 T905② */
  wsStep(dt);visvStep();} /* T375 後半 */
+function hdPlace(p,on){ /* β0.575.3 T905② 自分と相手の前照灯を置く。envStep のほか、補った位置で車の絵を置いた直後（syncVisuals の後）にも呼ぶ＝光が車より遅れない */
+ if(p&&on){headSpot.intensity=TOD[ENV.tod].night?2.6:1.2;{const hx=p.x+Math.sin(p.h)*2.2,hz=p.z+Math.cos(p.h)*2.2,tx=p.x+Math.sin(p.h)*30,tz=p.z+Math.cos(p.h)*30;headSpot.position.set(hx,.75+TH(hx,hz),hz);headSpot.target.position.set(tx,TH(tx,tz),tz);}headSpot.target.updateMatrixWorld();}
+ else headSpot.intensity=0;
+ {let bt=false;try{bt=isBat();}catch(_){}const q=bt?karts.find(k=>!k.isPlayer):null;rvSpot.visible=!!(q&&headSpot.visible);if(q&&on&&!q.gone){rvSpot.intensity=TOD[ENV.tod].night?2.2:1;const hx=q.x+Math.sin(q.h)*2.2,hz=q.z+Math.cos(q.h)*2.2,tx=q.x+Math.sin(q.h)*30,tz=q.z+Math.cos(q.h)*30;rvSpot.position.set(hx,.75+TH(hx,hz),hz);rvSpot.target.position.set(tx,TH(tx,tz),tz);rvSpot.target.updateMatrixWorld();}else rvSpot.intensity=0;} /* T499③ */}
 function updEnvHud(){const P=TOD[ENV.tod],w=WXN[ENV.wx];const ic=ENV.rain>.3?'☂':ENV.fog>.5?'🌫':ENV.cloud>.6?'☁':P.ic;
  const rsN=rsCur?RSF[rsCur].n+(ENV.wet>.2?'　':''):'',cond=ENV.wet>.6?'wet':ENV.wet>.2?'damp':'dry',cj=rsCur&&cond==='dry'?'':{wet:'ウェット',damp:'少し濡れ',dry:'ドライ'}[cond];const p=plrSafe();const fc=fcText();const el=document.getElementById('wx');if(el)el.innerHTML=`${ic} ${P.n}${ENV.clkOn?' '+clkTxt(ENV.clk):''}　${rsN}<b class="${cond}">${cj}</b>${p&&(tyCv.hidden||document.body.classList.contains('hudmin'))?`　<span>${TYR[p.ty||0].n}</span>`:''}${fc?`<i class="fc">${fc}</i>`:''}`;
  const ts=document.getElementById('tsEnv');if(ts)ts.textContent=`${P.en} / ${w.en}${roadSurf?' / '+RSF[roadSurf].en:''}`;}
@@ -11313,7 +11315,7 @@ function frame0(now){
     if(state==='finished'){afterFinish+=dt;const rr=retT>0&&!autoPlay;rwAskUpd();if(afterFinish>(sess==='drag'?7:isBat()?20:autoPlay&&sess==='race'&&player().dnf?40:rr?RETW:5)||!rr&&karts.every(k=>k.finished||k.dnf)&&(sess!=='drag'||afterFinish>2)&&(!BR.on||afterFinish>BRE))showResults();}
     }
     if(ROLL.fmE)fmEnd(); /* T360 */
-    if(state==='race'||state==='finished'){phX(phA);syncVisuals(dt*slwK());updateCamera(dt);phX(0);updateHud(dt);drawFx();updateLine(player());}
+    if(state==='race'||state==='finished'){phX(phA);syncVisuals(dt*slwK());if(headSpot.visible)hdPlace(player(),TOD[ENV.tod].night||ENV.fog>.5);updateCamera(dt);phX(0);updateHud(dt);drawFx();updateLine(player());}
   }
   if(bannerTimer>0){bannerTimer-=dt;if(bannerTimer<=0)clearBanner();}
   if(state!=='paused'){stepTelop(dt);stepRadio(dt);pitHud();coachTick(dt);}pnStep(dt);icyWarn();
