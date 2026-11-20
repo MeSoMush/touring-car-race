@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.577.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.577.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5304,7 +5304,7 @@ function stepKart(k,dt,ctl){
     k.icK=turbo?1-ICL*Math.max(0,Math.min(1,(k.iat-35)/50)):1;}}
   // トラック位置と壁
   const pdP=!!PAD&&pdPin(k); /* T744 広場の間は線の位置を止めて壁を見ない */if(!pdP){k.prevIdx=k.idx;k.idx=nearest(k.x,k.z,k.idx,16);k.lat=lateralAt(k.idx,k.x,k.z);}
-  if(!pdP){wallCollide(k);pitWallCollide(k);}if(P2P)p2pWall(k,dt);if(PARK.length)parkCollide(k);if(XBK&&XBK.st===2)parkCollide(k,[XBK]); /* β0.573.0 T972 */if(TRF.length)trfCollide(k);if(CRS.free)cityCollide(k); /* T510① */if(SWO.length)swoCollide(k); /* β0.572.0 T970 */ /* T515② */
+  if(!pdP){wallCollide(k);pitWallCollide(k);}if(P2P)p2pWall(k,dt);if(PARK.length)parkCollide(k);if(XBK&&XBK.st===2)parkCollide(k,[XBK]); /* β0.573.0 T972 */if(TRF.length)trfCollide(k);if(SC.g&&SC.g.root.visible)scCollide(k); /* T934 */if(CRS.free)cityCollide(k); /* T510① */if(SWO.length)swoCollide(k); /* β0.572.0 T970 */ /* T515② */
   {const s=Math.sign(k.lat),lw=WAL[k.idx]+.9+wx(k.idx,s);if(!CRS.free&&Math.abs(k.lat)>lw) /* T510① せき止めない街は横道へ入れる（道へ押し戻さない） */{const push=Math.abs(k.lat)-lw;k.x-=NX[k.idx]*s*push;k.z-=NZ[k.idx]*s*push;k.lat=s*(lw+.3);}}
   if(k.bump>0)k.bump-=dt;
   const a=k.prevIdx,b=k.idx;
@@ -7559,6 +7559,11 @@ function trfCollide(k){for(const t of TRF){if(!t.on)continue;const dx=k.x-t.x,dz
   const pts=cb.filter(q=>insideK(k,q)).concat(ca.filter(q=>insideK(t,q)));let px=(k.x+t.x)/2,pz=(k.z+t.z)/2;if(pts.length){px=0;pz=0;for(const q of pts){px+=q[0];pz+=q[1];}px/=pts.length;pz/=pts.length;}
   const J=wallResp(k,[px,pz],best,nx,nz,1/t.m,t.vx,t.vz);t.nh=(t.nh||0)+1;
   if(J){const dvx=-J[0]/t.m,dvz=-J[1]/t.m,df=dvx*Math.sin(t.h)+dvz*Math.cos(t.h);t.v=Math.max(0,t.v+df);t.latV+=dvx*NX[t.i]+dvz*NZ[t.i];if(Math.hypot(dvx,dvz)>.4&&!t.pol){if(!t.hit)polAdd(POLC,'車に当たった',k);t.hit=1;t.hitT=HWHT;t.hitN=(t.hitN||0)+1;}}}} /* 当てられた一般車はその場で止まる */
+/* T934 セーフティカーとの当たり（前は無く、手動の自分の車が SC に重なってすり抜けられた）。SC は台本で動くので押されても進み方は変えない。重さは SCM（車 1＝1250kg）、速さは SC.u を向きへ */
+const SCM=1.2;function scCollide(k){if(k.gone)return;const t={x:SC.x,z:SC.z,h:SC.h||0},dx=k.x-t.x,dz=k.z-t.z;if(dx*dx+dz*dz>49)return;const ca=kCorners(k),cb=kCorners(t);let best=1e9,n=null;
+  for(const ax of[...kAxes(k),...kAxes(t)]){const pa=proj(ca,ax),pb=proj(cb,ax),o=Math.min(pa[1],pb[1])-Math.max(pa[0],pb[0]);if(o<=0)return;if(o<best){best=o;n=ax;}}
+  let nx=n[0],nz=n[1];if(dx*nx+dz*nz<0){nx=-nx;nz=-nz;}const pts=cb.filter(q=>insideK(k,q)).concat(ca.filter(q=>insideK(t,q)));let px=(k.x+t.x)/2,pz=(k.z+t.z)/2;if(pts.length){px=0;pz=0;for(const q of pts){px+=q[0];pz+=q[1];}px/=pts.length;pz/=pts.length;}
+  const u=SC.u||0;wallResp(k,[px,pz],best,nx,nz,1/SCM,u*Math.sin(t.h),u*Math.cos(t.h));SC.hitN=(SC.hitN||0)+1;}
 /* AI：一般車をよける横の範囲と、抜けない時の速さ。同じ向きの車は対向車が来ない時だけ右から抜く（抜いている間は近い対向車だけ見る） */
 let TSH=1,TSHR=80,TSHM=.3,TSHN=25,TSHX=.9; /* T630 一般車を抜く側を保つ・覚える相手を探す先の距離 m・側を決めたとみなす横の差 m・TSHN m より近くで、もう一般車の横（幅＋TSHX m より外）にいる時は今いる側に決める */
 /* T821 首都高：一般車が HWPD m 以内に見えている間は、車線を決めて（k._hl）その車線の中だけを走る（線にかからない・レースの線は車線の中だけで使う）。
