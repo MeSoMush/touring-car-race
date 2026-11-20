@@ -706,7 +706,7 @@ body.touch.ckv #tyreCv,body.touch.ckv #wx{display:none!important}
 #resAdv,#qsAdv{margin:6px 0 0;padding:6px 10px;border-left:3px solid #4fc3f7;background:rgba(79,195,247,.08);font-size:13px;line-height:1.6;text-align:left}#resAdv b,#qsAdv b{color:#9fdcff}#resAdv ol,#qsAdv ol{margin:2px 0 0;padding-left:1.4em}#qsAdv{margin:0 0 8px}#garTop[hidden]{display:none!important} /* T664 予選の後のアドバイス */
 #resRec .up{color:#7dff9a}#resRec .dn{color:#ff8a7d}#resRec .gd{color:var(--gold);font-weight:700}
 /* T330 キーの割り当て */
-#keyScreen{z-index:19}body.optOn #keyScreen,body.optOn #helpScreen{z-index:31} /* T660③ OPTIONS の重ね（30）の上に */
+#keyScreen{z-index:19}body.optOn #keyScreen,body.optOn #helpScreen,body.optOn #sndScreen{z-index:31} /* T660③ OPTIONS の重ね（30）の上に */
 #resCup{margin:8px 0 0;font-size:13px;line-height:1.5}#resCup table{border-collapse:collapse;width:100%;margin-top:4px}#resCup td{padding:2px 6px;border-bottom:1px solid rgba(255,255,255,.08)}#resCup td.t{text-align:right;font-variant-numeric:tabular-nums}#resCup tr.me td{color:var(--gold)}#resCup .iv{font-size:11px;color:#ff8a6a;white-space:nowrap}#resCup tr.hd td{color:var(--muted);font-size:11px}#resCup small{display:block;color:var(--muted)}#resCup small.cw,#resCup small.cwb{color:inherit;margin:3px 0;padding-left:6px;border-left:2px solid var(--gold)}
 #resPrac{margin:6px 0 0;font-size:13px;line-height:1.6}#resPrac b{color:var(--gold)}#resPrac .pl{display:block;margin-top:4px;padding:6px 8px;background:rgba(255,255,255,.06);border-radius:4px}
 #keyScreen .panel{width:min(620px,100%);gap:10px}
@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.562.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.562.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8927,7 +8927,7 @@ function initAudio(){if(ac)return;try{const AC=window.AudioContext||window.webki
 function tone(freq,dur,type='square',vol=.25,slide=0,delay=0){if(!ac||muted)return;const t=ac.currentTime+delay;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,freq+slide),t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.004);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.02);}
 function noise(dur,vol=.3){if(!ac||muted)return;const b=ac.createBuffer(1,ac.sampleRate*dur,ac.sampleRate);const d=b.getChannelData(0);const fi=ac.sampleRate*.004;for(let i=0;i<d.length;i++)d[i]=(__VR()*2-1)*(1-i/d.length)*Math.min(1,i/fi);/* T174 出だしを4msで立ち上げる（プチ音を防ぐ） */const s=ac.createBufferSource();s.buffer=b;const g=ac.createGain();g.gain.value=vol;s.connect(g);g.connect(master);s.start();}
 function near(k,p){const pl=player();if(!pl)return 0;const x=k?k.x:p.x,z=k?k.z:p.z;const d=Math.hypot(x-pl.x,z-pl.z);return d<45?1-d/45:0;}
-let sfxLT=-1e9;function sfx(n,k,p,vol){if(!ac||muted||state==='title'&&!sndChk||spdMul>1&&autoPlay)return;if(n==='warn'||n==='pen'||n==='go'||n==='finish')sfxLT=performance.now();let v=vol??1;if(k&&!k.isPlayer){v=near(k)*.6;if(v<.05)return;}if(p){v=near(null,p);if(v<.05)return;}if(SFXH[n])v*=sndHP().fx; /* T838 */
+let sfxLT=-1e9;function sfx(n,k,p,vol){if(!ac||muted||state==='title'&&!sndChk||sndChk&&!sndSeGo||spdMul>1&&autoPlay)return; /* サウンドチェック中は、そのボタンから鳴らした音だけ（裏のデモの車の変速などは鳴らさない） */if(n==='warn'||n==='pen'||n==='go'||n==='finish')sfxLT=performance.now();let v=vol??1;if(k&&!k.isPlayer){v=near(k)*.6;if(v<.05)return;}if(p){v=near(null,p);if(v<.05)return;}if(SFXH[n])v*=sndHP().fx; /* T838 */
   switch(n){
     case'bump':noise(.12,.3*v);tone(80,.12,'square',.18*v,-30);break;
     case'boom':noise(.5,.45*v);tone(110,.4,'sawtooth',.25*v,-70);break;
@@ -11043,7 +11043,7 @@ function bkPop(){const now=performance.now();if(now-bkT<2000){bkT=0;try{history.
 if(isTouch&&history.pushState){bkPush();addEventListener('popstate',bkPop);}
 function closeAbout(){if($('aboutScreen').hidden)return;$('aboutScreen').hidden=true;focusVis('aboutBtn','anyAbout');}
 /* T332 サウンドチェック（GARAGE の「表示・操作・音」から。… */
-var sndChk=null; // var：上の音の関数（bgmTick・updateEngine・sfx）から先に読まれても大丈夫なように
+var sndChk=null,sndSeGo=0; // var：上の音の関数（bgmTick・updateEngine・sfx）から先に読まれても大丈夫なように
 const SND_BGM=[['title','タイトル'],['result','結果'],['race','レース（都市）'],['final','ファイナル（都市）'],['euro','レース（峠）'],['euroF','ファイナル（峠）'],['sun','レース（景色）'],['sunF','ファイナル（景色）'],['rock','レース（ラリー）'],['rockF','ファイナル（ラリー）']];
 const SND_SE=[['cd','スタートの合図','赤のランプ'],['go','スタート','消灯'],['shift','変速','シフトの音'],['blip','ブリッピング','回転合わせ'],['pop','アフターファイア','パンッ'],['bump','接触','車・壁に当たる'],['boom','大クラッシュ',''],['lap','周回','ラインを通過'],['final','ファイナルラップ',''],['finish','ゴール',''],['warn','注意','警告・トラックリミット'],['pen','ペナルティ',''],['radio','無線','ピピッ'],['pn','ペースノートの声','ブラウザの読み上げ'],['ui','メニューの音','']];
 const SND_LOOP=[['squeal','タイヤの鳴き','滑った時'],['wind','風切り','速い時'],['rumb','縁石','ゴロゴロ'],['grav','砂利・芝','コース外・砂利道'],['gsp','小石のしぶき','砂利で滑った時'],['rain','雨',''],['crowd','観客','歓声・拍手'],['scrape','擦れる音','壁・車に擦る']];
@@ -11065,7 +11065,7 @@ function sndSe(k){initAudio();if(ac&&ac.state==='suspended')ac.resume().catch(()
     if(k==='radio'){tone(1320,.05,'square',.06);tone(1760,.05,'square',.06,0,.07);}
     else if(k==='ui')tone(880,.03,'square',.06);
     else if(k==='pn'){try{const S=window.speechSynthesis;if(!S||!window.SpeechSynthesisUtterance){sndNote('この端末では読み上げが使えません');return;}const nm=pnTry();if(nm)sndNote('ペースノートの声：'+nm+'（OPTIONS の「ペースノートの声」で変えられる）');}catch(_){}}
-    else sfx(k);},60);}
+    else{sndSeGo=1;try{sfx(k);}finally{sndSeGo=0;}}},60);}
 function sndNote(t){const n=$('sndNow');if(n)n.textContent=t;}
 function sndBtn(k,n,sub,on,grp){return '<button type="button" class="sck" data-g="'+grp+'" data-k="'+k+'" aria-pressed="'+(on?'true':'false')+'">'+n+(sub?'<small>'+sub+'</small>':'')+'</button>';}
 function sndRender(){const S=sndChk;if(!S)return;
