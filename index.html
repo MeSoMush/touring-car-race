@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.570.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.570.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6245,7 +6245,7 @@ function watchRadio(dt){const p=player();if(!p||sess!=='race'||state!=='race'||p
   if(!autoPlay)for(const o of karts){if(o===p||o.dnf||o.finished||o.pit!==1||relLine(o)>=PIT_B)continue;const gp=progress(o)-progress(p);if(gp>0&&gp<PXR&&p.u>o.u+3){radio('前の '+o.name+' がピットに入る。'+(PS>0?'右':'左')+'へ寄って減速するぞ','pin',10);break;}} // T249
   {const av=k=>k&&k.ltR&&k.ltR.length>=2?k.ltR.reduce((x,y)=>x+y,0)/k.ltR.length:null,mp=av(p);RDS.ctS=RDS.ctS||{};
    for(const [o,ah] of [[a,1],[b,0]]){if(!o||o.finished||o.pit||p.lap>=LAPS||mp==null)continue;const mo=av(o);if(mo==null)continue;const d=ah?mo-mp:mp-mo,g=ah?(progress(o)-progress(p))/pace:(progress(p)-progress(o))/pace;if(!(d>.15)||g<CTG)continue;const n=g/d,left=LAPS-p.lap+1;if(n<1||n>CTN||n>left)continue;const key=o.id+(ah?'a':'b');if(RDS.ctS[key]&&p.lap-RDS.ctS[key]<3)continue;RDS.ctS[key]=p.lap;const N=Math.max(1,Math.round(n));
-    radio(ah?'前の '+o.name+' より1周 '+d.toFixed(1)+'秒速い。このままなら約'+N+'周で追いつく':'後ろの '+o.name+' は1周 '+d.toFixed(1)+'秒速い。このままだと約'+N+'周で追いつかれる','catch',30);break;}} /* T862② 何周で追いつくか（差÷直近の周のペースの差。1〜CTN 周の時だけ・同じ相手は3周あける） */
+    const wd=wearMode>0?Math.round(((o.wear||0)-(p.wear||0))*100):0,wt=Math.abs(wd)>=5?'（タイヤは'+(wd>0?'相手':'こちら')+'の方が '+Math.abs(wd)+'% 減っている）':''; /* β0.570.1 T862② 摩耗ありならタイヤの減りの差も一言（差が5%以上の時だけ） */radio((ah?'前の '+o.name+' より1周 '+d.toFixed(1)+'秒速い。このままなら約'+N+'周で追いつく':'後ろの '+o.name+' は1周 '+d.toFixed(1)+'秒速い。このままだと約'+N+'周で追いつかれる')+wt,'catch',30);break;}} /* T862② 何周で追いつくか（差÷直近の周のペースの差。1〜CTN 周の時だけ・同じ相手は3周あける） */
   const early=raceTime-raceT0<OBS2;
   // T228③ 前後1.5秒以内の車のツケ（タイヤ・ブレーキ・熱・疲れ）を知らせる。…
   if(!early&&a&&!a.finished&&(progress(a)-progress(p))/pace<1.5){const st=tkState(a);const kA=st.length?a.id+st[0][0]:"";if(st.length&&!RDS.tkS[kA]){RDS.tkS[kA]=1;radio('前の '+a.name+'、'+{t:'タイヤがきつそうだ。コーナーの出口で差を詰めよう',b:'ブレーキが熱そうだ。ブレーキングで仕掛けられるぞ',h:'エンジンが熱そうだ。直線が伸びていない',s:'競り合いで集中が切れてきたようだ。ミスを誘えるぞ、離れずについていこう',p:'焦ってきている。離れずに後ろから圧をかけ続けよう、ミスが出るぞ',m:'ラインの外でゴムかすを拾ったようだ。数コーナーは立ち上がりが鈍いぞ',d:'マシンにダメージ。コーナーが遅いぞ',e:'エンジンが弱っている。直線で並べるぞ'}[st[0][0]],'tk',25);}}
