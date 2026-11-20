@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.561.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.562.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3475,6 +3475,11 @@ function lnMix(c){LNC=c;const x0=LNX[0],cs=x0.ri||[];if(!c||!cs.length||c.every(
  for(let i=0;i<N;i++)IL[i]=mix(LNS,i);RADL.set(lnRad(IL));RLINFO=cs;
  const hasP=LNX.every(x=>x.i0);if(hasP){const A=LNX.map(x=>x.i0),P=new Float32Array(N),H=new Uint8Array(N);for(let i=0;i<N;i++){P[i]=mix(A,i);H[i]=LNX[Math.round(sel[i])].ph?LNX[Math.round(sel[i])].ph[i]:0;}IL0=P;RDL0=lnRad(P);PRLH=H;PRLINFO=x0.pi;}else{IL0=RDL0=PRLH=null;PRLINFO=null;}
  altRad();}
+let ILK=1,ILP=4,ILN=600,ILU=20,ILE=.003,ILA=.5,ILZ=30; /* T955 線の曲がりの山をならす（ilFair）。曲がりの二乗の和を最小にする作り（buildRL0）は、道幅の狭い角で線が内側の限りに触れる1点に曲がりを集める（頂点の曲がりが平均の約2倍の三角の形。SHINONOME の直角の角で、線の頂点の半径〈前後 ±9m の3点の円〉11〜14m に対して RADL 21〜23m、中心線 19m よりきつい）。遅めのアペックスのずらし（RLS）の後は横に 0.4m 跳ぶ点も出る。車の曲がれる速さは一番きつい所で決まる（v＝√(μgR)）ので、曲がりを角の中に広げる＝重み w＝(前後3点でならした曲がりの段＋ILE)^(ILP−2) を付けた曲がりの二乗の和を小さくする（ILP 4＝曲がりの4乗の和に近い。重みは ILU 回ごとに更新、1点ずつ動かしてすぐ反映＝揺れ止め）。道幅の限りは buildRL0 と同じ。公道の角の線（pubRL）が円を置いた点は動かさない。最後の ILZ 回は重みを全部同じにして、重みの違いで出る点ごとの細かいぎざぎざ（±3m で半径が交互に跳ぶ）を消す。ILK＝0 で前のまま */
+function ilFair(){const px=new Float64Array(N),pz=new Float64Array(N),w=new Float64Array(N),dd=new Float64Array(N);for(let i=0;i<N;i++){px[i]=TX[i]+NX[i]*IL[i];pz[i]=TZ[i]+NZ[i]*IL[i];}
+ for(let it=0;it<ILN;it++){if(it>=ILN-ILZ)w.fill(1);else if(it%ILU===0){for(let i=0;i<N;i++){const a=wrap(i-1),b=wrap(i+1);dd[i]=Math.hypot(px[a]+px[b]-2*px[i],pz[a]+pz[b]-2*pz[i])/2;}for(let i=0;i<N;i++)w[i]=Math.pow((dd[wrap(i-1)]+dd[i]+dd[wrap(i+1)])/3+ILE,ILP-2);}
+  for(let i=0;i<N;i++){if(PRLH&&PRLH[i])continue; /* 公道の角の線（pubRL）が円を置いた点はそのまま（両側の直線に接する一定の半径の円＝もう曲がりが角の中に広がっている） */const a=wrap(i-1),b=wrap(i+1),c=wrap(i-2),d=wrap(i+2),wa=w[a],wi=w[i],wb=w[b],den=wa+4*wi+wb,tx=(wa*(2*px[a]-px[c])+2*wi*(px[a]+px[b])+wb*(2*px[b]-px[d]))/den,tz=(wa*(2*pz[a]-pz[c])+2*wi*(pz[a]+pz[b])+wb*(2*pz[b]-pz[d]))/den; /* 重み付きの曲がりの二乗の和を点 i について最小にする位置（重みが全部同じなら buildRL0 の (4(a+b)−(c+d))/6 と同じ） */
+   let l=(tx-TX[i])*NX[i]+(tz-TZ[i])*NZ[i];const rw=RLW-(W-WL[i])+SWE();l=frLim(i,Math.max(-rw,Math.min(rw,l)));if(PARK.length)l=Math.max(PKL[i],Math.min(PKR[i],l));IL[i]+=(l-IL[i])*ILA;px[i]=TX[i]+NX[i]*IL[i];pz[i]=TZ[i]+NZ[i]*IL[i];}}}
 function buildRL0(){const px=new Float32Array(N),pz=new Float32Array(N);
  for(let i=0;i<N;i++)IL[i]=0;
  for(const [st,itn] of (RLMG>0?[[8,RLMG],[4,RLMG],[2,RLMG],[1,RLI1]]:[[1,RLIT]]))for(let it=0;it<itn;it++){ /* T625 粗い間隔から整える */
@@ -3498,6 +3503,7 @@ function buildRL0(){const px=new Float32Array(N),pz=new Float32Array(N);
  // ラインの半径：ライン上の点の向きの変わり方（KAP と同じ求め方）
  const rad=()=>RADL.set(lnRad(IL));
  RDL0=null;IL0=null;if(PUBR&&PRLD>0){rad();RDL0=Float32Array.from(RADL);IL0=Float32Array.from(IL);pubRL();if(!PRLH)RDL0=IL0=null;} /* T527 遅めのアペックスのずらしの後に置く（ずらすと円がゆがむ）。… */
+  if(ILK)ilFair(); /* T955 公道の角の線（pubRL）を置いた後に、全部の線の曲がりの山をならす */
  rad();altRad();
 }
 // T170 代替ライン（ベストから右 ALW m・左 ALW m に平行にずらし、道の端で止めた線）の半径。RADA[0]＝右、RADA[1]＝左
@@ -5235,7 +5241,7 @@ function stepKart(k,dt,ctl){
     const fr=FxR/cxR,yr=cyR*Math.sqrt(Math.max(0,capR*capR-fr*fr));Fyr*=Math.sqrt(Math.max(0,1-(fr/capR)**2));if(Math.abs(Fyr)>yr){Fyr=Math.sign(Fyr)*yr;wsR1=1;}if(k.drifting){const vx=k.u,vy=k.vl-kb*k.r,vv=Math.hypot(vx,vy);if(vv>.3){const F=capR*HBXMU;FxR=-F*vx/vv;Fyr=-F*vy/vv;}else{FxR=0;Fyr=0;}ws=1;wsR1=1;} /* T696 サイドブレーキ案③：後輪は止まっている（駆動は切れる）。… */ /* T558④ 縦に力を使った分だけ横の効き（硬さ）も下げる（摩擦円で分け合う。… */
     const capF=mF*Nf,cFx=capF*cxF;let FxF=Fd*fs-Fb*bb*sg; /* T758③ CPU・オートのトレイル・左足ブレーキも前後の配分 bb どおり（前は ctl.fo で前輪だけ） */let lock=false;if(Fb<=0){const cx=cFx*tc*(LSFX)*(Fd>0?dTF:1);if(Math.abs(FxF)>cx){ws=1;wsF1=1;if(tc>=1)qF+=cx*WSV*Math.min(WSXM,Math.abs(FxF)/cx-1)*h; /* T884 空転の仕事量＝限界の力×空転の滑りの速さの見込み（TC が効く時は空転しない） */if(Fd>0&&FxF*k.u>0&&!dtc0)dtc+=DTLS*mmI*fs*Math.sign(k.u); /* T730 */FxF=Math.sign(FxF)*cx*(1-lsp*Math.min(1,(Math.abs(FxF)/cx-1)*LSPX));}}else if(Math.abs(FxF)>cFx*.95){if(!k.aiDriven&&!ASSIST[assistLv].abs&&Math.abs(FxF)>cFx){lock=true;FxF=Math.sign(FxF)*cFx*.85;}else{FxF=Math.sign(FxF)*cFx*.95;if(k.isPlayer)k.absN=(k.absN||0)+1;}}
     const ff=FxF/cxF,yf=cyF*Math.max(capF*YFMIN,Fb<=0&&FxF*sg>0?capF*Math.sqrt(Math.max(0,1-(ff/(capF*LSFX))**2)):Math.sqrt(Math.max(0,capF*capF-ff*ff)));{const dn=Fb<=0&&FxF*sg>0?capF*LSFX:capF;Fyf*=Math.max(YFMIN,Math.sqrt(Math.max(0,1-(ff/dn)**2)));}if(Math.abs(Fyf)>yf){Fyf=Math.sign(Fyf)*yf;wsF1=1;}if(lock){Fyf*=.15;k.locked=true;if(FSA)k.fsp=Math.min(1,(k.fsp||0)+FSA*Math.abs(k.u)*h);}
-    const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
+    if(s===sub-1){k.uRc=Math.hypot(FxR,Fyr)/Math.max(1e-6,capR);k.uFc=Math.hypot(FxF,Fyf)/Math.max(1e-6,capF);} /* T928 前後の摩擦の円の使い方（CPU・オートの舵の SVK が読む。計算には使わない） */const cD=Math.cos(k.delta),sD=Math.sin(k.delta);
     const drag=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0))*k.u*Math.abs(k.u)*(1-DRK*(k.draft||0))*(1-DRSC*(k.drA||0)) /* T922 DRS */+roll*Math.sign(k.u)+HPD*(k.pdD||0)*k.u;if(k.isPlayer&&(k.slPk||(k.draft||0)>.02)){const cK=cd*(k.cdm||1)*(1+DAR*Math.abs(k.dmA||0));k.slG=Math.max(0,(k.slG||0)+(cK*k.u*Math.abs(k.u)*DRK*(k.draft||0)-2*cK*Math.abs(k.u)*(k.slG||0))*dt);k.slD=(k.slD||0)+k.slG*dt;} /* T858 引っぱりで得た速さ（速くなった分の抵抗の増えを引く。表示だけ） */k.drE=drag+G*tgs; /* T390 走る抵抗（空気・転がり・坂） */
     if(Fb>0)bq+=((lock?0:Math.max(0,Math.min(Fb*bb,(Fd*fs-FxF)*sg)))+Math.max(0,Math.min(Fb*(1-bb),(Fd*(1-fs)-FxR)*sg)))*Math.abs(k.u)*h; /* T892① ブレーキの熱は路面へ伝わった制動力から（ロック中の前は円盤が止まっている） */
     const du=FxR+FxF*cD-Fyf*sD-drag+dtc+k.vl*k.r;
@@ -6333,7 +6339,7 @@ function sbInit(){HSTI=new Int16Array(N);HSIC=new Uint8Array(N);HSCI=new Int16Ar
  T.sort((x,y)=>x.ti-y.ti);T.forEach((c,i)=>{const nx=T[(i+1)%T.length];c.xo=nx.ins!==c.ins&&(wrap(nx.ti-c.e)*SP<CXD)?1:0;});
  for(let i=0;i<T.length;i++){const c=T[i],pv=T[(i+T.length-1)%T.length];let j=c.ti,q=0;do{HSTI[j]=q;HSCI[j]=c.cid;HSIN[j]=c.ins;HSXO[j]=c.xo;j=wrap(j-1);q++;}while(j!==pv.ti&&q<N);}
  HSRA=[1,-1].map(sd=>{const P=new Float32Array(N);for(let i=0;i<N;i++)P[i]=sbLane(IL[i],WL[i],sd,0,HSW);return lnRad(P);});}
-let UFK=1,UFU=8,UFR=.0006,UFA=.5,UFM=.004,UFT=.6; /* T622 CPU・オートのハンドルのアンダーステアの足し：効き・覚える速さの下限 m/s・覚える曲がりの下限 1/m・前輪の滑り÷山の上限・強さの上限 s²/m・覚える時の時定数 秒 */
+let UFK=1,UFU=8,UFR=.0006,UFA=.5,UFM=.004,UFT=.6,SVK=1; /* T928 SVK：追従の式の狙いの角を、舗装（aiPav）では車の向きでなく進む向きから測る（狙いの点へ向かう弧は進む向きに接する。向きで測ると、角の中で続く横滑りの角 β の分だけ舵が足りず、速い角で線と平行に外へずれていた）。引くのは β を狙いの点まで走る時間（ld÷u）でならした値 k.svB だけ＝角の中で続く分（今の β をそのまま引くと、振れの途中で一時的に出る β まで消して、向きで測る式が持っていた振れを抑える働きが減り、速い S で揺れが育った）。後ろの余りが少ないほど引かない＝重みは 1−（今の β÷タイヤの山の角 apk）と 後輪の余りの割合（後輪の摩擦の円の使い方 k.uRc が前輪 k.uFc を上回ったら（1−uRc）÷（1−uFc）、上回らなければ 1）の小さい方（向きで測る式は後ろが出ると舵を戻す＝カウンターの働きを持つので、後輪が前輪より限界に近い＝オーバーステアの側に傾いた時はそれを残す。前輪が先に限界のアンダーの側〈速い角の定常〉では引く）。引くのは定常の旋回の間だけ＝今いる点と狙いの点の両方が角（CORNER）で、線の曲がり KAP が同じ向きの時（S の切り返し・直線での横の移動の横滑りは一時的な物なので、向きで測る式の振れを抑える働きを残す）。条件の入り切りも同じ時間でならす〈k.svG〉＝角に入った瞬間に舵が段で変わらないように）。0 で前のまま */ /* T622 CPU・オートのハンドルのアンダーステアの足し：効き・覚える速さの下限 m/s・覚える曲がりの下限 1/m・前輪の滑り÷山の上限・強さの上限 s²/m・覚える時の時定数 秒 */
 let YLE=120,YLCV=4,YLCD=25,YLG=2.8,YLD_V2=.75,YLD_N=45,YLP=1.6,SCWD=12,YLDU=3; /* T841 YLD_V2＝抜かれる直前（後ろ YLD_N m）の直線で緩める倍率・YLP＝抜く側が線から反対側へ出る m・SCWD＝SC 中の周回遅れの追い越しは SC より何 m/s 速くまで */
 let AFM=7,AFT=.15,AFD=6,AFDW=1,AFC=.7,XTH=.6,XT0=.4,XTM=.5,YLD=1,YLD_D=170,YLD_V=.82,YLN=.9,LPY=1,AIMUP=.6,SLG=1.25,BLF=.15,BLK=5,PWTC=.95,HPR=60,CSB=.6,AITH=.07,AITK=9; // FF車はCPU のコーナー速度を控えめに（前輪が駆動と曲がるのを両方受け持つため）
 // T521 公道のドリフト（理由がある時だけ使う。…
@@ -6485,7 +6491,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   if(RJK>0&&rcs&&!k.pit&&!k.finished&&Math.abs(k.lat)>W-RJE){for(const o of karts){if(o===k||o.dnf||o.gone||o.pit||o.finished)continue;const d=pK()-pgO(o),vc=o.u-k.u;if(d>0&&vc>RJV&&d<vc*RJT){lane=Math.sign(k.lat)*Math.max(Math.abs(lane)*Math.sign(lane)*Math.sign(k.lat),Math.min(Math.abs(k.lat),W+RJO,RJF>0?wFace(t,Math.sign(k.lat))-RJF:1e9)); /* T621 待つ所は壁の面より RJF m 内側まで（首都高は端のすぐ外が壁） */break;}}} /* T595 コースへ戻る時は後ろを見る：道の外（端から RJE m 内側より外）にいる間、後ろから RJV m/s 以上速く近づく車が RJT 秒以内に追いつくなら、道の外のすぐそば（端から外へ RJO m まで… */
   k._ln=lane;k._lnD=lane-ilT;let tx=TX[t]+NX[t]*lane,tz=TZ[t]+NZ[t]*lane;
   const flo=sess!=='drag'&&!k.pit&&!k.finished&&k.fs<=FLF&&(FLS[RSI[k.idx]]===1||FLS[RSI[k.idx]]===2&&!PUBR);let flm=0;if(flo&&FLH>0&&CORNER[t]){const ap=CORN[CID[t]].apex;if(RAD[ap]<=FLR)flm=-Math.sign(KAP[t])*erPk(RSI[t])*FLB*FLH*Math.min(1,Math.abs(KAP[t])/Math.max(1e-6,Math.abs(KAP[ap])));}k.flM=(k.flM||0)+(flm-(k.flM||0))*Math.min(1,dt/FLT); /* T727 流し：角では鼻先の狙いを、進む向き（狙いの点）より内へ k.flM rad ずらす。… */
-  const want=Math.atan2(tx-k.x,tz-k.z);const al=angDiff(want,k.h)-k.flM-(k.enL>0&&u>6?Math.atan2(k.vl,u):0);
+  const want=Math.atan2(tx-k.x,tz-k.z);const bI=u>6?Math.atan2(k.vl,u):0,svA=Math.min(1,dt*u/Math.max(1,ld));k.svB=(k.svB??bI)+(bI-(k.svB??bI))*svA;k.svG=(k.svG||0)+((CORNER[k.idx]&&CORNER[t]&&KAP[k.idx]*KAP[t]>0?1:0)-(k.svG||0))*svA;const al=angDiff(want,k.h)-k.flM-(k.enL>0&&u>6?bI:SVK&&u>6&&aiPav(k)?k.svG*k.svB*Math.max(0,Math.min(1-Math.abs(bI)/(k.apk||.15),(k.uRc||0)>(k.uFc||0)?(1-k.uRc)/Math.max(1e-3,1-(k.uFc||0)):1)):0);
   const dist=Math.max(4,Math.hypot(tx-k.x,tz-k.z));
   if(UFK>0&&u>UFU){const kr=k.r/u,af=Math.abs(Math.atan2(k.vl+(k.ka||KA)*k.r,u)-k.delta);if(Math.abs(kr)>UFR&&k.delta*k.r>0&&af<UFA*(k.apk||.15)){const q=Math.max(0,Math.min(UFM,(Math.abs(k.delta)/Math.abs(kr)-(k.kl||KL))/(u*u)));k.usK=(k.usK||0)+(q-(k.usK||0))*Math.min(1,dt/UFT);}} /* T622 アンダーステアの強さを覚える */
   const dl=Math.atan(2*((k.kl||KL)+(UFK>0?UFK*(k.usK||0)*u*u:0))*Math.sin(al)/dist);
