@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -4115,10 +4115,10 @@ const smokeG=(()=>{const P=new Float32Array(SMN*12),Q=new Float32Array(SMN*12),C
   for(let i=0;i<SMN;i++){for(let j=0;j<4;j++){Q[i*12+j*3]=cn[j][0];Q[i*12+j*3+1]=cn[j][1];}I.push(i*4,i*4+1,i*4+2,i*4,i*4+2,i*4+3);}
   const g=new THREE.BufferGeometry(),aP=new THREE.BufferAttribute(P,3),aQ=new THREE.BufferAttribute(Q,3),aC=new THREE.BufferAttribute(C,4);for(const a of[aP,aQ,aC])a.setUsage(THREE.DynamicDrawUsage);
   g.setAttribute('position',aP);g.setAttribute('cnr',aQ);g.setAttribute('col',aC);g.setIndex(I);
-  const m=new THREE.ShaderMaterial({uniforms:THREE.UniformsUtils.merge([THREE.UniformsLib.fog]),fog:true,transparent:true,depthWrite:false,
-   vertexShader:'attribute vec3 cnr;attribute vec4 col;varying vec2 vU;varying vec4 vC;\n#include <fog_pars_vertex>\nvoid main(){vU=cnr.xy;vC=col;vec4 mvPosition=modelViewMatrix*vec4(position,1.);mvPosition.xy+=cnr.xy*cnr.z;gl_Position=projectionMatrix*mvPosition;\n#include <fog_vertex>\n}',
+  const m=new THREE.ShaderMaterial({uniforms:THREE.UniformsUtils.merge([THREE.UniformsLib.fog,{uLift:{value:1}}]),fog:true,transparent:true,depthWrite:false,
+   vertexShader:'uniform float uLift;attribute vec3 cnr;attribute vec4 col;varying vec2 vU;varying vec4 vC;\n#include <fog_pars_vertex>\nvoid main(){vU=cnr.xy;vC=col;vec4 mvPosition=modelViewMatrix*vec4(position,1.);float d=length(mvPosition.xyz),f=mix(1.,max(d-cnr.z*.5,min(d,1.5))/max(d,.001),uLift);mvPosition.xyz*=f;mvPosition.xy+=cnr.xy*cnr.z*f;gl_Position=projectionMatrix*mvPosition;\n#include <fog_vertex>\n}',
    fragmentShader:'varying vec2 vU;varying vec4 vC;\n#include <common>\n#include <fog_pars_fragment>\nvoid main(){float a=.8*max(0.,1.-length(vU)*2.)*vC.a;if(a<.002)discard;gl_FragColor=vec4(vC.rgb*.831,a);\n#include <tonemapping_fragment>\n#include <encodings_fragment>\n#include <fog_fragment>\n}'});
-  m.userData.lin=1;const ms=new THREE.Mesh(g,m);ms.frustumCulled=false;ms.visible=false;scene.add(ms);return {ms,P,Q,C,aP,aQ,aC};})();
+  m.userData.lin=1; /* β0.575.1 T905③ 板は見えの大きさのまま、カメラの方へ大きさの半分寄せて描く（地面に刺さらない） */const ms=new THREE.Mesh(g,m);ms.frustumCulled=false;ms.visible=false;scene.add(ms);return {ms,P,Q,C,aP,aQ,aC};})();
 let smokeI=0;
 // T174 火花（壁や車とこすれた時）。点の集まり1つで描く（描画は1回）。寿命の切れた点は地面の下へ
 const SPK_N=180,spkPos=new Float32Array(SPK_N*3),spkV=new Float32Array(SPK_N*3),spkL=new Float32Array(SPK_N);let spkI=0,spkLive=0;
