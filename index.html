@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.577.4</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.577.5</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3798,13 +3798,14 @@ let lampTO=0;function setLamps(n,green){(startGrp.userData.lamps||[]).forEach((l
   document.querySelectorAll('#slights i').forEach((e,i)=>e.classList.toggle('on',!green&&i<n));} // T178③ 画面上のランプ（消灯＝スタート）
 
 // ガードレール（直線・コーナー内側）とタイヤバリア（コーナー外側）
+const rtRailIn=(i,s)=>{if(RTK<0)return false;const iK=Math.round(RTRK/SP),iE=Math.round(RTRE/SP);if(i<iK-40||i>iE+40)return false;const o=WAL[i]+1.2,px=TX[i]+NX[i]*o*s,pz=TZ[i]+NZ[i]*o*s;for(let j=iK-40;j<=iE+40;j++){if(Math.abs(j-i)<7||HV[j])continue;if((px-TX[j])**2+(pz-TZ[j])**2<(WAL[j]+.9)**2)return true;}return false;}; /* T974 */
 const CITYW=[],TIR=new Uint8Array(N*2); /* T494 市街地の狭い区間の壁（[点,側]）。…（T509） */
 const wFace=(i,s)=>(TIR[i*2+(s>0?1:0)]?WAL[i]+.55:WAL[i]+1.05)+wx(i,s); /* T509 当たりの面（線からの横の距離）。… */
 const wLat=(i,x,z)=>{const l=lateralAt(i,x,z),a=Math.abs(alongAt(i,x,z))-SP*.5-.3;return a>0?Math.sign(l)*Math.hypot(l,a):l;}; /* T509 壁の当たりに使う横の距離。… */
 {const steel=new THREE.MeshStandardMaterial({color:0xb4b9c0,metalness:.75,roughness:.35});
  const postM=new THREE.MeshStandardMaterial({color:0x6c7078,metalness:.5,roughness:.6});
  const rail=[],post=[],tires=[];
- for(let i=0;i<N;i++)for(const s of[-1,1]){const tireSide=CORNER[i]&&s===OUTS[i]&&!(CRS.grl&&WL[i]<W-.5)&&!CRS.city||ROXN&&ROX[i*2+(s>0?1:0)]>.3; /* T748 逃げ道の先はタイヤバリア */ /* T485 峠の狭い区間はガードレール。… */if(tireSide)TIR[i*2+(s>0?1:0)]=1;if(HID[i])continue;if(tireSide){if(i%1===0)tires.push([i,s]);}else if(CRS.city&&!CRS.free&&!(PITZ[i]&&s*PS>0))CITYW.push([i,s]); /* T510① せき止めない街は壁なし */ /* T514 市街地はピットの側以外ぜんぶ壁 */else if(!CRS.free){rail.push([i,s]);if(i%2===0)post.push([i,s]);}}
+ for(let i=0;i<N;i++)for(const s of[-1,1]){const tireSide=CORNER[i]&&s===OUTS[i]&&!(CRS.grl&&WL[i]<W-.5)&&!CRS.city||ROXN&&ROX[i*2+(s>0?1:0)]>.3; /* T748 逃げ道の先はタイヤバリア */ /* T485 峠の狭い区間はガードレール。… */if(tireSide)TIR[i*2+(s>0?1:0)]=1;if(HID[i])continue;if(tireSide){if(i%1===0)tires.push([i,s]);}else if(CRS.city&&!CRS.free&&!(PITZ[i]&&s*PS>0))CITYW.push([i,s]); /* T510① せき止めない街は壁なし */ /* T514 市街地はピットの側以外ぜんぶ壁 */else if(!CRS.free&&!HV[i]&&!rtRailIn(i,s)){rail.push([i,s]);if(i%2===0)post.push([i,s]);}} /* T974 往復：重なる下りの点（DUP）と、転回場でほかの区間の道の上に来るガードレールは描かない */
  const off=WALL+1.2;const D=new THREE.Object3D();
  const rm=new THREE.InstancedMesh(new THREE.BoxGeometry(.12,.34,SP*1.02),steel,rail.length*2);let c=0;
  for(const[i,s]of rail){const o=((WAL[i]+WAL[wrap(i+1)])/2+1.2)+(wx(i,s)+wx(wrap(i+1),s))/2;for(const y of[.62,.3]){if(y===.3&&false)continue;D.position.set(TX[i]+NX[i]*o*s+FX[i]*SP/2,y+.1,TZ[i]+NZ[i]*o*s+FZ[i]*SP/2);D.rotation.set(0,Math.atan2(FX[i]+FX[wrap(i+1)],FZ[i]+FZ[wrap(i+1)]),0);D.scale.set(1,y>.5?1:.6,1);D.updateMatrix();rm.setMatrixAt(c++,D.matrix);}}
