@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.1</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.575.2</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5149,7 +5149,8 @@ function stepKart(k,dt,ctl){
   if(!k.aiDriven&&(k.pso||k.pwr)){k.pso=0;k.pwr=false;} /* T535 オートを切ったら CPU 用のドリフトの状態を残さない */
   const surf=surfaceAt(k.idx,k.lat);k.surf=surf;
   // T186 A5 ソーセージ縁石に乗ると跳ねる：向き・横の速さが乱れ、少し減速して傷む（0.35秒に1回）。乗っている間はタイヤが浮いてグリップが落ちる
-  if(k.sauT>0)k.sauT-=dt;if(surf==='saus'&&Math.abs(k.u)>8&&!(k.sauT>0)){k.sauT=.35;const s=Math.min(1,Math.abs(k.u)/40);k.r+=(Math.random()-.5)*1.3*s;k.vl+=(Math.random()-.5)*2.4*s;k.u*=1-.04*s;syncWorld(k);dmgHit(k,3+Math.abs(k.u)*.12);k.saus=(k.saus||0)+1;if(k.isPlayer){sfx('bump',null,null,.4+.5*s);shake=Math.max(shake,.22*s);}}
+  if(k.sauT>0)k.sauT-=dt;if(surf==='saus'&&Math.abs(k.u)>8&&!(k.sauT>0)){k.sauT=.35;const s=Math.min(1,Math.abs(k.u)/40);k.r+=(Math.random()-.5)*1.3*s;k.vl+=(Math.random()-.5)*2.4*s;k.u*=1-.04*s;syncWorld(k);dmgHit(k,3+Math.abs(k.u)*.12);k.saus=(k.saus||0)+1;spark(k.x,k.z,k.vx,k.vz,2+Math.round(4*s)+((k.rh||0)<0?3:0));if(k.isPlayer){sfx('bump',null,null,.4+.5*s);shake=Math.max(shake,.22*s);scrLv=Math.max(scrLv,.5+.4*s);}} /* β0.575.2 T905 跳ねた時に底を擦る火花・擦れる音（車高「低め」は多め） */
+  if((k.rh||0)<0&&(surf==='curb'||surf==='saus')&&Math.abs(k.u)>20&&__VR()<dt*4){spark(k.x,k.z,k.vx,k.vz,1+(__VR()<.4?1:0));if(k.isPlayer)scrLv=Math.max(scrLv,.3);} /* β0.575.2 T905 車高「低め」は縁石の上で時々底を擦る（物理の suG で縁石の凸凹に弱い所と同じ条件） */
   // ハンドル（速度が上がるほど切れ角が小さい）
   const dMax=stMx(Math.abs(k.u),dmaxDiv(k)); /* T359 自分で運転している時は設定の分母 */
   const beta=Math.abs(k.u)>3?Math.atan2(k.vl,Math.abs(k.u)):0;
