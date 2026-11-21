@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.586.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.586.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6482,7 +6482,7 @@ function lbD(k,u,v,a0){const t=k.lbB;let hi=u,d=0;while(hi>v){const b=Math.floor
 function lbOk(k,u,dt){const up=k.lbU;k.lbU=u;if(up!=null&&(k.aiB||0)>.8&&!(k.aiA>.02)&&u>8){const ac=Math.max(2,Math.min(25,(up-u)/Math.max(dt,1e-3))),t=k.lbB||(k.lbB=[]),b=Math.floor(u/10),a0=t[b]??ac;t[b]=a0+(ac-a0)*Math.min(1,dt/LTAT);}
   return k.isPlayer&&k.aiDriven&&!k.pit&&!k.finished&&!k.dnf&&!REV&&sess!=='drag'&&LTF0[RSI[k.idx]]&&!cau()&&!rollF();}
 let USTM=.4,USTC=.3,USCM=.7,USCC=.6,USTT=.3; /* T780 アンダーが出たら舵を戻す（FF・4WD） */
-let LTF0=[0,1,1,0]; /* T778 路面ごと（舗装・砂利・雪・氷） */
+let LTF0=[0,0,1,0]; /* T778 路面ごと（舗装・砂利・雪・氷）。β0.586.1 砂利は切った：自分の車のオートだけが使う「遅く踏む」で、手前の角で舵を切りながら弱めたブレーキ（LTF）のまま止まりきれず、AOGIRI の砂利のヘアピン（道の 394〜399）へ突っ込んでいた（ご本人の報告）。切ると砂利の総当たりの壁 26→0回・合計のベスト同じ */
 let AUSK=1.087; /* T768 オートの曲がれる見込み＝CPU 達人の並み（skill 約1.05^AISK）。公道の舗装は掛けない（T930：峠で道の外が増える） */
 let CLBA=.1,CLBU=.2; /* T911 這い上がり：前へ CLBU m/s 以上で進みながら、ならした加速 uAc が CLBA m/s² を超えている間は立ち往生と数えない（運転手は前へ速くなっていく間はバックしない）（雪の急な上り坂で、登っている最中にバックに入らないように）。*/
 let OEN=100,OEW=3; /* T928 OE：線に対して外（OUTS の側）へ e₀ ずれ、速さの向きが線の接線より外へ ψ 向いている時、この先 OEN 点（角の印 CORNER で切らない。HIGASHI の速い角は印が途中で途切れ、その先で白線を越えていた）の各点 s で外のふくらみ e₀＋ψs−dk·s²/2 がその点の線と外の白線の間の余りを越えない最小の足し分 dk（各点で 2(e₀＋ψs−余り)/s² の最大。ψ≦0 でも、ずれたまま線が外へ寄る出口では要る）。線の曲率＋dk を、今のグリップで回れる速さ（vcOf）より速ければアクセルを抜く（ブレーキはかけない＝前輪を横の力に回す）。*/
