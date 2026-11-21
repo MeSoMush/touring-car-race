@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.587.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.588.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3560,10 +3560,10 @@ function ldApply(){if(!IL)return;const t=LDT[crsKey()];if(!t||t.N!==N){LDA=null;
  for(const [a,d] of t.segs)for(let q=0;q<d.length;q++){const i=wrap(a+q);IL[i]=Math.max(-WL[i]+1,Math.min(WL[i]-1,IL[i]+d[q]));}RADL.set(lnRad(IL));LDA=Float32Array.from(IL);}
 function vcFill(C,P,gm,ae,t,kr){const la0=MU.road*G*.82;for(let i=0;i<N;i++){const la=la0*rsG(i,gm,t);C[i]=vcOf(i,la,ae);P[i]=C[i];}
  for(let pass=0;pass<2;pass++)for(let i=N-1;i>=0;i--){const j=wrap(i+1),n=P[j];P[i]=Math.min(C[i],Math.sqrt(Math.max(0,n*n+2*(kr?brkA(kr,G*AIBG*rsG(i,gm,t),n*n):G*AIBG*rsG(i,gm,t))*SP+2*G*(TE[j]-TE[i]))));}} /* T757・T864④ ブレーキの見込みは CPU の走りと同じ brkA */
-function vcK(a){let n=0,df=0,cd=0;for(const k of a){if(!k||k.cd==null)continue;n++;df+=k.dfm||1;cd+=k.cd/((k.mm||1)*(k.fm||1))*(k.cdm||1);}return n?{dfm:df/n,cd:cd/n,mm:1,fm:1,cdm:1,bfK:1,dirty:0,dmW:0,draft:0}:null;} /* T864④ 表のための静かな車（押し付けと空気抵抗だけ） */
+let VCD=1;function vcK(a){let n=0,df=0,cd=0;for(const k of a){if(!k||k.cd==null)continue;n++;df+=k.dfm||1;cd+=k.cd/((k.mm||1)*(k.fm||1))*(k.cdm||1);}return n?{dfm:df/n,cd:cd/n,mm:1,fm:1,cdm:1,bfK:1,dirty:0,dmW:0,draft:0}:null;} /* T864④ 表のための静かな車（押し付けと空気抵抗だけ） */
 function vcTy(){let b=0;try{b=tyreBest();}catch(_){}try{const c=new Map();for(const k of karts)if(!k.isPlayer&&!k.dnf)c.set(k.ty||0,(c.get(k.ty||0)||0)+1);let m=-1,r=b;for(const[t,x]of c)if(x>m||x===m&&t===b){m=x;r=t;}b=r;}catch(_){}return b;} /* T757 CPU がいちばん多く履いているタイヤ（同じ数なら tyreBest） */
 function vcRunN(){try{let n=0;for(const k of karts)if(!k.isPlayer&&!k.dnf)n++;return n;}catch(_){return 0;}} /* T757 走っている CPU の数（リタイアで多数派が変わるので） */
-function vcRef(){vcVer++;ENV.vcD=0;ENV.vcN=vcRunN();const p=plrSafe(),b=vcTy();ENV.vcTy=b;let kc=null;try{kc=vcK(karts.filter(k=>!k.isPlayer&&!k.dnf));}catch(_){}vcFill(VC,VP,wetMul0('road',{ty:b,rain:b===1,_w:ENV.wet}),AERO,b,kc);if(p&&((p.dfm||1)!==1||(p.tww||1)!==1||(p.ty||0)!==b))vcFill(VCP,VPP,wetMul('road',p),AERO*(p.dfm||1),p.ty||0,vcK([p]));else{VCP.set(VC);VPP.set(VP);}} /* T757 表だけ作り直す（タイヤを替えた時） */
+function vcRef(){vcVer++;ENV.vcD=0;ENV.vcN=vcRunN();const p=plrSafe(),b=vcTy();ENV.vcTy=b;let kc=null;try{kc=vcK(karts.filter(k=>!k.isPlayer&&!k.dnf));}catch(_){}vcFill(VC,VP,wetMul0('road',{ty:b,rain:b===1,_w:ENV.wet}),AERO*(VCD&&kc?Math.min(1,kc.dfm):1) /* T837② 表も CPU の押し付ける力で（1 より大きくはしない＝フォーミュラ・GT3 の表は前のまま） */,b,kc);if(p&&((p.dfm||1)!==1||(p.tww||1)!==1||(p.ty||0)!==b))vcFill(VCP,VPP,wetMul('road',p),AERO*(p.dfm||1),p.ty||0,vcK([p]));else{VCP.set(VC);VPP.set(VP);}} /* T757 表だけ作り直す（タイヤを替えた時） */
 function calcVC(){vcVer++;lnAuto();ldApply();terrPre();ENV.vcWet=ENV.wet;vcRef();} /* T757 CPU が読む VC・VP はプレイヤーの車でなく、CPU がいちばん多く履いているタイヤと標準のセッティングで */
 calcVC();
 /* T282コースの形から見積もる値。… */
@@ -3572,9 +3572,10 @@ const CREF0=CREFB.cref0 /* クラスの仕様を入れた見積もりで書き�
 const ACCT=[[9.68,10,9.68,6.82,6.67,4.35,3.37,3.06,1.96,1.42,0.68],[9.68,10,9.68,10,6.67,6.98,4.55,4.41,3.13,2.78,1.92,1.43,0.81],[9.09,8.57,9.37,10,10,7.32,8.33,5.56,5.88,4.11,4,2.75,2.44,1.79,0.91,0.29],[9.68,10,9.68,10.34,9.09,6,4.92,5,3.45,3.37,2.27,2.07,1.4,0.83,0.24],[9.68,10,9.68,10.34,10.34,7.32,8.11,6.82,4.84,4.92,3.53,3.53,2.44,2.34,1.73,1.07,0.73],[4.84,5.26,5.08,4.41,2.86,2.07,1.42,0.82,0.25]];
 const ACCT837=[null,null,[9.34,8.57,9.64,10,10,7.32,8.78,5.56,5.99,4.22,4.11,2.84,2.52,1.85,0.95,0.33],[9.41,10.29,9.68,9.75,8.04,5.17,4.25,4.26,2.98,2.85,1.95,1.75,1.18,0.69,0.15],[9.68,10,9.68,10.34,10.02,6.57,7.21,6.09,4.23,4.35,3.08,3.11,2.11,2.01,1.5,0.91,0.59],null]; /* T837① GT3・GT4・GT1 の出力と車重を変えた後の加速の表＝ACCT に今の物理で測った前後の比（C:/Users/mesom/pk_out/t587/acc587.js）を掛けた物。ACCT はそのまま（フォーミュラの段 2・4 が同じ番号の見込み QREF・crFu を使うため）、箱車の予選の見込みにだけ比 CPL で掛ける */
 /* クラスの仕様（タイヤのグリップ g・ダウンフォース df・車重 m の倍率。… */
-let KIT=[{g:.98,df:.75,m:1,n:'市販車に近い車体＋レース用タイヤ・小さなスポイラー'},{g:1,df:.8,m:.97,n:'細めのスリック・控えめの空力（TCR 相当：約350馬力・約1265kg）'},{g:1.06,df:1.25,m:1.014,n:'太いスリック・大きなウイングとディフューザー（約550馬力・約1300kg）'},{g:1.03,df:.9,m:1.086,n:'中くらいの幅のスリック・市販車に近い空力・重め（約430馬力・約1440kg）'},{g:1.07,df:1.25,m:1,n:'いちばん太いスリック・強いダウンフォース・ほぼ専用の車体（約600馬力・約1330kg）'},{g:.96,df:.6,m:1,n:'軽自動車の車体＋細いレース用タイヤ・空力はほぼなし（ロールケージと安全装備）'}];
+let KIT=[{g:.98,df:.75,m:1,n:'市販車に近い車体＋レース用タイヤ・小さなスポイラー'},{g:1,df:.5,m:.97,n:'細めのスリック・控えめの空力（TCR 相当：約350馬力・約1265kg）'},{g:1.06,df:1.25,m:1.014,n:'太いスリック・大きなウイングとディフューザー（約550馬力・約1300kg）'},{g:1.03,df:.5,m:1.086,n:'中くらいの幅のスリック・市販車に近い空力・重め（約430馬力・約1440kg）'},{g:1.07,df:1.25,m:1,n:'いちばん太いスリック・強いダウンフォース・ほぼ専用の車体（約600馬力・約1330kg）'},{g:.96,df:.6,m:1,n:'軽自動車の車体＋細いレース用タイヤ・空力はほぼなし（ロールケージと安全装備）'}];
+const KITE=[{g:.98,df:.75},{g:1,df:.8},{g:1.06,df:1.25},{g:1.03,df:.9},{g:1.07,df:1.25},{g:.96,df:.6}]; /* T837② 見込み（lapEst・tyMix）の元は前の KIT のまま（フォーミュラの段が同じ番号の見込みを使うため）。箱車のクラスの変わった分は比 CPL で掛ける */
 let CPW=[1,1,1.088,.911,.88,1]; /* T837① クラスの出力の倍率（そろえたモード。最高速はそのままで出力と空気抵抗を一緒に＝加速だけ変わる）。タイヤに届く出力÷車重を実車（エンジン×0.88÷運転手込みの車重：TCR .247・GT4 .262・GT3 .363・GT1 .397）に。KIT の m もこの時に GT3 .95→1.014・GT4 1.02→1.086（測り C:/Users/mesom/pk_out/t587） */
-function lapEst(c,A0){const top=CC[c].top,A=A0||ACCT[c],KK=KIT[c]||{g:1,df:1},la0=MU.road*G*.82*KK.g,v=new Float64Array(N);
+function lapEst(c,A0,K0){const top=CC[c].top,A=A0||ACCT[c],KK=K0||KITE[c]||{g:1,df:1},la0=MU.road*G*.82*KK.g,v=new Float64Array(N);
   for(let i=0;i<N;i++){const la=la0*RSF[RSI[i]].mu*(RPG[i]?PUBM:1);v[i]=Math.min(top,vcOf(i,la,AERO*KK.df));}
   for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*RSF[RSI[i]].mu*(RPG[i]?PUBM:1)*SP+2*G*(TE[j]-TE[i]))));} /* ブレーキは CPU と同じ AIBG（前は 1.2 の決め打ち） */
   for(let p=0;p<2;p++)for(let i=0;i<N;i++){const j=wrap(i+1),m=RSF[RSI[i]].mu,a=m<1?Math.min(A[Math.floor(v[i]/5)]||0,MU.road*m*G*.5):A[Math.floor(v[i]/5)]||0;v[j]=Math.min(v[j],Math.sqrt(Math.max(0,v[i]*v[i]+2*a*SP-2*G*(TE[j]-TE[i]))));}
@@ -3642,7 +3643,7 @@ function icyHill(){if(state!=='race')return;const p=player();if(!p||p.finished||
  const gd=(TE[wrap(p.idx+8)]-TE[p.idx])/(8*SP);if(RSI[p.idx]===RICE&&gd>ICHG&&(p.thrV||0)>.5&&Math.abs(p.u)<1.5){if(!p.ih0)p.ih0=raceTime;if(raceTime-p.ih0>ICHT&&raceTime-(p.ihW??-99)>30){p.ihW=raceTime;toast(p.drv==='4WD'?'凍った上り坂：この坂は滑って登りにくい（下がって勢いをつけ直そう）':'凍った上り坂：2WD ではこの坂を登れない（下がって勢いをつけるか、4WD で）');}}else p.ih0=0;}
 function icyWarn(){icyHill();if(!ICYS.length||state!=='race')return;const p=player();if(!p||p.finished)return;for(const f of ICYS){const d=((f-p.idx+N)%N)*SP;if(d>100&&d<170&&(p.icW!==f||raceTime-(p.icWT||-99)>20)){p.icW=f;p.icWT=raceTime;if(sess==='race')radio('この先、日陰が凍っている。そっと行こう','icy',8);else toast('この先 凍結');}}}
 const RSEA=[RSE,.83,.98,1.07] /* T555 路面ごとの見積もりの効き（CPU・オートが砂利・雪・氷で限界近くまで使うようになり、HIGASHI の8台のベストの平均が 舗装の 1.150→1.089 倍・1.523→1.428 倍に。…（T568） */,rsLap=c=>rsRf?Math.pow(rsRf.lap[c]/CREF.lap[c],RSEA[rsCur]??RSE):1,rsFu=c=>Math.pow(rsLap(c),.9);
-const CREF=courseRef(),CPL=CC.map((_,c)=>ACCT837[c]?lapEst(c,ACCT837[c]).t/CREF.lap[c]:1) /* T837① 箱車のクラスの1周の見込みの比（フォーミュラは掛けない） */,crR=(a,b)=>Math.abs(a/b-1)<CRT?1:a/b,crLap=c=>crR(CREF.lap[c],CREF0.lap[c]),crFu=c=>crR(Math.sqrt(CREF.L/CREF0.L*CREF.lap[c]/CREF0.lap[c]),1); /* 1周の燃料は長さと1周の時間の間（試しのコース2つで実測と 3% 以内） */
+const CREF=courseRef(),CPL=CC.map((_,c)=>ACCT837[c]||KIT[c].df!==KITE[c].df?lapEst(c,ACCT837[c]||ACCT[c],KIT[c]).t/CREF.lap[c]:1) /* T837① 箱車のクラスの1周の見込みの比（フォーミュラは掛けない） */,crR=(a,b)=>Math.abs(a/b-1)<CRT?1:a/b,crLap=c=>crR(CREF.lap[c],CREF0.lap[c]),crFu=c=>crR(Math.sqrt(CREF.L/CREF0.L*CREF.lap[c]/CREF0.lap[c]),1); /* 1周の燃料は長さと1周の時間の間（試しのコース2つで実測と 3% 以内） */
 const lineMesh=(()=>{const pos=[],idx=[];for(let i=0;i<=N;i++){const j=i%N;for(const o of[-.25,.25]){const l=IL[j]+o;pos.push(TX[j]+NX[j]*l,.058,TZ[j]+NZ[j]*l);}if(i<N)idx.push(i*2,i*2+1,i*2+2,i*2+1,i*2+3,i*2+2);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(new Float32Array(pos.length),3));g.setIndex(idx);
   const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.3,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3}));m.material.userData.lin=1;m.renderOrder=1;scene.add(m);return m;})();
@@ -3717,12 +3718,12 @@ const PUD=[],PIDX=Array.from({length:N},()=>[]);
 // 車の位置の水の深さ（0〜1）：水たまりの楕円の中で、真ん中ほど深い。車の幅（半分 .6m）の分だけ横に広く見る
 function pudAt(k){let d=0;for(const p of PIDX[k.idx]){if(p.a<=0)continue;const sz=.45+.55*p.a,ds=relIdx(k.idx,p.i)+alongAt(k.idx,k.x,k.z),dl=Math.max(0,Math.abs(k.lat-p.l)-.6),x=ds/(p.len/2*sz),y=dl/(p.w/2*sz),r2=x*x+y*y;if(r2<1)d=Math.max(d,p.a*(1-.5*r2));}return d;}
 // CPU：先（15m＋速さ×1.8秒）の水たまりが、走るつもりの横位置にかかるなら、近い方の脇へよける（道の端 WL−1.4 まで）。よけられなければ手前で、浮かない速さまで落とす
-let PDP=1; /* T956 水たまりよけの道すじ（上の pudAvoid と lane の所）。0 で前のまま */
+let PDP=1,PDB=1; /* T956 水たまりよけの道すじ（上の pudAvoid と lane の所）。0 で前のまま */
 function pudAvoid(k,u){const n=Math.round((15+u*1.8)/SP),seen=new Set(),wg=wetMul('road',k);
   for(let j=2;j<=n;j+=2){const i=wrap(k.idx+j);for(const p of PIDX[i]){if(seen.has(p)||p.a<PDA)continue;seen.add(p);const ds=relIdx(p.i,k.idx);if(ds<0)continue;
     const sz=.45+.55*p.a,hw=p.w/2*sz+1.15,base=IL[p.i]+(k.lane||0)+(k.wo||0);if(Math.abs(base-p.l)>=hw)continue;
     const lim=WL[p.i]-1.4,c=[p.l-hw,p.l+hw].filter(x=>Math.abs(x)<=lim).sort((a,b)=>Math.abs(a-base)-Math.abs(b-base));
-    if(c.length){const d=c[0]-base;if(!PDP)return{d,v:null};const s=Math.max(0,ds*SP-p.len/2*sz),sg=Math.sign(d)||1,la=(k.lbLa||G*wg)*(1+AERO*(k.dfm||1)*u*u/G),ab=Math.max(0,-(k.ax||0),-(k.dvA||0)),ay=Math.sqrt(Math.max(0,la*la-ab*ab))-u*u/Math.max(1,RADL[k.idx]),tt=s/Math.max(1,u),mv=Math.max(0,ay)*tt*tt/4,q=Math.max(0,(k.lat-(IL[k.idx]+(k.lane||0)+(k.wo||0)))*sg),dd=sg*Math.min(Math.abs(d),q+mv); /* T956 横へ動ける量＝水たまりまでの時間 tt のうちに、横へ ay で加速して同じ ay で止まる距離 ay·tt²/4（ay＝ブレーキで使っていない横のグリップ √(la²−減速²) から線を回る分 u²/半径 を引いた残り）。もう寄っている分 q は保つ */const vs=HPV0+(HPV1-HPV0)*Math.min(1,.35/p.a);return{d:dd,v:Math.abs(dd)<Math.abs(d)-.05?Math.sqrt(vs*vs+2*G*wg*Math.max(0,ds-p.len/2*sz-4)):null,s};}
+    if(c.length){const d=c[0]-base;if(!PDP)return{d,v:null};const s=Math.max(0,ds*SP-p.len/2*sz),sg=Math.sign(d)||1,la=(k.lbLa||G*wg)*(1+AERO*(k.dfm||1)*u*u/G),vs0=HPV0+(HPV1-HPV0)*Math.min(1,.35/p.a),vC=Math.sqrt(vs0*vs0+2*G*wg*Math.max(0,ds-p.len/2*sz-4)),ab=Math.max(0,-(k.ax||0),-(k.dvA||0),PDB&&u>vC?(u*u-vC*vC)/(2*Math.max(1,s)):0) /* T837② よけきれずに手前で落とす時の減速も摩擦の円に入れる（押し付けの少ない車が、ブレーキしながら横へ動いた勢いを止められず壁まで流れていた） */,ay=Math.sqrt(Math.max(0,la*la-ab*ab))-u*u/Math.max(1,RADL[k.idx]),tt=s/Math.max(1,u),mv=Math.max(0,ay)*tt*tt/4,q=Math.max(0,(k.lat-(IL[k.idx]+(k.lane||0)+(k.wo||0)))*sg),dd=sg*Math.min(Math.abs(d),q+mv); /* T956 横へ動ける量＝水たまりまでの時間 tt のうちに、横へ ay で加速して同じ ay で止まる距離 ay·tt²/4（ay＝ブレーキで使っていない横のグリップ √(la²−減速²) から線を回る分 u²/半径 を引いた残り）。もう寄っている分 q は保つ */const vs=HPV0+(HPV1-HPV0)*Math.min(1,.35/p.a);return{d:dd,v:Math.abs(dd)<Math.abs(d)-.05?Math.sqrt(vs*vs+2*G*wg*Math.max(0,ds-p.len/2*sz-4)):null,s};}
     const vs=HPV0+(HPV1-HPV0)*Math.min(1,.35/p.a);return{d:0,v:Math.sqrt(vs*vs+2*G*wg*Math.max(0,ds-p.len/2*sz-4))};}}
   return{d:0,v:null};}
 // 見た目：ふちがぼけた水面の板（周りの景色が映る）。全部で描画1回
@@ -6897,7 +6898,7 @@ const tyWOf=(wet,tr)=>wet>.45||tr>.5?Math.max(.8,wet):Math.min(.3,wet),tyW=()=>t
 /* T484 路面が混ざったコースのタイヤ選び。… */
 let TYIK=1.64;const _tyM=new Map();
 function tyPS(t,s,w){if(!s&&w<.8)return TYR[t].lp||1;let g=0;for(let u=0;u<TYR.length;u++)g=Math.max(g,tyGrip(u,s,w));return Math.pow(Math.min(1,tyGrip(t,s,w)/g),-TYP);}
-function tyMix(t,w){const key=t+'_'+Math.round(w*20);let r=_tyM.get(key);if(r!=null)return r;const c=typeof ccChoice!=='undefined'&&CC[ccChoice]?ccChoice:1,top=CC[c].top,A=ACCT[c],KK=KIT[c]||{g:1,df:1},la0=MU.road*G*.82*KK.g,v=new Float64Array(N),m=new Float64Array(N),g0=tyGrip(0,0,0)/(TYR[0].tq||1);
+function tyMix(t,w){const key=t+'_'+Math.round(w*20);let r=_tyM.get(key);if(r!=null)return r;const c=typeof ccChoice!=='undefined'&&CC[ccChoice]?ccChoice:1,top=CC[c].top,A=ACCT[c],KK=KITE[c]||{g:1,df:1},la0=MU.road*G*.82*KK.g,v=new Float64Array(N),m=new Float64Array(N),g0=tyGrip(0,0,0)/(TYR[0].tq||1);
  for(let i=0;i<N;i++){const s=RSI[i];m[i]=s?tyGrip(t,s,w)/g0:RPG[i]?PUBM:1;}
  for(let i=0;i<N;i++){const la=la0*m[i];v[i]=Math.min(top,vcOf(i,la,AERO*KK.df));}
  for(let p=0;p<2;p++)for(let i=N-1;i>=0;i--){const j=wrap(i+1);v[i]=Math.min(v[i],Math.sqrt(Math.max(0,v[j]*v[j]+2*G*AIBG*m[i]*SP+2*G*(TE[j]-TE[i]))));}
