@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.595.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.596.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2898,8 +2898,7 @@ function dtNew(){const o=[];for(let i=0;i<DRIVERS.length;i++)if(i!==playerChoice
 function dtSim(a,b){const ta=CC[ccChoice].top*(1+.04*(Math.random()-.5)),tb=CC[ccChoice].top*(1+.04*(Math.random()-.5));const sa=(DRIVERS[a].skill||1)+Math.random()*.2,sb=(DRIVERS[b].skill||1)+Math.random()*.2;return sa*ta>=sb*tb?a:b;}
 function dtOpp(){const t=dtour,e=t.ent;if(t.rd===0)return e[1];const w=(i,j)=>t.w[i+'_'+j]??(t.w[i+'_'+j]=dtSim(e[i],e[j]));
   if(t.rd===1)return w(2,3);const sf=[w(4,5),w(6,7)];return t.w.f2??(t.w.f2=dtSim(sf[0],sf[1]));}
-let dragNos=0;const DLK=.5,DWG=.2,DWS=2.2,DSK=.03,NOSF=.3,NOST=3;
-const dPow=k=>Math.max(.35,Math.min(1.4,((k.top||60)-48)/32)); /* 馬力の強さ（最高速から） */
+let dragNos=0;const DLK=.5,NOSF=.3,NOST=3;
 function nitroGo(k){k=k||player();if(sess!=='drag'||state!=='race'||!k||!k.nos||k.dm.launch==null||k.dFin)return;k.nos=0;k.nosT=NOST;k.dm.nos={g:k.gear+1,v:k.u};
   if(k.isPlayer){telop('NITROUS',(k.gear+1)+'速・'+Math.round(k.u*3.6)+'km/h でナイトロ','yellow');sfx('blip',k);camKick=.6;}}
 /* T528 左右の荷重移動 */
@@ -10525,7 +10524,7 @@ function dragPlace(){
     k.dsp=dragSpec;if(dragSpec){k.Fp/=DSPM;k.mm=(k.mm||1)*DSPM;} /* ドラッグ仕様（相手も同じ） */
     {const DJ=wrap(DI+Math.round(DRAG_D/SP));k.h=Math.atan2(TX[DJ]-TX[DI],TZ[DJ]-TZ[DI]);} /* 直線全体の向きに置く（起点の向きは直線から少しずれていて、まっすぐ走ると 400m で約3m 中央へ寄っていた） */
     if(k.isPlayer&&DFIN[dragFin])k.gf=(k.gf||1)*(1+DFIN[dragFin]);
-    k.nos=dragNos;k.nosT=0;k.nosG=1+(Math.random()<.5?0:1);k.dsw=0;k.gPrev=0;
+    k.nos=dragNos;k.nosT=0;k.nosG=1+(Math.random()<.5?0:1);
     k.preL=0;k.lchR=0;k.dT=k.isPlayer?(dragStg&&!autoPlay?0:.9):.8+Math.random()*.25; /* タイヤの温まり。CPU と「自動」はバーンアウト済み */
     if(k.isPlayer&&dragStg&&!autoPlay){k.x-=FX[DI]*STG0;k.z-=FZ[DI]*STG0;k.dd=-STG0;k.idx=nearest(k.x,k.z,wrap(DI-4),12);k.prevIdx=k.idx;k.lat=lateralAt(k.idx,k.x,k.z);} /* 線の手前から自分で寄せる */
     syncWorld(k);});
@@ -10617,8 +10616,7 @@ function dragStep(k,dt){if(k.isPlayer&&drag&&drag.dp)dragTree();if(k.dFin||!k.dm
   if(k.gear>=kT(k)&&k.rpm>REDLINE-150)m.lim=1;
   if(m.launch!=null&&k.u>1){
     if((!k.isPlayer||autoPlay)&&k.nos&&k.gear>=k.nosG&&k.shiftT<=0&&!k.wheelspin)nitroGo(k);
-    if(k.isPlayer&&!autoPlay){const pw=dPow(k)*(k.dsp?1.15:1);k.dsw+=((Math.random()-.5)*2*DWS-k.dsw*1.6)*dt*3;k.r+=k.dsw*DWG*pw*(k.wheelspin?1:.3)*Math.min(1,k.u/12)*dt;
-      if(k.gear!==k.gPrev){if(k.gear>k.gPrev)k.r+=(Math.random()<.5?-1:1)*DSK*pw*(.6+Math.random()*.6);k.gPrev=k.gear;}}
+    /* T758⑥ 自分の車だけの作り物の揺れ（乱数の横揺れ・変速のひねり）は外した */
     if(!m.foul&&(k.isPlayer?k.lat+HX>0:k.lat-HX<0)){m.foul=true;m.cl=1;if(k.isPlayer){telop('DISQUALIFIED','センターラインを越えた　失格','yellow');sfx('warn');}else telop('DISQUALIFIED',k.name+'　センターライン越え','yellow');}}if(m.launch!=null&&m.t60==null){if(k.wheelspin)m.ws=(m.ws||0)+dt;if(m.tT==null)m.tT=k.dT||0;}
   if(m.t60==null&&k.dd>=18.29)m.t60=t;if(m.t100==null&&k.u>=100/3.6)m.t100=t;if(m.t200==null&&k.dd>=201.17)m.t200=t;
   if(k.dd>=DRAG_D){m.t400=t;m.trap=k.u;m.rpmF=k.rpm;m.gF=k.gear;k.dFin=true;k.manual=false;k.finished=true;k.finishTime=t;finishOrder.push(k);
