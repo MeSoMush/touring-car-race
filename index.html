@@ -1360,7 +1360,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.628.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.629.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -2789,7 +2789,7 @@ const stI=(k,a,dM,b)=>{const E=stE(k,a,dM,b),A=Math.abs(a);if(!(E>0)||A<=SLX*dM)
 let OEB=.05,OEBM=.3,OEB0=1,OEH=0; /* T999 OE が下げた分の扱い（下の aiControl） */
 let FLSX=0; /* T999 流しの手前の見張り：この m 先までに逆向きの角（半径 FLSR m 未満）が始まるなら流しを始めない・続けない（連続コーナーの切り返しで、前の角の流しのまま外の芝へ出ていた）。0 で切る */let FLSR=150;
 function flSx(k){if(!(FLSX>0))return false;const s0=Math.sign(KAP[k.idx]),n=Math.round(FLSX/SP);for(let j=1;j<=n;j++){const i=wrap(k.idx+j),q=KAP[i];if(CORNER[i]&&Math.sign(q)===-s0&&Math.abs(q)>1/FLSR)return true;}return false;}
-let ERRK=1; /* T813① CPU のミスのさいころ（T55）の倍率（1＝前のまま） */
+let ERRK=1,MSB=.1,MSF=3,MSP=3,MSA=2,MSL=2,MSG=.6; /* T813① CPU のミスのさいころ（T55）の倍率（1＝前のまま）。β0.629.0 理由のあるミス＝起きやすさ err×（MSB 理由の無い土台＋MSF×疲れ＋MSP×プレッシャー＋MSA 仕掛けている間＋MSL 抜かれた直後の取り返し＋MSG×レースの進み〈後半ほど集中が切れる〉） */
 const AILV=[{name:'入門',lo:.68,hi:.74,err:.34} /* T577⑤ .80・.855→.68・.74（入門はやさしいと 4% しか違わず、初めての人より速かった。… */,{name:'やさしい',lo:.86,hi:.91,err:.2},{name:'ふつう',lo:.92,hi:.965,err:.09},{name:'つよい',lo:.975,hi:1.01,err:.03},{name:'達人',lo:1.03,hi:1.07,err:0,bk:1.06,bm:.5}]; // T156bk・bm：達人だけ、ブレーキを遅く強く（腕前の係数ではベストが変わらなかったため）
 let ESW=.78,TCD=.05,TCU=.3; /* T825③ ESC：外側の前輪だけにブレーキをかけて車を戻す（戻す力のてこ＝トレッドの半分 ESW m）。② TC はエンジンを絞る形：絞る速さ TCD 秒・戻す速さ TCU 秒 */
 let edSel=0,EDBW=.3 /* T993 電子制御デフをブレーキで戻しきる強さ */,EDF=.5,ABAI=1,ABSM=.5,ABTS=.85; /* ABAI＝CPU の装備の ABS（0 で前の形。測り用。テストの運転手 chb742.js が切る）。CPU の電子制御デフの切り替え EDAI は T797 で消した（β0.625.0） */ /* T782 電子制御デフ（0 あり〈既定〉・1 なし。自分の車。CPU はいつもあり）・アクセルを抜いた時の前の配分の倍率 */
@@ -6645,7 +6645,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   erStep(k,u,beta,vAllow,dt);
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(pzK(k)&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))]; /* T869 オート（APZ）もミス・ブレーキ位置のずれ */
-    if(cn&&!k.cnPrev&&Math.random()<ERRK*aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
+    if(cn&&!k.cnPrev&&Math.random()<ERRK*aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(MSB+MSF*(1-(k.stam??1))+MSP*(k.prs||0)*prOf(k)+(sess==='race'?MSA*(k.atkT>0?1:0)+MSL*(k.lostT>0?1:0)+MSG*Math.max(0,Math.min(1,((k.lap||1)-1)/Math.max(1,LAPS-1))):0))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
     if(cn&&!k.cnPrev){const m=(1+BNS*(1-(k.stam??1)))*(1+BNP*(k.prs||0)*prOf(k)),gi=wrap(k.idx+Math.round(55/SP)),g=Math.min(1,rsG(gi,wetMul('road',k),k.ty)/BNG),r=BNR*g;k.bnb=(k.bnb||0)*r+(Math.random()+Math.random()-1)*BNZ*Math.sqrt(1-r*r)*m;k.bnz=k.bnb*g*Math.max(.3,1-SKZ*skv(k,'brk'));if(IEBK>0&&sess==='race'&&k.ien&&!cau()){let ri=0;for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;const ds=pgO(o)-pK();if(ds>3&&ds<Math.max(10,u*IEBT)&&Math.abs(o.lat-k.lat)<3.2)ri=Math.max(ri,ienOf(k,o));}if(ri>0){k.bnz+=IEBK*ri*Math.max(.3,1+.5*agOf(k))*g;k.iebN=(k.iebN||0)+1;}}} /* T421② 因縁の相手を IEBT 秒以内で追う間はブレーキを奥へ（宿敵への飛び込み。性格の攻め気で大小・滑る路面では縮める） */ /* T866③・T813 R5 ブレーキ位置の見積りのずれ（m、正＝遅い）。角から角へ引き継ぎ、疲れ・プレッシャーで揺れが大きい。滑る路面では縮める */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,trC=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0,trV=vcw>0?{...trC,gap:trC.gap*(1+VGP*vcw),bm:trC.bm-VBM*vcw}:trC,tr=!k.isPlayer&&chFcOn()?{...trV,gap:trV.gap*CFGP}:trV; /* T327④ 追走の CPU は車間を CFGP 倍に詰める（D1 の後追いは数 m） */ /* T375 見通しが悪いと車間を空け、急ブレーキを早めに決める */ // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
