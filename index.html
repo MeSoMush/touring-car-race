@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.614.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.615.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6415,7 +6415,7 @@ function driftAI(k,u,beta,dS,dt){k.hbCool=(k.hbCool||0)-dt;let blk=false,atk=fal
   
   k.csx=.35+CSB*dS*Math.min(1,Math.abs(beta)/.15);}
 /* T558④ 角の手前で向きを作る（EZ。… */
-let EZTA=1,EZFB=[0,.15,.08,0],FLE=[0,.3,0,0],FLEM=1.6,EZC=.5,EZK=1 /* 仕組みだけ → T558④ 物理を戻したので入れた（LTX 2.4） */,EZR0=8,EZR1=90,EZL=1.2,EZLL=2 /* T990 砂利・雪・氷の見込みの長さ（舗装は前の EZL 1.2 のまま） */,EZM=0,EZB0=.45,EZBL=.3,EZT=.9,EZH=.9,EZA=.55,EZBK=[.55,.85,.85,.7],EZW=1.6,EZV=10,EZP=[1,1,1],EZD=3,EZU=3;
+let DSLV=.6,EZTA=1,EZFB=[0,.15,.08,0],FLE=[0,.3,0,0],FLEM=1.6,EZC=.5,EZK=1 /* 仕組みだけ → T558④ 物理を戻したので入れた（LTX 2.4） */,EZR0=8,EZR1=90,EZL=1.2,EZLL=2 /* T990 砂利・雪・氷の見込みの長さ（舗装は前の EZL 1.2 のまま） */,EZM=0,EZB0=.45,EZBL=.3,EZT=.9,EZH=.9,EZA=.55,EZBK=[.55,.85,.85,.7],EZW=1.6,EZV=10,EZP=[1,1,1],EZD=3,EZU=3;
 const erPk=i=>{const R=RSF[i];return R.rb?pkA(R.rc,R.rb):pkA(TRC,TRB);};
 function erStep(k,u,beta,vA,dt){if(!EZK||sess==='drag'||k.pit||k.finished||k.hbT>0||u<EZV&&!(k.erS>1)){if(k.erS)k.erS=0;k.blS=undefined;return;}
   const ab=Math.abs(beta);
@@ -6571,8 +6571,8 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   const beta=u>6?Math.atan2(k.vl,u):0;k.csx=.35+CSB*slv*Math.min(1,Math.abs(beta)/.15);
   k.pwr=false;k.pso=0;
   const slvD=PUBR&&k.ty>1?Math.max(0,Math.min(1,(SLG-MU.road*rsG(k.idx,wetMul('road',k)/TYR[k.ty].d0))/.5)):slv; /* T526 公道用のタイヤでグリップが下がり、乾いていても「滑る路面」と見て公道のドリフトが止まっていた。… */
-  const dS=DRS>0&&PUBR&&sess!=='drag'&&!k.pit&&!k.finished&&slvD<=.3?DRS*(k.fs<.2?1:k.fs<.8?DR4:DRF):0; /* T521 公道では乾いた路面でも理由がある時はドリフトを使う（ご本人 2026-10-24「CPUでもオートでも使って欲しい」） */
-  if(dS>0&&u>10)driftAI(k,u,beta,dS,dt);
+  const dS=DRS>0&&PUBR&&sess!=='drag'&&!k.pit&&!k.finished&&slvD<=DSLV?DRS*(k.fs<.2?1:k.fs<.8?DR4:DRF):0; /* T521 公道では乾いた路面でも理由がある時はドリフトを使う（ご本人 2026-10-24「CPUでもオートでも使って欲しい」） */
+  if(dS>0&&u>10)driftAI(k,u,beta,dS,dt); /* T530② DSLV＝公道で滑らせる運転を使う路面の滑りやすさの上限（.3→.6＝雨も。雨の TSUZURA の1台 147.6→144.0秒・壁 0） */
   else if(slv>0&&k.fs<.6&&u>12&&!k.finished){
     
     const kc=Math.abs(KAP[k.idx]),kn=Math.abs(KAP[wrap(k.idx+8)]);
