@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.619.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.620.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -1846,11 +1846,12 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 <section class="screen" id="bugScreen" hidden>
   <div class="panel">
     <h2>不具合報告</h2>
-    <p class="note">おかしな動きを見つけたら、下の欄に「何をしていて、何が起きたか」を書いて「フォームを開いて送る」を押してください。報告の文章がコピーされ、送り先のフォームが新しいタブで開きます。フォームの「不具合報告の文章」欄に貼り付けて送信してください（このゲームから自動では送られません）。今のレースの状況・設定・起きたエラー・無線の履歴は、下にまとめて添えられます。</p>
+    <p class="note">おかしな動きを見つけたら、下の欄に「何をしていて、何が起きたか」を書いて「フォームを開いて送る」を押してください。報告の文章がコピーされ、送り先のフォームが新しいタブで開きます。フォームの「不具合報告の文章」欄に貼り付けて送信してください（このゲームから自動では送られません）。今のレースの状況・設定・起きたエラー・無線の履歴は、下にまとめて添えられます。レース中にポーズしてから開くと、ポーズした時の画面も出ます（「画像を保存」「画像をコピー」で、場所の説明に使えます。文章には入りません）。</p>
     <h3>起きたこと（ご記入）</h3>
     <textarea id="bugNote" rows="4" maxlength="4000" placeholder="例）雨のレースでスタート直後に画面が止まった。音は鳴っていた。"></textarea>
     <h3>添える情報 <small>自動でまとめた内容。個人の情報は入りません</small></h3>
     <textarea id="bugInfo" rows="9" readonly spellcheck="false"></textarea>
+    <div id="bugShotBox" hidden><h3 id="bugShotCap">ポーズした時の画面</h3><img id="bugShotImg" alt="ポーズした時のレースの画面" style="display:block;width:100%;max-height:40vh;object-fit:contain;background:#000;border-radius:6px"><div class="row" style="margin-top:6px"><button class="btn alt" id="bugShotSave" type="button">画像を保存</button><button class="btn alt" id="bugShotCopy" type="button">画像をコピー</button></div></div>
     <div id="bugMsg" aria-live="polite"></div>
     <div class="row">
       <button class="btn" id="bugForm" type="button">フォームを開いて送る</button>
@@ -2780,6 +2781,7 @@ const stE=(k,t,dM,b)=>k.u>3&&t*b>0&&t*(k.r||0)<0?Math.max(0,Math.min(SLK,dM+Math
 const stA=(k,s,dM,b)=>{const t=-s*dM,E=stE(k,t,dM,b),x=Math.abs(s);return E>0&&x>SLX?Math.sign(t)*(dM*x+E*(x-SLX)/(1-SLX)):t;}; /* 入力 s（−1〜1）→ 前輪の狙いの角度。入力の SLX までは今までどおり（−s×dMax）、そこからいっぱいまでの間で E を足す＝ふつうの手応えは変わらず、いっぱいに切れば超えて切れる */
 const stI=(k,a,dM,b)=>{const E=stE(k,a,dM,b),A=Math.abs(a);if(!(E>0)||A<=SLX*dM)return -a/dM;return -Math.sign(a)*Math.min(1,(A+E*SLX/(1-SLX))/(dM+E/(1-SLX)));}; /* stA の逆（狙いの角度 → 入力）。CPU・オートの運転手が使う */
 // 難易度（T55）：lo/hi＝CPU の速さの幅、err＝コーナー1つごとにミス（ブレーキ遅れでふくらむ・踏めずに失速）する確率
+let ERRK=1; /* T813① CPU のミスのさいころ（T55）の倍率（1＝前のまま） */
 const AILV=[{name:'入門',lo:.68,hi:.74,err:.34} /* T577⑤ .80・.855→.68・.74（入門はやさしいと 4% しか違わず、初めての人より速かった。… */,{name:'やさしい',lo:.86,hi:.91,err:.2},{name:'ふつう',lo:.92,hi:.965,err:.09},{name:'つよい',lo:.975,hi:1.01,err:.03},{name:'達人',lo:1.03,hi:1.07,err:0,bk:1.06,bm:.5}]; // T156bk・bm：達人だけ、ブレーキを遅く強く（腕前の係数ではベストが変わらなかったため）
 let ESW=.78,TCD=.05,TCU=.3; /* T825③ ESC：外側の前輪だけにブレーキをかけて車を戻す（戻す力のてこ＝トレッドの半分 ESW m）。② TC はエンジンを絞る形：絞る速さ TCD 秒・戻す速さ TCU 秒 */
 let edSel=0,EDBW=.3 /* T993 電子制御デフをブレーキで戻しきる強さ */,EDF=.5,EDAI=1,ABAI=1,ABSM=.5,ABTS=.85; /* EDAI・ABAI＝CPU の電子制御デフ・装備の ABS（0 で前の形。測り用） */ /* T782 電子制御デフ（0 あり〈既定〉・1 なし。自分の車。CPU はいつもあり）・アクセルを抜いた時の前の配分の倍率 */
@@ -6600,7 +6602,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
   erStep(k,u,beta,vAllow,dt);
   // ミス（T55）：コーナーの手前で一定の確率で、ブレーキが遅れてふくらむ／踏み切れずに失速する
   if(pzK(k)&&sess!=='drag'){const cn=CORNER[wrap(k.idx+Math.round(55/SP))]; /* T869 オート（APZ）もミス・ブレーキ位置のずれ */
-    if(cn&&!k.cnPrev&&Math.random()<aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
+    if(cn&&!k.cnPrev&&Math.random()<ERRK*aiP().err*Math.max(.2,1-SKE*skW(k,'cons',SKWN))*(spOf(k)==='late'&&sess==='race'&&LAPS-k.lap<=1?TSL:1)*(1+STE*(1-(k.stam??1)))*(1+PZE*(k.prs||0)*prOf(k))+(sess==='race'?STA*(1-(k.stam??1)):0)+PZA*(k.prs||0)*prOf(k)){if(Math.random()<.7){k.errT=2.4;k.errK=1.1+Math.random()*.1;}else{k.errT=1.8;k.errK=.8+Math.random()*.08;}k.errN=(k.errN||0)+1;}
     if(cn&&!k.cnPrev){const m=(1+BNS*(1-(k.stam??1)))*(1+BNP*(k.prs||0)*prOf(k)),gi=wrap(k.idx+Math.round(55/SP)),g=Math.min(1,rsG(gi,wetMul('road',k),k.ty)/BNG),r=BNR*g;k.bnb=(k.bnb||0)*r+(Math.random()+Math.random()-1)*BNZ*Math.sqrt(1-r*r)*m;k.bnz=k.bnb*g*Math.max(.3,1-SKZ*skv(k,'brk'));if(IEBK>0&&sess==='race'&&k.ien&&!cau()){let ri=0;for(const o of karts){if(o===k||o.dnf||o.finished||o.pit>0)continue;const ds=pgO(o)-pK();if(ds>3&&ds<Math.max(10,u*IEBT)&&Math.abs(o.lat-k.lat)<3.2)ri=Math.max(ri,ienOf(k,o));}if(ri>0){k.bnz+=IEBK*ri*Math.max(.3,1+.5*agOf(k))*g;k.iebN=(k.iebN||0)+1;}}} /* T421② 因縁の相手を IEBT 秒以内で追う間はブレーキを奥へ（宿敵への飛び込み。性格の攻め気で大小・滑る路面では縮める） */ /* T866③・T813 R5 ブレーキ位置の見積りのずれ（m、正＝遅い）。角から角へ引き継ぎ、疲れ・プレッシャーで揺れが大きい。滑る路面では縮める */k.cnPrev=cn;if(k.errT>0){k.errT-=dt;if(k.errT<=0)k.errT=0;vAllow*=k.errK;}}
   // 前の車を避ける・追突しない（T68：性格 TRAITS で車間・横の間隔・譲る確率が変わる）
   const cz=judgeOn?Math.min(1,(k.ipt||0)/JG2):0,trB=TRAITS[k.dr.tr??2],tr0=isForm()?{...trB,room:trB.room+FROOM,gap:trB.gap*FGAP}:trB,trC=cz>0?{...tr0,room:tr0.room+JCR*cz,gap:tr0.gap*(1+JCG*cz),yld:Math.min(.95,tr0.yld+.5*cz),bm:tr0.bm-cz}:tr0,tr=vcw>0?{...trC,gap:trC.gap*(1+VGP*vcw),bm:trC.bm-VBM*vcw}:trC; /* T375 見通しが悪いと車間を空け、急ブレーキを早めに決める */ // T50 フォーミュラは速さの差が大きく、タイヤ同士が当たると危ないので、車間 FGAP 倍・横の間隔＋FROOM m // T176：IPが付いた CPU は横の間隔・車間を広げ、譲りやすく、ブレーキを早めに
@@ -8418,7 +8420,7 @@ function ckMirrors(){const p=CK.k;ckMirLog.c=performance.now();if(!mirOn||!CK.mi
    sky.position.copy(cam.position);lodCars(cam,1);const hid=mirHide.call(null,cam),ro=mirRain();renderer.setRenderTarget(rt);renderer.render(scene,cam);renderer.setRenderTarget(null);rainMesh.material.opacity=ro;for(const g of hid)g.root.visible=true;ckMirLog.t[m.kind]=performance.now();}
   sky.position.copy(sp);p.g.root.visible=own;renderer.shadowMap.autoUpdate=au;}
 // 普通の描画（rMain）：運転席視点の時は、そのあと奥行きを消して室内を上から描く。室内の明るさは外の光（空の光・太陽）を少し弱めて写す
-function rMain(){if(ckPnOn())return ckPnRender();rMain0();}
+function rMain(){if(ckPnOn())ckPnRender();else rMain0();if(bugShotQ)bugShotTake();} /* T1000 ポーズの直前の画面：描いた直後（同じ処理の中）なら preserveDrawingBuffer 無しでも写せる */
 function rMain0(){const ck=!!(CK.g&&CK.g.visible&&CK.k&&CK.k.g);if(ck){CK.k.g.root.updateMatrixWorld(true);ckHold.matrix.copy(CK.k.g.body.matrixWorld);ckHold.matrixWorldNeedsUpdate=true;ckMirrors();} /* T714 鏡を描く前に室内を今の車の位置へ（前は1フレーム前の位置で「画面に入っているか」を調べていて、180km/h を超えると目のすぐ前のルームミラーと近い側のドアミラーがカメラの後ろと判定され、描かれずに… */
   lodCars(camera);const own=ck&&CK.v?CK.k.g.root:null,ov=own&&own.visible;if(own)own.visible=false; // 運転席（フォーミュラ以外）では自分の車体を描かない（ボンネットとミラーは室内の側で描く）
   renderer.setRenderTarget(ckPnT); /* T668 端を縮める投影の時は、いったん絵に描く */renderer.render(scene,camera);if(own)own.visible=ov;if(!ck)return;
@@ -9734,7 +9736,7 @@ function startRace(){autoUsed=!!autoPlay;auR=!!autoPlay;slwUsed=false;slwUi();kp
   setSpd(1);ROLL.fm=!FMX&&flOn();ROLL.on=(startMode===1||ROLL.fm)&&sess==='race'&&!PRAC;ROLL.green=false;BR.on=hwRB();BR.green=false;BR.n=-1; /* T821 */ROLL.fmE=0;ROLL.fmW=-9;ROLL.ovT=null;gprClr();raceT0=0;SC_reset();SC.n=0;FCY.n=0;SC.rfn=0;crashRec.length=0;setupRace();boxFix();ckPre();if(FMX)for(const k of karts){const t=FMX.t[k.id];if(t){k.tt=t.tt;k.tc=t.tc??t.tt;k.tb=t.tb;if(t.pen)k.pen=t.pen;}} /* T360 温めた分を持ち越す */
   $('titleScreen').hidden=true;$('resultScreen').hidden=true;$('pauseScreen').hidden=true;hud.hidden=false;pad.hidden=false;
   radioReset();state='countdown';cdHold=ROLL.on||BR.on||sess==='drag'?0:.2+Math.random()*1.3;countdown=ROLL.on?2:BR.on?.3:4.99+cdHold; /* T821 走っている車を長く止めない */$('slights').hidden=true;cdShown=-1;$('toast').textContent='';clearBanner();bannerTimer=0;steerSm=0;mThr=0;saH=0;sbV=0; /* T756⑥ 段階のペダルを前の走りから持ち越さない */rwBuf=[];rwT=0;holdT=0;rwCount=0;retT=0;$('rwAsk').hidden=true;tvI=-1;
-  lgSeq0=logN;lgK='';rpBuf=[];rpT=0;ghStart();ghLoad();rvLoad(); /* T419② */if(isBat())ghost=null; /* 公道バトルはゴーストなし */batLead=null;ghDelta=null;tgDelta=null;tgGhost=null;rcRef=null;rcRec=[];rcT=0;rcDelta=null;taMed=sess==='ta'&&!ssOn&&chOn==null?taMedT():null;secBest=[null,null,null];secShow=null;if(ghostMesh)ghostMesh.root.visible=false;$('raceBtn').hidden=true;$('againBtn').hidden=false;
+  lgSeq0=logN;lgK='';bugShot=null;rpBuf=[];rpT=0;ghStart();ghLoad();rvLoad(); /* T419② */if(isBat())ghost=null; /* 公道バトルはゴーストなし */batLead=null;ghDelta=null;tgDelta=null;tgGhost=null;rcRef=null;rcRec=[];rcT=0;rcDelta=null;taMed=sess==='ta'&&!ssOn&&chOn==null?taMedT():null;secBest=[null,null,null];secShow=null;if(ghostMesh)ghostMesh.root.visible=false;$('raceBtn').hidden=true;$('againBtn').hidden=false;
   fastLap=null;teleQ.length=0;teleT=0;if(teleEl){teleEl.remove();teleEl=null;}$('tele').innerHTML='';posShown=0;posRk=null;posPend=0;leadShown=null;leadPend=null;flagHud='x';flagWarnT=-9;for(const k in flagT)delete flagT[k];$('flag').hidden=true; /* T607① 前のレースの旗の時刻を残さない */for(const p of POSTS){p.c=-1;}
   if(!FMX){const P=TOD[ENV.tod],w=WXN[ENV.wx];telop('CONDITION',`${P.n}・${w.n}　路面 ${rsCur?RSF[rsCur].n+(ENV.wet>.2?'（濡れ）':''):ENV.wet>.6?'ウェット':ENV.wet>.2?'少し濡れている':'ドライ'}`);}
   if(sess==='race'&&!FMX)telop('RULES',ruleText(),judgeOn?'':'yellow');
@@ -9994,7 +9996,7 @@ let slOn=false;function setListUpd(){const el=$('setList'),tm=document.body.clas
 addEventListener('keydown',e=>{if(e.code==='Tab'&&(state==='race'||state==='countdown'||state==='finished')){e.preventDefault();if(!slOn){slOn=true;setListUpd();}}});
 addEventListener('keyup',e=>{if(e.code==='Tab'&&slOn){slOn=false;setListUpd();}});addEventListener('blur',()=>{if(slOn){slOn=false;setListUpd();}});
 function canPz(){return state==='race'||state==='countdown'||state==='finished';} /* 一時停止できる時：レース中・スタート前・完走やリタイアの後で結果画面が出る前（リタイアした場面でもポーズから不具合報告を送れるように。前は finished で右上のボタンが消えていた） */
-function pause(){msgPT=0;lgK='';setTimeout(()=>{try{lgUi();}catch(_){}},0); /* T605 */msUnlock();pnHush();pzLbl();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
+function pause(){msgPT=0;if(state==='race'||state==='countdown'||state==='finished')bugShotQ=1; /* T1000 */lgK='';setTimeout(()=>{try{lgUi();}catch(_){}},0); /* T605 */msUnlock();pnHush();pzLbl();setTMenu(false);pausedFrom=state;state='paused';pSetSync();{const ps=$('pSpec');if(ps)ps.innerHTML=specHtml(player());const r=sess==='race',n=ruleNote();$('pRuleL').hidden=$('pRule').hidden=!r;$('pRule').innerHTML=rulesHtml();$('pRuleN').hidden=!n;$('pRuleN').textContent=n;}$('pauseScreen').hidden=false;for(const k in input)input[k]=false;}
 {let d=null,ox=0,oy=0;const ps=$('pauseScreen'),h=ps&&ps.querySelector('h2'),pn=()=>ps.querySelector('.panel');if(h){h.title='ドラッグで動かせる（ダブルクリックで元の位置）';
   h.addEventListener('pointerdown',e=>{d={x:e.clientX-ox,y:e.clientY-oy};try{h.setPointerCapture(e.pointerId);}catch(_){}});h.addEventListener('pointermove',e=>{if(!d)return;ox=e.clientX-d.x;oy=e.clientY-d.y;pn().style.translate=ox+'px '+oy+'px';});
   h.addEventListener('pointerup',()=>{d=null;});h.addEventListener('dblclick',()=>{ox=oy=0;pn().style.translate='';});}} /* T605 一時停止の窓を動かせる（ご本人の案） */
@@ -11175,10 +11177,16 @@ function bugInfo(){
 function bugText(){const note=($('bugNote').value||'').trim();return '【（仮）ツーリングカーレース 不具合報告】\n\n■ 起きたこと\n'+(note||'（未記入）')+'\n\n'+$('bugInfo').value+'\n';}
 function bugMsg(t,ng){const el=$('bugMsg');el.textContent=t;el.classList.toggle('ng',!!ng);clearTimeout(el._t);if(t)el._t=setTimeout(()=>{el.textContent='';},8000);}
 function bugRefresh(){$('bugInfo').value=bugInfo();}
-function openBug(){msUnlock();bugRefresh();bugMsg('');$('bugSave').style.display=window.claude?'none':'';$('bugScreen').hidden=false;setTimeout(()=>{try{$('bugNote').focus();}catch(_){}},30);}
+/* T1000 不具合報告にポーズの直前の画面（レースの絵だけ。文字の表示は入らない）。ポーズの次のコマで1回だけ写し、横 BSW px までに縮めて持つ */
+let bugShot=null,bugShotQ=0;const BSW=1280;
+function bugShotTake(){bugShotQ=0;try{const c=renderer.domElement,w=c.width,h=c.height;if(!w||!h)return;const k=Math.min(1,BSW/w),cv=document.createElement('canvas');cv.width=Math.round(w*k);cv.height=Math.round(h*k);cv.getContext('2d').drawImage(c,0,0,cv.width,cv.height);bugShot={cv,url:cv.toDataURL('image/jpeg',.85),t:raceTime,crs:(COURSES[CRSI]||{}).name||''};}catch(_){bugShot=null;}}
+function bugShotUi(){const b=$('bugShotBox');if(!b)return;b.hidden=!bugShot;if(!bugShot)return;$('bugShotImg').src=bugShot.url;$('bugShotCap').textContent='ポーズした時の画面（'+bugShot.crs+'・経過 '+fmt(bugShot.t)+'）';$('bugShotSave').style.display=window.claude?'none':'';$('bugShotCopy').style.display=navigator.clipboard&&window.ClipboardItem?'':'none';}
+function openBug(){msUnlock();bugRefresh();bugMsg('');bugShotUi();$('bugSave').style.display=window.claude?'none':'';$('bugScreen').hidden=false;setTimeout(()=>{try{$('bugNote').focus();}catch(_){}},30);}
 function closeBug(){$('bugScreen').hidden=true;}
 function bugCopyFallback(text){const ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;left:-9999px;top:0;opacity:0;';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(_){}document.body.removeChild(ta);return ok;}
 $('bugOpenG').addEventListener('click',openBug);$('bugOpenP').addEventListener('click',openBug);$('bugClose').addEventListener('click',closeBug);
+$('bugShotSave').addEventListener('click',()=>{if(!bugShot)return;const d=new Date(),name='touring-car-screen-'+d.getFullYear()+brPad(d.getMonth()+1)+brPad(d.getDate())+'-'+brPad(d.getHours())+brPad(d.getMinutes())+'.jpg';try{const a=document.createElement('a');a.href=bugShot.url;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>{try{document.body.removeChild(a);}catch(_){}},1000);bugMsg('「'+name+'」を保存しました。フォームに画像を付ける欄があれば、そこから選んでください');}catch(_){bugMsg('保存できませんでした',true);}});
+$('bugShotCopy').addEventListener('click',()=>{if(!bugShot)return;try{bugShot.cv.toBlob(b=>{if(!b){bugMsg('写せませんでした',true);return;}navigator.clipboard.write([new ClipboardItem({'image/png':b})]).then(()=>bugMsg('画面をクリップボードへ写しました。貼り付けられる所（メール・チャットなど）に貼ってください'),()=>bugMsg('写せませんでした（この環境ではクリップボードへ画像を入れられません）。「画像を保存」を使ってください',true));},'image/png');}catch(_){bugMsg('写せませんでした',true);}}); /* T1000 */
 $('bugRefresh').addEventListener('click',()=>{bugRefresh();bugMsg('添える情報を今の状況で作り直しました');});
 $('bugCopy').addEventListener('click',()=>{const text=bugText();
   const done=ok=>{if(ok)bugMsg('コピーしました。不具合報告のフォーム（「フォームを開いて送る」で開く）の「不具合報告の文章」欄に貼り付けてください');else{bugMsg('コピーできませんでした。「.txt を保存」を使うか、下の欄を選んでコピーしてください',true);const inf=$('bugInfo');inf.value=text;inf.focus();inf.select();}};
