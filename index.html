@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.625.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.626.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6692,7 +6692,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
         if(!blocked&&Math.abs(nt-o.lat)>=2.3){k.laneT=nt;k.laneTimer=1.2;k.ovr=true;k.atkO=o.id;k.atkT=PBT;k.atk=1;vAllow*=(k.fs>.8?PBF:k.fs<.3?PBR:PB4)*((trev||tfull&&tsc&&tsc.t>=SCT)?SBL:1);}}}}
   // 大クラッシュで止まった車（T71）：コースに沿った距離で早めに見つけ、ブレーキをかけて横へよける
   // 片付けた残骸（gone）は避けない（見えない残骸の手前で止まってバックを繰り返していた）。…
-  {const wk=[];for(const o of karts){if(!o.dnf||o.gone||o===k)continue;const ds=pgO(o)-pK();if(ds<-4||ds>DNF0+u*DNF1)continue;wk.push([o,ds]);}
+  {const wk=[];for(const o of karts){if(!o.dnf||o.gone||o===k)continue;let ds=(o.idx-k.idx)*SP;ds-=Math.round(ds/L)*L; /* T989・T621① 道の上の位置の差で測る（前は progress() の差＝リタイアした車には順位のため −1億 が足してあり、ds が毎回 −1億 になってこの処理は一度も残骸を見ていなかった。公道の事故の後に続いた大クラッシュ 12種で 25→21回） */if(ds<-4||ds>DNF0+u*DNF1)continue;wk.push([o,ds]);}
    if(wk.some(([o])=>Math.abs(o.lat-k.lat)<3.4)){let best=k.lat,bs=-1e9;for(let c=-W+2.2;c<=W-2.2+1e-6;c+=.5){let m=1e9;for(const [o] of wk)m=Math.min(m,Math.abs(c-o.lat));const sc=Math.min(m,4)-.12*Math.abs(c-k.lat);if(sc>bs){bs=sc;best=c;}}
      k.laneT=best;k.laneTimer=1.5;k.ovr=true;
      for(const [o,ds] of wk)if((Math.abs(o.lat-k.lat)<2.2||Math.abs(o.lat-best)<2.4)&&u*u>2*DNFA*afdWet(k)*afdK(k)*Math.max(.5,ds-9))hard=true;}}
