@@ -1358,7 +1358,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.622.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.622.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -5219,7 +5219,7 @@ function stepKart(k,dt,ctl){
   if(k.dsT>0)k.dsT-=dt;
   if(!(ctl.brake||!ctl.accel)){k.liftT=0;k.u0=k.u;}else{
     if(!k.liftT&&!k.ev&&(!k.isPlayer||autoPlay)&&k.rpm>6300&&k.u>20&&Math.random()<.35){k.popT=.1;sfx('pop',k);} // T174 CPU も高回転でアクセルを離すとポップ（炎と音）。手で運転する自車は updateEngine で
-    k.liftT=(k.liftT||0)+dt;}
+    k.liftT=(k.liftT||0)+dt;if(BUK>0&&ac&&!muted&&!k.isPlayer&&!k.ev&&k.liftT<BUT&&k.rpm>BUR&&k.u>8&&!(k.shiftT>0)&&near(k)>.15&&__VR()<BUN*.6*Math.min(1,(k.rpm-BUR)/2500)*(1-k.liftT/BUT)*dt)sfx('bub',k);} /* T983② ほかの車のバブリング（近い車だけ、自分の車より少なめ。音の乱数 __VR で、走りの乱数の並びは変えない） */
   // T101：ブレーキ（アクセルオフ）で減らす速さ（開始時の速さ→先のコーナーの速さ）のうち DSP 割まで減ってから落とす（ブレーキ中盤〜後半で落とし、頂点までに終える）
   const dsSpan=(k.u0??k.u)-vrefD,dsProg=DSP>0&&dsSpan>4?((k.u0??k.u)-k.u)/dsSpan:1;
   // 先のコーナー（約300m）の速さ vref で回転が SHIFT_BK 以上になる、いちばん高いギアまで落とす（頂点で力のある回転域に入り、立ち上がりでそこから上げていく）
