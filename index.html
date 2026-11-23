@@ -1360,7 +1360,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.629.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.629.1</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -7834,13 +7834,15 @@ function wsStep(dt){const e=ENV,p=plrSafe();
    WS.d=WS.d.filter(d=>d.y>-8&&d.y<H+8&&d.x>-8&&d.x<W+8);
    WS.t+=dt;const per=WSP*(e.rain>.6?.55:1);if(WS.ph<0&&WS.t>=per){WS.ph=0;WS.t=0;}
    if(WS.ph>=0){WS.ph+=dt/.62;if(WS.ph>=1)WS.ph=-1;}}
-  const g=WS.cx;g.clearRect(0,0,W,H);
-  const px=W*.3,py=H*1.05,R=H*1.02,ang=WS.ph<0?null:Math.PI*(1-Math.sin(Math.min(1,WS.ph)*Math.PI)*.82); // ワイパーの軸は左下、行って戻る
+  const g=WS.cx;g.clearRect(0,0,W,H);let dY=H;const ckD=cm===5&&CK.g&&CK.k===p&&CK.dy!=null&&!p.g.formula; /* T1011 β0.629.1 運転席：ガラスの付け根を画面に写した高さ dY より上だけに描く（前は腕の付け根が画面の左下で、ダッシュボードやハンドルの上にも腕が描かれた）。車載（ボンネットの上）・中継の車載・フォーミュラはガラスが無いので腕を描かない */
+  if(ckD){try{const q=new THREE.Vector3(CK.ex||0,CK.dy,CK.dz);ckHold.localToWorld(q);q.project(camera);if(q.z<1&&isFinite(q.y))dY=Math.max(H*.2,Math.min(H,(1-q.y)/2*H));}catch(_){}}
+  g.save();if(ckD){g.beginPath();g.rect(0,0,W,dY);g.clip();}
+  const px=W*.3,py=dY+H*.02,R=Math.max(H*.3,dY*1.02),ang=WS.ph<0||!ckD?null:Math.PI*(1-Math.sin(Math.min(1,WS.ph)*Math.PI)*.82); // ワイパーの軸は左下、行って戻る
   if(ang!=null){const ca=Math.cos(ang),sa=Math.sin(ang);WS.d=WS.d.filter(d=>{const dx=d.x-px,dy=py-d.y,dist=Math.hypot(dx,dy);if(dist>R)return true;const da=Math.atan2(dy,dx);return Math.abs(da-ang)>.09;});
    g.strokeStyle='rgba(12,14,16,.85)';g.lineWidth=Math.max(2,H*.012);g.beginPath();g.moveTo(px,py);g.lineTo(px+ca*R,py-sa*R);g.stroke();}
   const nt=TOD[e.tod]&&TOD[e.tod].night;
   for(const d of WS.d){const al=d.a*(nt?.3:.42);g.fillStyle=`rgba(${nt?'150,160,175':'205,215,228'},${al*.55})`;g.beginPath();g.ellipse(d.x,d.y,d.r,d.r*.85,0,0,6.283);g.fill();
-   g.fillStyle=`rgba(255,255,255,${al*.7})`;g.beginPath();g.arc(d.x-d.r*.3,d.y-d.r*.35,d.r*.28,0,6.283);g.fill();}}
+   g.fillStyle=`rgba(255,255,255,${al*.7})`;g.beginPath();g.arc(d.x-d.r*.3,d.y-d.r*.35,d.r*.28,0,6.283);g.fill();}g.restore();}
 /* T375 後半 まわりのかげり：見通し（visOf）が悪いほど画面の外側を暗く。… */
 let visvA=-1;function visvStep(){const el=document.getElementById('visv');if(!el||!el.style)return;const on=(state==='race'||state==='countdown'||state==='finished'||state==='paused');
   const a=on?Math.max(0,Math.min(1,VVG*(1-visOf())/.45)):0,q=Math.round(a*50)/50;if(q!==visvA){visvA=q;el.style.opacity=q;el.style.visibility=q>0?'visible':'hidden';}} /* T425⑥ 0 の時は重ねる絵からも外す */
@@ -8026,7 +8028,7 @@ function ckBuild(p){
   const dx=lhdOf(p.g.car||0)?.38:-.38,ez=G.z0-1.29+CKF,ey=Math.min(eyeY(c,ez)+CKU,pl(G.yt,ez)-.08);CK.ex=dx;CK.ey=ey;CK.ez=ez; // T432：座席ごと前へ CKF・目を上へ CKU（外がよく見える位置。…
   const z0=G.z0,zb=ez+.36,half=z=>glassX(c,z,Math.max(G.yb,bt(z))+.02); // ダッシュボードの後ろの縁、その高さのガラスの半幅
   // ダッシュボード：フロントガラスの付け根から運転席の前まで、車体の上面に沿って少し上に（前は低く、手前は少し高く）
-  const yR=Math.min(bt(zb)+.05,ey-.24),yF=Math.min(bt(z0)+.02,yR); // ダッシュボードの上面の高さ（手前・奥）
+  const yR=Math.min(bt(zb)+.05,ey-.24),yF=Math.min(bt(z0)+.02,yR);CK.dy=yF;CK.dz=z0; // ダッシュボードの上面の高さ（手前・奥）。T1011 奥の縁（ガラスの付け根）は雨のワイパーの付け根に使う
   {const w=2*half((z0+zb)/2)+.04;bar(V(0,yF-.03,z0+.04),V(0,yR-.03,zb),w,.06,dash);
    box(w,.04,.06,dk,0,yR-.005,zb+.02);} // 手前の縁
   const dTop=z=>{const t=(z0+.04-z)/(z0+.04-zb);return yF+(yR-yF)*Math.max(0,Math.min(1,t));};
