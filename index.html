@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.644.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.645.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8605,9 +8605,23 @@ function ckAvoid(dt){const tw=$('tower');if(!tw)return;let s=ckAvS;
     const h=tw.offsetHeight,t=tw.getBoundingClientRect().top;if(top<1e9&&h>0){const room=top-12-t;if(room<h)s=Math.max(.6,room/h);}}
   else{ckAvT=0;s=1;}
   if(Math.abs(s-ckAvS)>.01||s===1&&ckAvS!==1){ckAvS=s;tw.style.transformOrigin='top left';tw.style.transform=s<1?'scale('+s.toFixed(3)+')':'';}}
+/* T1028 視点が変わる時（後方・遠め・中継のカット・正面望遠・ドローンの行き来）は、前の画を覚えて CTRT 秒かけて新しい画へ移る。
+   位置は車から見た位置で、車のまわりを弧を描いて回り込む（CTRA＝1。0 ならまっすぐ）。加減速はなめらか（始めと終わりがゆっくり）。途中は向きを車の方へ寄せて、車を画面から外さない。
+   運転席・車載（中継の車載も）との行き来は、車の中の作りが一瞬で入れ替わるので今まで通り一瞬。動きを減らす設定（RM）でも一瞬。CTRT＝0 で切る（2026-11-24、ご本人が見比べで案2を選んだ） */
+let CTRT=1,CTRA=1,ctrK='',ctrM0=-1,ctrSB=0,ctrT=99,ctrHas=0,ctrToF=60,ctrFF=60,ctrLF=60,ctrCk=0;const ctrFO=new THREE.Vector3(),ctrFQ=new THREE.Quaternion(),ctrLP=new THREE.Vector3(),ctrLQ=new THREE.Quaternion(),ctrV=new THREE.Vector3(),ctrQA=new THREE.Quaternion(),ctrQC=new THREE.Quaternion(),ctrM4=new THREE.Matrix4(),ctrUp=new THREE.Vector3(0,1,0);
+function ctrPre(){if(ctrHas&&ctrT<CTRT)camera.fov=ctrToF;const m=camEff();if(CTRT>0&&!RM&&m!==ctrM0&&ctrHas&&!ctrCk)ctrSB=1;ctrM0=m;} /* 視点ごとの画角の追いかけは、混ぜる前の画角から続ける */
+function ctrPost(dt){const m=camEff(),ck=isCk(m)||(isTV(m)&&DIR.sub==='onboard'),k0=m+'|'+(isTV(m)?DIR.sub:''),c=camTarget();if(!c)return;const cx=c.x,cz=c.z;
+ if(CTRT>0&&!RM&&ctrHas&&k0!==ctrK){if(ck||ctrCk)ctrT=99;else{ctrFO.set(ctrLP.x-cx,ctrLP.y,ctrLP.z-cz);ctrFQ.copy(ctrLQ);ctrFF=ctrLF;ctrT=0;}}ctrK=k0;ctrCk=ck;ctrToF=camera.fov;
+ if(CTRT>0&&ctrT<CTRT&&!RM){ctrT+=dt;const u=Math.min(1,ctrT/CTRT),k=u*u*u*(u*(u*6-15)+10),P=camera.position,tx=P.x-cx,tz=P.z-cz,oy=ctrFO.y+(P.y-ctrFO.y)*k;let ox,oz;
+  if(CTRA){const a0=Math.atan2(ctrFO.x,ctrFO.z),a1=Math.atan2(tx,tz),r0=Math.hypot(ctrFO.x,ctrFO.z),r1=Math.hypot(tx,tz),a=a0+angDiff(a1,a0)*k,r=r0+(r1-r0)*k;ox=Math.sin(a)*r;oz=Math.cos(a)*r;}
+  else{ox=ctrFO.x+(tx-ctrFO.x)*k;oz=ctrFO.z+(tz-ctrFO.z)*k;}
+  P.set(cx+ox,oy,cz+oz);ctrQA.copy(ctrFQ).slerp(camera.quaternion,k);ctrM4.lookAt(P,ctrV.set(cx,.9,cz),ctrUp);ctrQC.setFromRotationMatrix(ctrM4);ctrQA.slerp(ctrQC,Math.sin(Math.PI*k)*.75);camera.quaternion.copy(ctrQA);
+  camera.fov=ctrFF+(ctrToF-ctrFF)*k;camera.updateProjectionMatrix();if(u<1)followSun(cx,cz);}
+ ctrLP.copy(camera.position);ctrLQ.copy(camera.quaternion);ctrLF=camera.fov;ctrHas=1;}
 function camEff(){const p=player();return FINCAM&&sess==='race'&&state==='finished'&&p&&p.finished&&!p.dnf&&!autoPlay&&(camMode<3||camMode===5)?3:camMode;}
 let finCamOn=false;
-function updateCamera(dt){camera.position.y-=fsOff;fsOff=0;updateCamera0(dt);const p=player();if(p&&(p.fsp||0)>.05&&state==='race'&&camMode<=1&&!RM){const u=Math.abs(p.u);fsPh+=u/.33*dt;fsOff=FSV*p.fsp*Math.min(1,u/25)*(camMode===1?1:.5)*Math.sin(fsPh);camera.position.y+=fsOff;}rfStep();rmStep(dt);}
+function updateCamera(dt){ctrPre();updateCameraX(dt);ctrPost(dt);}
+function updateCameraX(dt){camera.position.y-=fsOff;fsOff=0;updateCamera0(dt);const p=player();if(p&&(p.fsp||0)>.05&&state==='race'&&camMode<=1&&!RM){const u=Math.abs(p.u);fsPh+=u/.33*dt;fsOff=FSV*p.fsp*Math.min(1,u/25)*(camMode===1?1:.5)*Math.sin(fsPh);camera.position.y+=fsOff;}rfStep();rmStep(dt);}
 /* T264 振動。… */
 /* T264 ⑦ ペースノート（ラリーの同乗者の読み上げ）。… */
 let pnMode=2,pnAll=0,pnLd=1,PNA=2.8,PNI=40,PNS=320,PNLL=180,PNT=.85;const PNR=[40,65,95,135,190];const PNLK=[1.4,1,.75]; /* T610④ 読み上げの早さ：早め・ふつう・遅め（先読みの長さに掛ける） */
@@ -8704,7 +8718,7 @@ function updateCameraIn(dt){
   const cH=camH+(LK.r||0),tgt=tmpV.set(p.x-Math.sin(cH)*dist,1.1+((far?4.4:CMHS)+r*.2+camKick*.2-vm*(VSK.ch*vq+VSK.sh*camDr)-1.1)*dmT,p.z-Math.cos(cH)*dist); /* T445 後ろを見る間は車の前から */
   if(!(PAD&&p.isPlayer&&isPad())){const ci=nearest(tgt.x,tgt.z,p.idx,30),cl=lateralAt(ci,tgt.x,tgt.z),lim=WAL[ci]+.2+wx(ci,Math.sign(cl));if(Math.abs(cl)>lim){const d=Math.abs(cl)-lim,sg=Math.sign(cl);tgt.x-=NX[ci]*sg*d;tgt.z-=NZ[ci]*sg*d;}} // T178⑥ 後方視点のカメラを壁の内側に収める（スピン・壁際で外へ抜けない）
   {const sp=Math.hypot(p.vx,p.vz),lc=Math.max(0,sp-CLAGV)/9;if(lc>0){tgt.x+=p.vx/sp*lc;tgt.z+=p.vz/sp*lc;}} // T220 追いかけの遅れ（速さ÷9 m）は CLAGV（60m/s＝216km/h）を超えた分だけ打ち消す。以前はフォーミュラの最高速で約5m余分に離れた
-  if(LK.r>1e-3&&LK.r<Math.PI-1e-3)camPos.copy(tgt);else camPos.lerp(tgt,Math.min(1,dtS*9)); /* T633 回っている間は回る位置そのもの（追いかけの遅れで車の中を通らない） */camera.position.copy(camPos);
+  if(LK.r>1e-3&&LK.r<Math.PI-1e-3)camPos.copy(tgt);else if(ctrSB){camPos.copy(tgt);ctrSB=0;}else camPos.lerp(tgt,Math.min(1,dtS*9)); /* T1028 切り替えの直後は追いかけを飛ばす（移る動きは ctrPost が受け持つ） */ /* T633 回っている間は回る位置そのもの（追いかけの遅れで車の中を通らない） */camera.position.copy(camPos);
   if(camKick>0)camKick=Math.max(0,camKick-dt*1.8);
   if(shake>0){shake-=dt;if(!RM){camera.position.x+=(__VR()-.5)*shake;camera.position.y+=(__VR()-.5)*shake*.7;}}
   camera.lookAt(p.x+Math.sin(cH)*8,1.1,p.z+Math.cos(cH)*8);
