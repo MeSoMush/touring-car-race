@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.641.0</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.642.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -3066,7 +3066,7 @@ function hmBuild(){const o=CRS.hm;if(!o||!HMV)return;const cs=o.cs||4,fl=o.fl||2
  HM={x0,z0,cs,w,h,f};try{if(typeof THREE!=='undefined'&&THREE.DataTexture){const d=new Uint8Array(w*h*4);for(let k=0;k<w*h;k++){const v=Math.max(0,Math.min(65535,Math.round((f[k]+100)*100)));d[k*4]=v>>8;d[k*4+1]=v&255;d[k*4+3]=255;}
   HMT=new THREE.DataTexture(d,w,h,THREE.RGBAFormat);HMT.magFilter=HMT.minFilter=THREE.NearestFilter;HMT.generateMipmaps=false;HMT.flipY=false;HMT.needsUpdate=true;THREE.Material.prototype.onBeforeCompile=function(sh){sh.uniforms.terrHM={value:HMT};};}}catch(_){}}
 hmBuild();terrBank();terrGLSL();
-const SAUS=new Uint8Array(N);let SAUG=.55,SAUW0=.75,SAUW1=2.4,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
+const SAUS=new Uint8Array(N);let SAUG=.55,SAUW0=.75,SAUW1=1.9 /* T1024 2.4→1.9（縁石が 0.5m 狭くなった分） */,SAUR=100; /* T186 A5 ソーセージ縁石（a5 の塊で SAUS を埋める） */
 // T206 ピットレーン（線からの距離 m。負＝線の手前）：実際のサーキットのように最終コーナーの内側（PIT_A）で分かれ、PIT_B（80km/h の線）から先はピットウォールの内側。
 // ボックスは線をまたいで並び（PIT_BX から PBS m おき。…（T244・T289）
 const PLW=CRS.plw; /* ピットの入口・出口を長く：［分かれる所 PIT_A・入口の白線の始まり PLA・合流 PIT_D］（線からの m） */
@@ -3089,10 +3089,11 @@ const wx=(i,s)=>(s*PS>0?PWX[i]:0)+ROX[i*2+(s>0?1:0)];
 let PTL=60;const PTP=new Float32Array(N);for(let i=0;i<N;i++){if(!PITZ[i])continue;const r=relOfI(i),c=t=>Math.max(0,Math.min(1,t));PTP[i]=c((r-(PIT_A-5))/PTL)*c((PIT_D+10-r)/PTL);} /* T487 ピットの舗装の広がり（入口・出口を斜めに。… */ // s の側の壁の外へのずれ
 const NOCB=!!(CRS.trf&&CRS.trf.hw); /* ご本人の不具合報告「高速にゼブラゾーンは不自然」：首都高はコーナーの縁石（赤白）と外の砂利を作らず、路肩の舗装にする */
 /* T690 街（CRS.free）の歩道：道の端 WL から WAL までで、街の格子のどの通りの帯（中心から sw/2）にも入っていない所。… */
+let KBI=1,KBO=1.2;const kbw=(i,sg)=>sg===OUTS[i]?KBO:KBI; /* T1024 角の縁石の幅（道の端から m）。内側 KBI・外側 KBO（ご本人 2026-11-24「赤白の幅を 1.0〜1.2mに」。前は両側 1.5） */
 let SWK=1,SWI=1.2,SWR=.6,SWH=.12;const SWE=()=>CRS.free&&SWK?SWI:0;
 function swG(k){return CRS.free&&!HID[k.idx]&&k.surf==='grass';} /* T826 街の歩道の奥（コンクリート）＝区分は走路の外でも砂煙・砂利の音は出さない */
 function swAt(i,lat){if(!CRS.free||!CRS.grid||!SWK)return false;const a=Math.abs(lat);if(a<=WL[i]||a>WAL[i])return false;const G=CRS.grid,hw=G.sw/2,x=TX[i]+NX[i]*lat,z=TZ[i]+NZ[i]*lat;for(const g of G.x)if(Math.abs(x-g)<hw)return false;for(const g of G.z)if(Math.abs(z-g)<hw)return false;return true;}
-function surfaceAt(i,lat){if(CRS.free&&!HID[i])return swAt(i,lat)?(Math.abs(lat)<=WL[i]+SWI?'curb':'grass'):'road';if(ROXN&&ROX[i*2+(lat>0?1:0)]>.3&&Math.abs(lat)>WL[i]+(CORNER[i]?1.5:0))return'road'; /* T748 逃げ道は舗装（実際の市街地のランオフ） */ /* T826 歩道の端の帯（SWI m）は縁石、その奥は走路の外（ご本人 2026-11-11「歩道走ると大きく減速」） */ /* T510①・T690 の「街の中はぜんぶ舗装」は T826で変わった：街の路面は道・歩道の端の帯（縁石）・歩道の奥（走路の外と同じ減速。見た目はコンクリートなので砂煙・砂利の音は swG で止める） */const W=WL[i],WALL=WAL[i],a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=W+(WALL+1+PWX[i]-W)*PTP[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+1.5)return NOCB?'road':'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return NOCB?'road':'gravel';return'grass';}
+function surfaceAt(i,lat){if(CRS.free&&!HID[i])return swAt(i,lat)?(Math.abs(lat)<=WL[i]+SWI?'curb':'grass'):'road';if(ROXN&&ROX[i*2+(lat>0?1:0)]>.3&&Math.abs(lat)>WL[i]+(CORNER[i]?kbw(i,lat>0?1:-1):0))return'road'; /* T748 逃げ道は舗装（実際の市街地のランオフ） */ /* T826 歩道の端の帯（SWI m）は縁石、その奥は走路の外（ご本人 2026-11-11「歩道走ると大きく減速」） */ /* T510①・T690 の「街の中はぜんぶ舗装」は T826で変わった：街の路面は道・歩道の端の帯（縁石）・歩道の奥（走路の外と同じ減速。見た目はコンクリートなので砂煙・砂利の音は swG で止める） */const W=WL[i],WALL=WAL[i],a=Math.abs(lat);if(a<=W)return'road';if(PITZ[i]&&lat*PS>0&&a<=W+(WALL+1+PWX[i]-W)*PTP[i])return'road';if(SAUS[i]&&a>W+SAUW0&&a<=W+SAUW1&&Math.sign(lat)===-OUTS[i])return'saus';if(CORNER[i]&&a<=W+kbw(i,Math.sign(lat)))return NOCB?'road':'curb';if(CORNER[i]&&Math.sign(lat)===OUTS[i]&&a<=WALL+1)return NOCB?'road':'gravel';return'grass';}
 
 /* ================= Three.js ================= */
 const canvas=document.getElementById('gl');
@@ -3353,14 +3354,14 @@ function rtPark(){const q=CRS.rt,[cx,cz]=RTC,g=new THREE.CircleGeometry(q.pk,72)
  const bs=new THREE.Mesh(new THREE.PlaneGeometry(.8,.8),new THREE.MeshLambertMaterial({color:0x111111}));bs.rotation.x=-Math.PI/2;bs.position.set(cx,.05,cz);scene.add(bs);}
 // 縁石（コーナーだけ）
 {const t=canvasTex(64,128,(g,w,h)=>{g.fillStyle='#c8201a';g.fillRect(0,0,w,h/2);g.fillStyle='#f1f1ee';g.fillRect(0,h/2,w,h/2);g.fillStyle='rgba(0,0,0,.12)';for(let y=0;y<h;y+=8)g.fillRect(0,y,w,2);},true);
- const m=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.7}),3.2);const ky=(l,i)=>.05+(Math.abs(l)-WL[i])/1.5*.09;const grN=i=>CRS.grl&&WLB[i]<W-.5,kc=(sg,g)=>i=>CORNER[i]&&!CRS.free&&!NOCB&&!g===!grN(i)&&!(PITZ[i]&&sg===PS);ribbon(i=>WL[i],i=>WL[i]+1.5,ky,m,3.2,kc(1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,m,3.2,kc(-1));if(CRS.grl){const sm=new THREE.MeshStandardMaterial({color:0x6e6d69,roughness:.95});ribbon(i=>WL[i],i=>WL[i]+1.5,ky,sm,3.2,kc(1,1));ribbon(i=>-WL[i]-1.5,i=>-WL[i],ky,sm,3.2,kc(-1,1));} /* T485 峠の狭い区間は灰色の路肩 */  }
+ const m=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.7}),3.2);const ky=(l,i)=>.05+(Math.abs(l)-WL[i])/kbw(i,Math.sign(l))*.09;const grN=i=>CRS.grl&&WLB[i]<W-.5,kc=(sg,g)=>i=>CORNER[i]&&!CRS.free&&!NOCB&&!g===!grN(i)&&!(PITZ[i]&&sg===PS);ribbon(i=>WL[i],i=>WL[i]+kbw(i,1),ky,m,3.2,kc(1));ribbon(i=>-WL[i]-kbw(i,-1),i=>-WL[i],ky,m,3.2,kc(-1));if(CRS.grl){const sm=new THREE.MeshStandardMaterial({color:0x6e6d69,roughness:.95});ribbon(i=>WL[i],i=>WL[i]+kbw(i,1),ky,sm,3.2,kc(1,1));ribbon(i=>-WL[i]-kbw(i,-1),i=>-WL[i],ky,sm,3.2,kc(-1,1));} /* T485 峠の狭い区間は灰色の路肩 */  }
 /* T690 街の歩道：道の端から SWR m の低い坂（SWH m 上がる）と、WAL までの平らな板（交差点＝横の通りの帯では切る）。… */
 if(CRS.free&&CRS.grid&&SWK){const t=canvasTex(64,64,(g,w,h)=>{g.fillStyle='#8d8f92';g.fillRect(0,0,w,h);g.fillStyle='rgba(40,40,44,.35)';g.fillRect(0,0,w,2);g.fillRect(0,0,2,h);g.fillStyle='rgba(255,255,255,.06)';g.fillRect(4,4,w/2-6,h/2-6);g.fillRect(w/2+2,h/2+2,w/2-6,h/2-6);},true);
  const pm=new THREE.MeshStandardMaterial({map:t,roughness:.95}),em=new THREE.MeshStandardMaterial({color:0xa9aaa6,roughness:.9}),ok=sg=>i=>{const j=wrap(i+1);return swAt(i,sg*(WL[i]+.05))&&swAt(i,sg*(WAL[i]-.05))&&swAt(j,sg*(WL[j]+.05))&&swAt(j,sg*(WAL[j]-.05));},ry=(l,i)=>.045+Math.min(1,Math.max(0,(Math.abs(l)-WL[i])/SWR))*SWH;
  for(const sg of[1,-1]){ribbon(i=>sg*WL[i],i=>sg*(WL[i]+SWR),ry,em,3,ok(sg));ribbon(i=>sg*(WL[i]+SWR),i=>sg*WAL[i],.045+SWH,pm,2.4,ok(sg));}}
 // グラベル（コーナー外側）
 {const t=canvasTex(256,256,(g,w,h)=>{noiseFill(g,w,h,'#b7a37c',.22,14000,2.4);},true);
- ribbon(i=>OUTS[i]*(WL[i]+1.5),i=>OUTS[i]*(WAL[i]+1),.03,SNW.vm=rfMat(new THREE.MeshLambertMaterial({map:t}),10),10,i=>CORNER[i]&&!CRS.free&&!NOCB&&!(ROXN&&ROX[i*2+(OUTS[i]>0?1:0)]>.3)); /* せき止めない街は砂利なし */SNW.vt=t;}
+ ribbon(i=>OUTS[i]*(WL[i]+KBO),i=>OUTS[i]*(WAL[i]+1),.03,SNW.vm=rfMat(new THREE.MeshLambertMaterial({map:t}),10),10,i=>CORNER[i]&&!CRS.free&&!NOCB&&!(ROXN&&ROX[i*2+(OUTS[i]>0?1:0)]>.3)); /* せき止めない街は砂利なし */SNW.vt=t;}
 if(ROXN){const t=canvasTex(128,256,(g,w,h)=>{noiseFill(g,w,h,'#4d4f53',.08,6000,1.8);g.fillStyle='rgba(235,235,230,.6)';for(let y=0;y<h;y+=64){g.beginPath();g.moveTo(8,y);g.lineTo(w/2,y+40);g.lineTo(w-8,y);g.lineTo(w-8,y+10);g.lineTo(w/2,y+50);g.lineTo(8,y+10);g.fill();}},true),m=rfMat(new THREE.MeshStandardMaterial({map:t,roughness:.95}),9);for(const sg of[1,-1]){const q=i=>ROX[i*2+(sg>0?1:0)];ribbon(i=>sg*(WL[i]+(CORNER[i]?1.5:0)),i=>sg*(WAL[i]+.55+q(i)),.035,m,9,i=>q(i)>.3&&q(wrap(i+1))>.3);}} /* T748 逃げ道の舗装（白い山形の印） */
 // ブレーキングの目安看板（コーナー手前の150・100・50m）
 {const nums=[150,100,50];const mats=nums.map(n=>new THREE.MeshLambertMaterial({map:canvasTex(128,96,(g,w,h)=>{g.fillStyle='#f4f4f2';g.fillRect(0,0,w,h);g.strokeStyle='#16181c';g.lineWidth=6;g.strokeRect(5,5,w-10,h-10);g.fillStyle='#16181c';g.font='italic 800 60px "Saira Condensed","Arial Narrow",sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(String(n),w/2,h/2+3);}),side:THREE.DoubleSide}));
@@ -3677,8 +3678,8 @@ const CORN=[];
  for(const C of CORN){let mr=1e9;for(let j=0;j<40;j++)mr=Math.min(mr,RAD[wrap(C.s+j)]);let st=0;while(st<70&&!CORNER[wrap(C.s-st-1)])st++;C.bd=mr<=160&&st*SP>=165;C.r=mr;
   if(!CRS.free&&RAD[C.apex]<SAUR)for(let j=-8;j<=8;j++)SAUS[wrap(C.apex+j)]=1;}
  const t=canvasTex(64,64,(g,w,h)=>{g.fillStyle='#f2c200';g.fillRect(0,0,w,h);g.fillStyle='#16171a';for(let x=-h;x<w;x+=32){g.beginPath();g.moveTo(x,0);g.lineTo(x+16,0);g.lineTo(x+16+h,h);g.lineTo(x+h,h);g.fill();}},true);
- const m=new THREE.MeshStandardMaterial({map:t,roughness:.6});const hy=(l,i)=>{const a=Math.abs(l),W=WL[i];return a<=W+1.6||a>=W+2.3?.05:.2;};
- ribbon(i=>-OUTS[i]*(WL[i]+1.55),i=>-OUTS[i]*(WL[i]+1.95),hy,m,2.4,i=>SAUS[i]);ribbon(i=>-OUTS[i]*(WL[i]+1.95),i=>-OUTS[i]*(WL[i]+2.35),hy,m,2.4,i=>SAUS[i]);}
+ const m=new THREE.MeshStandardMaterial({map:t,roughness:.6});const hy=(l,i)=>{const a=Math.abs(l),W=WL[i];return a<=W+KBI+.1||a>=W+KBI+.8?.05:.2;};
+ ribbon(i=>-OUTS[i]*(WL[i]+KBI+.05),i=>-OUTS[i]*(WL[i]+KBI+.45),hy,m,2.4,i=>SAUS[i]);ribbon(i=>-OUTS[i]*(WL[i]+KBI+.45),i=>-OUTS[i]*(WL[i]+KBI+.85),hy,m,2.4,i=>SAUS[i]);}
 
 // 路面のラバー（T51）：走行ラインを車が通るたびにゴムが乗り、グリップが少し上がって路面が黒ずむ。雨で流れる
 const RUB=new Float32Array(N),RUB_ADD=.028,RUBG=.035;let rubT=0;
@@ -6281,7 +6282,7 @@ function spinCount(k){const v=Math.hypot(k.u,k.vl);if(v<2&&!k.spnA)return;const 
 // 4輪すべてが白線（コーナーは縁石の外端）より外で0.3秒以上走ったら違反
 function trackLimits(k,dt){if(k.dnf||k.finished||state!=='race'||holdT>0||k.pit>0){k.tlT=0;return;}
   spinCount(k);
-  let out=Math.abs(k.lat)>=WL[k.idx]-2.6;if(out)for(const c of kCorners(k)){ /* 真ん中寄りなら四隅を調べない（軽量化 ） */const i=nearest(c[0],c[1],k.idx,6);const lim=CORNER[i]?WL[i]+1.5:WL[i]+.3;if(Math.abs(lateralAt(i,c[0],c[1]))<=lim){out=false;break;}}
+  let out=Math.abs(k.lat)>=WL[k.idx]-2.6;if(out)for(const c of kCorners(k)){ /* 真ん中寄りなら四隅を調べない（軽量化 ） */const i=nearest(c[0],c[1],k.idx,6);const la=lateralAt(i,c[0],c[1]),lim=CORNER[i]?WL[i]+kbw(i,Math.sign(la)):WL[i]+.3;if(Math.abs(la)<=lim){out=false;break;}}
   let plx=false;if(!out&&sess!=='drag'){const pl=plLat(relLine(k));if(pl!=null&&k.lat*PS>pl+.3&&!(raceTime-(k.pmT??-99)<4&&raceTime>=(k.pmT??-99))){out=true;plx=true;}} // T320 ピット入口の白線をまたいだ
   if(out&&k.u>12){k.tlT=(k.tlT||0)+dt;if(k.tlT>.3&&!k.tlHit){k.tlHit=true;k.tl=(k.tl||0)+1;if(!tlOn)return;
     if(solo()){if(isSS())return;if(isCh()){if(k.isPlayer)chFail('コース外（4輪とも白線の外）');return;}if(k.isPlayer&&k.lap>=1&&!k.lapBad){k.lapBad=true;k.lbW=plx?'ピット入口の白線':'コース外走行（4輪とも白線の外）';telop('TRACK LIMITS',(plx?'ピット入口の白線をまたいだ':'コース外走行')+'　このラップは無効','yellow');sfx('warn');if(fdRun&&LAPS<FDMX&&!autoPlay){toast('この周は数えません　次の周から数え直します');toastTimer=3.5;} /* T680③ */}return;}
@@ -7885,9 +7886,9 @@ function vgY(i,l){const a=Math.abs(l),sg=l>0?1:-1,w=WL[i];if(a<=w)return VG0;
   if(CRS.free&&!HID[i])return swAt(i,l)?.045+Math.min(1,(a-w)/SWR)*SWH:VG0;
   let y=-9;const rx=ROXN?ROX[i*2+(sg>0?1:0)]:0;
   if(PITZ[i]&&sg===PS&&a>=W+.02&&a<=W+.02+(WALL+.88+PWX[i]-W)*PTP[i])y=.043;
-  if(CORNER[i]&&!NOCB){if(a<=w+1.5&&!(PITZ[i]&&sg===PS))y=Math.max(y,.05+(a-w)/1.5*.09);else if(sg===OUTS[i]&&a>w+1.5&&a<=WAL[i]+1&&!(rx>.3))y=Math.max(y,.03);}
-  if(SAUS[i]&&sg===-OUTS[i]&&a>=w+1.55&&a<=w+2.35)y=Math.max(y,.05+.15*(1-Math.abs(a-w-1.95)/.4));
-  if(rx>.3&&a>=w+(CORNER[i]?1.5:0)&&a<=WAL[i]+.55+rx)y=Math.max(y,.035);
+  if(CORNER[i]&&!NOCB){const cw=kbw(i,sg);if(a<=w+cw&&!(PITZ[i]&&sg===PS))y=Math.max(y,.05+(a-w)/cw*.09);else if(sg===OUTS[i]&&a>w+cw&&a<=WAL[i]+1&&!(rx>.3))y=Math.max(y,.03);} /* T1024 */
+  if(SAUS[i]&&sg===-OUTS[i]&&a>=w+KBI+.05&&a<=w+KBI+.85)y=Math.max(y,.05+.15*(1-Math.abs(a-w-KBI-.45)/.4)); /* T1024 縁石の幅に合わせて寄せる */
+  if(rx>.3&&a>=w+(CORNER[i]?kbw(i,sg):0)&&a<=WAL[i]+.55+rx)y=Math.max(y,.035);
   if(y>-9)return y;if(CRS.elev)return VG0;return -.04-.12*Math.max(0,Math.min(1,(w+5.5-a)/7));}
 function vgBlob(g){if(g.vgB===undefined){g.vgB=null;for(const o of g.root.children)if(o.isMesh&&o.geometry&&o.geometry.type==='PlaneGeometry'){g.vgB=o;o.position.y=.01;}}} /* 影の板（SHADOWS なし）：前は車の 5cm 上＝路面の 1cm 上。車が路面まで上がるので車の 1cm 上へ（.05−VG0。読み込みの途中でも呼ぶので数字で） */
 /* 車体の下の面の点（車体の中の座標。25cm の升ごとにいちばん低い点。タイヤの奥の黒い板はタイヤに隠れるので数えない）。車の形ごとに1回だけ作る */
