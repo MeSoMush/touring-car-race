@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.653.3</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.653.4</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -7222,7 +7222,7 @@ function rollCtl(k,dt){k.fwdT=Math.max(k.fwdT||0,.5);const sA=k.aiA,sB=k.aiB,a=a
 /* ===== T157・T233 セーフティカーと FCY（実際のレースの手順にならう） scMode：0＝なし／1＝短め（大クラッシュはまず FCY。…（T237） */
 let SCPW=20,scMode=1,SCV0=36,SCVK=.65,SCG=16,SCL=26,SCMIN=25,SCDK=.65,SCDV=42,SCWM=80,SCW0=260,SCW1=450,SCCK=.74,SCQT=45,SCQG=45; /* T868 SCCK＝隊列に追いつくまでの速さ（走行ラインの速さの割合）。現実のセーフティカーのデルタタイム（決められた最小の時間。ふつうの1周より3〜4割遅い）に合わせて .85→.74 */
 let FCYV=22.2,FCYW=3,FCYMIN=10,FCYSC=30,FCYD=6;
-let SCPS=1,SCPT=3,SCPZ=20,SCPD=1.5,SCAGC=3.6; /* T1056 SCPS 追い越してよい車は直線で抜き始める（SC の先 SC.u×SCPT＋SCPZ m に角が無い・SC の狙いが今より SCPD m/s 以上低くない） */let SCAV=1,SCAD=45,SCAW=4,SCAG=2.6,SCAF=11,SCAH=1,SCAHD=20,SCAHG=9,SCAB=12,SCAQ=8,SCAP=11,SCAY=1,SCAYD=60,SCAYE=1.2,SCAYT=2.5; /* SC を押す不具合（β0.653.1 の報告）：SCAV 追い越してよい車は SC の横 SCAW m へ移って抜く（SCAD m 手前から・横 SCAG m 未満の間は後ろ SCAF m で待つ）・SCAH SC もすぐ前 SCAHD m の車に追突しない（SCAHG m 空ける） */let SCWV=1,SCWT=8,SCWK=.74,SCWX=90,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
+let SCPS=1,SCPT=3,SCPZ=20,SCPD=1.5,SCAGC=3.6; /* T1056 SCPS 追い越してよい車は直線で抜き始める（SC の先 SC.u×SCPT＋SCPZ m に角が無い・SC の狙いが今より SCPD m/s 以上低くない） */let SCAV=1,SCAD=45,SCAW=4,SCAG=2.6,SCAF=11,SCAH=1,SCAHD=20,SCAHG=9,SCAB=12,SCAQ=8,SCAP=11,SCAY=1,SCAYD=60,SCAYE=1.2,SCAYT=2.5; /* SC を押す不具合（β0.653.1 の報告）：SCAV 追い越してよい車は SC の横 SCAW m へ移って抜く（SCAD m 手前から・横 SCAG m 未満の間は後ろ SCAF m で待つ）・SCAH SC もすぐ前 SCAHD m の車に追突しない（SCAHG m 空ける） */let SCWV=1,SCWT=8,SCWK=.74,SCWX=400,SCWP=1 /* T1058 SCWP ピットレーンの中でも追い越してよい印を残す・SCWX 抜き切るまで待つ上限の秒（前は 90） */,SCWS=.85,SCPK=.45,SCPN=3,SCFN=1; // T237
 const SC={on:false,ph:1,d:0,t:0,t1:0,u:0,lp:0,inLap:false,out:false,ret:false,wv:0,fin:false,g:null,x:0,z:0,h:0,ahead:null,n:0,rf:0,rfD:0,rfT:0,rfn:0,prk:false,l:0}; /* T934 prk＝待機場所に止まっている・l＝横の位置 */
 const FCY={on:false,ph:0,t:0,n:0};
 const cau=()=>SC.on||FCY.on,SCN=['なし','短め','実際どおり'];
@@ -7297,7 +7297,7 @@ function scStep(dt){fcyStep(dt);
     SC._vt=vt; /* T1056 SC の狙いの速さ（追い越してよい車が SC の減速を見る） */const sp0=((SC.d%L)+L)%L;SC.u+=Math.max(-6*dt,Math.min(5*dt,vt-SC.u));SC.d+=SC.u*dt;scPos();if(((SC.d%L)+L)%L<sp0)SC.lp++;}
   // それぞれの車の目標の速さ。出動を待つ間は黄旗のペース（前の車に近ければ合わせる）。コースに出たら、コース上ですぐ前の車（周回は関係なく、物理的に前）について行く
   const sp=((SC.d%L)+L)%L;let mx=0;
-  for(const k of karts){k.scV=null;if(k.dnf||k.finished||scInPL(k)){k.wav=0;continue;}const me=trkPos(k);let best=1e9,au=0,isSC=false;
+  for(const k of karts){k.scV=null;if(k.dnf||k.finished||scInPL(k)){if(!(SCWP>0&&k.wav===1&&scInPL(k)&&!k.dnf&&!k.finished))k.wav=0;continue;} /* T1058 ピットレーンの中でも追い越してよい印を残す（前は消えて、同じ SC では二度と許可されず周回遅れのまま残った） */const me=trkPos(k);let best=1e9,au=0,isSC=false;
     if(SC.ph===1){best=(sp-me+L)%L;au=SC.u;isSC=true;}
     if(k.wav===1){if(SC.ph!==1||best>L/2){k.wav=2;}else{k.scV=Math.min(70,VP[k.idx]*SCWK,SC.u+SCWD);continue;}} /* T841 隊列の横は安全な速さで */ // T237 周回遅れ：前の車とセーフティカーを抜く（抜いたら隊列の後ろへ）
     for(const o of run){if(o===k)continue;const g=(trkPos(o)-me+L)%L;if(g>0&&g<best){best=g;au=Math.max(0,o.u);isSC=false;}}
