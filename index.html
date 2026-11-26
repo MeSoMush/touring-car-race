@@ -1209,7 +1209,7 @@ body:not(.touch) .btn[data-key]::after,body.inPad:not(.touch) .btn[data-pad]::af
 @media (max-height:520px){#flSbm{gap:4px}#flSbm label{width:auto}#flSbm .flI{white-space:nowrap;font-size:11px;letter-spacing:0;padding:4px 2px}} /* ⑤ スマホ横の SANDBOX の種目を1行に（TIME ATTACK・RALLY SS だけ2行に折れて段違いだった） */
 @media (min-height:521px){body:not(.touch) #resultScreen .panel>.row .btn{padding:18px 6px 6px}}
 /* T921 結果・選手権の画面の重なり・切れ（総点検 ）。色・字の大きさ・部品は今のまま、箱の取り合いだけ直す */
-@media (max-height:520px){#resDk b{display:block;float:right;margin-left:10px}} /* 前は T900 で見出しごと消していた */
+@media (max-height:520px){#resDk b{display:block;margin:0 0 1px}} /* 前は T900 で見出しごと消していた。T813③ 右へ寄せる float をやめて左に（スマホ横で見出しだけ右端へ離れていた） */
 @media (min-height:521px){#resultScreen .panel{padding-bottom:0}#resultScreen .panel>.row{position:sticky;bottom:0;z-index:2;margin-top:auto;padding:8px 0 clamp(10px,2vw,18px);background:rgb(15,17,21);box-shadow:0 -10px 12px -4px rgba(15,17,21,.95)}} /* T642① PC も結果のボタンの段を画面の下に止める（流す課題の結果で2段目が画面の下で切れ、送ると見出しが消えた） */
 @media (max-height:520px){#resultScreen #resCup tr.hd td{top:-12px;box-shadow:0 -12px 0 #121419,0 1px 0 rgba(255,255,255,.14)}} /* T642⑤ スマホ横は外の箱（上の余白）ごと送るので、見出しを余白の分だけ上に止める。下の #resCup tr.hd td より強く */
 @media (max-height:520px){#resultScreen .panel{overflow-y:auto;overscroll-behavior:contain;padding-bottom:0}#resultScreen .panel>.row{position:sticky;bottom:0;z-index:2;margin:auto -14px 0;padding:0 14px 10px;background:#0f1115}}
@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.654.3</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.654.4</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -10301,7 +10301,7 @@ const RDK={ks:null,t:0,rel:null,en:{},oa:{},ot:{},ip:{},iv:{},ps:[],er:[],gw:{},
 /* T421① 2台の接触の回数と、後ろから当てた側（多い方。同じ数なら出さない） */
 function ctTx(x,y,xn){const C=RDK.ct.filter(e=>e.a===x&&e.b===y||e.a===y&&e.b===x);if(!C.length)return '';const hx=C.filter(e=>e.h===x).length,hy=C.filter(e=>e.h===y).length;return '・接触 '+C.length+'回'+(hx>hy?'（後ろから当てたのは '+(xn||x.name)+' '+hx+'回）':hy>hx?'（後ろから当てたのは '+y.name+' '+hy+'回）':'');}
 function rdkStep(){if(sess!=='race'||karts.length<2||state!=='race'&&state!=='finished')return;const n=karts.length;
- if(RDK.ks!==karts||raceTime<RDK.t-.05){if(RDK.ks!==karts){RDK.ps=[];RDK.er=[];RDK.ct=[];RDK.en={};RDK.oa={};RDK.ot={};RDK.ip={};RDK.iv={};RDK.gw={};RDK.wg=[];}else{RDK.ps=RDK.ps.filter(e=>e.t<=raceTime);RDK.er=RDK.er.filter(e=>e.t<=raceTime);RDK.wg=RDK.wg.filter(e=>e.t<=raceTime);RDK.ct=RDK.ct.filter(e=>e.t<=raceTime);for(const k of karts){RDK.en[k.id]=k.errN||0;RDK.oa[k.id]=!!k.otA;}} /* T917 巻き戻した先の数を基準に（ミスの数え損ね・OTS の二重を防ぐ） */ /* 巻き戻しは先の分を捨てる */RDK.ks=karts;RDK.rel=new Int8Array(n*n);RDK.nx=0;}
+ if(RDK.ks!==karts||raceTime<RDK.t-.05){if(RDK.ks!==karts){RDK.ps=[];RDK.er=[];RDK.ct=[];RDK.en={};RDK.oa={};RDK.ot={};RDK.ip={};RDK.iv={};RDK.gw={};RDK.wg=[];}else{RDK.ps=RDK.ps.filter(e=>e.t<=raceTime);RDK.er=RDK.er.filter(e=>e.t<=raceTime);RDK.wg=RDK.wg.filter(e=>e.t<=raceTime);RDK.ct=RDK.ct.filter(e=>e.t<=raceTime);for(const k of karts){RDK.en[k.id]=k.errN||0;RDK.oa[k.id]=!!k.otA;}} /* T917 巻き戻した先の数を基準に（ミスの数え損ね・OTS の二重を防ぐ） */ /* 巻き戻しは先の分を捨てる */RDK.ks=karts;RDK.rel=new Int8Array(n*n);RDK.nx=0;ERS.t=-99;}
  RDK.t=raceTime;if(raceTime<RDK.nx)return;RDK.nx=raceTime+.1; /* T797⑤ 0.1秒ごと（抜きは前後 2m の差で見るので足りる） */const p=player(),ro=ROLL.on&&!ROLL.green,pr=karts.map(k=>k.finished||k.dnf||k.gone||k.pit>0||ro?null:progress(k)),lp=k=>Math.max(1,Math.min(LAPS,k.lap));
  {let rk=null;for(const k of karts){if(RDK.gw[k.id]&&!k.gw&&k.gwW!==3&&RDK.wg.length<200){rk=rk||ranking();RDK.wg.push({t:raceTime,k,pos:rk.indexOf(k),d:raceTime-(k.gwA??raceTime)});}RDK.gw[k.id]=!!k.gw;}} /* T861(c) 待つのをやめて仕掛けた時の順位 */
  for(const k of karts){const e=k.errN||0;if(e>(RDK.en[k.id]||0))RDK.er.push({t:raceTime,lap:lp(k),k,c:CID[wrap(k.idx+Math.round(55/SP))],w:k.erW||0,h:k.erH||1});RDK.en[k.id]=e;
@@ -10309,8 +10309,15 @@ function rdkStep(){if(sess!=='race'||karts.length<2||state!=='race'&&state!=='fi
   if(p&&k!==p&&k.ien&&k.ien[p.id]){const v=ienNow(k,p.id);if(v>(RDK.ip[k.id]||0))RDK.ip[k.id]=v;}
   if(k!==p&&k.ien)for(const id in k.ien){if(p&&+id===p.id)continue;const v=ienNow(k,+id);if(v>IEH){const q=Math.min(k.id,+id)+'_'+Math.max(k.id,+id);if(v>(RDK.iv[q]||0))RDK.iv[q]=v;}}}
  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const x=i*n+j;if(pr[i]==null||pr[j]==null){RDK.rel[x]=0;continue;}const g=pr[i]-pr[j];if(Math.abs(g)>40){RDK.rel[x]=0;continue;}if(Math.abs(g)<=2)continue;
-  const sg=g>0?1:-1,q=RDK.rel[x];RDK.rel[x]=sg;if(q&&q!==sg&&RDK.ps.length<4000){const w=sg>0?karts[i]:karts[j];RDK.ps.push({t:raceTime,lap:lp(w),w,l:sg>0?karts[j]:karts[i]});}}}
-const ERW=['','疲れが出て','後ろから迫られて','仕掛けている最中に','抜かれた直後に取り返そうとして','終盤、集中が切れて','タイヤが落ちてきているのに同じペースで'],erTx=e=>(ERW[e.w]||'')+(e.h===2?'ブレーキが早すぎた':'ブレーキが遅れた'); /* T813① ミスの理由の言葉 */
+  const sg=g>0?1:-1,q=RDK.rel[x];RDK.rel[x]=sg;if(q&&q!==sg&&RDK.ps.length<4000){const w=sg>0?karts[i]:karts[j];RDK.ps.push({t:raceTime,lap:lp(w),w,l:sg>0?karts[j]:karts[i]});rdkSay(RDK.ps[RDK.ps.length-1]);}}} /* T1049 */
+const ERW=['','疲れが出て','後ろから迫られて','仕掛けている最中に','抜かれた直後に取り返そうとして','終盤、集中が切れて','タイヤがたれてきて'],erTx=e=>e.w===6?(e.h===2?'タイヤのたれを気にしてブレーキが早すぎた':'タイヤがたれているのにペースを落とさず突っ込んだ'):(ERW[e.w]||'')+(e.h===2?'ブレーキが早すぎた':'ブレーキが遅れた'); /* T813① ミスの理由の言葉。T813③ 6番（タイヤのたれ）は文ごと別に */
+/* T1049 順位が入れ替わったミスを、走っている間に一言。抜かれた側の8秒以内のミス（RDK.er）を探し、①自分が抜いた→無線 ②自分の前後2台以内・250m 以内の CPU どうし→無線 ③トップ交代→テロップ。
+   無線は今の無線の設定（radLv・重さ1＝「大事な物だけ」「なし」では出ない）に従い、待っている無線がある時は出さない。同じ種類は key で 20〜30秒・トップ交代は 40秒あける。乱数は引かない（走りは変わらない） */
+const ERS={t:-99};function rdkSay(x){if(state!=='race'||ROLL.on&&!ROLL.green||!x)return;const p=player(),w=x.w,l=x.l;if(p&&l===p)return;const e=RDK.er.find(q=>q.k===l&&!q.sd&&q.t<=x.t&&q.t>x.t-8);if(!e)return;const tx=erTx(e);
+ if(p&&w===p){if(radioQ.length)return;e.sd=1;radio(l.name+'、'+tx+'。その隙に前へ出たぞ！','erp',20);return;}
+ const rk=ranking(),iw=rk.indexOf(w),il=rk.indexOf(l);
+ if(p&&!p.finished&&!p.dnf&&p.pit===0){const ip=rk.indexOf(p);if(Math.max(Math.abs(iw-ip),Math.abs(il-ip))<=2&&Math.abs(progress(w)-progress(p))<250){if(radioQ.length)return;e.sd=1;radio((iw<ip?'前で ':'後ろで ')+l.name+'が'+tx+'。'+w.name+'が前へ','ern',30);return;}}
+ if(iw===0&&raceTime-ERS.t>=40&&!teleQ.length&&!radioQ.length){e.sd=1;ERS.t=raceTime;telop('トップ交代',l.name+'が'+tx+' → '+w.name+'が先頭へ');}}
 function rdkShow(){const el=$('resDk');el.hidden=true;el.innerHTML='';if(sess!=='race'||karts.length<2||RDK.ks!==karts)return;
  const p=player(),nm=k=>k===p?'あなた':k.name,L=[],fo=k=>{const i=finishOrder.indexOf(k);return i<0?99:i;},cnt=(a,f)=>{const m=new Map();for(const e of a){const k=f(e);m.set(k,(m.get(k)||0)+1);}let b=null,c=0;m.forEach((v,k)=>{if(v>c){b=k;c=v;}});return [b,c,m];};
  {let b=null,bs=-1;for(const e of RDK.er){const x=RDK.ps.find(q=>q.l===e.k&&q.t>=e.t&&q.t<e.t+8);if(!x)continue;const sc=(x.w===p||e.k===p?1e4:0)+(99-Math.min(fo(e.k),fo(x.w)))*10+e.t/1e5;if(sc>bs){bs=sc;b=[e,x];}}
