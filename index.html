@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.653.4</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.654.0</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -6455,7 +6455,7 @@ let ALR=42,ALD=95,ALH=.35,ALPO=.25,ALPI=.15,PSOT=1.0,ATBK=.6,ATBM=.35,TKT=.18;
 // T120① CXD＝この m 以内に逆向きのコーナーが続く角では、並走の仕掛け（sbStep）が外から並んで次のコーナーでインを取る側も選ぶ（T857 で外回りの線を選びやすくする CXO・出口で並ぶ XLO・クロスライン XCK・周回遅れを使う LBK は、切っても抜き合い・接触・壁が変わらなかったので消した）
 let CXD=200;
 /* T772・T761 並走：角の手前で前の車の横へ出て並びかけ、並んだら2台で道幅を分け合い、相手を離すまで線へ戻らない。sbStep は渡された値だけで決める（T773 へ移す形）。同じ側に居続けるので逆向きの角で内外が入れ替わる */
-let L1P=0.4,L1G=1.3,RTP=1,RTD=25,RTM=1,RTV=25,RTQ=1.5,RTS=3; /* T1021 RTP ふくらんだ前の車の戻りを見込む・RTD 見込む車間 m・RTM 線から外れているとみなす m */ /* T534 1周目の決勝だけ：L1P 並走の仕掛けの確率・L1G 車間の倍率（1＝控えない） */
+let RBL=1,RBN=10,RBD=20,RBQ=1,RBT=2; /* T1042 RBL 角の中は道の上の横の差を届くまで進めて前の車を見る（0 で前のまま）・RBD 見る車間の上限 m */let L1P=0.4,L1G=1.3,RTP=1,RTD=25,RTM=1,RTV=25,RTQ=1.5,RTS=3; /* T1021 RTP ふくらんだ前の車の戻りを見込む・RTD 見込む車間 m・RTM 線から外れているとみなす m */ /* T534 1周目の決勝だけ：L1P 並走の仕掛けの確率・L1G 車間の倍率（1＝控えない） */
 function l1f(k,v){return sess==='race'&&k.lap<2?v:1;}
 let HSW=3.2,HSV=5.5,HSF=20,HSE=9,HSX=5,HSZ=4,HST=.7,HSZ0=1.5,HSH=1,HSGP=3,HSM=1.3,HSP=.7,HSG=4,HSS=3,HSN=6,HSY=.5,HSRT=1.2,HSOT=.8,HSLB=8,HSTI=null,HSIC=null,HSCI=null,HSIN=null,HSXO=null,HSRA=null;const HSRS=[];
 function sbStep(s,me,rs,n,rd,rnd,pr,yl){
@@ -6695,6 +6695,7 @@ if(PARK.length||polPk)lane=pkClamp(k.idx,t,lane); /* T515① 路駐の方へは�
       if(!sbO&&fwd>(u<LOWV&&Math.abs(o.u)<LOWV?0:-3)&&!(k.wav&&!o.wav)&&!(lpA&&fwd<1)&&(Math.abs(nt-o.lat)<2.3||k.yT>0&&k.yTo===o.id)){follow=true;if(FPY>0&&!(u<LOWV&&raceTime-raceT0>LWS))folB=true;else fV=Math.min(fV,(o.vx*fx+o.vz*fz)+FPY);}} /* 遅い時は前の車が先に行く（お互いに待って止まらない） */ /* T475 スタートから LWS 秒の後は、遅い時も前の車の速さ＋FPY までは踏む（並んだまま2台とも 0km/h まで止まっていた） */
     let sdm=Math.abs(side);if(SDP>0&&sdm>=2.3&&fwd>0){const cl=k.u-(o.vx*fx+o.vz*fz);if(cl>SDC){const ch=Math.cos(k.h),sh=Math.sin(k.h),t=Math.min(SDT,fwd/cl),sp=side+((o.vx-k.vx)*ch-(o.vz-k.vz)*sh)*t;sdm=sp*side<=0?0:Math.min(sdm,Math.abs(sp));}} // T256 横から入ってくる遅い車を先読み（横の位置を届くまで進めて、真ん中をまたぐなら 0）
     let rtpO=0;if(RTP>0&&k.u<RTV&&sdm>=2.3&&fwd>0&&k.u-(o.vx*fx+o.vz*fz)>RTQ&&fwd<RTD&&CORNER[k.idx]&&Math.abs((o.laneT??o.lat)-o.lat)>RTM){const a1=o.lat,a2=o.laneT??o.lat,lo=Math.min(a1,a2),hi=Math.max(a1,a2),kl=k.lat||0;const d=kl>=lo&&kl<=hi?0:Math.min(Math.abs(kl-a1),Math.abs(kl-a2));if(d<2.3)rtpO=1;sdm=Math.min(sdm,d);} /* T1021 角の中で狙いの線から外れた前の車（ふくらんだ車）は、線へ戻ってくると見込む（1周目の団子で、外へふくらんだ前の車の内に速く並びかけ、頂点で戻った所に当たっていた） */
+    if(RBL>0&&aiPav(k)&&sdm>=2.3&&fwd>0&&fwd<RBD&&!o.dnf&&!o.pit&&(CORNER[k.idx]||CORNER[wrap(k.idx+RBN)])){const cl=k.u-(o.vx*fx+o.vz*fz);if(cl>RBQ){const t=Math.min(RBT,Math.max(0,fwd-4.5)/cl+.3),ln=(o.lat||0)-(k.lat||0),lp=ln+((o.vx*NX[o.idx]+o.vz*NZ[o.idx])-(k.vx*NX[k.idx]+k.vz*NZ[k.idx]))*t,dm=lp*ln<=0?0:Math.min(Math.abs(ln),Math.abs(lp));if(dm<2.3)sdm=dm;}} /* T1042 舗装の角の中（と RBN 点先が角）は、道の上の横の差を届くまで（上限 RBT 秒）進めた値でも前の車かを見る（別の線から寄ってくる強く減速中の前の車を読み飛ばして後ろから当たっていた）。砂利は強い接触が減らず壁だけ増えたので舗装だけ */
     if(fwd<=0||sdm>=2.3&&!(PUBR&&(Math.abs(side)<2.3||Math.abs(k.laneT-o.lat)<2.3)))continue; /* T519 */ /* 入ろうとしている車線の車も */
     const close=k.u-(o.vx*fx+o.vz*fz)*(osl?SPH:1),cB=close+(OBA>0&&!osl?Math.min(OBX,Math.max(0,-(o.ax||0)))*OBA:0); // T73横を向いた・スピン中・後ろ向きの前の車は、すぐ止まる前提で見積もる（調査：大クラッシュの最初の衝突の多くが、横を向いた車や速度差の大きい車への追突）
     if(k.clw&&o.id===k.clO&&fwd>0&&fwd<CLG&&Math.abs(side)<2.6){follow=true;fV=Math.min(fV,(o.vx*fx+o.vz*fz)+(fwd-CLG)*FGK);}
