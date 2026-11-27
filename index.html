@@ -1362,7 +1362,7 @@ body.optOn #sysBar,body.optOn #sysVolPop,body.optOn #sysAsk{display:none!importa
 })(typeof window!=='undefined'?window:globalThis);
 </script>
 <section class="tscreen st0" id="titleScreen">
-  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.657.2</span></div>
+  <div class="tsBar tsTop"><span id="tsCourse">HIGASHI RACEWAY</span><span id="tsEnv"></span><span class="sp"></span><span id="drvK"></span><span id="padInfo" hidden></span><button class="tsB" id="tsMute" type="button" aria-pressed="true">音 ON</button><button class="tsB" id="tsFs" type="button">全画面</button><span id="tsVer">β0.657.3</span></div>
   <div class="tsMain">
     <div class="tsLogo"><small>（仮）</small><h1><i>Touring</i><i class="r">Car Race</i></h1><p>ツーリングカーレース</p></div>
     <div class="tsPress">PRESS ANY KEY<span>キーを押す ／ 画面をタップ</span></div><script>if(("ontouchstart" in window)||matchMedia("(pointer:coarse)").matches)document.querySelector(".tsPress").innerHTML="TAP TO START<span>画面をタップ</span>";</script>
@@ -8066,7 +8066,7 @@ let hdX=0,hdV=0,hdG=0,hdK=null; // T174 車載視点の頭の揺れ（前後の�
 const isTV=m=>m===3||m===4||m===6, /* T659 6＝ドローン */DRW=1.2,DRW0=1.5, /* T659 ドローンが壁から離れる m・横へずれてよい最小 m */isCk=m=>m===1||m===5;
 /* T458 運転席の室内の材質は作り直しのたびに捨てない（捨てると色の付け方〈シェーダー〉の組み立てが毎回やり直しになり、数秒止まった）。… */
 const ckMC=new Map(),ckMatK=(k,mk)=>{let m=ckMC.get(k);if(!m){m=mk();m.userData.keep=1;ckMC.set(k,m);}return m;};let ckPC=0;
-let SWSM=.08; /* T1086 ハンドルの絵のなめらかさ（秒。0で前のまま） */
+let SWSM=.06; /* T1086 ハンドルの絵のなめらかさ（秒。0で前のまま。β0.657.3 で .08→.06＝ご本人「.06秒にする」。大きな切り返しの幅を残し、人の手らしくないガクガクを減らすのが狙い） */
 const CK={g:null,k:null,ci:-1,wheel:null,cv:null,tex:null,t:0,key:'',ex:0,ey:0,ez:0};
 function ckBuild(p){
   ckDispose(); /* T458 前は鏡の映像の絵まで捨てていた */
